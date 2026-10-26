@@ -126,7 +126,7 @@ Prasyarat terpenuhi: format korpus dan aturan pemuat dikunci di H-046. Aturan pe
 **Bukti verifikasi yang wajib disetor**: tabel per bagian dengan token terukur, hash, jumlah anotasi terurai, dan contoh dua ketentuan yang berubah (teks bersih vs baris status).
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — kode dan bukti selesai di mesin otoritatif (pemuat `bb40dba`, token dan kalibrasi: commit G3), review Tier 2 independen 0 BLOCKER (`_kerja/l3/REVIEW-G2.md`, `REVIEW-G3.md`, tidak di-commit). Bukti: `uv run pytest -q`; `uv run python -m backend.corpus` (`runs/corpus/uupt-40-2007.c56e4f0f38a4.txt`); `uv run python -m backend.measure --offline` (`runs/measure/5db7720bc1f5a121.json`). Belum `selesai` karena dua kriteria menunggu operator: (a) hash diverifikasi di mesin kedua; (b) metode baseline kalibrasi `sementara` (I-26, G-30).
 
 Operator, di akhir M0: kunci nilai grid H-012 setelah melihat panjang pasal, lalu mulai menulis butir kontrol (H-011) dengan aturan span gold H-048: span menandai semua ayat yang dibutuhkan, boleh multi-ayat, tidak lebih.
 

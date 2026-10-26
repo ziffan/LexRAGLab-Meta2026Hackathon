@@ -9,3 +9,23 @@ hf_revision = "0fb02478b02565b2ce7fc57e6051c91172774ac9"
 # Berkas tokenizer tidak di-commit (H-029); dibaca dari cache HF lokal.
 
 # Rasio kalibrasi diisi di M0.2 (G3).
+
+[calibration]
+# Diukur G3 27 Okt 2026 (run measure-5db7720bc1f5a121, runs/measure/5db7720bc1f5a121.json).
+# Rasio = tokens_endpoint / tokens_local. Hanya informasi; anggaran tetap token lokal (EVAL-SPEC §2).
+status = "sementara"   # metode baseline selisih vs teks acuan "." menunggu I-26 (G-30)
+method = "difference_vs_reference_text"
+provider = "meta"
+model = "muse-spark-1.3-contributor"
+hidden_overhead_tokens = 165
+run_id = "measure-5db7720bc1f5a121"
+clean_sha256 = "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2"
+mean_section_ratio = 1.0
+
+[calibration.uupt-40-2007]
+document = 1.0
+pembukaan = 1.0
+penjelasan_umum = 1.0
+batang_tubuh = 1.0
+penjelasan_pasal = 1.0
+pengesahan = 1.0

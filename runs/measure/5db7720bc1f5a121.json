@@ -1,0 +1,101 @@
+{
+  "run_record": {
+    "run_id": "measure-5db7720bc1f5a121",
+    "kind": "measure",
+    "created_at": "2026-10-26T17:15:52Z",
+    "cache_key": "5db7720bc1f5a121ba8020eb3c90554c958cdb4ad317533aee1715d2c7c4fda7",
+    "corpus_hash": "a6b38ee519dddeafc130b3ec18ad80805ed51602dbdd98786b7ab9adbd89ae81",
+    "config_hash": "ee5b3e9c785a7794f61b82ca908e4387680b9cd14629277e7f43581ebc625ec7",
+    "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+    "loader_rules_version": "1",
+    "prompt_version": null,
+    "prompt_hash": null,
+    "model": "muse-spark-1.3-contributor",
+    "effort": null,
+    "tokenizer": {
+      "name": "muse-spark-open",
+      "version": "meta-models/Muse-Spark-Open-816B-A42B@0fb02478b02565b2ce7fc57e6051c91172774ac9#sha256:ac2f41ef2444dec8"
+    },
+    "embedder": null,
+    "packing": null,
+    "usage_input_tokens": null,
+    "usage_cached_tokens": null,
+    "usage_output_tokens": null,
+    "cost_usd_micros": 0,
+    "latency_ms": 11434,
+    "host": "authoritative",
+    "device": "cpu",
+    "provider": "meta",
+    "quantization": null,
+    "status": "ok",
+    "error": null
+  },
+  "method": {
+    "name": "difference_vs_reference_text",
+    "status": "sementara",
+    "reference_text": ".",
+    "reference_endpoint_raw": 166,
+    "reference_tokens_local": 1,
+    "hidden_overhead_tokens": 165,
+    "issue": "I-26",
+    "gotcha": "G-30"
+  },
+  "rows": [
+    {
+      "section": "pembukaan",
+      "chars": 1833,
+      "tokens_local": 392,
+      "endpoint_raw": 557,
+      "tokens_endpoint": 392,
+      "calibration_ratio": 1.0
+    },
+    {
+      "section": "penjelasan_umum",
+      "chars": 6735,
+      "tokens_local": 1248,
+      "endpoint_raw": 1413,
+      "tokens_endpoint": 1248,
+      "calibration_ratio": 1.0
+    },
+    {
+      "section": "batang_tubuh",
+      "chars": 132945,
+      "tokens_local": 28347,
+      "endpoint_raw": 28512,
+      "tokens_endpoint": 28347,
+      "calibration_ratio": 1.0
+    },
+    {
+      "section": "penjelasan_pasal",
+      "chars": 71226,
+      "tokens_local": 16456,
+      "endpoint_raw": 16621,
+      "tokens_endpoint": 16456,
+      "calibration_ratio": 1.0
+    },
+    {
+      "section": "pengesahan",
+      "chars": 400,
+      "tokens_local": 140,
+      "endpoint_raw": 305,
+      "tokens_endpoint": 140,
+      "calibration_ratio": 1.0
+    },
+    {
+      "section": "_document",
+      "chars": 213139,
+      "tokens_local": 46583,
+      "endpoint_raw": 46748,
+      "tokens_endpoint": 46583,
+      "calibration_ratio": 1.0
+    }
+  ],
+  "mean_section_ratio": 1.0,
+  "cost_projection": {
+    "basis": "one full clean document as input, Contributor price from config/model",
+    "input_tokens": 46583,
+    "uncached_micros": 4659,
+    "cached_micros": 94
+  },
+  "n_endpoint_calls": 7
+}
