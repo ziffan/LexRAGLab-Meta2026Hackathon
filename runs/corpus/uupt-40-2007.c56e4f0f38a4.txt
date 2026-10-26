@@ -1,0 +1,15 @@
+section           ranges     chars
+pembukaan              1      1833
+penjelasan_umum        1      6735
+batang_tubuh         171    132945
+penjelasan_pasal     171     71226
+pengesahan             1       400
+TOTAL                345    213139
+
+doc_id               uupt-40-2007
+file sha256          a6b38ee519dddeafc130b3ec18ad80805ed51602dbdd98786b7ab9adbd89ae81
+clean_sha256         c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2
+loader_rules_version 1
+char_count (clean)   213139
+annotations parsed   6 (disclaimer=1, footnote=2, frontmatter=1, label=2)
+status proposals     16 (approved_by_operator=false; default_rule effective_from 2007-08-16)

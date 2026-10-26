@@ -18,3 +18,39 @@ address_prefix = "UU 40/2007"
 status = "berlaku"
 effective_from_source = "pengesahan.diundangkan"
 approved_by_operator = false
+
+[loader_uupt]
+# Parameter aturan pemuat UU PT (G2). Asal nilai: docs/DATA-CONTRACTS.md §2 (H-046); nilai literal
+# disalin dari berkas beku H-045. Mengubah salah satunya = aturan berubah -> naikkan loader_rules_version.
+# Bunyi persis disclaimer editorial (baris non-kosong pertama setelah frontmatter).
+disclaimer = "Bukan naskah LN/BN. Sitasi resmi rujuk LN/TLN atau Berita Negara."
+# Daftar kunci frontmatter berkas beku (§2, "Kunci frontmatter berkas beku").
+frontmatter_keys = ["jenis", "nomor", "tahun", "tentang", "konsolidasi_dalam_satu_naskah_berdasarkan", "lembaran_negara", "catatan", "catatan_koreksi", "perubahan_pasca_pakai"]
+# Kunci yang wajib kosong (R12).
+frontmatter_must_be_empty = ["catatan_koreksi", "perubahan_pasca_pakai"]
+# Jumlah beku (§2 "Format berkas").
+pasal_count = 171
+bab_count = 14
+footnote_count = 2
+
+# Sumber konsolidasi di frontmatter (DATA-CONTRACTS §2 "Usulan baris status"; nilai dari berkas beku H-045).
+# Urutan tiga string `konsolidasi_dalam_satu_naskah_berdasarkan`.
+source_kinds = ["perppu", "uu_pengubah", "mk"]
+# UU 24/2011 (Pasal 67 di note dan source, bukan amended_by: §2).
+uu_pengubah_number = "24"
+uu_pengubah_year = "2011"
+uu_pengubah_label = "UU 24/2011"
+uu_pengubah_article = "Pasal 67"
+uu_pengubah_label_needle = "24 TAHUN 2011"       # harus ada di teks label tebal
+uu_pengubah_footnote_needle = "Nomor 24 Tahun 2011"  # harus ada di definisi footnote
+# Putusan MK yang diterima (label tebal dan definisi footnote harus menyebutnya).
+mk_number = "84/PUU-XI/2013"
+
+[[loader_uupt.labels]]
+# Dua label tebal yang dikenal (§2); kind menaut ke entri frontmatter.
+text = "PUTUSAN MAHKAMAH KONSTITUSI NOMOR 84/PUU-XI/2013"
+kind = "mk"
+
+[[loader_uupt.labels]]
+text = "UNDANG-UNDANG NOMOR 24 TAHUN 2011"
+kind = "uu_pengubah"
