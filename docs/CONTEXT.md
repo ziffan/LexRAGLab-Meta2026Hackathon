@@ -1,15 +1,36 @@
 # CONTEXT — keadaan terkini
 
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
-Sumber keputusan: H-017, H-027, H-044.
+Sumber keputusan: H-017, H-027, H-044, H-052, H-057.
 
-diperbarui: 2026-10-26, setelah impor spec
+diperbarui: 2026-10-27 (UTC 26 Okt malam), sesi agen otonom semalam (M0 + draft skenario Tier 1)
 
 ## Status
 
-- Spec pra-acara (25–26 Okt 2026) diimpor ke `docs/` sebagai satu commit berlabel, terseleksi dan disaring (H-044). Belum ada kode, butir, akta sintetis, atau run.
-- M0 dimulai. Slice dan kriteria selesai di `docs/MILESTONES.md`.
-- Korpus UU PT menyusul sebagai commit pra-acara terpisah (H-044, H-045), lalu diverifikasi di M0.2.
+- Toolchain dipin: Python 3.12, `torch 2.11.0+cu128` dari index PyTorch (G-28), FastAPI 0.162.0, openai 3.37.0, sentence-transformers 6.2.0; `uv sync` lalu `uv run pytest -q`. Pin per paket di `pyproject.toml`; alasan di bawah.
+- M0.1: **belum mulai — menunggu persetujuan skenario** (`docs/scenarios/M0.1.md`). Smoke provider sudah jalan (bukan kode M0.1): Meta Model API OK (strict JSON, cached tokens, effort `low`); OpenRouter diblok guardrail akun (G-29, I-25).
+- M0.2: **berjalan** — pemuat korpus, token lokal, kalibrasi endpoint, dan proyeksi biaya selesai di mesin otoritatif dengan review Tier 2 independen. Sisa: hash di mesin kedua, persetujuan metode baseline kalibrasi (I-26).
+  - `clean_sha256` UU PT = `c56e4f0f38a4…` (`loader_rules_version` 1); 171 Pasal; 16 usulan baris status (bukan tabel status; `approved_by_operator=false`).
+  - Token lokal dokumen 46.583; rasio endpoint/lokal 1,0 di semua bagian; overhead tersembunyi endpoint 165 token. Proyeksi satu dokumen penuh sebagai input: 4.659 micro-USD uncached, 94 cached.
+- Draft skenario Tier 1 M0.1, M1.2, M1.4, M1.5 di `docs/scenarios/`, masing-masing dengan laporan pemeriksa independen (`*.pemeriksa.md`, dua putaran). Status semua: draft — menunggu persetujuan operator.
+- Lembar kerja butir kontrol: `docs/worksheets/butir-kontrol.md` (peta lokasi + template; bukan butir, H-006).
+- Belanja Model API sesi ini: 517 micro-USD (Meta), 0 OpenRouter.
+
+## Pin versi (M0)
+
+| Paket | Pin | Alasan |
+|---|---|---|
+| Python | 3.12.* | H-013, G-28 (uv bisa memilih 3.14) |
+| torch | 2.11.0+cu128 (index eksplisit) | G-28; `cuda.is_available()` = True di RTX 5060 Ti |
+| fastapi | 0.162.0 | terbaru (23 Okt), tidak ada masalah saat sync/import |
+| openai | 3.37.0 | 3.38.0 rilis 26 Okt (< 24 jam); mundur satu minor sebagai pengaman, belum ada masalah teramati |
+| sentence-transformers | 6.2.0 | terbaru (21 Okt), import OK |
+| tokenizers / tiktoken | 0.23.3 / 0.14.0 | tokenizer H-014 dan cadangan `o200k` |
+| rank-bm25 / sastrawi | 0.2.2 / 1.0.1 | M1.2 (tidak aktif tapi stabil, MILESTONES M0) |
+
+## Menunggu operator
+
+Lihat `docs/ISSUES.md` "Menunggu operator" (I-25 s.d. I-30), dan pertanyaan operator di tiap `docs/scenarios/*.md`.
 
 ## Lingkungan
 
@@ -18,4 +39,7 @@ diperbarui: 2026-10-26, setelah impor spec
 
 ## Berikutnya
 
-1. M0 sesuai `docs/MILESTONES.md`.
+1. Operator: putuskan I-25..I-30; setujui (atau minta revisi) skenario M0.1, M1.2, M1.4, M1.5; verifikasi hash korpus di mesin kedua (`uv run python -m backend.corpus`).
+2. Setelah skenario M0.1 disetujui: kode M0.1 (klien Spark) oleh agen, review Tier 1.
+3. Operator, akhir M0: kunci nilai grid H-012 (lihat panjang bagian di `runs/corpus/` dan `runs/measure/`), tulis butir kontrol memakai lembar kerja.
+4. M1 tidak dimulai sebelum butir kontrol dan grid ada.
