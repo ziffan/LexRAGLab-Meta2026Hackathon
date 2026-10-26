@@ -15,6 +15,7 @@ diperbarui: 2026-10-27 (UTC 26 Okt malam), sesi agen otonom semalam (M0 + draft 
 - Draft skenario Tier 1 M0.1, M1.2, M1.4, M1.5 di `docs/scenarios/`, masing-masing dengan laporan pemeriksa independen (`*.pemeriksa.md`, dua putaran). Status semua: draft — menunggu persetujuan operator.
 - Lembar kerja butir kontrol: `docs/worksheets/butir-kontrol.md` (peta lokasi + template; bukan butir, H-006).
 - Belanja Model API sesi ini: 517 micro-USD (Meta), 0 OpenRouter.
+- Verifikasi orkestrator (dijalankan ulang, bukan dari laporan agen): `uv run pytest -q` 90 passed; prefix key `.env` di seluruh histori git = 0; `.env` tidak ter-track. Rasio kalibrasi 1,0 bukan sirkular: enam ukuran endpoint mentah (305–46.748) masing-masing tepat token lokal + 165, jadi tokenizer Muse Spark Open identik dengan tokenizer endpoint.
 
 ## Pin versi (M0)
 
