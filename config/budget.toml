@@ -1,0 +1,7 @@
+# config/budget — cost guard (SECURITY-COMPLIANCE T6). Uang integer micro-USD.
+version = 1
+# Cap dev semalam 27 Okt (mandat operator, brief L2): Meta + OpenRouter digabung.
+dev_total_cap_micros = 2000000
+
+[per_role_cap_micros]
+measure = 500000

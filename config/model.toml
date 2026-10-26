@@ -1,0 +1,39 @@
+# config/model — profil model (docs/ARCHITECTURE.md §7, H-028, H-057).
+# Pemilik nilai: operator. Model ID hanya dari berkas ini.
+version = 1
+default_profile = "meta"
+
+[profiles.meta]
+# Jalur otoritatif: satu-satunya jalur untuk angka yang dilaporkan (H-027, H-028).
+provider = "meta"
+model = "muse-spark-1.3-contributor"
+base_url_env = "MUSE_BASE_URL"   # nilai di .env lokal, tidak dicetak
+api_key_env = "MUSE_API_KEY"
+for_reported_numbers = true
+
+[profiles.openrouter_dev]
+# Hanya dev dan uji (H-057). Tidak dipakai untuk angka yang dilaporkan.
+provider = "openrouter"
+model = "meta/muse-spark-1.3-contributor"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+for_reported_numbers = false
+
+[effort]
+# Nilai valid diuji di G1 smoke (G-05); diisi ulang setelah hasil smoke.
+a = "low"
+b = "low"
+c = "low"
+d = "low"
+measure = "low"
+
+[pricing.meta]
+# Contributor, per 1M token, dalam micro-USD (H-028; harga dicek ulang di M0).
+input_per_mtok_micros = 100000
+cached_per_mtok_micros = 2000
+output_per_mtok_micros = 200000
+
+[limits]
+max_rpm = 140          # di bawah 150 RPM Contributor (G-19)
+timeout_s = 120
+max_retries = 1

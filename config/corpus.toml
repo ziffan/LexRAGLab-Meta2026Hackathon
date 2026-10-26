@@ -1,0 +1,20 @@
+# config/corpus — korpus yang diterima pemuat (H-045, H-046, G-16).
+version = 1
+loader_rules_version = "1"
+
+[[documents]]
+doc_id = "uupt-40-2007"
+family = "uupt"
+title = "Undang-Undang Nomor 40 Tahun 2007 tentang Perseroan Terbatas (konsolidasi)"
+path = "data/uupt/UU_40_2007_PERSEROAN_TERBATAS.md"
+sha256 = "a6b38ee519dddeafc130b3ec18ad80805ed51602dbdd98786b7ab9adbd89ae81"
+size_bytes = 215465
+address_prefix = "UU 40/2007"
+
+[status_default]
+# Aturan status default (H-046, DATA-CONTRACTS §5). USULAN: menunggu persetujuan operator
+# bersama versi tabel status (H-009). Tanggal diambil pemuat dari baris "Diundangkan"
+# di blok PENGESAHAN, bukan literal di sini.
+status = "berlaku"
+effective_from_source = "pengesahan.diundangkan"
+approved_by_operator = false

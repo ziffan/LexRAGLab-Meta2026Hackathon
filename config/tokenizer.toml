@@ -1,0 +1,11 @@
+# config/tokenizer — tokenizer lokal H-014 dan rasio kalibrasi (EVAL-SPEC §2).
+version = 1
+primary = "muse-spark-open"
+fallback = "o200k_base"
+
+[muse-spark-open]
+hf_repo = "meta-models/Muse-Spark-Open-816B-A42B"
+hf_revision = "0fb02478b02565b2ce7fc57e6051c91172774ac9"
+# Berkas tokenizer tidak di-commit (H-029); dibaca dari cache HF lokal.
+
+# Rasio kalibrasi diisi di M0.2 (G3).

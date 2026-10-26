@@ -1,0 +1,42 @@
+[project]
+name = "lexraglab"
+version = "0.1.0"
+description = "Chunking and retrieval setting finder for Indonesian legal document families"
+requires-python = "==3.12.*"
+# Versi dipin di M0 (docs/MILESTONES.md M0, G-28). Alasan per pin di docs/CONTEXT.md "Pin versi".
+dependencies = [
+    "fastapi==0.162.0",
+    "uvicorn==0.54.0",
+    "openai==3.37.0",
+    "sentence-transformers==6.2.0",
+    "transformers==5.20.2",
+    "torch==2.11.0+cu128",
+    "tokenizers==0.23.3",
+    "tiktoken==0.14.0",
+    "numpy==2.5.4",
+    "pydantic==2.14.1",
+    "python-dotenv==1.2.4",
+    "rank-bm25==0.2.2",
+    "sastrawi==1.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+]
+
+[tool.uv]
+package = false
+
+# G-28: torch hanya dari index PyTorch cu128, bukan build CPU PyPI.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["backend/tests"]

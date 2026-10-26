@@ -1,0 +1,30 @@
+# Secrets (SECURITY-COMPLIANCE T1)
+.env
+.env.*
+!.env.example
+
+# Berkas kerja orkestrasi (brief, keadaan, log pengawas)
+_kerja/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Frontend
+node_modules/
+frontend/dist/
+
+# Tokenizer berlisensi dan cache embedding besar (CONVENTIONS "Git", H-029)
+tokenizer/
+cache/
+*.npy
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

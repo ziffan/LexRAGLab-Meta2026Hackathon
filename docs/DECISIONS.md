@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-056.
+Sumber keputusan: H-001 sampai H-057.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -65,6 +65,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-054 | Lima butir akta tidak dibagi tune/held-out; dilaporkan per butir sebagai uji transfer; frontier akta tanpa klaim pemilihan; tidak ada `SplitRecord` akta | 2026-10-26 |
 | H-055 | Bila pemicu 31 Okt H-017 aktif, editor skema A turun ke berkas berversi dan U5 hanya menampilkan diff; pemecah seri akhir = `setting_id` terkecil leksikografis | 2026-10-26 |
 | H-056 | Blanko PPAT tidak dipakai; keluarga akta hanya lima akta sintetis (menutup H-P23, merevisi H-040) | 2026-10-26 |
+| H-057 | OpenRouter hanya untuk dev dan uji: profil `openrouter_dev` (model ID `meta/muse-spark-1.3-contributor`) dan `meta` (`muse-spark-1.3-contributor`) di `config/model`; `RunRecord` mencatat `provider`; run OpenRouter tidak dipakai untuk angka yang dilaporkan, run final lewat Meta Model API (H-027, H-028); tetap Responses API + `strict: true` (H-016), bila OpenRouter tidak mendukung jalur itu berhenti, tidak turun ke Chat Completions; pengecualian "tanpa key kedua" AGENTS.md hanya untuk dev. *Dikonfirmasi operator di sesi 26 Okt malam; dicatat agen di sini; operator menyalin ke log keputusan operator 27 Okt* | 2026-10-27 |
 
 ## Pending
 
@@ -113,3 +114,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-26 | H-052 sampai H-055 ditambahkan (skenario Tier 1 diusulkan agen, Glimmer lewat W6/U3, akta tanpa split, fallback editor dan pemecah seri `setting_id`); pending baru H-P23 (blanko PPAT) |
 | 2026-10-26 | H-056 ditambahkan (blanko PPAT tidak dipakai), H-P23 ditutup |
 | 2026-10-26 | Ringkasan H-001 sampai H-056 diimpor ke repo app sebagai bagian spec pra-acara, disaring (H-044) |
+| 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
