@@ -1,0 +1,34 @@
+# GOTCHAS — jebakan yang sudah diketahui
+
+Tujuan: daftar perilaku tak terduga yang sudah diketahui sebelum kode, supaya tidak ditemukan ulang.
+Sumber keputusan: H-014, H-016, H-027, H-028, H-031, H-042, H-045, H-046, H-047.
+
+Sumber fakta: riset Model API 21 dan 25 Okt 2026 (riset Model API pra-acara). Dicek ulang di M0.
+
+| # | Jebakan | Akibat | Cara hindari |
+|---|---|---|---|
+| G-01 | Responses memakai `text.format`; Chat memakai `response_format`. Tertukar → HTTP 400 | Panggilan gagal | Hanya Responses API (H-016) |
+| G-02 | `strict` default `false` | Keluaran tidak dijamin sesuai skema | Selalu set `strict: true` |
+| G-03 | Dengan `strict: true`: `additionalProperties: false` wajib, semua key di `required`, `allOf`/`oneOf` tidak didukung, `anyOf` tidak boleh di root, skema rekursif ditolak | 400 atau skema ditolak | Field opsional lewat `anyOf` dengan null; hierarki datar (`docs/DATA-CONTRACTS.md`) |
+| G-04 | Reasoning tidak bisa dimatikan (`none` = 400) dan ditagih sebagai output | Biaya output lebih besar dari perkiraan | Effort tetap rendah, dicatat per run |
+| G-05 | Nilai effort tidak konsisten antar halaman docs (`max` vs `xhigh`) | 400 pada nilai tertentu | Uji nilai valid di M0.1 |
+| G-06 | Prompt caching hanya hint; request paralel pertama mungkin belum kena cache | Biaya B naik | Satu request pemanas, lalu `prompt_cache_key`; ukur `cached_tokens` |
+| G-07 | Cached tokens ada di `usage.input_tokens_details.cached_tokens` (Responses), bukan `prompt_tokens_details` | Cached terbaca 0 | Baca field Responses |
+| G-08 | `/v1/responses/input_tokens` ikut system prompt tersembunyi dan bukan untuk perkiraan biaya | Anggaran salah | Tokenizer lokal untuk anggaran; endpoint hanya untuk kalibrasi dengan baseline input kosong (H-014) |
+| G-09 | `max_completion_tokens` mencakup reasoning | Jawaban terpotong | Beri ruang cukup; catat `status` keluaran |
+| G-10 | PDF hanya dibaca 100 halaman pertama | Teks hilang | Korpus dikirim sebagai teks, bukan PDF |
+| G-11 | `tool_choice` hanya `auto`, argumen tidak dijamin sesuai schema | Retrieval bergantung pada query model | Tool calling tidak dipakai |
+| G-12 | Muse Code memakai Contributor mode secara default. Model API Contributor dipilih lewat model ID `-contributor`, bukan setelan akun | Isi mesin yang dibaca agen Muse Code ikut bahan latih | Muse Code: Standard di akun sebelum sesi. Model API: `muse-spark-1.3-contributor` dari `config/model` (H-028) |
+| G-13 | Peraturan perubahan dimulai `Pasal I` (Romawi) | Chunker struktur salah membaca | Test khusus di M1.1. Tidak relevan selama korpus berupa konsolidasi (H-031); berlaku lagi bila teks UU pengubah dimasukkan |
+| G-14 | Tidak ada embeddings endpoint dari Meta | — | Embedder lokal `BAAI/bge-m3` (H-042) |
+| G-15 | Kredit $150 tidak disebut di docs API; batas rate untuk tier kredit tidak didokumentasikan | Kehabisan kredit atau 429 tak terduga | Cek saldo di dashboard pada M0; cost guard |
+| G-16 | Git for Windows memasang `core.autocrlf=true` di level sistem. Checkout korpus di mesin Windows berubah menjadi CRLF: hash berubah dan offset span gold bergeser. Mesin Linux tidak terdampak | Hash tidak cocok dengan sumber; metrik salah diam-diam; butir yang ditulis di satu mesin salah offset di mesin lain | Aturan "Akhir baris" di `docs/CONVENTIONS.md`: `.gitattributes` `eol=lf` + `data/** -text` di commit pertama, loader menolak `\r`/BOM dan hash asing. Hash acuan: SHA-256 `a6b38ee5…` (H-045), tercatat di `config/corpus` dan diverifikasi di M0.2 |
+| G-17 | Embedding dan grid dihitung di dua mesin berbeda (mesin GPU vs mesin CPU). Embedding float GPU vs CPU tidak identik byte per byte; ranking bisa berbeda pada skor yang hampir seri | Hasil grid dan frontier berbeda antar mesin untuk kunci cache yang sama; NFR reproducibility (ARCHITECTURE §9) gagal | H-027: mesin GPU otoritatif untuk embedding, grid, dan run Spark; `RunRecord` mencatat host dan device |
+| G-18 | Shell non-interaktif (mis. perintah lewat SSH) tidak memuat profil shell, jadi alat yang dipasang lewat profil (nvm, uv) tidak ada di PATH | Salah simpulan "belum terpasang"; skrip remote gagal | Jalankan lewat login shell (`bash -lic "..."`) atau muat env alat lebih dulu |
+| G-19 | Contributor: 150 RPM / 3M TPM (Standard 3.000 / 4M), effort `max` tidak tersedia | 429 saat B per ayat dijalankan paralel | Pembatas laju dan backoff `Retry-After` di klien; effort tetap rendah |
+| G-20 | Penjelasan UU memakai nomor pasal yang sama dengan batang tubuh | Span gold, chunk, dan kutipan C tertukar antara batang tubuh dan Penjelasan | Metadata bagian di `CorpusDoc` sejak M0.2; alamat kutipan menyertakan bagian; test khusus di M1.1 (H-031) |
+| G-21 | Anotasi konsolidasi (UU pengubah, putusan MK) tercampur di teks pasal | Anotasi ikut potongan, BM25, dan anggaran token; offset span bergeser | Pemuat memisahkan anotasi sebelum chunking; span gold ditulis atas teks bersih; teks bersih diuji bebas penanda (H-031, H-046) |
+| G-22 | `multilingual-e5-large` berhenti di 512 token | Potongan per pasal yang panjang terpotong diam-diam; grid berbias melawan chunker struktur | Ditutup H-042: `BAAI/bge-m3` (8192 token). Tetap set `max_seq_length` eksplisit di `config/retrieval` dan catat jumlah potongan terpotong di `RunRecord` |
+| G-24 | `peraturan.bpk.go.id` menolak unduhan non-browser (HTTP 403, halaman tantangan JavaScript), termasuk dari container agen | Agen tidak bisa mengambil lampiran peraturan; skrip unduh gagal diam-diam bila tidak cek status | Operator mengunduh lewat browser, mencatat hash, lalu memasukkan teksnya (H-040). Skrip unduh selalu cek status dan tipe konten |
+| G-25 | Konversi PDF ke Markdown meninggalkan hard-wrap: sekitar 120 paragraf terbelah, dan sebagian baris sambungan diawali `(n)` (rujukan "ayat (2)" yang terpotong) sehingga terlihat seperti ayat baru. Aturan "nomor = ayat sebelumnya + 1" saja tidak cukup | Chunker per ayat memecah ayat palsu; span gold dan Recall@K salah | Korpus beku H-045 sudah dirapikan (26 Okt). Pemuat tetap menguji: setiap baris `(n)` di batang tubuh berurutan per pasal, dan baris yang diawali huruf kecil hanya sah sebagai kalimat penutup rincian, yaitu bila baris non-kosong sebelumnya butir `a.`/`1.` yang diakhiri `;`, `; atau`, atau `; dan` (H-046, contoh Pasal 102 ayat (1)). Kalimat penutup milik ayat, bukan butir terakhir; chunker per huruf diuji untuk itu di M1.1 |
+| G-26 | Muse Glimmer lokal (H-047) memakai sebagian besar VRAM mesin GPU pada konteks panjang, dan reasoning-nya tidak bisa dimatikan (bisa diatur `low`–`xhigh`; pada uji 26 Okt sekitar 75% keluaran adalah reasoning) | OOM bila dijalankan bersamaan dengan embedding bge-m3; jawaban lambat atau terpotong bila batas keluaran sempit | Glimmer dan embedding tidak dijalankan bersamaan; `reasoning_effort` dipin di `config/model` sebelum run; batas keluaran cukup longgar; keluaran divalidasi skema di sisi klien |
