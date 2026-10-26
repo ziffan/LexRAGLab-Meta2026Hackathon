@@ -178,10 +178,10 @@ Slot di bawah sengaja kosong sampai skenario slice itu disusun.
 
 | Slice | Yang diuji | Skenario (diusulkan agen) | Jawaban hitung tangan | Dicek pemeriksa / disetujui operator / tanggal |
 |---|---|---|---|---|
-| M0.1 | Secret dan perhitungan biaya | | | |
-| M1.2 | Span recall, precision token, pengemasan anggaran, pemecahan gold per ayat dan Recall@K (H-048) | | | |
-| M1.4 | Split berstrata dan pembulatan held-out (H-049), frontier, kebocoran held-out, pemecah seri sampai `setting_id` (H-034, H-055) | | | |
-| M1.5 | Entity preservation, boundary coherence | | | |
+| M0.1 | Secret dan perhitungan biaya | draft `docs/scenarios/M0.1.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M0.1.pemeriksa.md`) / belum disetujui operator / 2026-10-27 |
+| M1.2 | Span recall, precision token, pengemasan anggaran, pemecahan gold per ayat dan Recall@K (H-048) | draft `docs/scenarios/M1.2.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.2.pemeriksa.md`) / belum disetujui operator / 2026-10-27 |
+| M1.4 | Split berstrata dan pembulatan held-out (H-049), frontier, kebocoran held-out, pemecah seri sampai `setting_id` (H-034, H-055) | draft `docs/scenarios/M1.4.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.4.pemeriksa.md`) / belum disetujui operator / 2026-10-27 |
+| M1.5 | Entity preservation, boundary coherence | draft `docs/scenarios/M1.5.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.5.pemeriksa.md`) / belum disetujui operator / 2026-10-27 |
 | M2.1 | Transisi status usulan | | | |
 | M2.3 | Verifier uji 1 dan 2, ambang fuzzy | | | |
 | M2.4 | Uji 3 tiga nilai (stretch) | | | |
