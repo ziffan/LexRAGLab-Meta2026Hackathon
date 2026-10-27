@@ -131,7 +131,7 @@ def test_w1_runs_grid_then_cached(client, world):
     assert world["enc"].encode_calls == calls  # nol hitung
     assert (world["root"] / "runs" / "grid" / f"{rec['cache_key']}.json").is_file()
     clean_error(client.post(f"{FAM}/grid/run", json={"budget_tokens": 1234}), 400, "invalid_request")
-    clean_error(client.post("/api/families/akta/grid/run", json={}), 422, "validation_failed")
+    clean_error(client.post("/api/families/xyz/grid/run", json={}), 400, "invalid_request")  # akta W1: test_grid_akta_multi (H-086)
 
 
 # ---- R3 sesudah run ----

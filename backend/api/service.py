@@ -19,7 +19,7 @@ from backend.corpus import CorpusDoc, CorpusError, akta_entries, load_corpus
 from backend.grid.expand import expand_grid
 from backend.grid.schemas import SchemaBinding, bind_schema_versions
 from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError
-from backend.grid.types import Setting, setting_content
+from backend.grid.types import MULTI_DOC_FAMILIES, Setting, setting_content
 from backend.pipeline.grid_run import (GridResult, GridRunError, Plan, RunFileStore, load_header_binding, load_items, make_plan,
                                        run_family_grid, to_grid_items)
 from backend.pipeline.pipeline import Pipeline, SettingNotAvailable, unavailable_reason
@@ -165,11 +165,17 @@ class Service:
         return res
 
     # --- hasil grid tersimpan (R3) ---
+    def grid_docs(self, family: str) -> dict[str, Any]:
+        """Argumen dokumen grid: `doc` (UU PT, satu dokumen) atau `docs` (keluarga multi-dokumen, H-086)."""
+        if family in MULTI_DOC_FAMILIES:
+            return {"docs": self.family_docs(family)}
+        return {"doc": self.doc("uupt-40-2007")}
+
     def plan(self, family: str, *, create_split: bool = False, headers: HeaderBinding | None = None,
              schemas: SchemaBinding | None = None) -> Plan:
-        doc = self.doc("uupt-40-2007")
+        dkw = self.grid_docs(family)
         try:
-            return make_plan(family, doc=doc, tokenizer=self.tok(), butir_dir=self.butir_dir, runs_dir=self.runs_dir,
+            return make_plan(family, **dkw, tokenizer=self.tok(), butir_dir=self.butir_dir, runs_dir=self.runs_dir,
                              config_dir=self.config_dir, create_split=create_split, headers=headers, schemas=schemas)
         except GridRunError as exc:
             raise ApiError(409, "hash_mismatch", str(exc)) from None
@@ -228,8 +234,8 @@ class Service:
                 "scores": [r.scores[p.chunk_id] for p in r.packed], "packed_tokens": sum(p.cost for p in r.packed)}
 
     def run_grid(self, family: str, *, replay: bool = False) -> GridResult:
-        if family != "uupt":
-            raise ApiError(422, "validation_failed", f"Grid for family {family!r} is not available in M1.")
+        if family not in ("uupt", *MULTI_DOC_FAMILIES):
+            raise ApiError(422, "validation_failed", f"Grid for family {family!r} is not available.")
         with self.compute_lock:
             if replay:
                 _plan, env = self.stored_grid(family)
@@ -239,7 +245,7 @@ class Service:
                 rec["status"] = "cached"
                 return GridResult(env["key"], True, rec, env, RunFileStore(self.runs_dir / "grid").path(env["key"]))
             try:
-                return run_family_grid(family, doc=self.doc("uupt-40-2007"), tokenizer=self.tok(), runs_dir=self.runs_dir,
+                return run_family_grid(family, **self.grid_docs(family), tokenizer=self.tok(), runs_dir=self.runs_dir,
                                        butir_dir=self.butir_dir, config_dir=self.config_dir, encoder=self._encoder,
                                        encoder_factory=self._encoder_factory, embed_cache_dir=self.embed_cache_dir, headers=self.header_binding(),
                                        schemas=self.schema_binding(family))

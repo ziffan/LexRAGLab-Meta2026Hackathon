@@ -30,10 +30,28 @@ class GridItem:
     clean_sha256: str = ""
     gold_spans: tuple[tuple[int, int], ...] = ()
     query: str = ""  # ikut item_set_hash: query berubah = kunci cache grid berubah
+    doc_id: str = ""  # keluarga multi-dokumen (H-086): dokumen yang dirujuk butir; "" = keluarga satu dokumen
+
+
+def _item_row(i: GridItem) -> dict[str, Any]:
+    d = asdict(i)
+    if not d["doc_id"]:
+        d.pop("doc_id")  # keluarga satu dokumen: baris hash sama persis dengan sebelum H-086 (kunci UU PT tak berubah)
+    return d
 
 
 def item_set_hash(items: Iterable[GridItem]) -> str:
-    rows = [asdict(i) for i in sorted(items, key=lambda i: i.id)]
+    rows = [_item_row(i) for i in sorted(items, key=lambda i: i.id)]
+    return sha256_hex(canonical_json(rows))
+
+
+MULTI_DOC_FAMILIES = ("akta",)  # H-086: retrieval per dokumen butir, agregasi rata-rata per butir lintas dokumen
+
+
+def family_corpus_hash(docs: Iterable[Any]) -> str:
+    """Hash korpus keluarga multi-dokumen: daftar (`doc_id`, `clean_sha256`) terurut menurut `doc_id` (H-086).
+    Pengganti `clean_sha256` tunggal pada kunci cache grid keluarga multi-dokumen."""
+    rows = sorted([d.doc_id, d.clean_sha256] for d in docs)
     return sha256_hex(canonical_json(rows))
 
 

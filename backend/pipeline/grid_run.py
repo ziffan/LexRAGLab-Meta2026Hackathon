@@ -1,6 +1,7 @@
 """Run grid nyata (M1.4 + M1.5): ekspansi G6a ke setting yang tersedia, split, pipeline, frontier, pilihan profil, mutu.
 
-CLI: `uv run python -m backend.pipeline.grid_run [--family uupt]`. Hasil di `runs/grid/<kunci>.json`
+CLI: `uv run python -m backend.pipeline.grid_run [--family uupt|akta]`. Keluarga akta (H-086): retrieval per akta butir,
+agregasi rata-rata per butir lintas akta, tanpa split dan tanpa pemilihan profil (H-054). Hasil di `runs/grid/<kunci>.json`
 (amplop: RunRecord §12 + metrik per butir + titik + frontier + pilihan + mutu). Kunci sama = nol hitung.
 Tanpa Model API; `cost_usd_micros = 0`.
 """
@@ -25,8 +26,10 @@ from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding
 from backend.grid.runner import GridError, grid_cache_key, run_grid
 from backend.grid.schemas import SchemaBinding, bind_schema_versions, is_approved
 from backend.grid.split import SplitError, ensure_split, load_latest_split_record, make_split
-from backend.grid.types import GridItem, Setting, SplitRecord, canonical_json, item_set_hash, metrics_to_cache
+from backend.grid.types import (MULTI_DOC_FAMILIES, NO_SPLIT_FAMILY, GridItem, Setting, SplitRecord, canonical_json,
+                                family_corpus_hash, item_set_hash, metrics_to_cache)
 from backend.metrics.run_record import run_record_parts
+from backend.pipeline.multi import MultiDocPipeline
 from backend.pipeline.pipeline import Pipeline, unavailable_reason
 from backend.quality.aggregate import quality_metrics
 from backend.quality.types import ChunkSpan, QualityDoc
@@ -35,6 +38,8 @@ from backend.spark.runrecord import RunRecord
 
 RECALL_ITEM_SCOPES = ("all", "tune", "held_out")
 CONFIGS = ("grid", "retrieval", "tokenizer", "corpus")
+FAMILY_CONFIGS = {"akta": ("corpus_akta",)}  # config korpus tambahan yang ikut config_hash keluarga itu saja (UU PT tetap)
+GRID_FAMILIES = ("uupt", *MULTI_DOC_FAMILIES)
 _ITEM_FILE = re.compile(r"^(\w+)\.v(\d+)\.jsonl$")
 
 
@@ -63,9 +68,33 @@ def load_items(family: str, butir_dir: Path) -> tuple[list[dict[str, Any]], str 
 
 
 def to_grid_items(items: list[dict[str, Any]]) -> list[GridItem]:
+    """`doc_id` hanya diisi untuk keluarga multi-dokumen (H-086); UU PT tetap "" agar `item_set_hash` tak berubah."""
     return [GridItem(id=i["id"], family=i["family"], origin=i["origin"], mode=i["mode"], clean_sha256=i["clean_sha256"],
                      gold_spans=tuple(sorted((int(g["start"]), int(g["end"])) for g in i.get("gold_spans", []))),
-                     query=i["query"]) for i in items]
+                     query=i["query"], doc_id=str(i.get("doc_id") or "") if i["family"] in MULTI_DOC_FAMILIES else "")
+            for i in items]
+
+
+def check_items_against_docs(family: str, raw: list[dict[str, Any]], *, doc: Any = None, docs: Any = None) -> None:
+    """Satu dokumen: semua butir ditulis atas teks bersih `doc`. Multi-dokumen (H-086): tiap butir merujuk `doc_id` yang ada
+    di korpus keluarga dan `clean_sha256`-nya sama dengan teks bersih dokumen itu; id butir unik lintas dokumen."""
+    if family not in MULTI_DOC_FAMILIES:
+        for it in raw:
+            if it.get("clean_sha256") != doc.clean_sha256:
+                raise GridRunError(f"item {it.get('id')!r} was written against a different clean text than the loaded corpus")
+        return
+    by_doc = {d.doc_id: d for d in docs}
+    seen: set[Any] = set()
+    for it in raw:
+        iid, did = it.get("id"), it.get("doc_id")
+        if iid in seen:
+            raise GridRunError(f"duplicate item id {iid!r} in the {family} items")
+        seen.add(iid)
+        d = by_doc.get(did)
+        if d is None:
+            raise GridRunError(f"item {iid!r} refers to doc_id {did!r}, which is not in the {family} corpus")
+        if it.get("clean_sha256") != d.clean_sha256:
+            raise GridRunError(f"item {iid!r} was written against a different clean text than document {did!r}")
 
 
 # ---------- rencana ----------
@@ -83,6 +112,7 @@ class Plan:
     item_file: str | None
     split: SplitRecord | None
     key: str | None
+    corpus_key: str = ""  # komponen korpus kunci cache: `clean_sha256` (satu dokumen) atau `family_corpus_hash` (H-086)
 
 
 def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers: HeaderBinding | None = None,
@@ -138,20 +168,31 @@ def schema_report(pipe: Pipeline, executed: list[Setting], schemas: SchemaBindin
     if not used or schemas is None:
         return {"schemas_used": [], "schema_approved": None, "boundary_diff": {}}
     scope = list(pipe.rcfg["scope_sections"])
-    hand = chunk_document(pipe.doc, {"chunker": "structure_handwritten"}, tokenizer=pipe.tok, retrieval_cfg=pipe.rcfg)
+    multi = isinstance(pipe, MultiDocPipeline)
+    pipes = _doc_pipes(pipe)
+    hands = {p.doc.doc_id: chunk_document(p.doc, {"chunker": "structure_handwritten"}, tokenizer=p.tok, retrieval_cfg=p.rcfg)
+             for p in pipes}
     desc, diffs = [], {}
     for v, s in sorted(used.items()):
         rec = schemas.resolve(v)
         assert rec is not None
         desc.append(schemas.describe(rec))
-        diffs[str(v)] = boundary_diff(pipe.doc, hand, pipe.chunk_set(s).chunks, sections=scope)
+        per_doc = {p.doc.doc_id: boundary_diff(p.doc, hands[p.doc.doc_id], p.chunk_set(s).chunks, sections=scope) for p in pipes}
+        diffs[str(v)] = per_doc if multi else per_doc[pipes[0].doc.doc_id]  # multi-dokumen: per doc_id (H-086)
     return {"schemas_used": desc, "schema_approved": all(d["schema_approved"] for d in desc), "boundary_diff": diffs}
 
 
-def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_dir: Path, config_dir: Path | None = None,
-              create_split: bool, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None) -> Plan:
-    """Rencana run. `create_split=False` (R3): split dihitung murni dari record tersimpan, tanpa menulis; tanpa record -> split None."""
-    cfgs = {n: config.load(n, config_dir) for n in CONFIGS}
+def make_plan(family: str, *, doc: Any = None, tokenizer: Any, butir_dir: Path, runs_dir: Path, config_dir: Path | None = None,
+              create_split: bool, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None,
+              docs: Any = None) -> Plan:
+    """Rencana run. `create_split=False` (R3): split dihitung murni dari record tersimpan, tanpa menulis; tanpa record -> split None.
+    Keluarga multi-dokumen (H-086): `docs` = semua dokumen keluarga; tanpa split (H-054), kunci ber-`split_version` None."""
+    multi = family in MULTI_DOC_FAMILIES
+    if multi and not docs:
+        raise GridRunError(f"family {family!r} needs its document list")
+    if not multi and doc is None:
+        raise GridRunError(f"family {family!r} needs its document")
+    cfgs = {n: config.load(n, config_dir) for n in (*CONFIGS, *FAMILY_CONFIGS.get(family, ()))}
     settings = bind_schema_versions(expand_grid(cfgs["grid"], family), schemas)
     hb = headers is not None
     runnable = [s for s in settings if unavailable_reason(s, headers=hb, schemas=schemas) is None]
@@ -159,13 +200,11 @@ def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_di
                 "budget_tokens": s.budget_tokens, "reason": unavailable_reason(s, headers=hb, schemas=schemas)}
                for s in settings if unavailable_reason(s, headers=hb, schemas=schemas)]
     raw, fname = load_items(family, butir_dir)
-    for it in raw:
-        if it.get("clean_sha256") != doc.clean_sha256:
-            raise GridRunError(f"item {it.get('id')!r} was written against a different clean text than the loaded corpus")
+    check_items_against_docs(family, raw, doc=doc, docs=docs)
     items = to_grid_items(raw)
     g = cfgs["grid"]["split"]
     split: SplitRecord | None = None
-    if items:
+    if items and family != NO_SPLIT_FAMILY:
         kw = dict(family=family, seed=g["seed"], held_out_ratio=g["held_out_ratio"], min_control=g["min_control_in_held_out"],
                   strata=tuple(g["strata"]))
         splits_dir = Path(runs_dir) / "split"
@@ -179,8 +218,14 @@ def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_di
             if create_split:
                 raise GridRunError(str(exc)) from None
     chash = pipeline_config_hash(cfgs, tokenizer.info, headers, schema_identities(runnable, schemas))
-    key = grid_cache_key(doc.clean_sha256, chash, item_set_hash(items), split.split_version) if split else None
-    return Plan(family, cfgs, chash, headers, schemas, settings, runnable, skipped, items, fname, split, key)
+    corpus_key = family_corpus_hash(docs) if multi else doc.clean_sha256
+    if split:
+        key: str | None = grid_cache_key(corpus_key, chash, item_set_hash(items), split.split_version)
+    elif family == NO_SPLIT_FAMILY and items:
+        key = grid_cache_key(corpus_key, chash, item_set_hash(items), None)
+    else:
+        key = None
+    return Plan(family, cfgs, chash, headers, schemas, settings, runnable, skipped, items, fname, split, key, corpus_key)
 
 
 # ---------- penyimpanan amplop ----------
@@ -239,19 +284,27 @@ def selection_dict(sel: Any) -> dict[str, Any]:
 
 
 # ---------- mutu (M1.5) ----------
+def _doc_pipes(pipe: Any) -> list[Pipeline]:
+    """Pipeline satu-dokumen di balik `pipe` (urut `doc_id` untuk multi-dokumen)."""
+    return list(pipe.pipes.values()) if isinstance(pipe, MultiDocPipeline) else [pipe]
+
+
+def _quality_doc(p: Pipeline, s: Setting) -> QualityDoc:
+    cs = p.chunk_set(s)
+    units = cs.amap.in_sections(set(p.rcfg["scope_sections"]))
+    bounds = frozenset({0, len(p.doc.text)} | {u.start for u in units} | {u.end for u in units})
+    return QualityDoc(p.doc.text, tuple(ChunkSpan(c.start, c.end) for c in cs.chunks), bounds)
+
+
 def quality_for(pipe: Pipeline, s: Setting, metrics: list[Any]) -> dict[str, Any]:
     """QualityMetrics satu setting: potongan seluruh korpus + Recall@K per butir dari ItemMetrics (fungsi produksi M1.2)."""
-    cs = pipe.chunk_set(s)
     q = pipe.rcfg["quality"]
-    scope = set(pipe.rcfg["scope_sections"])
-    units = cs.amap.in_sections(scope)
-    bounds = frozenset({0, len(pipe.doc.text)} | {u.start for u in units} | {u.end for u in units})
-    qdoc = QualityDoc(pipe.doc.text, tuple(ChunkSpan(c.start, c.end) for c in cs.chunks), bounds)
+    qdocs = [_quality_doc(p, s) for p in _doc_pipes(pipe)]  # multi-dokumen: hitungan entitas/batas digabung lintas dokumen
     scope = q.get("recall_items", "all")
     if scope not in RECALL_ITEM_SCOPES:
         raise GridRunError(f"[quality].recall_items must be one of {list(RECALL_ITEM_SCOPES)}, got {scope!r}")
     used = [x for x in metrics if scope == "all" or x.split == scope]
-    m = quality_metrics(s.setting_id, [qdoc], pipe.k, [x.recall_at_k for x in used], q["entity_patterns"], q["abbreviations"])
+    m = quality_metrics(s.setting_id, qdocs, pipe.k, [x.recall_at_k for x in used], q["entity_patterns"], q["abbreviations"])
     d = asdict(m)
     d["items_scope"] = scope  # label cakupan butir Recall@K (I-39)
     d["recall_n_items"] = sum(1 for x in used if x.recall_at_k is not None)
@@ -278,20 +331,25 @@ class GridResult:
     path: Path
 
 
-def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, butir_dir: Path, config_dir: Path | None = None,
+def run_family_grid(family: str, *, doc: Any = None, tokenizer: Any, runs_dir: Path, butir_dir: Path, config_dir: Path | None = None,
                     encoder: Encoder | None = None, encoder_factory: Callable[[], Encoder] | None = None,
                     embed_cache_dir: Path | None = None, pipeline_out: list | None = None,
                     log: Callable[[str], None] = lambda _m: None, headers: HeaderBinding | None = None,
-                    schemas: SchemaBinding | None = None) -> GridResult:
-    """Jalankan (atau baca dari cache) grid satu keluarga. Tanpa Model API."""
+                    schemas: SchemaBinding | None = None, docs: Any = None) -> GridResult:
+    """Jalankan (atau baca dari cache) grid satu keluarga. Tanpa Model API.
+    Keluarga multi-dokumen (akta, H-086): `docs` = semua dokumen keluarga; retrieval per dokumen butir; tanpa split dan tanpa
+    pemilihan profil (H-054)."""
     t0 = time.perf_counter()
-    if family != "uupt":
-        raise GridRunError(f"grid for family {family!r} is not available in M1")
+    if family not in GRID_FAMILIES:
+        raise GridRunError(f"grid for family {family!r} is not available")
+    multi = family in MULTI_DOC_FAMILIES
     plan = make_plan(family, doc=doc, tokenizer=tokenizer, butir_dir=butir_dir, runs_dir=runs_dir, config_dir=config_dir, create_split=True,
-                     headers=headers, schemas=schemas)
+                     headers=headers, schemas=schemas, docs=docs)
     if not plan.items:
+        if multi:
+            raise GridRunError(f"no approved {family} items: no {family}.v*.jsonl item file in the item directory")
         raise GridRunError(f"no items for family {family!r}")
-    assert plan.split is not None and plan.key is not None
+    assert plan.key is not None and (plan.split is not None or family == NO_SPLIT_FAMILY)
     store = RunFileStore(Path(runs_dir) / "grid")
     existing = store.read(plan.key)
     if existing and existing.get("record"):
@@ -301,9 +359,9 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
         return GridResult(plan.key, True, rec, existing, store.path(plan.key))
 
     g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
-    pipe = Pipeline(doc, tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
-                    encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers,
-                    schemas=schemas)
+    pkw = dict(tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
+               encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers, schemas=schemas)
+    pipe: Any = MultiDocPipeline(docs, **pkw) if multi else Pipeline(doc, **pkw)
     if pipeline_out is not None:
         pipeline_out.append(pipe)
     log(f"run {len(plan.runnable)} settings, skipped {len(plan.skipped)}, items {len(plan.items)}")
@@ -312,7 +370,7 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
             f"approved={is_approved(schemas.resolve(sid['schema_version']))}")  # type: ignore[union-attr]
     if headers is not None:
         log(f"header B: scope={headers.scope} granularity={headers.granularity}")
-    res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=doc.clean_sha256,
+    res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=plan.corpus_key,
                    config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family,
                    header_scope=headers.scope if headers is not None else "all")
     assert res.grid_run_id == plan.key
@@ -337,10 +395,14 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
     host = config.load("model", config_dir)["host"]
     device = ("cuda:0" if enc.device == "cuda" else enc.device) if enc is not None else "cpu"
     parts = run_record_parts(tokenizer.info, g["packing"]["rule"])
+    if multi:  # H-086: hash korpus keluarga (doc_id + clean_sha256 terurut) menggantikan teks bersih tunggal
+        corpus_hash, clean, rules = plan.corpus_key, plan.corpus_key, ",".join(sorted({d.loader_rules_version for d in docs}))
+    else:
+        corpus_hash, clean, rules = config.config_hash({"docs": [doc.sha256]}), doc.clean_sha256, doc.loader_rules_version
     record = RunRecord(
         run_id=f"grid-{plan.key[:16]}", kind="grid", created_at=utc_now(), cache_key=plan.key,
-        corpus_hash=config.config_hash({"docs": [doc.sha256]}), config_hash=plan.config_hash,
-        clean_sha256=doc.clean_sha256, loader_rules_version=doc.loader_rules_version, prompt_version=None, prompt_hash=None,
+        corpus_hash=corpus_hash, config_hash=plan.config_hash,
+        clean_sha256=clean, loader_rules_version=rules, prompt_version=None, prompt_hash=None,
         model=None, effort=None, tokenizer=parts["tokenizer"], embedder=emb, packing=parts["packing"],
         usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None, cost_usd_micros=0,
         projected_cost_usd_micros=None, latency_ms=int((time.perf_counter() - t0) * 1000), host=host, device=device,
@@ -349,7 +411,10 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
     envelope = {
         "key": plan.key, "family": family, "record": record,
         "item_file": plan.item_file, "n_items": len(plan.items),
-        "split": plan.split.to_dict(),
+        "split": plan.split.to_dict() if plan.split is not None else None,  # akta: tanpa split (H-054)
+        **({"docs": [{"doc_id": d.doc_id, "clean_sha256": d.clean_sha256, "loader_rules_version": d.loader_rules_version,
+                      "n_items": sum(1 for i in plan.items if i.doc_id == d.doc_id)} for d in sorted(docs, key=lambda d: d.doc_id)]}
+           if multi else {}),
         "settings_run": [asdict(s) for s in executed], "skipped": plan.skipped,
         "n_truncated_by_chunker": trunc,
         "metrics": [metrics_to_cache(m) for m in res.metrics],
@@ -379,15 +444,19 @@ def summarize(res: GridResult) -> list[str]:
     for sk in sorted({(s['chunker'], s['header_b'], s['reason']) for s in env["skipped"]}, key=str):
         out.append(f"  skipped: chunker={sk[0]} header_b={sk[1]}: {sk[2]}")
     sp = env["split"]
-    tune = sum(1 for a in sp["assignments"] if a["split"] == "tune")
-    out.append(f"split v{sp['split_version']} seed={sp['seed']} ratio={sp['held_out_ratio']}: tune={tune} held_out={len(sp['assignments']) - tune} "
-               f"control_in_held_out={sp['control_in_held_out']}")
+    if sp is not None:
+        tune = sum(1 for a in sp["assignments"] if a["split"] == "tune")
+        out.append(f"split v{sp['split_version']} seed={sp['seed']} ratio={sp['held_out_ratio']}: tune={tune} held_out={len(sp['assignments']) - tune} "
+                   f"control_in_held_out={sp['control_in_held_out']}")
+    else:
+        out.append("split: none (H-054); docs " + ", ".join(f"{d['doc_id']}={d['n_items']}" for d in env.get("docs", [])))
+    want = "tune" if sp is not None else None
     by_id = {s["setting_id"]: s for s in env["settings_run"]}
     for f in env["frontiers"]:
-        if f["split"] != "tune":
+        if f["split"] != want:
             continue
-        out.append(f"frontier tune budget={f['budget_tokens']}:")
-        pts = {p["setting_id"]: p for p in env["points"] if p["split"] == "tune" and p["budget_tokens"] == f["budget_tokens"]}
+        out.append(f"frontier {want or 'all items'} budget={f['budget_tokens']}:")
+        pts = {p["setting_id"]: p for p in env["points"] if p["split"] == want and p["budget_tokens"] == f["budget_tokens"]}
         for sid in f["point_ids"]:
             p, s = pts[sid], by_id[sid]
             out.append(f"  {sid[:12]} {s['chunker']}/{s['retrieval_mode']} header_b={'on' if s['header_b'] else 'off'}: span_recall {_frac(p, 'mean_span_recall')} "
@@ -421,12 +490,17 @@ def main(argv: list[str] | None = None) -> int:
                          "ditandai di amplop); tanpa Model API")
     args = ap.parse_args(argv)
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
-    from backend.corpus import load_corpus
+    from backend.corpus import akta_entries, load_corpus
     from backend.tokenizer import get_tokenizer
 
     t0 = time.perf_counter()
     try:
-        res = run_family_grid(args.family, doc=load_corpus(), tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
+        if args.family in MULTI_DOC_FAMILIES:
+            ids = [i for i, e in akta_entries().items() if e.get("family", args.family) == args.family]
+            dkw: dict[str, Any] = {"docs": [load_corpus(i) for i in ids]}
+        else:
+            dkw = {"doc": load_corpus()}
+        res = run_family_grid(args.family, **dkw, tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
                               butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True),
                               headers=load_header_binding(runs_dir=args.runs_dir) if args.with_headers else None,
                               schemas=SchemaBinding.from_store(args.runs_dir, args.family) if args.with_schema else None)
