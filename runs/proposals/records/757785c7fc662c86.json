@@ -50,12 +50,12 @@
  },
  "edited": null,
  "family": "akta",
- "item_id": null,
+ "item_id": "usulan-757785c7fc662c86",
  "operator_note": null,
  "proposal_id": "757785c7fc662c86",
  "resolved_span": null,
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "disetujui",
+ "reviewed_at": "2026-10-27T23:54:41Z",
  "run_id": "47a01013d86046ee8f17577a9cdb691a",
  "validation": null
 }
