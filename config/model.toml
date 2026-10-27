@@ -55,4 +55,9 @@ base_url_env = "BASETEN_BASE_URL"   # nilai di .env lokal, tidak dicetak
 api_key_env = "BASETEN_API_KEY"
 for_reported_numbers = false
 roles = ["c"]
-# Harga per 1M token belum dipin: tanpa [pricing.baseten_open] klien fail-closed (config_invalid). Operator mengisi (I-34).
+
+[pricing.baseten_open]
+# Spark Open di Baseten, per 1M token, micro-USD. Sumber: dashboard Baseten "Model API pricing", disalin operator 27 Okt (I-34).
+input_per_mtok_micros = 1250000
+cached_per_mtok_micros = 150000
+output_per_mtok_micros = 4250000
