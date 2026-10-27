@@ -72,7 +72,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 
 | ID | Pertanyaan | Owner | Batas |
 |---|---|---|---|
-| — | Tidak ada pending (H-P23 ditutup H-056) | — | — |
+| H-P24 | Pembanding C stretch: tetap Glimmer lokal (H-047), tukar ke Spark Open di Baseten (pengecualian Chat Completions H-016, key Baseten di `.env`), atau keduanya? Discord Baseten 27 Okt: inference Baseten memenuhi "verified by partner". Rekomendasi agen: tukar (jam sama, partner memverifikasi, tanpa rebutan VRAM). Sampai diputus H-047 berlaku | Operator | Sebelum stretch pembanding C |
 
 ## Pilihan spec yang menunggu operator
 
@@ -117,3 +117,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-26 | Ringkasan H-001 sampai H-056 diimpor ke repo app sebagai bagian spec pra-acara, disaring (H-044) |
 | 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
 | 2026-10-27 | H-058 ditambahkan (nilai grid H-012), `config/grid.toml` dibuat |
+| 2026-10-27 | Pending H-P24 dibuka (kredit Baseten Spark Open diterima; Discord mengonfirmasi verifikasi partner) |
