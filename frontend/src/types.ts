@@ -301,6 +301,8 @@ export interface Health {
   replay: boolean;
   model: string | null;
   config_hash: string;
+  /** Jumlah `cost_usd_micros` seluruh RunRecord tersimpan (integer micro-USD); null/tidak ada = tidak terbaca. */
+  run_cost_usd_micros?: number | null;
   model_profiles: ModelProfileInfo[];
 }
 

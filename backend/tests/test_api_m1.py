@@ -52,6 +52,37 @@ def test_r1_health_is_on_the_unified_app_without_leaking(client):
     assert K not in r.text and BASE not in r.text
 
 
+def test_r1_run_cost_is_exact_sum_beyond_r6_max_limit(tmp_path):
+    from backend.api.routers.system import MAX_LIMIT
+
+    from .spark_fakes import synth
+
+    runs = tmp_path / "runs"
+    n = MAX_LIMIT + 7
+    for i in range(n):
+        synth(runs, "a", "meta", None if i % 10 == 0 else 3 + i, run_id=f"cost-{i:04d}")
+    want = sum(3 + i for i in range(n) if i % 10 != 0)
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=runs, encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
+    c = TestClient(create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg()))
+    r = c.get("/api/health")
+    assert r.status_code == 200
+    got = r.json()["run_cost_usd_micros"]
+    assert type(got) is int and got == want
+    assert len(c.get("/api/runs", params={"limit": str(MAX_LIMIT)}).json()) == MAX_LIMIT  # R6 terpotong; R1 tidak
+    assert K not in r.text and BASE not in r.text
+
+
+def test_r1_run_cost_zero_without_records_and_null_when_unreadable(tmp_path):
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs", encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
+    c = TestClient(create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg()))
+    assert c.get("/api/health").json()["run_cost_usd_micros"] == 0
+    d = tmp_path / "runs" / "spark" / "records"
+    d.mkdir(parents=True)
+    (d / "bad.json").write_text("{not json", encoding="utf-8")
+    r = c.get("/api/health")
+    assert r.status_code == 200 and r.json()["run_cost_usd_micros"] is None
+
+
 def test_uniform_error_shape_across_modules(client, world):
     clean_error(client.get("/api/runs", params={"kind": "bogus"}), 400, "invalid_request")
     clean_error(client.get("/api/does-not-exist"), 404, "not_found")

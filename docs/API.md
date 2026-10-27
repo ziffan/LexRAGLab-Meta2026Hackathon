@@ -22,12 +22,14 @@ Bentuk ini mengikuti H-020: endpoint baca dilebur menjadi snapshot per keluarga,
 
 | # | Metode dan jalur | Request | Response | Panel | Slice |
 |---|---|---|---|---|---|
-| R1 | `GET /api/health` | — | `{status, replay, model, config_hash, model_profiles: [{model_profile, model, available}]}` | U0, U3 | M0.1 |
+| R1 | `GET /api/health` | — | `{status, replay, model, config_hash, run_cost_usd_micros, model_profiles: [{model_profile, model, available}]}` | U0, U3 | M0.1 |
 | R2 | `GET /api/families` | — | `[{family, n_docs, n_items, has_grid}]` | U0 | M0.2 |
 | R3 | `GET /api/families/{family}/snapshot` | query `budget_tokens` opsional (default dari `config/grid`) | `FamilySnapshot` (bagian 4) | U0–U9 | M0.2, diperluas tiap slice |
 | R4 | `GET /api/families/{family}/docs/{doc_id}` | query `setting_id` opsional, atau `schema_version` opsional (int, saling eksklusif dengan `setting_id` → 400 `invalid_request`; versi tak ada → 404 `not_found`; skema tak cocok → 422 `validation_failed`; H-078) | `{doc_id, text, chunks: Chunk[] \| null, headers: HeaderB[] \| null}` (§3, §7) | U1, U6 | M1.1, M3.2 |
 | R5 | `GET /api/families/{family}/retrieval` | query `setting_id`, `item_id` | `{retrieved_chunk_ids, ranks, scores, packed_tokens}` | U1 | M1.2 |
 | R6 | `GET /api/runs` | query `kind`, `limit` | `RunRecord[]` (§12) | U8 | M0.1 |
+
+`run_cost_usd_micros` (R1): integer micro-USD, jumlah `cost_usd_micros` seluruh RunRecord yang dibaca R6 tanpa limit (record tanpa biaya = 0); `null` bila record tersimpan tidak terbaca. Ekspor statis menyalinnya ke `health.json`.
 
 R4 dan R5 dipisah dari snapshot karena teks dokumen dan ranking per butir per setting terlalu besar untuk dikirim sekaligus.
 

@@ -295,3 +295,64 @@ Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`. Bila oper
 - Uji komponen (Tier 3): buka/tutup dengan klik, Enter, Spasi, Esc; satu popover pada satu waktu; id hilang = test gagal; tidak ada angka bergaya hasil di berkas konten (pemeriksaan pola digit pada `body` kecuali daftar izin notasi yang ditinjau manual: "2x2", "Check 1/2/3", "muse-spark-1.3", "BM25", "V10-any", "(1), (2)", "1 divided", "(0 if none)").
 - Uji visual (Claude in Chrome, H-073): tangkapan layar hint tertutup dan terbuka pada 375, 768, dan 1440 px; konsol tanpa galat; bukti di `_kerja/orkestrasi/bukti/`.
 - Ekspor statis replay memuat hint dan panel Glossary berfungsi tanpa backend (kriteria gate H-051).
+
+## 10. Theme (H-083)
+
+Sumber: H-083 (nilai) dan mockup pra-acara operator (acuan token dan pola saja, tidak disalin; H-044). Implementasi: `frontend/src/theme.css` (satu-satunya sumber nilai) dan `frontend/src/styles.css` (hanya `var(--...)`). Komponen tidak memakai hex literal; SVG grafik U2 memakai `var(--...)`. Kontras dikunci oleh `frontend/src/__tests__/contrast.test.ts`.
+
+### 10.1 Token
+
+| CSS variable | Nilai | Pemakaian |
+|---|---|---|
+| `--bg` | `#F3F4F1` | latar halaman, kartu item, blok konteks |
+| `--ink` | `#15181C` | teks utama |
+| `--surface` | `#FFFFFF` | panel, tombol, input |
+| `--line` | `#D3D7DC` | border panel, tabel, pemisah |
+| `--line-strong` | `#8A929B` | border kontrol (tombol, select, segmented); non-teks butuh kontras lebih tinggi dari `--line` |
+| `--muted` | `#4B535D` | teks sekunder, label |
+| `--accent` / `--accent-hover` | `#1D5BA8` / `#123E75` | tautan, fokus, alamat, penanda terpilih, deret header B off; hover tombol |
+| `--on-accent` | `#FFFFFF` | teks di atas `--accent` |
+| `--panel-head` | `#EEF0F2` | kepala chunk, kepala tabel |
+| `--skeleton` | `#E4E7EA` | skeleton loading |
+| `--gold` | `#FBE3A6` | sorot span gold, baris terpilih, sel berubah |
+| `--head-bg` / `--head-ink` / `--head-muted` | `#15181C` / `#FFFFFF` / `#C9CED4` | header gelap U0: latar, nilai, label |
+| `--pass-bg/-line/-text` | `#E3ECF8` / `#B7CBE8` / `#1D4E8F` | chip pass (biru) |
+| `--fail-bg/-line/-text` | `#FBEBDD` / `#EDC6A3` / `#8A3F06` | chip fail (oranye), chunk terbelah |
+| `--notrun-bg/-line/-text` | `#F1F2F4` / `#D3D7DC` / `#5A616B` | chip not-run, tag netral |
+| `--replay-bg` / `--replay-ink` | `#F2B872` / `#15181C` | badge REPLAY |
+| `--err-bg/-line/-text` | `#FBE9E7` / `#E3A49B` / `#8C2318` | galat, konfirmasi destruktif, penanda terpilih di grafik |
+| `--series-off` / `--series-on` / `--dominated` | `#1D5BA8` / `#A8500C` / `#6B737C` | grafik U2: header B off, header B on, titik dominated (lihat selisih 4, 5) |
+
+Pass/fail memakai biru/oranye, bukan hijau/merah. Mode gelap: tidak ada (UI-SPEC tidak menuntut; tidak ditambah).
+
+### 10.2 Tipografi
+
+| Font | Variable | Dipakai untuk |
+|---|---|---|
+| IBM Plex Sans 400/500/600 | `--font-sans` | UI: label, tombol, tabel, judul panel, tag |
+| IBM Plex Serif 400/600 | `--font-serif` | teks hukum (chunk, konteks usulan, kutipan sitasi), kueri butir, jawaban model, ikon hint |
+| IBM Plex Mono 400/500 | `--font-mono` | alamat (`.addr`, `.ev-addr`), hash, ID model dan biaya di header, kelas `.mono` |
+
+Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi persis, subset `latin`, hanya bobot di atas), diimpor di `main.tsx`. Alasan dependensi: ekspor statis (H-051) harus jalan tanpa CDN dan tanpa jaringan; `build:static` mengemas berkas woff/woff2 ke `dist-static/assets`. Lisensi font OFL.
+
+### 10.3 Pola komponen
+
+- Header gelap U0 (`--head-bg`): nama app, Family, Selected setting, `Model` (dari `/api/health`), `Run cost` (`run_cost_usd_micros` dari `/api/health`: jumlah `cost_usd_micros` seluruh RunRecord tersimpan, dihitung server tanpa limit; frontend tidak menjumlah, satu fetch health di `App`), badge `REPLAY` (`.tag.replay`). Nilai tidak terbaca ditampilkan "n/a".
+- Panel putih (`.panel`): border `--line`, radius 6, padding 16.
+- Label uppercase kecil: `.field`, `dt` detail, kepala tabel (0,75rem, letter-spacing 0,04em).
+- Chip: pass, fail, not-run (token di atas), bulat, 0,75rem, teks tebal 600.
+- Tombol: tinggi minimal 44 px (`button`, `.seg-item`, `select` di `.field`). Pengecualian: tombol hint 24 px dan tombol alamat (`.addr`) tetap kecil (inline di teks).
+- Footer: "Research demo. Not legal advice." dan "Built with {model}" (model dari `/api/health`, bukan literal).
+
+### 10.4 Selisih mockup vs UI-SPEC/keputusan (UI-SPEC dan keputusan menang)
+
+| # | Mockup | Yang dipakai |
+|---|---|---|
+| 1 | Tata letak artboard per layar | `docs/UI-SPEC.md` §2 tetap; hanya tema yang diambil |
+| 2 | Isi basi: keluarga POJK, `muse-spark-1.3`, angka `[n]` | tidak dibawa; Model dan Run cost dari data aplikasi |
+| 3 | Footer menyebut model literal | "Built with {model}" dari `/api/health`; baris provenance U9 (`items_summary`) belum diimplementasi dan di luar tugas tema |
+| 4 | Warna deret header B on (`#A8500C`, ada di mockup, tidak di daftar H-083) | dipakai sebagai `--series-on` (kontras 5,50 di atas putih); perlu konfirmasi operator |
+| 5 | Abu titik dominated `#6B737C` (mockup) | `--dominated`; tidak di daftar H-083, perlu konfirmasi operator |
+| 6 | Header memuat "Profile" dan "Review proposals ({n} pending)" (UI-SPEC U0) | tidak ditambah (di luar tema); tautan "Review proposals" tetap di bawah header |
+| 7 | Kontrol 44 px | tombol hint (24 px, H-073) dan `.addr` dikecualikan agar tidak merusak alur teks |
+| 8 | Border panel `#D3D7DC` terlalu terang untuk kontrol (kontras non-teks < 3:1) | kontrol memakai `--line-strong` `#8A929B` (nilai mockup, bukan dari H-083) |

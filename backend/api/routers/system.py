@@ -44,6 +44,19 @@ def grid_records(runs_dir: Path) -> list[RunRecord]:
     return out
 
 
+def all_records(runs_dir: Path) -> list[RunRecord]:
+    """Semua RunRecord tersimpan (records + grid), tanpa limit; dipakai R6 dan R1. ValueError bila record rusak."""
+    return store.load_records(runs_dir) + grid_records(runs_dir)
+
+
+def run_cost_micros(runs_dir: Path) -> int | None:
+    """Jumlah `cost_usd_micros` seluruh RunRecord (None = 0). Integer micro-USD. None bila record tidak terbaca."""
+    try:
+        return sum(int(r.cost_usd_micros or 0) for r in all_records(runs_dir))
+    except ValueError:
+        return None
+
+
 @router.get("/api/health")
 def health(request: Request) -> dict[str, Any]:
     st = request.app.state
@@ -54,6 +67,7 @@ def health(request: Request) -> dict[str, Any]:
         "replay": st.replay,
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
+        "run_cost_usd_micros": run_cost_micros(st.service.runs_dir),
         "model_profiles": [
             {"model_profile": name, "model": p.get("model"), "available": _available(p, st.env)}
             for name, p in profiles.items()
@@ -72,10 +86,9 @@ def runs_list(request: Request, kind: str | None = None, limit: str | None = Non
         n = int(limit)
     runs = request.app.state.service.runs_dir
     try:
-        records = store.load_records(runs)
+        records = all_records(runs)
     except ValueError:
         raise ApiError(500, "model_error", "stored run records are unreadable") from None
-    records += grid_records(runs)
     if kind is not None:
         records = [r for r in records if r.kind == kind]
     records.sort(key=lambda r: (r.created_at, r.run_id), reverse=True)

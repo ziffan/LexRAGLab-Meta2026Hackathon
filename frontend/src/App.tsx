@@ -1,6 +1,6 @@
 import { ChunksVsGold } from "./components/ChunksVsGold";
 import { EvidencePanel } from "./components/Evidence";
-import { Header } from "./components/Header";
+import { Header, useBuildInfo } from "./components/Header";
 import { Hint } from "./components/Hint";
 import { ProfilePanel } from "./components/ProfileExport";
 import { PerItem } from "./components/PerItem";
@@ -15,10 +15,11 @@ const reviewView = (): boolean =>
 
 export function App() {
   // U6 adalah layar terpisah (`/review`), bukan panel di halaman utama (docs/UI-SPEC.md).
+  const build = useBuildInfo();
   if (reviewView()) return <ReviewScreen />;
   return (
     <div className="app">
-      <Header />
+      <Header build={build} />
       <nav className="app-nav"><a href={isStatic() ? "?view=review" : "/review"}>Review proposals</a><Hint id="role.d" /></nav>
       <main className="layout">
         <ChunksVsGold />
@@ -39,7 +40,7 @@ export function App() {
           <RunLogPanel />
         </div>
       </main>
-      <footer className="app-footer">Research demo. Not legal advice.<Hint id="app.audience" /></footer>
+      <footer className="app-footer"><span>Research demo. Not legal advice.<Hint id="app.audience" /></span>{build.model && <span>Built with <span className="mono">{build.model}</span></span>}</footer>
     </div>
   );
 }

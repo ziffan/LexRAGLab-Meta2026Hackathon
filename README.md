@@ -123,6 +123,8 @@ The hackathon started on 26 Oct 2026, 23:00 WIB. The first commit in this reposi
 | The planning specs in [`docs/`](docs/), imported in one labelled commit (`docs: import pre-event planning`). Planning only: no code. No pre-event prototype code is copied into this repository | All code, configuration, prompts, evaluation items, synthetic deeds, stored runs, profiles, and the live replay |
 | The Company Law file: an unofficial consolidation of UU 40/2007, consolidated as of 30 December 2022, prepared by the operator from the regulation texts and Constitutional Court decisions; committed separately as pre-event material (`data: add UU 40/2007 consolidated text`) | Every change to the specs after the import commit |
 
+The visual theme of the UI (colour tokens, IBM Plex typography, component patterns) comes from the operator's pre-event design mockup (H-083, H-044); the mockup markup is not copied and the layout follows `docs/UI-SPEC.md`.
+
 The five synthetic deeds are written during the hackathon by an AI agent (the development agent) and reviewed by the operator. All identities in them are fictitious.
 
 ## Disclaimer

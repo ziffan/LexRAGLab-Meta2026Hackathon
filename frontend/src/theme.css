@@ -1,0 +1,48 @@
+/* Token tema (H-083, docs/UI-SPEC.md "Theme (H-083)"). Satu-satunya sumber nilai warna dan font; komponen memakai var(--...).
+   Pasangan teks/latar dikunci >= 4,5:1 oleh src/__tests__/contrast.test.ts, yang membaca berkas ini. */
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --bg: #F3F4F1;
+  --ink: #15181C;
+  --surface: #FFFFFF;
+  --line: #D3D7DC;
+  --line-strong: #8A929B;
+  --muted: #4B535D;
+  --accent: #1D5BA8;
+  --accent-hover: #123E75;
+  --on-accent: #FFFFFF;
+  --panel-head: #EEF0F2;
+  --skeleton: #E4E7EA;
+  --gold: #FBE3A6;
+
+  --head-bg: #15181C;
+  --head-ink: #FFFFFF;
+  --head-muted: #C9CED4;
+
+  --pass-bg: #E3ECF8;
+  --pass-line: #B7CBE8;
+  --pass-text: #1D4E8F;
+  --fail-bg: #FBEBDD;
+  --fail-line: #EDC6A3;
+  --fail-text: #8A3F06;
+  --notrun-bg: #F1F2F4;
+  --notrun-line: #D3D7DC;
+  --notrun-text: #5A616B;
+  --replay-bg: #F2B872;
+  --replay-ink: #15181C;
+  --err-bg: #FBE9E7;
+  --err-line: #E3A49B;
+  --err-text: #8C2318;
+
+  /* Grafik U2 (SVG): deret header B on, penanda terpilih, titik dominated. */
+  --series-off: #1D5BA8;
+  --series-on: #A8500C;
+  --dominated: #6B737C;
+
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink);
+}

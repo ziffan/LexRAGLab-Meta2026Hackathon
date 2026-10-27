@@ -244,6 +244,17 @@ def test_export_answers_layout_and_profile_availability(monkeypatch):
     assert {p["model_profile"]: p["available"] for p in h["model_profiles"]} == {"meta": True}  # glim tanpa jawaban tersimpan: tidak dicantumkan
 
 
+def test_static_health_carries_run_cost(tmp_path):
+    from .spark_fakes import synth
+
+    app = make_app(tmp_path, replay=True)
+    synth(tmp_path / "runs", "a", "meta", 1234, run_id="rc-1")
+    synth(tmp_path / "runs", "a", "meta", None, run_id="rc-2")
+    synth(tmp_path / "runs", "a", "meta", 66, run_id="rc-3")
+    h = json.loads(build_files(app, families=("uupt",), retrieval=False, answers=False)["health.json"])
+    assert h["run_cost_usd_micros"] == 1300 and type(h["run_cost_usd_micros"]) is int
+
+
 # ---- W12: determinisme ekspor ----
 def test_export_is_byte_deterministic_with_injected_clock(world):
     from datetime import datetime, timezone

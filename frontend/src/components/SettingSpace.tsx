@@ -11,10 +11,10 @@ import { EmptyBlock, SnapshotPanel } from "./Shell";
 // U2 Setting space (docs/UI-SPEC.md U2). Dua deret: header B off (biru) dan on (oranye, M3.2). Titik header-on yang gagal
 // tidak digambar; alasannya tampil di daftar "Failed header-on settings".
 
-const COLOR_OFF = "#1f4e8c";
-const COLOR_ON = "#b4540a";
+const COLOR_OFF = "var(--series-off)";
+const COLOR_ON = "var(--series-on)";
 const colorOf = (on: boolean): string => (on ? COLOR_ON : COLOR_OFF);
-const COLOR_LINE = "#46515e";
+const COLOR_LINE = "var(--muted)";
 
 interface Dot {
   x: number;
@@ -55,12 +55,12 @@ export const frontierLine = (dots: Dot[]): Dot[] => dots.filter((d) => d.onFront
 
 function MarkerShape({ cx, cy, chunker, hollow, selected, on }: { cx: number; cy: number; chunker: Setting["chunker"]; hollow: boolean; selected: boolean; on: boolean }) {
   const color = colorOf(on);
-  const fill = hollow ? "#ffffff" : color;
+  const fill = hollow ? "var(--surface)" : color;
   const common = { fill, stroke: color, strokeWidth: 2 };
   const r = 7;
   return (
     <g>
-      {selected && <circle cx={cx} cy={cy} r={r + 6} fill="none" stroke="#b3261e" strokeWidth={2.5} />}
+      {selected && <circle cx={cx} cy={cy} r={r + 6} fill="none" stroke="var(--err-text)" strokeWidth={2.5} />}
       {chunker === "fixed_size" ? (
         <rect x={cx - r} y={cy - r} width={2 * r} height={2 * r} {...common} />
       ) : chunker === "structure_handwritten" ? (
@@ -162,23 +162,23 @@ function Body({ snap }: { snap: Snapshot }) {
         <div className="chart" role="img" aria-label={`Span recall against tokens (local tokenizer), ${dots.length} settings, ${line.length} on the frontier, ${onDots} with header B on`}>
           <ResponsiveContainer width="100%" minWidth={0} height={340}>
             <ScatterChart margin={{ top: 12, right: 20, bottom: 36, left: 16 }}>
-              <CartesianGrid stroke="#c5ccd4" />
+              <CartesianGrid stroke="var(--line)" />
               <XAxis
                 type="number"
                 dataKey="x"
                 name="Tokens"
                 domain={[(min: number) => Math.max(0, Math.floor((min * 0.97) / 50) * 50), (max: number) => Math.ceil((max * 1.02) / 50) * 50]}
                 allowDecimals={false}
-                tick={{ fill: "#1b2430", fontSize: 12 }}
-                label={{ value: "Tokens (local tokenizer), mean retrieved", position: "insideBottom", offset: -20, fill: "#1b2430", fontSize: 13 }}
+                tick={{ fill: "var(--ink)", fontSize: 12 }}
+                label={{ value: "Tokens (local tokenizer), mean retrieved", position: "insideBottom", offset: -20, fill: "var(--ink)", fontSize: 13 }}
               />
               <YAxis
                 type="number"
                 dataKey="y"
                 name="Span recall"
                 domain={[0, 1]}
-                tick={{ fill: "#1b2430", fontSize: 12 }}
-                label={{ value: "Span recall", angle: -90, position: "insideLeft", fill: "#1b2430", fontSize: 13 }}
+                tick={{ fill: "var(--ink)", fontSize: 12 }}
+                label={{ value: "Span recall", angle: -90, position: "insideLeft", fill: "var(--ink)", fontSize: 13 }}
               />
               <Tooltip content={<Tip />} isAnimationActive={false} cursor={{ strokeDasharray: "3 3" }} />
               <Scatter name="Frontier" data={line} line={{ stroke: COLOR_LINE, strokeWidth: 2 }} shape={() => <g />} legendType="none" tooltipType="none" isAnimationActive={false} />
@@ -239,8 +239,8 @@ function Body({ snap }: { snap: Snapshot }) {
       <ul className="legend-list" aria-label="Legend">
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Structure (handwritten parser)</li>
         <li><svg width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Fixed-size</li>
-        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="#6b7480" stroke="#6b7480" strokeWidth="2" /></svg> Frontier (filled), joined by a line</li>
-        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="#fff" stroke="#6b7480" strokeWidth="2" /></svg> Dominated (hollow)</li>
+        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="var(--dominated)" stroke="var(--dominated)" strokeWidth="2" /></svg> Frontier (filled), joined by a line</li>
+        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="var(--surface)" stroke="var(--dominated)" strokeWidth="2" /></svg> Dominated (hollow)</li>
         <li data-testid="legend-off"><span className="swatch" style={{ background: COLOR_OFF }} aria-hidden="true" /> Header B off</li>
         {onDots > 0 ? (
           <li data-testid="legend-on"><span className="swatch" style={{ background: COLOR_ON }} aria-hidden="true" /> Header B on</li>
