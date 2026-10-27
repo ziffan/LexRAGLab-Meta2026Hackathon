@@ -188,3 +188,36 @@ def test_real_corpus_sources(real):
     assert all(u.key == u.chunk_ids[0] for u in pa)
     big = next(u for u in pa if len(u.chunk_ids) > 1)
     assert "Pasal" in big.address and " › ayat" not in big.address.lower()
+
+
+def test_alternating_errors_reset_consecutive_counter(tmp_path):
+    long = "satu dua tiga empat lima enam"
+    rig, prompt, prefix = setup(tmp_path, override=lambda cid: {"chunk_id": cid, "header": long if int(cid[1:]) % 2 else "ok"})
+    us = [Unit(f"i{n}", "a", "t", 1, (f"i{n}",)) for n in range(8)]
+    res = run(rig, prompt, prefix, us, tmp_path, warm=False)  # galat selang-seling, batas 3 beruntun tak tercapai
+    assert res.stopped_reason is None and len(res.outcomes) == 8
+    assert sum(1 for o in res.outcomes if o.error) == 4
+
+
+def test_existing_header_file_is_not_overwritten(tmp_path):
+    rig, prompt, prefix = setup(tmp_path)
+    run(rig, prompt, prefix, units(), tmp_path)
+    path = tmp_path / "h" / "ayat" / prompt.prompt_hash[:12] / "id1.json"
+    first = path.read_text(encoding="utf-8")
+    path.write_text(first.replace("Konteks singkat", "Dipertahankan"), encoding="utf-8", newline="\n")
+    rig2, _, _ = setup(tmp_path / "x", header="Lain sekali")
+    rig2.client = rig2.new_client()
+    run(rig2, prompt, prefix, units(), tmp_path)
+    assert "Dipertahankan" in path.read_text(encoding="utf-8")
+
+
+def test_projection_rpm_floor_at_150():
+    class Const:
+        def count(self, text):
+            return 1
+
+    prefix = DocPrefix(text="x", nonce="n", tokens=10, cache_key="k")
+    us = [Unit(f"u{i}", "a", "t", 1, (f"u{i}",)) for i in range(299)]
+    pr = {"input": 1, "cached": 1, "output": 1}
+    p = project_units(us, prefix, Const(), pr, rpm=150, expected_output_tokens=1, max_output_tokens=1, assumed_latency_ms=1)
+    assert p["calls"] == 300 and p["time"]["rpm_floor_seconds"] == 120  # 300 * 60 / 150
