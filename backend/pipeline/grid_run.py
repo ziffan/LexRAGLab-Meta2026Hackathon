@@ -20,6 +20,7 @@ from typing import Any, Callable
 
 from backend import config
 from backend.grid.expand import expand_grid
+from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding
 from backend.grid.runner import GridError, grid_cache_key, run_grid
 from backend.grid.split import SplitError, ensure_split, load_latest_split_record, make_split
 from backend.grid.types import GridItem, Setting, SplitRecord, canonical_json, item_set_hash, metrics_to_cache
@@ -71,6 +72,7 @@ class Plan:
     family: str
     cfgs: dict[str, dict[str, Any]]
     config_hash: str
+    headers: HeaderBinding | None
     settings: list[Setting]  # semua hasil ekspansi
     runnable: list[Setting]
     skipped: list[dict[str, Any]]
@@ -80,18 +82,41 @@ class Plan:
     key: str | None
 
 
-def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any) -> str:
-    return config.config_hash({**cfgs, "_tokenizer_info": {"name": tok_info.name, "version": tok_info.version}})
+def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers: HeaderBinding | None = None) -> str:
+    """Hash konfigurasi run. Dengan header B (A10): hash isi store header, granularitas, `prompt_hash` B, model, dan
+    `header_b.scope` ikut; `run_id` B tidak. Tanpa binding hash sama seperti sebelum M3.2."""
+    parts: dict[str, Any] = {**cfgs, "_tokenizer_info": {"name": tok_info.name, "version": tok_info.version}}
+    if headers is not None:
+        parts["_header_b"] = headers.identity()
+    return config.config_hash(parts)
+
+
+def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, headers_dir: Path | None = None) -> HeaderBinding:
+    """Binding dari `config/header_b` (granularity, scope, max_header_tokens) + `prompts/b` + `config/model` + `runs/`."""
+    from backend.header_b.prompt import load_prompt
+
+    hc = config.load("header_b", config_dir)
+    scope = hc.get("scope", "frontier_only")
+    if scope not in SCOPES:
+        raise GridRunError(f"config/header_b: scope must be one of {list(SCOPES)}, got {scope!r}")
+    if hc.get("granularity") not in ("pasal", "ayat"):
+        raise GridRunError("config/header_b: granularity must be 'pasal' or 'ayat'")
+    prompt = load_prompt(int(hc["max_header_tokens"]))
+    mc = config.load("model", config_dir)
+    store = DirHeaderStore(headers_dir or Path(runs_dir) / "headers", prompt.prompt_hash, runs_dir)
+    return HeaderBinding(store, hc["granularity"], scope, prompt.prompt_hash, mc["profiles"][mc["default_profile"]]["model"])
 
 
 def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_dir: Path, config_dir: Path | None = None,
-              create_split: bool) -> Plan:
+              create_split: bool, headers: HeaderBinding | None = None) -> Plan:
     """Rencana run. `create_split=False` (R3): split dihitung murni dari record tersimpan, tanpa menulis; tanpa record -> split None."""
     cfgs = {n: config.load(n, config_dir) for n in CONFIGS}
     settings = expand_grid(cfgs["grid"], family)
-    runnable = [s for s in settings if unavailable_reason(s) is None]
+    hb = headers is not None
+    runnable = [s for s in settings if unavailable_reason(s, headers=hb) is None]
     skipped = [{"setting_id": s.setting_id, "chunker": s.chunker, "retrieval_mode": s.retrieval_mode, "header_b": s.header_b,
-                "budget_tokens": s.budget_tokens, "reason": unavailable_reason(s)} for s in settings if unavailable_reason(s)]
+                "budget_tokens": s.budget_tokens, "reason": unavailable_reason(s, headers=hb)}
+               for s in settings if unavailable_reason(s, headers=hb)]
     raw, fname = load_items(family, butir_dir)
     for it in raw:
         if it.get("clean_sha256") != doc.clean_sha256:
@@ -112,9 +137,9 @@ def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_di
         except SplitError as exc:
             if create_split:
                 raise GridRunError(str(exc)) from None
-    chash = pipeline_config_hash(cfgs, tokenizer.info)
+    chash = pipeline_config_hash(cfgs, tokenizer.info, headers)
     key = grid_cache_key(doc.clean_sha256, chash, item_set_hash(items), split.split_version) if split else None
-    return Plan(family, cfgs, chash, settings, runnable, skipped, items, fname, split, key)
+    return Plan(family, cfgs, chash, headers, settings, runnable, skipped, items, fname, split, key)
 
 
 # ---------- penyimpanan amplop ----------
@@ -215,12 +240,13 @@ class GridResult:
 def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, butir_dir: Path, config_dir: Path | None = None,
                     encoder: Encoder | None = None, encoder_factory: Callable[[], Encoder] | None = None,
                     embed_cache_dir: Path | None = None, pipeline_out: list | None = None,
-                    log: Callable[[str], None] = lambda _m: None) -> GridResult:
+                    log: Callable[[str], None] = lambda _m: None, headers: HeaderBinding | None = None) -> GridResult:
     """Jalankan (atau baca dari cache) grid satu keluarga. Tanpa Model API."""
     t0 = time.perf_counter()
     if family != "uupt":
         raise GridRunError(f"grid for family {family!r} is not available in M1")
-    plan = make_plan(family, doc=doc, tokenizer=tokenizer, butir_dir=butir_dir, runs_dir=runs_dir, config_dir=config_dir, create_split=True)
+    plan = make_plan(family, doc=doc, tokenizer=tokenizer, butir_dir=butir_dir, runs_dir=runs_dir, config_dir=config_dir, create_split=True,
+                     headers=headers)
     if not plan.items:
         raise GridRunError(f"no items for family {family!r}")
     assert plan.split is not None and plan.key is not None
@@ -234,18 +260,22 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
 
     g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
     pipe = Pipeline(doc, tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
-                    encoder_factory=encoder_factory or (lambda: encoder_from_config(r)))
+                    encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers)
     if pipeline_out is not None:
         pipeline_out.append(pipe)
     log(f"run {len(plan.runnable)} settings, skipped {len(plan.skipped)}, items {len(plan.items)}")
+    if headers is not None:
+        log(f"header B: scope={headers.scope} granularity={headers.granularity}")
     res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=doc.clean_sha256,
-                   config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family)
+                   config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family,
+                   header_scope=headers.scope if headers is not None else "all")
     assert res.grid_run_id == plan.key
     by_id = {s.setting_id: s for s in plan.runnable}
     per_setting: dict[str, list[Any]] = {}
     for m in res.metrics:
         per_setting.setdefault(m.setting_id, []).append(m)
-    quality = [quality_for(pipe, s, per_setting[s.setting_id]) for s in plan.runnable]
+    executed = [s for s in plan.runnable if s.setting_id in per_setting]  # tanpa kembaran di luar scope dan setting gagal
+    quality = [quality_for(pipe, s, per_setting[s.setting_id]) for s in executed]
     q_by_id = {q["setting_id"]: q for q in quality}
     comparison = []
     for budget, sel in sorted(res.selections.items()):
@@ -269,14 +299,15 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
         usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None, cost_usd_micros=0,
         projected_cost_usd_micros=None, latency_ms=int((time.perf_counter() - t0) * 1000), host=host, device=device,
         provider=None, quantization=None, status="ok", error=None).to_dict()
+    record["failed_settings"] = [f.to_dict() for f in res.failed_settings]  # DATA-CONTRACTS §12, H-069
     envelope = {
         "key": plan.key, "family": family, "record": record,
         "item_file": plan.item_file, "n_items": len(plan.items),
         "split": plan.split.to_dict(),
-        "settings_run": [asdict(s) for s in plan.runnable], "skipped": plan.skipped,
+        "settings_run": [asdict(s) for s in executed], "skipped": plan.skipped,
         "n_truncated_by_chunker": trunc,
         "metrics": [metrics_to_cache(m) for m in res.metrics],
-        "points": [point_dict(p) for p in res.points],
+        "points": [{**point_dict(p), "header_b": by_id[p.setting_id].header_b} for p in res.points],  # deret on/off (U2)
         "frontiers": [{"family": f.family, "split": f.split, "budget_tokens": f.budget_tokens, "point_ids": list(f.point_ids),
                        "grid_run_id": f.grid_run_id} for f in res.frontiers],
         "selections": {str(b): selection_dict(s) for b, s in sorted(res.selections.items())},
@@ -312,7 +343,7 @@ def summarize(res: GridResult) -> list[str]:
         pts = {p["setting_id"]: p for p in env["points"] if p["split"] == "tune" and p["budget_tokens"] == f["budget_tokens"]}
         for sid in f["point_ids"]:
             p, s = pts[sid], by_id[sid]
-            out.append(f"  {sid[:12]} {s['chunker']}/{s['retrieval_mode']}: span_recall {_frac(p, 'mean_span_recall')} "
+            out.append(f"  {sid[:12]} {s['chunker']}/{s['retrieval_mode']} header_b={'on' if s['header_b'] else 'off'}: span_recall {_frac(p, 'mean_span_recall')} "
                        f"mean_retrieved_tokens {_frac(p, 'mean_retrieved_tokens')}")
     for b, sel in env["selections"].items():
         s = by_id[sel["setting_id"]]
@@ -336,6 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--family", default="uupt")
     ap.add_argument("--runs-dir", type=Path, default=config.REPO_ROOT / "runs")
     ap.add_argument("--butir-dir", type=Path, default=config.REPO_ROOT / "data" / "butir")
+    ap.add_argument("--with-headers", action="store_true",
+                    help="sertakan kembaran header-on (store runs/headers, scope dari config/header_b); tanpa Model API")
     args = ap.parse_args(argv)
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     from backend.corpus import load_corpus
@@ -344,7 +377,8 @@ def main(argv: list[str] | None = None) -> int:
     t0 = time.perf_counter()
     try:
         res = run_family_grid(args.family, doc=load_corpus(), tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
-                              butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True))
+                              butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True),
+                              headers=load_header_binding(runs_dir=args.runs_dir) if args.with_headers else None)
     except (GridRunError, GridError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

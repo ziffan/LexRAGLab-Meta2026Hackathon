@@ -10,6 +10,7 @@ from typing import Any, Callable, Mapping, Protocol, Sequence
 
 from backend.metrics.types import ItemMetrics
 from backend.grid.frontier import aggregate_points, compute_frontiers
+from backend.grid.headers import SCOPES, FailedSetting, HeaderError, failed_from_error, twin_key
 from backend.grid.select import Selection, select_profiles
 from backend.grid.types import (
     Frontier,
@@ -82,6 +83,22 @@ class GridRun:
     points: tuple[GridPoint, ...]
     frontiers: tuple[Frontier, ...]
     selections: Mapping[int, Selection]  # kosong untuk akta
+    failed_settings: tuple[FailedSetting, ...] = ()  # setting header-on yang gagal (H-069); tanpa GridPoint
+
+
+FAILED_MARK = "_failed_settings"  # elemen penutup nilai cache bila ada setting gagal (bukan ItemMetrics)
+
+
+def _frontier_twins(off: Sequence[Setting], on: Sequence[Setting], metrics: Sequence[ItemMetrics], key: str,
+                    family: str) -> list[Setting]:
+    """Kembaran header-on yang boleh dieksekusi (`scope = frontier_only`, A6): hanya kembaran dari setting yang ada di
+    frontier TUNE deret off per anggaran. Held-out tidak dibaca (EVAL-SPEC §8 butir 6)."""
+    by_id = {s.setting_id: s for s in off}
+    points, frontiers = compute_frontiers(aggregate_points(metrics, by_id), key)
+    split = None if family == NO_SPLIT_FAMILY else "tune"
+    keep = {pid for f in frontiers if f.split == split for pid in f.point_ids}
+    wanted = {twin_key(by_id[pid]) for pid in keep}
+    return [s for s in on if twin_key(s) in wanted]
 
 
 def run_grid(
@@ -95,8 +112,15 @@ def run_grid(
     split_record: SplitRecord | None,
     simplicity: Mapping[str, Any],
     family: str,
+    header_scope: str = "all",
 ) -> GridRun:
-    """family bersplit: `split_record` wajib. akta: `split_record` None, split pada metrik = None (H-054, H-059)."""
+    """family bersplit: `split_record` wajib. akta: `split_record` None, split pada metrik = None (H-054, H-059).
+
+    `header_scope` (`config/header_b.scope`, harus ikut `config_hash`, A10): `all` mengeksekusi semua setting;
+    `frontier_only` mengeksekusi deret off lebih dulu lalu hanya kembaran header-on dari frontier tune off (H-069).
+    `HeaderError` dari pipeline = setting itu gagal: dicatat di `failed_settings`, tanpa metrik, run lanjut."""
+    if header_scope not in SCOPES:
+        raise GridError(f"header_scope must be one of {list(SCOPES)}, got {header_scope!r}")
     if family != NO_SPLIT_FAMILY:
         if split_record is None:
             raise GridError("a split-bearing family requires a SplitRecord")
@@ -109,23 +133,42 @@ def run_grid(
     version = split_record.split_version if (family != NO_SPLIT_FAMILY and split_record) else None
     key = grid_cache_key(clean_sha256, config_hash, item_set_hash(items), version)
 
+    failed: list[FailedSetting] = []
     cached = cache.get(key)
     if cached is not None:
-        metrics = [metrics_from_cache(d) for d in cached]
+        metrics = [metrics_from_cache(d) for d in cached if FAILED_MARK not in d]
+        failed = [FailedSetting(**f) for d in cached if FAILED_MARK in d for f in d[FAILED_MARK]]
         hit = True
     else:
         metrics = []
         want = {i.id for i in items}
-        for st in settings:
-            got = pipeline(st, items)
+
+        def execute(st: Setting) -> None:
+            try:
+                got = pipeline(st, items)
+            except HeaderError as err:
+                failed.append(failed_from_error(err))
+                return
             if {m.item_id for m in got} != want or len(got) != len(want):
                 raise GridError(f"pipeline returned a different item set for setting {st.setting_id}")
             metrics.extend(replace(m, setting_id=st.setting_id, split=split_of[m.item_id]) for m in got)
+
+        off = [s for s in settings if not s.header_b]
+        on = [s for s in settings if s.header_b]
+        for st in off:
+            execute(st)
+        if on and header_scope == "frontier_only":
+            on = _frontier_twins(off, on, metrics, key, family)
+        for st in on:
+            execute(st)
         metrics.sort(key=lambda m: (m.setting_id, m.item_id))
-        cache.put(key, [metrics_to_cache(m) for m in metrics])
+        value: list[dict[str, Any]] = [metrics_to_cache(m) for m in metrics]
+        if failed:
+            value.append({FAILED_MARK: [f.to_dict() for f in failed]})
+        cache.put(key, value)
         hit = False
 
     by_id = {s.setting_id: s for s in settings}
     points, frontiers = compute_frontiers(aggregate_points(metrics, by_id), key)
     selections = select_profiles(points, by_id, simplicity, family=family) if family != NO_SPLIT_FAMILY else {}
-    return GridRun(key, hit, tuple(metrics), tuple(points), tuple(frontiers), selections)
+    return GridRun(key, hit, tuple(metrics), tuple(points), tuple(frontiers), selections, tuple(failed))
