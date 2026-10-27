@@ -5,3 +5,9 @@ dev_total_cap_micros = 2000000
 
 [per_role_cap_micros]
 measure = 500000
+# Cap per peran: usulan agen M0.1 (O-11, peran tanpa cap = config_invalid), operator boleh ubah.
+# Jumlahnya di bawah dev_total_cap_micros; cap total tetap berlaku.
+a = 500000
+b = 1000000
+c = 500000
+d = 250000

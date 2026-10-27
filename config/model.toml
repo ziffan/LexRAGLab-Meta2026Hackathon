@@ -2,6 +2,8 @@
 # Pemilik nilai: operator. Model ID hanya dari berkas ini.
 version = 1
 default_profile = "meta"
+# Label mesin untuk RunRecord.host (bukan hostname; H-027). Usulan agen M0.1 (O-13), operator boleh ubah.
+host = "authoritative"
 
 [profiles.meta]
 # Jalur otoritatif: satu-satunya jalur untuk angka yang dilaporkan (H-027, H-028).
@@ -16,6 +18,7 @@ for_reported_numbers = true
 provider = "openrouter"
 model = "meta/muse-spark-1.3-contributor"
 base_url = "https://openrouter.ai/api/v1"
+pricing = "meta"   # harga memakai [pricing.meta] (D4, scenarios/M0.1): harga OpenRouter sama dengan Contributor
 api_key_env = "OPENROUTER_API_KEY"
 for_reported_numbers = false
 
@@ -37,3 +40,8 @@ output_per_mtok_micros = 200000
 max_rpm = 140          # di bawah 150 RPM Contributor (G-19)
 timeout_s = 120
 max_retries = 1
+# Kunci retry 429 (SECURITY-COMPLIANCE T6; usulan agen M0.1, T1 di docs/scenarios/M0.1.md; operator boleh ubah).
+backoff_base_s = 2     # tunggu pertama bila 429 tanpa Retry-After valid
+backoff_factor = 2     # eksponensial: 2, 4, 8 detik
+max_429_retries = 3    # jatah retry 429, terpisah dari max_retries (jatah retry timeout; O-16)
+max_wait_s = 120       # tunggu lebih dari ini (termasuk Retry-After) -> berhenti rate_limited
