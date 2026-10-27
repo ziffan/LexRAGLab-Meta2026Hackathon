@@ -3,6 +3,8 @@ from fractions import Fraction as F
 
 import pytest
 
+from backend.metrics.item import recall_at_k_from_parts
+from backend.metrics.types import RankedChunk
 from backend.quality.aggregate import (
     macro_recall, pooled_counts, quality_metrics, top_k, validate_k,
 )
@@ -124,16 +126,10 @@ def test_S11_metrik_atas_seluruh_potongan_bukan_per_butir():
     assert c.recall_at_k is None
 
 
-# ---------- Recall@K (helper test: definisi skenario) ----------
-def part_in_chunk(g, c):
-    return c[0] <= g[0] and g[1] <= c[1]
-
-
+# ---------- Recall@K: fungsi produksi backend.metrics.item (S-1 pemeriksa G7a) ----------
 def recall_item(parts, ranking, k):
-    if not parts:
-        return None
-    sel = top_k(ranking, k)
-    return F(sum(1 for g in parts if any(part_in_chunk(g, c) for c in sel)), len(parts))
+    """Recall@K per butir lewat fungsi produksi; `parts` = bagian-ayat, `ranking` = daftar (start, end)."""
+    return recall_at_k_from_parts(parts, [RankedChunk(s, e) for s, e in ranking], k)
 
 
 G1, G2, G3 = (8, 43), (44, 78), (97, 113)

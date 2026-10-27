@@ -52,3 +52,17 @@ top_n = 0
 [recall]
 # Usulan agen, operator boleh ubah. K untuk Recall@K.
 k = 5
+
+[quality]
+# Usulan agen (INT-a), operator boleh ubah. Metrik mutu potongan M1.5 (EVAL-SPEC §7): pola dipindai terpisah
+# per pola di teks bersih (regex Python, `re`). Kemunculan yang tumpang-tindih antar pola dihitung terpisah.
+entity_patterns = [
+  'Pasal \d+[A-Z]?',                         # Pasal + nomor + huruf opsional (mis. Pasal 153A)
+  'ayat \(\d+\)',                            # rujukan ayat
+  'UU \d+/\d{4}',                            # rujukan UU gaya singkat
+  'Perppu \d+/\d{4}',                        # rujukan Perppu gaya singkat
+  'Undang-Undang Nomor \d+ Tahun \d{4}',     # gaya penuh yang dipakai teks konsolidasi (usulan tambahan agen)
+]
+# Singkatan yang titiknya BUKAN akhir kalimat (boundary coherence, EVAL-SPEC §7). Dicocokkan persis
+# (peka huruf besar-kecil) terhadap deretan huruf tepat sebelum titik.
+abbreviations = ["No", "dst", "dll"]

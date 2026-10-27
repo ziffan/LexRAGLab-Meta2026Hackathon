@@ -263,3 +263,41 @@ def test_g13_roman_pasal_text_does_not_crash_any_chunker():
     f = chunk_fixed(d, size=4, overlap=1, tokenizer=ToyWs(), retrieval_cfg=RCFG)
     assert [c.warnings for c in s] == [[NO_MARKER_WARNING]]  # Pasal I tidak dikenal: jatuh ke fallback per section
     assert f and re.search(r"Pasal I", d.text[f[0].start:f[-1].end])
+
+
+# ---- INT-a perbaikan kecil dari review (G3 SHOULD-1, NIT-1) ----
+
+def _scope_cfg(*sections):
+    cfg = dict(config.load("retrieval"))
+    cfg["scope_sections"] = list(sections)
+    return cfg
+
+
+def test_fixed_key_changes_when_scope_sections_change():
+    from backend.chunking.fixed import fixed_key
+    cfg = config.load("retrieval")
+    k_all = fixed_key(cfg, 512, 64, ToyWs())
+    k_one = fixed_key(_scope_cfg("batang_tubuh"), 512, 64, ToyWs())
+    assert k_all != k_one
+    assert fixed_key(cfg, 512, 64, ToyWs()) == k_all  # deterministik
+
+
+def test_structure_key_changes_when_scope_sections_change():
+    from backend.chunking.structure import structure_key
+    assert structure_key(config.load("retrieval"), ToyWs()) != structure_key(_scope_cfg("batang_tubuh"), ToyWs())
+
+
+class _OtherTok(ToyWs):
+    info = type("I", (), {"name": "toy-ws", "version": "2"})()
+
+
+@pytest.mark.parametrize("name", ["structure_handwritten", "fixed_size"])
+def test_tokenizer_name_and_version_enter_chunker_key_and_chunk_id(name):
+    """Ganti tokenizer (versi) = chunker_key dan chunk_id berubah, walau offset potongan sama."""
+    doc = u_doc()
+    setting = {"chunker": name, "chunk_size_tokens": 4, "overlap_tokens": 1}
+    a = chunk_document(doc, setting, tokenizer=ToyWs())
+    b = chunk_document(doc, setting, tokenizer=_OtherTok())
+    assert [(c.start, c.end) for c in a] == [(c.start, c.end) for c in b]
+    assert {c.chunker_key for c in a}.isdisjoint({c.chunker_key for c in b})
+    assert {c.chunk_id for c in a}.isdisjoint({c.chunk_id for c in b})

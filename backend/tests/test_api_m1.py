@@ -1,0 +1,181 @@
+"""API terpadu (INT-a): R1, R3, R4, R5, R6, W1 lewat satu `create_app`, galat seragam. Korpus nyata, encoder palsu, runs di tmp."""
+
+from __future__ import annotations
+
+import json
+
+import pytest
+from fastapi.testclient import TestClient
+
+from backend import config
+from backend.api.app import Service, create_app
+from backend.tokenizer import get_tokenizer
+
+from .pipeline_fakes import FakeEncoder
+from .spark_fakes import BASE, K, budget_cfg, model_cfg
+
+FAM = "/api/families/uupt"
+
+
+@pytest.fixture(scope="module")
+def world(tmp_path_factory):
+    root = tmp_path_factory.mktemp("m1api")
+    enc = FakeEncoder()
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=root / "runs", encoder=enc, embed_cache_dir=root / "emb")
+    app = create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg())
+    return {"svc": svc, "app": app, "client": TestClient(app, raise_server_exceptions=False), "enc": enc, "root": root}
+
+
+@pytest.fixture(scope="module")
+def client(world):
+    return world["client"]
+
+
+def sid(world, chunker, mode, budget=2000, header=False):
+    return next(s["setting_id"] for s in world["svc"].settings("uupt") if s["chunker"] == chunker and s["retrieval_mode"] == mode
+                and s["budget_tokens"] == budget and s["header_b"] is header)
+
+
+def clean_error(r, status, code):
+    assert r.status_code == status, r.text
+    body = r.json()
+    assert set(body) == {"error"} and set(body["error"]) == {"code", "message"} and body["error"]["code"] == code
+    low = r.text.lower()
+    assert "traceback" not in low and K not in r.text and BASE not in r.text and "\\" not in r.text
+    return body
+
+
+# ---- satu app, galat seragam (R1/R6 dan route M1 memakai handler yang sama) ----
+def test_r1_health_is_on_the_unified_app_without_leaking(client):
+    r = client.get("/api/health")
+    assert r.status_code == 200 and r.json()["status"] == "ok"
+    assert K not in r.text and BASE not in r.text
+
+
+def test_uniform_error_shape_across_modules(client, world):
+    clean_error(client.get("/api/runs", params={"kind": "bogus"}), 400, "invalid_request")
+    clean_error(client.get("/api/does-not-exist"), 404, "not_found")
+    clean_error(client.get("/api/families/xyz/snapshot"), 400, "invalid_request")
+    clean_error(client.get(f"{FAM}/retrieval"), 400, "invalid_request")  # parameter wajib hilang
+    clean_error(client.get(f"{FAM}/snapshot", params={"budget_tokens": "abc"}), 400, "invalid_request")
+    clean_error(client.post(f"{FAM}/grid/run", json={"budget_tokens": "abc"}), 400, "invalid_request")
+    clean_error(client.put("/api/health"), 405, "invalid_request")
+
+
+def test_unexpected_exception_is_500_without_trace(world, monkeypatch):
+    def boom(self, *a, **k):
+        raise RuntimeError("secret internal detail C:\\path\\x.py")
+
+    monkeypatch.setattr(Service, "run_grid", boom)
+    r = TestClient(world["app"], raise_server_exceptions=False).post(f"{FAM}/grid/run", json={})
+    clean_error(r, 500, "internal_error")
+    assert "secret" not in r.text
+
+
+def test_server_binds_localhost_only():
+    import backend.api.__main__ as m
+    assert m.HOST == "127.0.0.1"
+
+
+# ---- sebelum run: grid null (R3 tidak pernah menjalankan grid) ----
+def test_r3_before_any_run_has_null_grid_and_split(client, world):
+    d = client.get(f"{FAM}/snapshot").json()
+    assert d["grid"] is None and d["metrics"] == [] and d["quality"] == [] and d["split"] is None
+    assert len(d["settings"]) == 36 and not (world["root"] / "runs").exists()  # tidak menulis apa pun
+    assert world["enc"].encode_calls == 0
+
+
+# ---- W1 ----
+def test_w1_runs_grid_then_cached(client, world):
+    r1 = client.post(f"{FAM}/grid/run", json={"budget_tokens": None})
+    assert r1.status_code == 200, r1.text
+    rec = r1.json()
+    assert rec["kind"] == "grid" and rec["status"] == "ok" and rec["cost_usd_micros"] == 0 and rec["packing"] == "stop"
+    assert rec["tokenizer"]["name"] == get_tokenizer().info.name and rec["embedder"]["name"] == "fake-enc"
+    calls = world["enc"].encode_calls
+    assert calls > 0
+    r2 = client.post(f"{FAM}/grid/run", json={"budget_tokens": 1000})
+    assert r2.status_code == 200 and r2.json()["status"] == "cached" and r2.json()["cache_key"] == rec["cache_key"]
+    assert world["enc"].encode_calls == calls  # nol hitung
+    assert (world["root"] / "runs" / "grid" / f"{rec['cache_key']}.json").is_file()
+    clean_error(client.post(f"{FAM}/grid/run", json={"budget_tokens": 1234}), 400, "invalid_request")
+    clean_error(client.post("/api/families/akta/grid/run", json={}), 422, "validation_failed")
+
+
+# ---- R3 sesudah run ----
+def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
+    d = client.get(f"{FAM}/snapshot").json()
+    assert d["split"]["split_version"] == 1 and d["items_summary"]["by_split"] == {"tune": 5, "held_out": 4}
+    assert d["items_summary"]["control_in_held_out"] >= 3 and {i["split"] for i in d["items"]} == {"tune", "held_out"}
+    g = d["grid"]
+    assert set(g["tune"]) == {"points", "frontier"} and set(g["held_out"]) == {"points", "frontier"}
+    assert g["tune"]["frontier"]["split"] == "tune" and g["tune"]["frontier"]["budget_tokens"] == 2000
+    assert len(g["tune"]["points"]) == 6 and len(g["held_out"]["points"]) == 6
+    assert g["selected"]["tune_point"]["split"] == "tune" and g["selected"]["budget_tokens"] == 2000
+    assert len(g["skipped"]) == 12 and all(s["reason"] for s in g["skipped"])
+    assert g["quality_comparison"]["selected_setting_id"] == g["selected"]["setting_id"]
+    assert len(d["metrics"]) == 6 * 9 and {m["split"] for m in d["metrics"]} == {"tune", "held_out"}
+    assert len(d["quality"]) == 6 and {"entity_preservation", "boundary_coherence", "recall_at_k", "k"} <= set(d["quality"][0])
+    d1000 = client.get(f"{FAM}/snapshot", params={"budget_tokens": 1000}).json()
+    assert d1000["grid"]["selected"]["budget_tokens"] == 1000 and d1000["grid"]["tune"]["frontier"]["budget_tokens"] == 1000
+    assert client.get(f"{FAM}/snapshot", params={"budget_tokens": 777}).json()["grid"] is None
+
+
+def test_r3_is_read_only(client, world):
+    before = sorted(p.name for p in (world["root"] / "runs").rglob("*") if p.is_file())
+    calls = world["enc"].encode_calls
+    client.get(f"{FAM}/snapshot")
+    assert sorted(p.name for p in (world["root"] / "runs").rglob("*") if p.is_file()) == before
+    assert world["enc"].encode_calls == calls
+
+
+# ---- R4 ----
+def test_r4_chunks_for_grid_setting_and_unavailable_setting(client, world):
+    r = client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": sid(world, "fixed_size", "dense")})
+    assert r.status_code == 200 and len(r.json()["chunks"]) > 300
+    clean_error(client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": sid(world, "structure_schema", "bm25")}), 422, "validation_failed")
+    clean_error(client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": "0" * 64}), 404, "not_found")
+
+
+# ---- R5 ----
+@pytest.mark.parametrize("chunker,mode", [("structure_handwritten", "bm25"), ("fixed_size", "dense"), ("structure_handwritten", "hybrid")])
+def test_r5_retrieval_shape_and_agrees_with_grid_metrics(client, world, chunker, mode):
+    s = sid(world, chunker, mode)
+    r = client.get(f"{FAM}/retrieval", params={"setting_id": s, "item_id": "kontrol-K-02"})
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert set(d) == {"retrieved_chunk_ids", "ranks", "scores", "packed_tokens"}
+    n = len(d["retrieved_chunk_ids"])
+    assert n > 0 and len(d["ranks"]) == n and len(d["scores"]) == n and d["ranks"] == sorted(d["ranks"]) and d["ranks"][0] == 1
+    assert 0 < d["packed_tokens"] <= 2000
+    env = next((world["root"] / "runs" / "grid").glob("*.json"))
+    stored = next(m for m in json.loads(env.read_text(encoding="utf-8"))["metrics"] if m["setting_id"] == s and m["item_id"] == "kontrol-K-02")
+    assert stored["retrieved_chunk_ids"] == d["retrieved_chunk_ids"] and stored["retrieved_tokens"] == d["packed_tokens"]
+
+
+def test_r5_errors(client, world):
+    ok = sid(world, "fixed_size", "bm25")
+    clean_error(client.get(f"{FAM}/retrieval", params={"setting_id": "0" * 64, "item_id": "kontrol-K-02"}), 404, "not_found")
+    clean_error(client.get(f"{FAM}/retrieval", params={"setting_id": ok, "item_id": "nope"}), 404, "not_found")
+    clean_error(client.get(f"{FAM}/retrieval", params={"setting_id": sid(world, "fixed_size", "bm25", header=True), "item_id": "kontrol-K-02"}),
+                422, "validation_failed")
+
+
+# ---- R6 ----
+def test_r6_lists_grid_run_records(client, world):
+    rows = client.get("/api/runs", params={"kind": "grid"}).json()
+    assert len(rows) == 1 and rows[0]["kind"] == "grid" and rows[0]["status"] == "ok" and rows[0]["cost_usd_micros"] == 0
+    assert all(r["kind"] != "grid" for r in client.get("/api/runs", params={"kind": "measure"}).json())
+    assert any(r["kind"] == "grid" for r in client.get("/api/runs").json())
+
+
+# ---- replay: W1 hanya membaca ----
+def test_w1_in_replay_reads_only(world, tmp_path):
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "empty")
+    app = create_app(svc, env={}, model_config=model_cfg(), budget_config=budget_cfg(), replay=True)
+    r = TestClient(app, raise_server_exceptions=False).post(f"{FAM}/grid/run", json={})
+    clean_error(r, 409, "replay_no_stored_run")
+    svc2 = Service(tokenizer=get_tokenizer(), runs_dir=world["root"] / "runs")
+    app2 = create_app(svc2, env={}, model_config=model_cfg(), budget_config=budget_cfg(), replay=True)
+    r2 = TestClient(app2, raise_server_exceptions=False).post(f"{FAM}/grid/run", json={})
+    assert r2.status_code == 200 and r2.json()["status"] == "cached"

@@ -53,8 +53,9 @@ def call(app, path: str, query: str = "") -> tuple[int, dict[str, Any]]:
 
 
 @pytest.fixture(scope="module")
-def app():
-    return create_app(Service(tokenizer=get_tokenizer()))
+def app(tmp_path_factory):
+    # runs_dir kosong: snapshot M1.1 tidak boleh bergantung pada run grid tersimpan di repo
+    return create_app(Service(tokenizer=get_tokenizer(), runs_dir=tmp_path_factory.mktemp("runs")))
 
 
 @pytest.fixture(scope="module")
@@ -64,18 +65,25 @@ def snap(app):
     return body
 
 
+def m11_settings(snap):
+    """Dua setting M1.1: bm25, header B off, anggaran default (sekarang bagian dari grid penuh INT-a)."""
+    return [s for s in snap["settings"] if s["chunker"] in ("structure_handwritten", "fixed_size") and s["retrieval_mode"] == "bm25"
+            and not s["header_b"] and s["budget_tokens"] == snap["budget_tokens"]]
+
+
 def setting(snap, chunker):
-    return next(s for s in snap["settings"] if s["chunker"] == chunker)
+    return next(s for s in m11_settings(snap) if s["chunker"] == chunker)
 
 
 def test_snapshot_exposes_items_and_the_two_m11_settings(snap):
     assert snap["family"] == "uupt" and snap["replay"] is False and snap["budget_tokens"] == 2000
     assert [i["id"] for i in snap["items"]][:2] == ["kontrol-K-01", "kontrol-K-02"] and len(snap["items"]) == 9
-    assert [s["chunker"] for s in snap["settings"]] == ["structure_handwritten", "fixed_size"]
+    assert [s["chunker"] for s in m11_settings(snap)] == ["structure_handwritten", "fixed_size"]
+    assert len(snap["settings"]) == 36 and snap["split"] is None and snap["items_summary"]["by_split"] is None
     fx = config.load("grid")["fixed_size"]
     f = setting(snap, "fixed_size")
     assert (f["chunk_size_tokens"], f["overlap_tokens"]) == (fx["chunk_size_tokens"], fx["overlap_tokens"])
-    assert len({s["setting_id"] for s in snap["settings"]}) == 2
+    assert len({s["setting_id"] for s in snap["settings"]}) == 36
     assert snap["corpus"][0]["clean_sha256"] == real_doc().clean_sha256 and "text" not in snap["corpus"][0]
     assert snap["grid"] is None and snap["metrics"] == [] and snap["items_summary"]["n_items"] == 9
 

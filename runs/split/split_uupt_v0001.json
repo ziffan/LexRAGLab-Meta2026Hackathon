@@ -1,0 +1,58 @@
+{
+  "assignments": [
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-01",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-02",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-03",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-04",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-05",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-06",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-07",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-08",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-09",
+      "split": "held_out"
+    }
+  ],
+  "control_in_held_out": 4,
+  "family": "uupt",
+  "held_out_ratio": 0.4,
+  "seed": 20261026,
+  "split_version": 1,
+  "strata": [
+    "origin",
+    "mode"
+  ]
+}

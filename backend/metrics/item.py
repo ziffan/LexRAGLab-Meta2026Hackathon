@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from fractions import Fraction
 from typing import Sequence
 
 from backend.metrics import intervals as iv
@@ -38,6 +39,19 @@ def recall_at_k_counts(parts: Sequence[Interval], ranked: Sequence[RankedChunk],
     top = ranked[: max(k, 0)]
     hit = sum(1 for gs, ge in parts if any(c.start <= gs and ge <= c.end for c in top))
     return hit, len(parts)
+
+
+def recall_at_k_from_parts(parts: Sequence[Interval], ranked: Sequence[RankedChunk], k: int) -> Fraction | None:
+    """Recall@K per butir dari bagian-ayat yang sudah dipecah (EVAL-SPEC §6): `Fraction(hit, total)`;
+    tanpa bagian (butir tanpa gold) -> None. Fungsi produksi yang sama dengan `ItemMetrics.recall_at_k`."""
+    hit, total = recall_at_k_counts(parts, ranked, k)
+    return Fraction(hit, total) if total else None
+
+
+def recall_at_k_item(gold_spans: Sequence[Interval], ranked: Sequence[RankedChunk], k: int, units: Sequence[Interval]) -> Fraction | None:
+    """Recall@K per butir dari span gold mentah: gabung (A1), pecah di batas unit peta alamat (H-048), lalu hitung."""
+    gold = iv.merge(gold_spans)
+    return recall_at_k_from_parts(gold_parts(gold, units) if gold else [], ranked, k)
 
 
 def compute_item_metrics(

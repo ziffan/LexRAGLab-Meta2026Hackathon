@@ -18,10 +18,12 @@ def context_for(doc: Any, retrieval_cfg: dict[str, Any] | None) -> tuple[dict[st
     return cfg, scope, prefix, dict(cfg.get("chunking", {}).get("section_labels", {}))
 
 
-def structure_key(cfg: dict[str, Any]) -> str:
+def structure_key(cfg: dict[str, Any], tok: Any) -> str:
+    """Tokenizer (nama + versi) ikut kunci: `tokens_local` bergantung padanya, jadi ganti tokenizer = `chunk_id` baru."""
     return make_chunker_key("structure_handwritten", {
         "version": cfg["chunking"]["structure_version"],
         "scope_sections": list(cfg["scope_sections"]),
+        "tokenizer": tok.info.name, "tokenizer_version": tok.info.version,
     })
 
 
@@ -31,7 +33,7 @@ def chunk_structure(doc: Any, *, amap: AddressMap | None = None, retrieval_cfg: 
     cfg, scope, prefix, labels = context_for(doc, retrieval_cfg)
     tok = tokenizer or get_tokenizer()
     amap = amap or build_address_map(doc.text, doc.sections, prefix, scope, labels)
-    key = structure_key(cfg)
+    key = structure_key(cfg, tok)
     out: list[Chunk] = []
     for u in amap.in_sections(scope):
         out.append(Chunk(

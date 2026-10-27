@@ -29,6 +29,7 @@ class GridItem:
     mode: str
     clean_sha256: str = ""
     gold_spans: tuple[tuple[int, int], ...] = ()
+    query: str = ""  # ikut item_set_hash: query berubah = kunci cache grid berubah
 
 
 def item_set_hash(items: Iterable[GridItem]) -> str:

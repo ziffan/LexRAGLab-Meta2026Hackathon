@@ -83,3 +83,8 @@ def test_corpus_with_empty_and_stopword_only_documents():
     ids = [c for c, _ in r.rank("pembubaran perseroan")]
     assert ids[0] == "d3" and "e1" not in ids and "e2" not in ids
     assert r.rank("direksi") == Bm25Retriever(docs, **PARAMS).rank("direksi")
+
+
+def test_tokenize_lowercases_before_stopword_filter():
+    """G4a putaran 2 (SHOULD): tanpa lowercase, 'YANG' lolos filter stopword lalu di-stem jadi 'yang'."""
+    assert tokenize("YANG Direksi", stemming=True, stopwords=True) == ["direksi"]
