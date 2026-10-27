@@ -32,6 +32,7 @@ export const flagLabel = (f: string): string => FLAG_LABEL[f] ?? f;
 
 /** Label model (H-053). Profil Glimmer lokal diberi nama tetap; selain itu model ID dari data. */
 export function modelLabel(p: ModelProfileInfo): string {
+  if (p.label) return p.label; // nama dari config/model: Contributor, Spark Open (Baseten), Glimmer (local)
   if (/glimmer/i.test(`${p.model_profile} ${p.model ?? ""}`)) return "Muse Glimmer (local, open-weight)";
   return p.model ?? p.model_profile;
 }
@@ -42,9 +43,25 @@ export function profileUnavailableText(p: ModelProfileInfo): string {
   return isGlimmer(p) ? "Local Glimmer server not running" : "Profile not configured";
 }
 
+/** Profil yang boleh dipilih untuk jawaban C: tanpa batas peran (Contributor) atau `roles` memuat `c` (M2.5). */
+export const answerProfiles = (health: Health | null): ModelProfileInfo[] =>
+  (health?.model_profiles ?? []).filter((p) => !p.roles || p.roles.length === 0 || p.roles.includes("c"));
+
+/** Satu baris label model untuk pilihan: nama, kuantisasi, effort (H-053). */
+export function modelDetail(p: ModelProfileInfo): string {
+  return [modelLabel(p), p.quantization ?? null, p.effort ? `effort ${p.effort}` : null].filter(Boolean).join(" · ");
+}
+
+/** Label manusia untuk kunci `model_profile` dari health; kunci apa adanya bila tak dikenal. */
+export function profileLabel(health: Health | null, key: string): string {
+  const p = health?.model_profiles.find((x) => x.model_profile === key);
+  return p ? modelLabel(p) : key;
+}
+
 /** Profil model awal: default server (null) bila ada profil tersedia; selain itu null. */
 export function defaultProfile(health: Health | null): string | null {
-  const ok = health?.model_profiles.find((p) => p.available && !isGlimmer(p));
+  const ok = answerProfiles(health).find((p) => p.available && !isGlimmer(p) && (!p.roles || p.roles.length === 0))
+    ?? answerProfiles(health).find((p) => p.available && !isGlimmer(p));
   return ok?.model_profile ?? null;
 }
 
@@ -141,8 +158,11 @@ export function summaryRows(summary: RejectionSummary[]): SummaryRow[] {
 export const SUMMARY_HEADERS = ["Answered, supported", "Answered, unsupported", "Abstained, correctly", "Abstained, should have answered"] as const;
 
 /** Run live: aktif hanya untuk butir `scene_checked` DAN backend terjangkau. Replay server tidak menonaktifkan (H-050, API.md §1); ekspor statis (H-051) atau backend mati menonaktifkan. */
-export function runLiveState(sceneChecked: boolean | undefined, backendUp: boolean): { enabled: boolean; reason: string } {
+export const CLI_ONLY_REASON = "Glimmer runs offline via CLI to avoid GPU contention with embeddings; stored results are shown.";
+
+export function runLiveState(sceneChecked: boolean | undefined, backendUp: boolean, profile?: ModelProfileInfo | null): { enabled: boolean; reason: string } {
   if (isStatic() || !backendUp) return { enabled: false, reason: STATIC_DISABLED };
+  if (profile?.live_via_cli) return { enabled: false, reason: CLI_ONLY_REASON }; // G-26
   if (!sceneChecked) return { enabled: false, reason: "Live runs are limited to items marked scene_checked by the operator" };
   return { enabled: true, reason: "Run one live Muse Spark call for this item" };
 }

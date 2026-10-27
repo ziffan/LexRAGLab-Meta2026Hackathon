@@ -29,9 +29,9 @@ def test_config_hash_is_order_independent():
 
 def test_model_ids_are_contributor_only():
     # H-028: semua profil Contributor, kecuali pembanding peran C (H-060: Spark Open di Baseten),
-    # yang hanya boleh peran C dan tidak pernah untuk angka yang dilaporkan.
+    # dan Glimmer lokal (H-047, M2.5), yang hanya boleh peran C dan tidak pernah untuk angka yang dilaporkan.
     m = config.load("model")
-    comparators = {"meta-models/muse-spark-open-1026"}
+    comparators = {"meta-models/muse-spark-open-1026", "meta/muse-glimmer"}
     for prof in m["profiles"].values():
         if prof["model"] in comparators:
             assert prof["roles"] == ["c"] and prof["for_reported_numbers"] is False

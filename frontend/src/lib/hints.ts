@@ -8,6 +8,8 @@ export interface HintEntry {
   title: string;
   body: string;
   stretch?: boolean;
+  /** Entri baru yang belum disetujui operator (I-49); file tetap `final` untuk entri lain. */
+  status?: "draft";
 }
 
 export interface HintFile {
@@ -123,4 +125,5 @@ export function glossaryGroups(query: string, feats: ReadonlySet<string>): Gloss
 }
 
 export const introEntries = (): HintEntry[] => INTRO_IDS.map((id) => BY_ID.get(id)).filter((e): e is HintEntry => !!e);
-export const isDraft = (): boolean => HINT_FILE.status !== "final";
+export const isDraft = (): boolean => HINT_FILE.status !== "final" || draftIds().length > 0;
+export const draftIds = (): string[] => HINT_FILE.entries.filter((e) => e.status === "draft").map((e) => e.id);

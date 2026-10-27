@@ -294,6 +294,15 @@ export interface ModelProfileInfo {
   model_profile: string;
   model: string | null;
   available: boolean;
+  /** Field di bawah dikirim R1 sejak M2.5; opsional supaya health.json statis lama tetap terbaca. */
+  label?: string;
+  provider?: string | null;
+  quantization?: string | null;
+  effort?: string | null;
+  roles?: string[];
+  local?: boolean;
+  live_via_cli?: boolean;
+  unavailable_reason?: string | null;
 }
 
 export interface Health {

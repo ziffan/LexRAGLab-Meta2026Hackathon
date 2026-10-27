@@ -33,7 +33,7 @@ from .errors import BudgetExceeded, ConfigInvalid, UsageInvalid
 from .money import compute_cost_micros
 from .runrecord import RunRecord, kind_for_role, utc_iso
 from .schema_check import check_schema_name, check_strict, validate_instance
-from .settings import Settings, build_settings, effort_for
+from .settings import API_CHAT, Settings, build_settings, effort_for
 
 _SENSOR = "[REDACTED]"
 _MAX_MSG = 300
@@ -142,7 +142,7 @@ class SparkClient:
         self._s: Settings = build_settings(profile, model_config, self._env, need_credentials=not self._replay)
         self._config_hash = cfg.config_hash({"model": dict(model_config), "budget": dict(budget_config)})
         self._ledger = Ledger(self._runs)
-        host = urlsplit(self._s.base_url).hostname if self._s.base_url else None
+        host = urlsplit(self._s.base_url).hostname if self._s.base_url and self._s.api != API_CHAT else None
         extra = [v.strip() for k, v in self._env.items()
                  if isinstance(v, str) and ("KEY" in k.upper() or "TOKEN" in k.upper()) and len(v.strip()) >= 6]
         secrets = set(self._s.all_secrets) | set(extra)
@@ -152,7 +152,12 @@ class SparkClient:
         self._sdk = None
         if not self._replay:
             _quiet_sdk_loggers()
-            http_client = httpx2.Client(transport=transport) if transport is not None else None
+            if transport is not None:
+                http_client = httpx2.Client(transport=transport)
+            elif self._s.api == API_CHAT:
+                http_client = httpx2.Client(trust_env=False)  # loopback: jangan lewat proxy lingkungan
+            else:
+                http_client = None
             self._sdk = openai.OpenAI(api_key=self._s.api_key, base_url=self._s.base_url, max_retries=0,
                                       timeout=self._s.limits.timeout_s, http_client=http_client)
             self._limiter = ratelimit.get_limiter(profile, self._s.api_key)
@@ -176,10 +181,15 @@ class SparkClient:
         return s[:_MAX_MSG]
 
     def _projected(self, est_input: int, max_output_tokens: int) -> int:
-        return compute_cost_micros({"input": est_input, "cached": 0, "output": max_output_tokens}, self._s.pricing)
+        out = max(max_output_tokens, self._s.max_output_tokens_floor or 0)
+        return compute_cost_micros({"input": est_input, "cached": 0, "output": out}, self._s.pricing)
 
     def _caps(self) -> Caps:
         return effective_caps(self._budget_cfg, self._env)
+
+    def _effort(self, role: str) -> str:
+        """Effort untuk RunRecord/cache: profil yang memin `reasoning_effort` (Glimmer) menang atas `[effort]` per peran."""
+        return self._s.effort_override or effort_for(self._model_cfg, role)
 
     def _check_args(self, a: Mapping[str, Any]) -> None:
         for k in ("est_input", "max_output_tokens"):
@@ -209,7 +219,7 @@ class SparkClient:
         seen: set[str] = set()
         for c in calls:
             self._check_args(c)
-            effort = effort_for(self._model_cfg, role)
+            effort = self._effort(role)
             key = self._key_for(c, effort)
             if key in seen or store.cache_read(self._runs, role, key) is not None:
                 per.append(0)
@@ -220,6 +230,8 @@ class SparkClient:
         return evaluate(role, caps, per, self._ledger.spent(), self._ledger.spent(role=role))
 
     def _guard(self, role: str, projected: int) -> None:
+        if self._s.api == API_CHAT:
+            return  # lokal: harga 0, tidak menambah belanja Model API; cap tidak relevan (H-047)
         caps = self._caps()
         p = evaluate(role, caps, [projected], self._ledger.spent(), self._ledger.spent(role=role))
         if p.verdict != "ok":
@@ -229,7 +241,7 @@ class SparkClient:
 
     def run_batch(self, calls: list[Mapping[str, Any]]) -> BatchResult:
         proj = self.project_batch(calls) if not self._replay else None
-        if proj is not None and proj.verdict != "ok":
+        if proj is not None and proj.verdict != "ok" and self._s.api != API_CHAT:
             raise BudgetExceeded(proj.reason)
         results: list[CallResult | None] = [None] * len(calls)
         not_run: list[int] = []
@@ -254,7 +266,7 @@ class SparkClient:
         t0 = self._now()
         args = {"role": role, "est_input": est_input, "max_output_tokens": max_output_tokens}
         self._check_args(args)
-        effort = effort_for(self._model_cfg, role)
+        effort = self._effort(role)
         ctx = _Ctx(role=role, effort=effort, prompt_version=prompt_version, prompt_hash=prompt_hash,
                    meta=meta or {}, t0=t0,
                    cache_key=self._key_for({"input": input, "prompt_hash": prompt_hash, "schema_hash": schema_hash}, effort))
@@ -293,12 +305,14 @@ class SparkClient:
     def _network(self, ctx: _Ctx, projected: int, input_text: str, schema: dict, schema_name: str,
                  prompt_cache_key: str | None, max_output_tokens: int, validator: Validator | None) -> CallResult:
         lim = self._s.limits
+        if self._s.api == API_CHAT:
+            return self._network_chat(ctx, projected, input_text, schema, schema_name, max_output_tokens, validator)
         kwargs: dict[str, Any] = {
             "model": self._s.model,
             "input": input_text,
             "reasoning": {"effort": ctx.effort},
             "text": {"format": {"type": "json_schema", "name": schema_name, "schema": schema, "strict": True}},
-            "max_output_tokens": max_output_tokens,
+            "max_output_tokens": max(max_output_tokens, self._s.max_output_tokens_floor or 0),
             "timeout": lim.timeout_s,
         }
         if prompt_cache_key is not None:
@@ -345,6 +359,38 @@ class SparkClient:
                                   projected=projected * (timeouts + 1))
             return self._interpret(ctx, projected, http, schema, validator, projected * timeouts)
 
+    def _network_chat(self, ctx: _Ctx, projected: int, input_text: str, schema: dict, schema_name: str,
+                      max_output_tokens: int, validator: Validator | None) -> CallResult:
+        """Chat Completions ke endpoint lokal (H-047): satu pesan user, `response_format` json_schema, tanpa tools.
+        Skema divalidasi lagi di sisi klien oleh `_interpret_chat`; keluaran tidak valid = record error, tidak di-cache."""
+        lim = self._s.limits
+        floor = self._s.max_output_tokens_floor
+        kwargs: dict[str, Any] = {
+            "model": self._s.model,
+            "messages": [{"role": "user", "content": input_text}],
+            "response_format": {"type": "json_schema",
+                                "json_schema": {"name": schema_name, "schema": schema, "strict": True}},
+            "max_tokens": max(max_output_tokens, floor) if floor else max_output_tokens,
+            "reasoning_effort": ctx.effort,
+            "timeout": lim.timeout_s,
+        }
+        timeouts = 0
+        while True:
+            try:
+                raw = self._sdk.chat.completions.with_raw_response.create(**kwargs)  # type: ignore[union-attr]
+                http = raw.http_response
+            except openai.APIStatusError as exc:
+                code, msg = self._map_status(exc.status_code, exc.response)
+                return self._fail(ctx, code, msg)
+            except Exception as exc:  # noqa: BLE001
+                if _is_timeout(exc):
+                    if timeouts < lim.max_retries:
+                        timeouts += 1
+                        continue
+                    return self._fail(ctx, "timeout", f"timeout after {_fmt_num(lim.timeout_s)} s ({timeouts + 1} attempts)")
+                return self._fail(ctx, "model_unavailable", "connection to the local model server failed")
+            return self._interpret(ctx, projected, http, schema, validator, 0)
+
     def _map_status(self, status: int, response: Any) -> tuple[str, str]:
         msg, reasons = self._server_message(response)
         if status == 401:
@@ -387,15 +433,19 @@ class SparkClient:
             data = http.json()
         except Exception:  # noqa: BLE001
             data = None
-        usage = self._parse_usage(data)
-        if usage is None:
+        chat = self._s.api == API_CHAT
+        usage = self._parse_usage_chat(data) if chat else self._parse_usage(data)
+        if usage is None and not chat:
             return self._fail(ctx, "usage_invalid", "usage missing or invalid in the response",
                               projected=projected + timeout_proj)
-        cost = compute_cost_micros(usage, self._s.pricing)
+        # Lokal: tanpa usage sah, biaya tetap harga lokal (0) dan token tidak dicatat; bukan galat.
+        cost = compute_cost_micros(usage, self._s.pricing) if usage is not None else 0
 
         def err(code: str, message: str) -> CallResult:
             return self._fail(ctx, code, message, usage=usage, cost=cost, projected=tp)
 
+        if chat:
+            return self._interpret_chat(ctx, data, schema, validator, usage, cost, err)
         status = data.get("status")
         if status == "incomplete":
             d = data.get("incomplete_details")
@@ -426,6 +476,55 @@ class SparkClient:
         store.save_record(self._runs, rec)
         self._log.info("spark call role=%s status=ok cost_usd_micros=%d", ctx.role, cost)
         return CallResult(canonical, rec)
+
+    def _interpret_chat(self, ctx: _Ctx, data: Any, schema: dict, validator: Validator | None,
+                        usage: dict[str, int] | None, cost: int, err: Callable[[str, str], CallResult]) -> CallResult:
+        ch = (data.get("choices") if isinstance(data, dict) else None) or []
+        c0 = ch[0] if ch and isinstance(ch[0], dict) else None
+        if c0 is None:
+            return err("schema_invalid", "response has no choices")
+        if c0.get("finish_reason") == "length":
+            return err("incomplete", "response incomplete (max_tokens); raise max_output_tokens")
+        msg = c0.get("message")
+        text = msg.get("content") if isinstance(msg, dict) else None
+        if not isinstance(text, str) or not text.strip():
+            return err("schema_invalid", "response has no output text")
+        try:
+            out = json.loads(text, parse_constant=_reject_constant)
+        except (ValueError, RecursionError):
+            return err("schema_invalid", "output text is not valid JSON")
+        if not isinstance(out, dict):
+            return err("schema_invalid", "output JSON is not an object")
+        bad = validate_instance(out, schema)
+        if bad:
+            return err("schema_invalid", f"output does not match the schema: {bad}")
+        canonical = store.canonical_json(out)
+        reason = self._semantic(canonical, validator)
+        if reason:
+            res = err("semantic_invalid", reason)
+            res.rejected_output = canonical
+            return res
+        rec = self._record(ctx, status="ok", usage=usage, cost=cost, t_end=self._now())
+        store.cache_write(self._runs, ctx.role, ctx.cache_key, canonical, rec)
+        store.save_record(self._runs, rec)
+        self._log.info("spark call role=%s status=ok cost_usd_micros=%d", ctx.role, cost)
+        return CallResult(canonical, rec)
+
+    @staticmethod
+    def _parse_usage_chat(data: Any) -> dict[str, int] | None:
+        """Chat Completions: prompt_tokens / completion_tokens / prompt_tokens_details.cached_tokens."""
+        u = data.get("usage") if isinstance(data, dict) else None
+        if not isinstance(u, dict):
+            return None
+        d = u.get("prompt_tokens_details")
+        cached = d.get("cached_tokens") if isinstance(d, dict) else None
+        cand = {"input": u.get("prompt_tokens"), "cached": 0 if cached is None else cached,
+                "output": u.get("completion_tokens")}
+        try:
+            from .money import validate_usage
+            return validate_usage(cand)
+        except UsageInvalid:
+            return None
 
     @staticmethod
     def _parse_usage(data: Any) -> dict[str, int] | None:

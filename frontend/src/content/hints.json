@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "status": "final",
   "locale": "en",
   "entries": [
@@ -42,6 +42,12 @@
       "id": "term.gold_span",
       "title": "Gold span",
       "body": "The gold span is the exact passage of the source text that answers an evaluation question, marked by the operator or proposed by Muse Spark and approved by the operator. Every metric that mentions gold is measured against this span. An item with no gold span is one where the system should abstain."
+    },
+    {
+      "id": "ui.pending_review",
+      "title": "Pending operator review",
+      "status": "draft",
+      "body": "Deed results (structure schema v2, must-refuse items and the deed grid) are waiting for operator review. Nothing is shown here until the operator approves it, and no interim numbers are displayed."
     },
     {
       "id": "ui.gold_split",

@@ -12,6 +12,7 @@ model = "muse-spark-1.3-contributor"
 base_url_env = "MUSE_BASE_URL"   # nilai di .env lokal, tidak dicetak
 api_key_env = "MUSE_API_KEY"
 for_reported_numbers = true
+label = "Contributor"
 
 [profiles.openrouter_dev]
 # Hanya dev dan uji (H-057). Tidak dipakai untuk angka yang dilaporkan.
@@ -55,9 +56,36 @@ base_url_env = "BASETEN_BASE_URL"   # nilai di .env lokal, tidak dicetak
 api_key_env = "BASETEN_API_KEY"
 for_reported_numbers = false
 roles = ["c"]
+label = "Spark Open (Baseten)"
+max_output_tokens = 6000   # usulan agen, operator boleh ubah; reasoning ~93% keluaran (G-33): 2000 dari prompt berisiko terpotong; biaya diproyeksikan dengan batas ini
 
 [pricing.baseten_open]
 # Spark Open di Baseten, per 1M token, micro-USD. Sumber: dashboard Baseten "Model API pricing", disalin operator 27 Okt (I-34).
 input_per_mtok_micros = 1250000
 cached_per_mtok_micros = 150000
 output_per_mtok_micros = 4250000
+
+[profiles.glimmer_local]
+# Pembanding on-prem peran C, stretch (H-047, H-053). Muse Glimmer lokal di LM Studio, Chat Completions ke loopback
+# (satu-satunya pengecualian H-016), validasi skema di sisi klien. Tanpa API key. Dipin sebelum run pertama;
+# jangan diubah setelah melihat hasil. Run terpisah dari Contributor (H-028); tidak untuk angka utama.
+provider = "lmstudio_local"
+api = "chat_completions"
+model = "meta/muse-glimmer"
+base_url = "http://127.0.0.1:8080/v1"
+quantization = "Q4_K_M"
+context_length = 131072
+reasoning_effort = "high"      # menggantikan [effort].c untuk profil ini (G-26: reasoning tidak bisa dimatikan)
+timeout_s = 900                # usulan agen, operator boleh ubah: reasoning panjang di GPU lokal (G-26)
+live_via_cli = true            # W6 live ditolak 409 (G-26: jangan berbarengan dengan embedding); jalankan lewat `python -m backend.answer.compare_c`
+max_retries = 0                # tanpa retry timeout: satu upaya bisa belasan menit
+max_output_tokens = 16000      # usulan agen, operator boleh ubah; batas keluaran minimal; reasoning ~75% keluaran, 2000 dari prompt akan terpotong
+for_reported_numbers = false
+roles = ["c"]
+label = "Glimmer (local)"
+
+[pricing.glimmer_local]
+# Lokal: tidak ada tagihan; biaya selalu 0 (listrik/perangkat keras tidak dihitung).
+input_per_mtok_micros = 0
+cached_per_mtok_micros = 0
+output_per_mtok_micros = 0

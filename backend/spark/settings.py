@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from backend import config as cfg
 
@@ -17,6 +18,10 @@ from .errors import ConfigInvalid
 from .money import validate_pricing
 from .ratelimit import MAX_RPM_EXCLUSIVE
 
+API_RESPONSES = "responses"
+API_CHAT = "chat_completions"  # hanya klien lokal Glimmer (H-047), endpoint loopback
+LOCAL_PLACEHOLDER_KEY = "local-no-key"  # konstanta non-rahasia; SDK mewajibkan string, server lokal tidak memeriksanya
+LOOPBACK_HOSTS = ("127.0.0.1", "localhost", "::1")
 REQUIRED_LIMITS_NUM = ("timeout_s", "backoff_base_s", "backoff_factor", "max_wait_s")
 
 
@@ -71,12 +76,28 @@ def clean_env_value(raw: Any) -> str:
     return raw.strip() if isinstance(raw, str) else ""
 
 
+def is_loopback_url(url: Any) -> bool:
+    """http(s) ke 127.0.0.1 / localhost / ::1 saja (H-047: Glimmer lokal, backend tidak keluar mesin)."""
+    if not isinstance(url, str):
+        return False
+    try:
+        u = urlsplit(url.strip())
+        return u.scheme in ("http", "https") and (u.hostname or "").lower() in LOOPBACK_HOSTS
+    except ValueError:
+        return False
+
+
+def profile_api(p: Mapping[str, Any]) -> str:
+    return API_CHAT if p.get("api") == API_CHAT else API_RESPONSES
+
+
 def profile_cfg(model_cfg: Mapping[str, Any], profile: str) -> Mapping[str, Any]:
     profiles = model_cfg.get("profiles")
     p = profiles.get(profile) if isinstance(profiles, Mapping) else None
     if not isinstance(p, Mapping):
         raise ConfigInvalid(f"config/model: unknown profile '{profile}'")
-    for k in ("provider", "model", "api_key_env"):
+    required = ("provider", "model") if profile_api(p) == API_CHAT else ("provider", "model", "api_key_env")
+    for k in required:
         if not isinstance(p.get(k), str) or not p[k]:
             raise ConfigInvalid(f"config/model: profile '{profile}' has no valid '{k}'")
     return p
@@ -105,11 +126,43 @@ class Settings:
     api_key_env: str
     for_reported_numbers: bool
     all_secrets: tuple[str, ...] = field(repr=False, default=())
+    api: str = API_RESPONSES
+    effort_override: str | None = None  # profil Glimmer: reasoning_effort dipin di profil (H-047)
+    max_output_tokens_floor: int | None = None  # profil reasoning-berat: batas keluaran minimal (G-26)
 
     def __repr__(self) -> str:  # tanpa key dan base URL (S10)
         return f"Settings(profile={self.profile!r}, provider={self.provider!r}, model={self.model!r})"
 
     __str__ = __repr__
+
+
+def _opt_str(profile: str, p: Mapping[str, Any], k: str) -> str | None:
+    v = p.get(k)
+    if v is None:
+        return None
+    if not isinstance(v, str) or not v:
+        raise ConfigInvalid(f"config/model: profile '{profile}' {k} must be a non-empty string")
+    return v
+
+
+def _opt_int(profile: str, p: Mapping[str, Any], k: str) -> int | None:
+    v = p.get(k)
+    if v is None:
+        return None
+    if not _is_int(v) or v < 1:
+        raise ConfigInvalid(f"config/model: profile '{profile}' {k} must be a positive integer")
+    return v
+
+
+def _profile_limits(profile: str, p: Mapping[str, Any], base: Limits) -> Limits:
+    """Override per profil untuk `timeout_s` dan `max_retries` (reasoning panjang, G-26)."""
+    t = p.get("timeout_s")
+    r = p.get("max_retries")
+    if t is not None and (not _is_num(t) or t <= 0):
+        raise ConfigInvalid(f"config/model: profile '{profile}' timeout_s must be > 0")
+    if r is not None and (not _is_int(r) or r < 0):
+        raise ConfigInvalid(f"config/model: profile '{profile}' max_retries must be a non-negative integer")
+    return replace(base, timeout_s=base.timeout_s if t is None else t, max_retries=base.max_retries if r is None else r)
 
 
 def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str, str], *,
@@ -133,6 +186,22 @@ def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str,
     except ValueError as exc:
         raise ConfigInvalid(f"config/model [pricing.{pricing_name}]: {exc}") from None
 
+    api = profile_api(p)
+    if api == API_CHAT:
+        # Glimmer lokal: loopback saja, tanpa key (placeholder konstan), validasi dilakukan selalu (juga replay).
+        bu = p.get("base_url")
+        if not is_loopback_url(bu):
+            raise ConfigInvalid(f"config/model: profile '{profile}' must use a loopback base_url (127.0.0.1, localhost or ::1)")
+        limits = _profile_limits(profile, p, limits)
+        return Settings(
+            profile=profile, provider=p["provider"], model=p["model"],
+            quantization=p["quantization"] if isinstance(p.get("quantization"), str) else None,
+            host_label=host, device="local", pricing=pricing, limits=limits,
+            api_key=LOCAL_PLACEHOLDER_KEY, base_url=bu.strip(), api_key_env="",
+            for_reported_numbers=bool(p.get("for_reported_numbers", False)), all_secrets=(), api=API_CHAT,
+            effort_override=_opt_str(profile, p, "reasoning_effort"),
+            max_output_tokens_floor=_opt_int(profile, p, "max_output_tokens"),
+        )
     key_env = p["api_key_env"]
     api_key = clean_env_value(env.get(key_env))
     base_url = ""
@@ -160,4 +229,5 @@ def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str,
         host_label=host, device="remote", pricing=pricing, limits=limits,
         api_key=api_key, base_url=base_url, api_key_env=key_env,
         for_reported_numbers=bool(p.get("for_reported_numbers", False)), all_secrets=secrets,
+        max_output_tokens_floor=_opt_int(profile, p, "max_output_tokens"),
     )

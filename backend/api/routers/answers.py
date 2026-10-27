@@ -5,7 +5,9 @@ M2.3: `verifier` = `VerifierResult` per kutipan (best lalu baseline, urutan `cit
 `RejectionSummary` per (setting_id, slot, model_profile) untuk butir ini. Mode replay yang tak menemukan run tersimpan
 untuk prompt `current` mencoba versi prompt lebih lama (hasil v1 tetap dapat dibaca). `tolak` dan `bukti_tidak_cukup` adalah respons 200. `live=false` (atau mode replay tanpa
 butir `scene_checked`) hanya membaca run tersimpan; tanpa run -> 409 `replay_no_stored_run`. Hanya profil Contributor
-(`meta`) dan `openrouter_dev` untuk dev; profil berbatas peran (Spark Open, M2.5) ditolak di sini."""
+(`meta`) dan `openrouter_dev` untuk dev; profil berbatas peran diterima hanya bila `roles` memuat `c` (M2.5: Spark Open
+Baseten, Glimmer lokal); profil tanpa `c` -> 422. Jawaban tersimpan per `model_profile` (ada di `answer_id`), tak pernah
+digabung lintas profil (H-028)."""
 
 from __future__ import annotations
 
@@ -20,6 +22,8 @@ from backend.answer.context import build_context, check_same_budget
 from backend.answer.prompt import load_prompt, prompt_versions
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
+from backend.api.routers.system import profile_status
+from backend.spark.settings import API_CHAT, profile_api
 from backend.grid.types import Setting
 from backend.pipeline.grid_run import baseline_for, to_grid_items
 from backend.pipeline.pipeline import SettingNotAvailable
@@ -48,8 +52,9 @@ def _profile(request: Request, name: str | None) -> str:
     prof = mc.get("profiles", {}).get(name) if isinstance(name, str) else None
     if prof is None:
         raise ApiError(400, "invalid_request", f"Unknown model_profile {str(name)[:40]!r}.")
-    if prof.get("roles"):
-        raise ApiError(422, "validation_failed", "This model_profile is not available for W6 until M2.5.")
+    roles = prof.get("roles")
+    if roles and "c" not in roles:  # profil berbatas peran: hanya yang memuat C boleh di W6 (H-053, H-060)
+        raise ApiError(422, "validation_failed", "This model_profile is not available for the answer role (C).")
     return name
 
 
@@ -77,6 +82,14 @@ def post_answers(request: Request, family: str, body: AnswersBody) -> dict[str, 
     # live=false, atau mode replay tanpa butir scene_checked: hanya baca (API.md 1).
     allow_live = body.live and (not st.replay or bool(raw.get("scene_checked")))
     replay = not allow_live
+    prof_cfg = st.model_config["profiles"][profile]
+    if allow_live and prof_cfg.get("live_via_cli"):
+        # G-26: W6 live menjalankan retrieval/embedding di proses ini; profil ini dijalankan lewat CLI. Hasil tersimpan tetap terbaca.
+        raise ApiError(409, "live_unavailable", "This model runs offline via the CLI to avoid GPU contention with embeddings; stored results are shown.")
+    if allow_live and profile_api(prof_cfg) == API_CHAT:
+        ok, why = profile_status(request, prof_cfg)  # server lokal mati -> 503 jelas, tanpa konteks/embedding
+        if not ok:
+            raise ApiError(503, "model_unavailable", why or "Local model server is not available.")
     item = to_grid_items([raw])[0]
     doc = svc.doc("uupt-40-2007")
     tok = svc.tok()

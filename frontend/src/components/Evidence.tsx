@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { fetchHealth } from "../api";
 import { useStore } from "../state";
 import {
-  SUMMARY_HEADERS, baselineFor, columnView, defaultProfile, evidenceReducer, flagLabel, formatUsd, isGlimmer, loadEvidence,
+  SUMMARY_HEADERS, answerProfiles, baselineFor, columnView, modelDetail, profileLabel, defaultProfile, evidenceReducer, flagLabel, formatUsd, isGlimmer, loadEvidence,
   modelLabel, profileUnavailableText, runLiveState, summaryRows, tokenStr, type ColumnView, type EvidenceState,
 } from "../lib/evidence";
 import { fixed3, orNa } from "../lib/format";
@@ -24,7 +24,7 @@ function Check({ name, value }: { name: string; value: string | null }) {
   return <Tag kind={value === "Pass" ? "ok" : "bad"}>{`${name}: ${value}`}</Tag>;
 }
 
-export function EvidenceColumn({ col, settings }: { col: ColumnView; settings: Setting[] }) {
+export function EvidenceColumn({ col, settings, modelName }: { col: ColumnView; settings: Setting[]; modelName?: string }) {
   const setting = settings.find((s) => s.setting_id === col.settingId);
   return (
     <article className="column ev-col" aria-label={col.title}>
@@ -34,7 +34,7 @@ export function EvidenceColumn({ col, settings }: { col: ColumnView; settings: S
         <div><dt>Model</dt><dd>{orNa(col.model)}</dd></div>
         <div><dt>Quantization</dt><dd>{orNa(col.quantization)}</dd></div>
         <div><dt>Effort</dt><dd>{orNa(col.effort)}</dd></div>
-        <div><dt>Model profile</dt><dd>{col.modelProfile}</dd></div>
+        <div><dt>Model profile</dt><dd>{modelName && modelName !== col.modelProfile ? `${modelName} (${col.modelProfile})` : col.modelProfile}</dd></div>
         <div><dt>Status</dt><dd><strong data-status={col.statusCode}>{col.status}</strong></dd></div>
       </dl>
       <h4 className="detail-title">Answer</h4>
@@ -118,10 +118,12 @@ export interface EvidenceViewProps {
   elapsedSeconds?: number;
   noItem?: boolean;
   noBaseline?: boolean;
+  /** Kunci `model_profile` -> nama tampilan (dari R1); tanpa ini kunci ditampilkan apa adanya. */
+  profileName?: (key: string) => string;
 }
 
 /** Badan panel: empty / loading / error / ready, tanpa store. */
-export function EvidenceView({ state, settings, elapsedSeconds = 0, noItem = false, noBaseline = false }: EvidenceViewProps) {
+export function EvidenceView({ state, settings, elapsedSeconds = 0, noItem = false, noBaseline = false, profileName }: EvidenceViewProps) {
   if (noItem) return <EmptyBlock>Select an item to see end-to-end evidence.</EmptyBlock>;
   if (noBaseline) return <EmptyBlock>Select a setting other than the fixed-size baseline to compare against it.</EmptyBlock>;
   const last = state.status === "loading" || state.status === "error" || state.status === "empty" ? state.last : null;
@@ -141,8 +143,8 @@ export function EvidenceView({ state, settings, elapsedSeconds = 0, noItem = fal
             Actual input tokens come from the model usage and are shown per column.
           </p>
           <div className="columns two">
-            <EvidenceColumn col={columnView(data.best, data.verifier, data.runs, "Best profile")} settings={settings} />
-            <EvidenceColumn col={columnView(data.baseline, data.verifier, data.runs, "Baseline")} settings={settings} />
+            <EvidenceColumn col={columnView(data.best, data.verifier, data.runs, "Best profile")} settings={settings} modelName={profileName?.(data.best.model_profile)} />
+            <EvidenceColumn col={columnView(data.baseline, data.verifier, data.runs, "Baseline")} settings={settings} modelName={profileName?.(data.baseline.model_profile)} />
           </div>
           <h3 className="detail-title">2x2 summary<Hint id="verifier.matrix_2x2" /></h3>
           <SummaryTable data={data} settings={settings} />
@@ -162,7 +164,7 @@ export interface EvidenceControlsProps {
 }
 
 export function EvidenceControls({ health, profile, onProfile, runLive, onRunLive, busy }: EvidenceControlsProps) {
-  const profiles = health?.model_profiles ?? [];
+  const profiles = answerProfiles(health);
   const current = profile ?? defaultProfile(health) ?? "";
   return (
     <div className="controls">
@@ -172,12 +174,15 @@ export function EvidenceControls({ health, profile, onProfile, runLive, onRunLiv
           {profiles.length === 0 && <option value="">Server default</option>}
           {profiles.map((p) => (
             <option key={p.model_profile} value={p.model_profile} disabled={!p.available}>
-              {modelLabel(p)}{p.available ? "" : ` (${profileUnavailableText(p)})`}
+              {modelDetail(p)}{p.available ? "" : ` (${profileUnavailableText(p)})`}
             </option>
           ))}
         </select>
       </label>
-      {profiles.some((p) => isGlimmer(p) && !p.available) && <span className="note">Local Glimmer server not running</span>}
+      {profiles.filter((p) => !p.available && p.unavailable_reason).map((p) => (
+        <span key={p.model_profile} className="note">{modelLabel(p)}: {p.unavailable_reason}</span>
+      ))}
+      {profiles.some((p) => isGlimmer(p) && !p.available && !p.unavailable_reason) && <span className="note">Local Glimmer server not running</span>}
       <button type="button" onClick={onRunLive} disabled={!runLive.enabled || busy} title={runLive.reason}>Run live</button>
       {!runLive.enabled && <span className="note">{runLive.reason}</span>}
     </div>
@@ -255,7 +260,7 @@ export function EvidencePanel() {
     return () => clearInterval(t);
   }, [loading]);
 
-  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null);
+  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null, health?.model_profiles.find((p) => p.model_profile === effProfile));
   const doLive = () => {
     if (!snap || !itemId || !bestId || !baseId) return;
     const id = ++reqId.current;
@@ -269,7 +274,7 @@ export function EvidencePanel() {
     body = (
       <>
         <EvidenceControls health={health} profile={profile} onProfile={setProfile} runLive={runLive} onRunLive={doLive} busy={loading} />
-        <EvidenceView state={ev} settings={settings} elapsedSeconds={elapsed} noItem={!item} noBaseline={!!item && noBaseline} />
+        <EvidenceView state={ev} settings={settings} elapsedSeconds={elapsed} noItem={!item} noBaseline={!!item && noBaseline} profileName={(k) => profileLabel(health, k)} />
       </>
     );
   }

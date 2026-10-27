@@ -14,7 +14,7 @@ import { EmptyBlock, SnapshotPanel } from "./Shell";
 
 export function PerItem() {
   return (
-    <SnapshotPanel id="u4" title="Per-item results" loadingText="Loading per-item metrics…" errorTitle="Metrics unavailable">
+    <SnapshotPanel pendingGate id="u4" title="Per-item results" loadingText="Loading per-item metrics…" errorTitle="Metrics unavailable">
       {(snap) => <Body snap={snap} />}
     </SnapshotPanel>
   );

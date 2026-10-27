@@ -98,7 +98,7 @@ function Tip({ active, payload }: TipProps) {
 
 export function SettingSpace() {
   return (
-    <SnapshotPanel id="u2" title="Setting space" loadingText="Loading grid…" errorTitle="Grid run failed" hints={["app.read_frontier", "metric.span_recall", "metric.pareto_frontier", "metric.tune_heldout", "header_b.what", "metric.token_budget", "metric.local_tokenizer"]}>
+    <SnapshotPanel pendingGate id="u2" title="Setting space" loadingText="Loading grid…" errorTitle="Grid run failed" hints={["app.read_frontier", "metric.span_recall", "metric.pareto_frontier", "metric.tune_heldout", "header_b.what", "metric.token_budget", "metric.local_tokenizer"]}>
       {(snap) => <Body snap={snap} />}
     </SnapshotPanel>
   );

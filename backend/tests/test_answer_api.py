@@ -129,8 +129,8 @@ def test_budget_exceeded_is_402_before_network(svc, tmp_path):
 
 def test_validation_errors_are_uniform(svc, tmp_path):
     m = model_cfg()
-    m["profiles"]["baseten_open"] = {"provider": "baseten", "model": "x", "base_url_env": "MUSE_BASE_URL",
-                                     "api_key_env": "MUSE_API_KEY", "for_reported_numbers": False, "roles": ["c"]}
+    m["profiles"]["b_only"] = {"provider": "baseten", "model": "x", "base_url_env": "MUSE_BASE_URL",
+                                     "api_key_env": "MUSE_API_KEY", "for_reported_numbers": False, "roles": ["b"]}
     c, tr, _ = make(svc, tmp_path, model=m)
     best, _base = ids(svc)
     other_budget = next(x for x in svc.grid_settings("uupt") if x.budget_tokens != 2000 and x.chunker == "fixed_size"
@@ -139,7 +139,7 @@ def test_validation_errors_are_uniform(svc, tmp_path):
         (body(svc, item_id="tidak-ada"), 404, "not_found"),
         (body(svc, best_setting_id="0" * 64), 404, "not_found"),
         (body(svc, model_profile="nama-ngawur"), 400, "invalid_request"),
-        (body(svc, model_profile="baseten_open"), 422, "validation_failed"),
+        (body(svc, model_profile="b_only"), 422, "validation_failed"),
         (body(svc, baseline_setting_id=other_budget.setting_id), 422, "validation_failed"),
         (body(svc, baseline_setting_id=best.setting_id), 422, "validation_failed"),
         ({"item_id": ITEM}, 400, "invalid_request"),

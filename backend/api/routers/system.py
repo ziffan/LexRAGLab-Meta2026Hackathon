@@ -10,14 +10,31 @@ from typing import Any
 from fastapi import APIRouter, Request
 
 from backend.api.errors import ApiError
-from backend.spark import store
+from backend.spark import local_server, store
 from backend.spark.runrecord import KINDS, RunRecord
-from backend.spark.settings import clean_env_value
+from backend.spark.settings import API_CHAT, clean_env_value, profile_api
 
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 500
 
 router = APIRouter()
+
+
+def _local_probe(request: Request):
+    """Pemeriksa server lokal; tes menggantinya lewat `app.state.local_probe(base_url, model) -> (bool, str)`."""
+    return getattr(request.app.state, "local_probe", None) or local_server.probe_cached
+
+
+def profile_status(request: Request, profile: Mapping[str, Any]) -> tuple[bool, str | None]:
+    """(available, alasan bila tidak). Profil lokal: server hidup dan model dimuat; replay statis: hasil tersimpan saja."""
+    st = request.app.state
+    if profile_api(profile) == API_CHAT:
+        if st.replay:
+            return True, None  # replay: hanya hasil tersimpan (W6 live=false); tanpa probe jaringan
+        ok, msg = _local_probe(request)(profile.get("base_url", ""), profile.get("model", ""))
+        return ok, None if ok else msg
+    ok = _available(profile, st.env)
+    return ok, None if ok else "Model API credentials are not configured."
 
 
 def _available(profile: Mapping[str, Any], env_map: Mapping[str, str]) -> bool:
@@ -57,6 +74,16 @@ def run_cost_micros(runs_dir: Path) -> int | None:
         return None
 
 
+def _profile_row(request: Request, name: str, p: Mapping[str, Any]) -> dict[str, Any]:
+    available, reason = profile_status(request, p)
+    st = request.app.state
+    effort = p.get("reasoning_effort") or st.model_config.get("effort", {}).get("c")
+    return {"model_profile": name, "model": p.get("model"), "available": available,
+            "label": p.get("label") or name, "provider": p.get("provider"), "quantization": p.get("quantization"),
+            "effort": effort, "roles": list(p.get("roles") or []), "local": profile_api(p) == API_CHAT, "live_via_cli": bool(p.get("live_via_cli")),
+            "unavailable_reason": reason}
+
+
 @router.get("/api/health")
 def health(request: Request) -> dict[str, Any]:
     st = request.app.state
@@ -68,10 +95,7 @@ def health(request: Request) -> dict[str, Any]:
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
         "run_cost_usd_micros": run_cost_micros(st.service.runs_dir),
-        "model_profiles": [
-            {"model_profile": name, "model": p.get("model"), "available": _available(p, st.env)}
-            for name, p in profiles.items()
-        ],
+        "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 
 

@@ -5,7 +5,7 @@ import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { useStore } from "../state";
 import type { ImportResult, Profile, Report, Snapshot } from "../types";
 import { Hint } from "./Hint";
-import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
+import { EmptyBlock, ErrorBlock, LoadingBlock, PendingReview, isPendingReview } from "./Shell";
 
 // U7 Export profile (docs/UI-SPEC.md U7; docs/scenarios/M4.3.md S20). Logika di fungsi murni dengan klien suntikan
 // (tanpa jaringan di test); `ProfileView` murni (props); `ProfilePanel` menyambung store dan peramban.
@@ -294,6 +294,7 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
   let body;
   if (state.snapshot.status === "idle" || state.snapshot.status === "loading") body = <LoadingBlock text="Loading snapshot…" />;
   else if (state.snapshot.status === "error") body = <ErrorBlock title="Profile export unavailable: could not load the family snapshot." message={state.snapshot.message} />;
+  else if (snap && isPendingReview(snap)) body = <PendingReview />;
   else
     body = (
       <ProfileView
