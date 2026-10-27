@@ -15,7 +15,7 @@ from .caller import run_headers
 from .project import project_units
 from .prompt import PromptB, load_prompt
 from .render import DocPrefix, build_prefix
-from .units import SOURCES, Unit, build_units
+from .units import ALL_SOURCES, Unit, build_units
 
 DEFAULT_DOC = "uupt-40-2007"
 KEYS = ("max_header_tokens", "max_output_tokens", "warm_max_output_tokens", "expected_output_tokens", "assumed_latency_ms", "max_consecutive_errors")
@@ -64,13 +64,16 @@ class Prepared:
 
 def prepare(source: str, *, doc: Any = None, tokenizer: Any, header_cfg: dict[str, Any], retrieval_cfg: dict[str, Any],
             grid_cfg: dict[str, Any], config_dir: Path | None = None, doc_id: str = DEFAULT_DOC,
-            prompt: PromptB | None = None) -> Prepared:
-    if source not in SOURCES:
-        raise HeaderConfigError(f"source must be one of {list(SOURCES)}")
+            prompt: PromptB | None = None, schema_record: Any = None) -> Prepared:
+    if source not in ALL_SOURCES:
+        raise HeaderConfigError(f"source must be one of {list(ALL_SOURCES)}")
+    if source == "structure_schema" and schema_record is None:
+        raise HeaderConfigError("source structure_schema needs an active schema A record (runs/schemas/<family>)")
     doc = doc or load_corpus(doc_id, config_dir=config_dir)
     prompt = prompt or load_prompt(header_cfg["max_header_tokens"], header_cfg.get("prompt_version"))
     prefix = build_prefix(prompt, doc, tokenizer)
-    units = build_units(doc, source, tokenizer=tokenizer, retrieval_cfg=retrieval_cfg, grid_cfg=grid_cfg)
+    units = build_units(doc, source, tokenizer=tokenizer, retrieval_cfg=retrieval_cfg, grid_cfg=grid_cfg,
+                        schema_record=schema_record)
     return Prepared(doc, prompt, prefix, units, source)
 
 

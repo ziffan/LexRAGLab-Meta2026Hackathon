@@ -16,6 +16,7 @@ from backend.tokenizer import get_tokenizer
 
 from .caller import run_headers
 from .project import write_projection
+from .reuse import plan_schema, project_schema, write_reuse
 from .run import (DEFAULT_DOC, HeaderConfigError, find_unit, load_all_configs, prepare, project, run_smoke,
                   smoke_projection)
 from .units import SOURCES
@@ -30,6 +31,23 @@ def _fmt(p: dict) -> str:
             f"upper_no_cache={c['upper_no_cache']} ({format_usd_micros(c['upper_no_cache'])})\n"
             f"             time @ {p['rpm']} RPM, latency {p['assumed_latency_ms']} ms (assumed): "
             f"rpm_floor={t['rpm_floor_seconds']}s sequential={t['sequential_seconds']}s estimated={t['estimated_seconds']}s")
+
+
+def _schema_record(a):
+    from backend.grid.schemas import SchemaBinding
+    rec = SchemaBinding.from_store(config.REPO_ROOT / "runs", a.family).active()  # H-075: versi operator tertinggi, bila tak ada Spark
+    if rec is None:
+        print(f"error: no schema A record for family {a.family!r} in runs/schemas", file=sys.stderr)
+    return rec
+
+
+def _fmt_schema(r: dict) -> str:
+    head = (f"  structure_schema chunks={r['chunks']} reused={r['reused']} already_stored={r['already_stored']} "
+            f"to_call={r['to_call']} near_miss={len(r['near_miss'])} "
+            f"(reused with address label differing: {r['address_differs']})")
+    if not r["to_call"]:
+        return head + "\n  cost micro-USD (to_call only): 0"
+    return head + "\n" + _fmt({**r["projection"], "source": "schema/call"})
 
 
 def _client(a, model_cfg, budget_cfg):
@@ -69,11 +87,55 @@ def _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw) -> int:
     return {"accepted": 0, "rejected_by_api": 1}.get(out["status"], 4)
 
 
+def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw, rcfg, gcfg) -> int:
+    p = prepare("structure_schema", **kw)
+    hdir = config.REPO_ROOT / "runs" / "headers"
+    plan = plan_schema(p, headers_dir=hdir, tokenizer=tok, retrieval_cfg=rcfg, grid_cfg=gcfg, limit=a.sample or None)
+    res = project_schema(p, plan, tok, hc, model_cfg, profile=a.profile, rpm=a.rpm)
+    print(_fmt_schema(res))
+    if a.project_only:
+        path = (config.REPO_ROOT / "runs" / "headers" / "projection"
+                / f"{DEFAULT_DOC}-{p.doc.clean_sha256[:12]}-{p.prompt.prompt_hash[:12]}-structure_schema.json")
+        write_projection(path, {"created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "structure_schema": res})
+        print(f"written: {path.relative_to(config.REPO_ROOT)}")
+        return 0
+    if a.sample < 1:
+        print("error: --sample N (N >= 1) is required for a live run", file=sys.stderr)
+        return 2
+    caps = effective_caps(budget_cfg, None)
+    ledger = Ledger(config.REPO_ROOT / "runs")
+    cost = res["projection"]["cost_usd_micros"]["upper_cached"]
+    if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
+        print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
+        return 3
+    print(f"reuse written: {write_reuse(plan, headers_dir=hdir, prompt=p.prompt)} (no calls)")
+    if not plan.call:
+        return 0
+    client = _client(a, model_cfg, budget_cfg)
+    meta = {"corpus_hash": config.config_hash({"docs": [p.doc.sha256]}), "clean_sha256": p.doc.clean_sha256,
+            "loader_rules_version": p.doc.loader_rules_version, "tokenizer": {"name": tok.info.name, "version": tok.info.version}}
+    try:
+        run = run_headers(client, p.prompt, p.prefix, plan.call, granularity="structure_schema", tokenizer=tok, headers_dir=hdir,
+                          max_header_tokens=hc["max_header_tokens"], max_output_tokens=hc["max_output_tokens"],
+                          max_consecutive_errors=hc["max_consecutive_errors"], warm_max_output_tokens=hc["warm_max_output_tokens"],
+                          cache_guard_calls=hc["cache_guard_calls"], cache_guard_min_ratio=hc["cache_guard_min_ratio"],
+                          meta=meta, max_length_chars=hc.get("schema_max_length_chars"))
+    except BudgetExceeded as exc:
+        print(f"error: budget_exceeded: {exc}", file=sys.stderr)
+        return 3
+    for o in run.outcomes:
+        print(f"[{o.unit.address}] " + (o.headers[0]["header"] if o.headers else f"ERROR {o.error}"))
+    print(f"outcomes={len(run.outcomes)} stopped={run.stopped_reason}")
+    return 0 if run.stopped_reason is None else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m backend.header_b")
     ap.add_argument("--granularity", choices=("pasal", "ayat"))
-    ap.add_argument("--chunker", choices=("structure_handwritten", "fixed_size"), default="structure_handwritten",
-                    help="fixed_size (H-069): satu header per potongan fixed_size; granularity diabaikan")
+    ap.add_argument("--chunker", choices=("structure_handwritten", "fixed_size", "structure_schema"), default="structure_handwritten",
+                    help="fixed_size (H-069): satu header per potongan fixed_size; structure_schema (H-080): potongan skema A aktif, "
+                         "header Pasal dipakai ulang bila rentang+teks identik; granularity diabaikan")
+    ap.add_argument("--family", default="uupt", help="keluarga skema A untuk --chunker structure_schema")
     ap.add_argument("--sample", type=int, default=0, help="N unit pertama (urutan dokumen)")
     ap.add_argument("--project-only", action="store_true")
     ap.add_argument("--smoke", action="store_true",
@@ -87,8 +149,15 @@ def main(argv: list[str] | None = None) -> int:
     hc, model_cfg, budget_cfg, rcfg, gcfg = load_all_configs()
     tok = get_tokenizer()
     gran = a.granularity or hc["granularity"]
-    source = "fixed_size" if a.chunker == "fixed_size" else gran
+    source = a.chunker if a.chunker in ("fixed_size", "structure_schema") else gran
     kw = dict(tokenizer=tok, header_cfg=hc, retrieval_cfg=rcfg, grid_cfg=gcfg)
+    if source == "structure_schema":
+        rec = _schema_record(a)
+        if rec is None:
+            return 2
+        kw["schema_record"] = rec
+        if not a.smoke:
+            return _schema_main(a, hc, model_cfg, budget_cfg, tok, kw, rcfg, gcfg)
 
     if a.project_only:
         first = prepare(SOURCES[0], **kw)
