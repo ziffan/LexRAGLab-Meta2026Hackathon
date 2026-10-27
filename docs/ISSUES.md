@@ -9,12 +9,12 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-61 | Grid akta M4.2: kode grid satu-dokumen (`GridItem` tanpa `doc_id`, kunci cache satu `clean_sha256`, `run_family_grid` menolak family selain `uupt`); akta = 5 dokumen. Spec (EVAL-SPEC, DATA-CONTRACTS) diam: retrieval butir akta dicari **di dalam akta butir itu** atau **lintas kelima akta**? Analisis `_kerja/orkestrasi/l3/W35-akta-siapkan-hasil.md` §4 (slice S1–S4) | (1) **Per dokumen**: butir akta hanya mengambil potongan dari `doc_id`-nya. Alasannya, uji transfer menanyakan struktur satu akta, dan lima akta mirip satu sama lain sehingga pencarian lintas dokumen mencampur kemiripan antarakta dengan mutu chunking. Anggaran token tetap per butir; frontier akta = rata-rata per butir. (2) S1 (multi-dokumen, kunci cache dari hash korpus keluarga) direview Tier 1 line-by-line; M4.2 tidak ada di daftar Tier 1 H-052, jadi tidak perlu skenario disetujui lebih dulu kecuali operator memintanya | Operator | Sebelum grid akta (M4.2; pemicu H-017 31 Okt) |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-61 | Grid akta: retrieval per akta atau lintas lima akta | Operator: per akta, `doc_id` per butir, grid per dokumen diagregasi per keluarga (H-086) | 2026-10-27 |
 | I-59 | Revisi hint `app.purpose` (motivasi, putusan 8) | Operator: 1.1.0 disetujui apa adanya, `status` final; agregat LDD = Engagement A + B (keduanya LDD) (tanpa H) | 2026-10-27 |
 | I-54 | Butir demo `scene_checked` dan jawaban C untuk adegan 4 | Operator: K-09, K-01, K-08 sebagai butir demo app (data v13); C live sesudah grid v2 (H-085) | 2026-10-27 |
 | I-60 | Skema A UU PT v2: kontrak parent_order, Buku, chunk_id/B ulang, premis Penjelasan | Operator: varian (ii) tanpa Buku, semantik terdekat di DATA-CONTRACTS §6, Penjelasan seperti v1 (section terpisah), B ulang 343 (H-084) | 2026-10-27 |
