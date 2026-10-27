@@ -9,15 +9,16 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-62 | Bentuk `grid` akta di R3 `FamilySnapshot` (API.md §4 mengunci `{tune, held_out}`; akta tanpa split, H-054/H-059) dan setting laporan transfer akta (H-078 butir 3) | (a) `grid` akta = `{all: {points, frontier}}` (kunci `all`, tanpa `tune`/`held_out`), U2 akta menampilkan satu frontier berlabel "transfer test, no profile selection"; (b) setting laporan akta = chunker `structure_schema` dengan skema A akta aktif + mode retrieval, header B, dan anggaran dari profil terbaik UU PT pada anggaran yang sama. API.md §4 + DATA-CONTRACTS §10 diredaksi, kode S4 W38 menyusul. Mengubah angka laporan: tidak (bentuk kontrak) | operator | sebelum grid akta final |
-| I-63 | Unit akta untuk Recall@K dan boundary coherence: `Pipeline` membangun unit dari parser UU PT, sehingga satu akta = satu unit (akta-01: (0, 15802)); Recall@K (gold per unit, H-048) dan boundary akta jadi kurang bermakna; span recall/precision/token tidak terpengaruh | Unit akta = potongan skema A akta aktif (v2 H-088: Kepala Akta, Komparisi, Pasal n, Keterangan Pendiri, Penutup Akta), dipakai hanya untuk Recall@K/boundary akta; UU PT tidak berubah. Alternatif: unit = Pasal parser akta (`akta_address.py`) tanpa bagian non-Pasal; atau biarkan dan tampilkan Recall@K/boundary akta "n/a". Mengubah angka laporan: ya (Recall@K, boundary akta) | operator | sebelum grid akta final |
-| I-64 | Cakupan grid akta: W38 mengekspansi seluruh `config/grid` (36 titik), sedangkan M4.2 kriteria 2 menyebut profil terbaik UU PT dengan chunker skema A akta | Jalankan seluruh `config/grid` untuk frontier akta (konteks transfer, tanpa pemilihan profil, H-054), dan sorot setting I-62 (b) sebagai baris laporan transfer. Alternatif: hanya setting transfer (lebih murah, tanpa frontier). Biaya: tanpa LLM untuk header-off; header-on akta butuh header B akta (H-088 G-6). Mengubah angka laporan: ya | operator | sebelum grid akta final |
-| I-65 | `config/retrieval` `[quality].recall_items = "held_out"` (H-065) membuat `recall_n_items = 0` untuk akta (tanpa split, H-054), sehingga Recall@K `QualityMetrics` akta selalu null | Untuk keluarga tanpa split, cakupan Recall@K = semua butir ber-gold, berlabel "transfer" di panel (tanpa kata held-out, H-078 butir 1); UU PT tetap held-out. Alternatif: biarkan null dan tampilkan "n/a" untuk akta. Mengubah angka laporan: ya (Recall@K akta) | operator | sebelum grid akta final |
+| — | (tidak ada isu baru; gerbang lama: Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/publik/Pages) | | | |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-65 | Recall@K akta selalu null (`recall_items = held_out`) | Operator: (a) keluarga tanpa split, semua butir ber-gold, label "transfer"; UU PT tetap held-out (H-090) | 2026-10-28 |
+| I-64 | Cakupan grid akta | Operator: (a) seluruh `config/grid` 36 titik, setting transfer disorot (H-091) | 2026-10-28 |
+| I-63 | Unit akta untuk Recall@K dan boundary | Operator: (a) unit = potongan skema A akta aktif; skenario M4.1-akta-unitmap disetujui (H-090) | 2026-10-28 |
+| I-62 | Bentuk `grid` akta di R3 + setting laporan transfer | Operator: (a) `{all: {points, frontier}}`, setting = structure_schema skema akta aktif + profil terbaik UU PT (H-091) | 2026-10-28 |
 | I-61 | Grid akta: retrieval per akta atau lintas lima akta | Operator: per akta, `doc_id` per butir, grid per dokumen diagregasi per keluarga (H-086) | 2026-10-27 |
 | I-59 | Revisi hint `app.purpose` (motivasi, putusan 8) | Operator: 1.1.0 disetujui apa adanya, `status` final; agregat LDD = Engagement A + B (keduanya LDD) (tanpa H) | 2026-10-27 |
 | I-54 | Butir demo `scene_checked` dan jawaban C untuk adegan 4 | Operator: K-09, K-01, K-08 sebagai butir demo app (data v13); C live sesudah grid v2 (H-085) | 2026-10-27 |
