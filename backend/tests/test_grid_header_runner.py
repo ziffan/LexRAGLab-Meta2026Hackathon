@@ -277,3 +277,20 @@ def test_S13_cache_key_covers_header_content_granularity_prompt_scope_not_run_id
     assert pipeline_config_hash(cfgs, info, base) != pipeline_config_hash(cfgs, info, replace(base, model="m2"))
     # tanpa binding hash lama tetap sama (M1 tidak berubah)
     assert pipeline_config_hash(cfgs, info) == pipeline_config_hash(cfgs, info, None)
+
+
+def test_S13_single_component_changes_each_invalidate_alone():
+    cfgs, info = {"grid": {"x": 1}}, SimpleNamespace(name="toy-ws", version="1")
+    h = lambda b: pipeline_config_hash(cfgs, info, b)
+    base = HeaderBinding(make_store({"c1": "H1 H2"}), "pasal", "all", "p1", "m")
+    assert h(base) != h(replace(base, store=make_store({"c1": "H9"})))  # hanya isi store
+    assert h(base) != h(replace(base, prompt_hash="p2"))  # hanya prompt_hash
+    assert h(base) == h(replace(base, store=make_store({"c1": "H1 H2"}, run_id="b2")))
+
+
+def test_cache_hit_returns_same_failed_settings():
+    w = s8_world(store_has={"s1", "s2", "s4"}, scope="all")
+    cache = MemoryGridCache()
+    r1, _ = run8(w, cache=cache)
+    r2, _ = run8(w, cache=cache)
+    assert r2.cache_hit and r1.failed_settings == r2.failed_settings == (FailedSetting("s3+", "header_missing", "s3c1"),)

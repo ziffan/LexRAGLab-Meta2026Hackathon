@@ -273,3 +273,23 @@ def test_S38_bad_schema_name_rejected(tmp_path):
     rig = Rig(tmp_path)
     r = rig.client.call(**call_args(0, schema_name="")).record
     assert r.error["code"] == "schema_invalid" and rig.tr.calls == 0
+
+
+def test_failed_settings_optional_field_roundtrip():
+    from backend.spark.runrecord import RunRecord
+
+    base = dict(run_id="r", kind="grid", created_at="2026-10-27T00:00:00Z", cache_key="k", corpus_hash=None, config_hash=None,
+                clean_sha256=None, loader_rules_version=None, prompt_version=None, prompt_hash=None, model=None, effort=None,
+                tokenizer=None, embedder=None, packing=None, usage_input_tokens=None, usage_cached_tokens=None,
+                usage_output_tokens=None, cost_usd_micros=0, projected_cost_usd_micros=5, latency_ms=1, host="h", device="cpu",
+                provider=None, quantization=None, status="ok", error=None)
+    old = RunRecord(**base)
+    legacy = {k: v for k, v in old.to_dict().items() if k != "failed_settings"}
+    assert old.to_dict()["failed_settings"] is None and RunRecord.from_dict(legacy) == old  # record lama terbaca
+    assert RunRecord.from_dict(old.to_dict()) == old
+    fs = [{"setting_id": "s+", "reason": "header_missing", "chunk_id": "c4"}]
+    new = RunRecord(**base, failed_settings=fs)
+    assert RunRecord.from_dict(new.to_dict()) == new and new.to_dict()["failed_settings"] == fs
+    assert new.spend_micros() == old.spend_micros() == 5
+    with pytest.raises(ValueError):
+        RunRecord.from_dict({**old.to_dict(), "failed_settings": "x"})

@@ -91,3 +91,24 @@ def test_config_hash_differs_by_scope_and_header_content(w):
 def test_load_header_binding_reads_scope_from_config(w):
     b = load_header_binding(runs_dir=w["runs"])
     assert b.scope == "frontier_only" and b.granularity in ("pasal", "ayat") and b.prompt_hash and b.model
+
+
+def test_dir_header_store_cross_granularity_and_run_id_path_guard(tmp_path):
+    import json
+
+    from backend.grid.headers import DirHeaderStore
+
+    hd, runs = tmp_path / "h", tmp_path / "runs"
+    for g, cid in (("ayat", "c1"), ("pasal", "c1"), ("fixed_size", "f1")):
+        d = hd / g / "abcdef123456"
+        d.mkdir(parents=True)
+        (d / f"{cid}.json").write_text(json.dumps({"chunk_id": cid, "header": f"h-{g}", "run_id": "r1"}), encoding="utf-8")
+    (runs / "spark" / "records").mkdir(parents=True)
+    (runs / "spark" / "records" / "r1.json").write_text(json.dumps({"clean_sha256": "X"}), encoding="utf-8")
+    (runs / "secret.json").write_text(json.dumps({"clean_sha256": "LEAK"}), encoding="utf-8")
+    st = DirHeaderStore(hd, "abcdef123456" + "0" * 52, runs)
+    assert st.get("c1", "ayat")["granularity"] == "ayat" and st.get("c1", "pasal")["granularity"] == "pasal"
+    assert st.get("f1", "ayat")["granularity"] == "fixed_size"  # ditemukan di dir lain -> label asli (S9e)
+    assert st.get("zz", "ayat") is None and st.get("../x", "ayat") is None
+    assert st.run_clean_sha256("r1") == "X" and st.run_clean_sha256("../../secret") is None and st.run_clean_sha256("nope") is None
+    assert st.content_hash() == DirHeaderStore(hd, "abcdef123456" + "0" * 52, runs).content_hash()

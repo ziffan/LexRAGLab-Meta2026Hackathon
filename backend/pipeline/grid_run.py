@@ -298,8 +298,8 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
         model=None, effort=None, tokenizer=parts["tokenizer"], embedder=emb, packing=parts["packing"],
         usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None, cost_usd_micros=0,
         projected_cost_usd_micros=None, latency_ms=int((time.perf_counter() - t0) * 1000), host=host, device=device,
-        provider=None, quantization=None, status="ok", error=None).to_dict()
-    record["failed_settings"] = [f.to_dict() for f in res.failed_settings]  # DATA-CONTRACTS §12, H-069
+        provider=None, quantization=None, status="ok", error=None,
+        failed_settings=[f.to_dict() for f in res.failed_settings]).to_dict()  # DATA-CONTRACTS §12, H-069
     envelope = {
         "key": plan.key, "family": family, "record": record,
         "item_file": plan.item_file, "n_items": len(plan.items),

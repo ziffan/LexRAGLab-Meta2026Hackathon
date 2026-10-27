@@ -56,16 +56,21 @@ class RunRecord:
     quantization: str | None
     status: str
     error: dict[str, str] | None
+    # Hanya kind=grid (H-069): [{setting_id, reason, chunk_id | None}]. None untuk kind lain. Record lama tanpa field ini tetap terbaca.
+    failed_settings: list[dict[str, Any]] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> RunRecord:
-        names = [f.name for f in fields(cls)]
+        names = [f.name for f in fields(cls) if f.name != "failed_settings"]
         if not isinstance(d, dict) or any(n not in d for n in names):
             raise ValueError("run record has missing fields")
-        return cls(**{n: d[n] for n in names})
+        fs = d.get("failed_settings")
+        if fs is not None and not isinstance(fs, list):
+            raise ValueError("failed_settings must be a list or absent")
+        return cls(**{n: d[n] for n in names}, failed_settings=fs)
 
     def spend_micros(self) -> int:
         """Belanja untuk buku: `(cost ?? 0) + (projected ?? 0)` (O-3 cabang A; H-071: cost murni usage,
