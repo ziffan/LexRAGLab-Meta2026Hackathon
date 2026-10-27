@@ -1,0 +1,27 @@
+# config/retrieval — cakupan retrieval dan parameter chunker (M1.1). Berkas ini akan dilengkapi M1.2/M1.3
+# (BM25, embedder, RRF, K) tanpa mengubah kunci yang sudah ada.
+version = 1
+
+# Cakupan retrieval: filter, bukan pembuangan teks, sehingga mengubah cakupan tidak menggeser offset.
+# Asal nilai: docs/DATA-CONTRACTS.md §2 "Bagian (section)" dan H-046.
+scope_sections = ["batang_tubuh", "penjelasan_pasal", "penjelasan_umum"]
+
+[chunking]
+# Versi implementasi chunker; masuk chunker_key (DATA-CONTRACTS §3). Naikkan bila aturan batas
+# unit atau alamat berubah, supaya chunk_id lama tidak dipakai ulang.
+structure_version = 1
+fixed_size_version = 1
+# Label bagian untuk alamat unit tingkat bagian (dokumen tanpa penanda struktur). Alamat kanonik
+# Pasal/ayat tidak memakai label ini (DATA-CONTRACTS §2 "Alamat kanonik").
+[chunking.section_labels]
+batang_tubuh = "Batang Tubuh"
+penjelasan_pasal = "Penjelasan"
+penjelasan_umum = "Penjelasan Umum"
+pembukaan = "Pembukaan"
+pengesahan = "Pengesahan"
+
+[setting_defaults]
+# Field Setting (DATA-CONTRACTS §10) yang belum punya makna di M1.1. PLACEHOLDER: retrieval_mode
+# baru dipakai di M1.2; nilai ini mengikuti urutan jalur BM25 lebih dulu. Mengubahnya mengubah setting_id.
+retrieval_mode = "bm25"
+header_b = false
