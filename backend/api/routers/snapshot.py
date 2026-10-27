@@ -17,6 +17,7 @@ from backend import config
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
 from backend.api.routers.proposals import get_proposals
+from backend.profile.aggregate import build_report
 from backend.proposal.report import items_summary, origin_report
 from backend.grid.types import metrics_from_cache
 from backend.schema_a import SchemaStore, SchemaStoreError, snapshot_view
@@ -57,6 +58,23 @@ def grid_view(env: dict[str, Any], budget: int, settings: list[dict[str, Any]] |
     metrics = [metrics_from_cache(m).to_dict() for m in env["metrics"] if m["setting_id"] in ids]
     quality = [q for q in env["quality"] if q["setting_id"] in ids]
     return grid, metrics, quality
+
+
+def report_view(family: str, items: list[dict[str, Any]], env: dict[str, Any] | None, selected: dict[str, Any] | None
+                ) -> dict[str, Any] | None:
+    """`FamilySnapshot.report` (H-077, API.md §4): laporan per butir `build_report` untuk setting terpilih pada anggaran ini,
+    dibangun dari butir + metrik grid tersimpan (tanpa menghitung ulang). `None` bila belum ada grid, belum ada setting terpilih,
+    atau tak ada baris metrik untuk setting itu. Logika agregat ada di `backend.profile.aggregate`; di sini hanya pemanggilan."""
+    sid = (selected or {}).get("setting_id")
+    if env is None or not sid:
+        return None
+    rows = [metrics_from_cache(m) for m in env["metrics"] if m.get("setting_id") == sid]
+    if not rows:
+        return None
+    try:
+        return build_report(family, items, rows)
+    except (KeyError, ValueError):  # butir tak dikenal / keluarga tak dikenal: tanpa laporan, bukan 500
+        return None
 
 
 HEADER_SAMPLE_PER_GRANULARITY = 10
@@ -142,10 +160,11 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     if split is not None and sel:
         rows = [m for m in metrics if m.get("setting_id") == sel.get("setting_id")]
         by_origin_report = origin_report(items, rows, split="held_out")
+    report = report_view(family, items, env, sel)
     return {
         "family": family, "budget_tokens": budget, "replay": request.app.state.replay, "config_hash": config.config_hash(cfgs),
         "corpus": corpus, "items": items, "split": split.to_dict() if split is not None else None,
-        "items_summary": summary, "origin_report": by_origin_report,
+        "items_summary": summary, "origin_report": by_origin_report, "report": report,
         "settings": svc.settings(family),
         "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schemas_rejected": schemas_rejected, "schema_diff": schema_diff,
         "proposals": get_proposals(request).list_proposals(family), "answers": [], "answers_summary": [], "runs_summary": None,

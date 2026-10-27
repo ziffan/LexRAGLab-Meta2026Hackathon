@@ -81,6 +81,7 @@ def test_server_binds_localhost_only():
 def test_r3_before_any_run_has_null_grid_and_split(client, world):
     d = client.get(f"{FAM}/snapshot").json()
     assert d["grid"] is None and d["metrics"] == [] and d["quality"] == [] and d["split"] is None
+    assert "report" in d and d["report"] is None  # H-077: tanpa grid, laporan null
     assert len(d["settings"]) == 36 and not (world["root"] / "runs").exists()  # tidak menulis apa pun
     assert world["enc"].encode_calls == 0
 
@@ -119,6 +120,56 @@ def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
     d1000 = client.get(f"{FAM}/snapshot", params={"budget_tokens": 1000}).json()
     assert d1000["grid"]["selected"]["budget_tokens"] == 1000 and d1000["grid"]["tune"]["frontier"]["budget_tokens"] == 1000
     assert client.get(f"{FAM}/snapshot", params={"budget_tokens": 777}).json()["grid"] is None
+
+
+REPORT_KEYS = {"family", "title", "rows", "summary", "by_origin", "by_mode"}
+ROW_KEYS = {"item_id", "split", "origin", "mode", "span_recall", "token_precision", "reciprocal_rank", "recall_at_k",
+            "fully_covered", "note"}
+
+
+def test_r3_report_uupt_is_heldout_report_of_selected_setting(client, world):
+    """H-077: `report` = build_report(uupt) atas butir held-out pada setting terpilih; angka sama dengan metrik snapshot."""
+    d = client.get(f"{FAM}/snapshot").json()
+    r = d["report"]
+    assert set(r) == REPORT_KEYS and r["family"] == "uupt" and r["title"] == "Held-out results"
+    sel = d["grid"]["selected"]["setting_id"]
+    held = sorted(m["item_id"] for m in d["metrics"] if m["setting_id"] == sel and m["split"] == "held_out")
+    assert held and [x["item_id"] for x in r["rows"]] == held and len(held) == d["items_summary"]["by_split"]["held_out"]
+    assert all(set(x) == ROW_KEYS and x["split"] == "held_out" for x in r["rows"])
+    assert r["summary"]["n_items"] == len(held)
+    assert set(r["summary"]["fully_covered"]) == {"numerator", "denominator", "text"}
+    gold_rows = [x for x in r["rows"] if x["span_recall"] is not None]
+    assert all(x["span_recall"]["text"] == f"{x['span_recall']['numerator']} of {x['span_recall']['denominator']}" for x in gold_rows)
+    assert [x["note"] for x in r["rows"] if x["span_recall"] is None] == ["no gold (must abstain)"] * (len(held) - len(gold_rows))
+    # budget lain -> setting terpilih lain, tetap laporan held-out
+    d1 = client.get(f"{FAM}/snapshot", params={"budget_tokens": 1000}).json()
+    assert d1["report"]["title"] == "Held-out results" and d1["report"]["rows"]
+    # anggaran tanpa run -> grid null -> report null
+    assert client.get(f"{FAM}/snapshot", params={"budget_tokens": 777}).json()["report"] is None
+
+
+def test_r3_report_akta_is_null_and_not_a_heldout_claim(client):
+    d = client.get("/api/families/akta/snapshot").json()
+    assert d["grid"] is None and d["report"] is None  # tidak ada grid akta tersimpan (H-077)
+
+
+def test_static_export_carries_report_and_passes_scanner(world, tmp_path):
+    from backend.replay.export import build_files
+    from backend.replay.scan import scan_files
+
+    app = create_app(Service(tokenizer=get_tokenizer(), runs_dir=world["root"] / "runs", encoder=FakeEncoder(),
+                             embed_cache_dir=world["root"] / "emb"), env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE},
+                     model_config=model_cfg(), budget_config=budget_cfg(), replay=True)
+    files = build_files(app, families=("uupt", "akta"), retrieval=False, answers=False)
+    uupt = json.loads(files["snapshot/uupt/default.json"])
+    assert uupt["report"] is not None and uupt["report"]["title"] == "Held-out results"
+    assert uupt["report"] == client_report(world)
+    assert json.loads(files["snapshot/akta/default.json"])["report"] is None
+    assert scan_files(files, secrets=[K], base_urls=[BASE]) == []
+
+
+def client_report(world):
+    return world["client"].get(f"{FAM}/snapshot").json()["report"]
 
 
 def test_r3_is_read_only(client, world):

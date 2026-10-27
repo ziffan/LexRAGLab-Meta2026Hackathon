@@ -193,7 +193,7 @@ export function ResultsSection({ family, profile, report }: { family: string; pr
   if (!akta && !profile) return null;
   return (
     <section className="subpanel" aria-label={akta ? TITLE_AKTA : TITLE_UUPT}>
-      <h3>{akta ? TITLE_AKTA : TITLE_UUPT}{akta ? <span className="tag neutral">Transfer test</span> : <Hint id="metric.tune_heldout" />}</h3>
+      <h3>{akta ? TITLE_AKTA : TITLE_UUPT}{akta ? <><span className="tag neutral">Transfer test</span><Hint id="metric.transfer_test" /></> : <Hint id="metric.tune_heldout" />}</h3>
       {!akta && profile && <HeldOutSummary profile={profile} />}
       {report ? <ReportTable report={report} /> : akta ? <EmptyBlock>No per-item transfer report is included in this snapshot.</EmptyBlock> : null}
     </section>

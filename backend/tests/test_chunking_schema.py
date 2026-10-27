@@ -148,7 +148,11 @@ def test_active_and_approved_interpretation(tmp_path):
     b = SchemaBinding.from_store(tmp_path, "uupt")
     assert b.active()["schema_version"] == 3 and is_approved(b.active())  # koreksi operator menang
     assert pick_active([]) is None
-    assert is_approved({"source": "spark", "operator_approved": True})
+    # H-075: hanya source == operator; flag operator_approved tidak punya arti, Spark tak pernah disetujui
+    assert not is_approved({"source": "spark", "operator_approved": True})
+    assert not is_approved({"source": "spark"}) and is_approved({"source": "operator"})
+    assert is_approved({"source": "operator", "operator_approved": False})
+    assert not is_approved({}) and not is_approved({"source": "agent"})  # review W19 S-1: hanya "operator" persis
     s = next(x for x in expand_grid(bc.load("grid"), "uupt") if x.chunker == "structure_schema")
     assert s.schema_version is None
     bound = bind_schema_versions([s], b)[0]
@@ -342,3 +346,25 @@ def test_schema_approved_requires_all_versions(world):
     assert mixed["schema_approved"] is False  # satu versi belum disetujui -> False (bukan any)
     assert set(mixed["boundary_diff"]) == {"1", "2"}
     assert schema_report(pipe, [pin(2)], b)["schema_approved"] is True
+
+
+# ---------- H-075: persetujuan skema hanya source == operator; kunci grid tak berubah ----------
+def test_h075_spark_never_approved_operator_always_approved(tmp_path):
+    st = SchemaStore(tmp_path)
+    for _ in range(3):
+        st.append("uupt", {"source": "spark", "body": SCHEMA_A["body"]})
+    b = SchemaBinding.from_store(tmp_path, "uupt")
+    assert all(not is_approved(r) for r in b.records)
+    assert b.describe(b.active())["schema_approved"] is False and "operator_approved" not in b.describe(b.active())
+    st.append("uupt", {"source": "operator", "body": SCHEMA_A["body"], "operator_note": "v1 disetujui tanpa perubahan"})
+    b = SchemaBinding.from_store(tmp_path, "uupt")
+    assert is_approved(b.active()) and b.describe(b.active())["schema_approved"] is True
+    assert [is_approved(r) for r in b.records] == [False, False, False, True]
+
+
+def test_h075_identity_unchanged_by_approval_rule(tmp_path):
+    """Identitas skema (komponen config_hash) = versi + hash isi + sumber; aturan persetujuan tak ikut."""
+    st = SchemaStore(tmp_path)
+    st.append("uupt", {"source": "spark", "body": SCHEMA_A["body"]})
+    ident = SchemaBinding.from_store(tmp_path, "uupt").identity()
+    assert set(ident) == {"family", "schema_version", "schema_hash", "source"} and ident["source"] == "spark"

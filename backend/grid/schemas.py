@@ -3,8 +3,9 @@
 - Versi aktif per keluarga = `SchemaRecord` operator dengan versi tertinggi; bila belum ada koreksi operator, record Spark
   dengan versi tertinggi. Alasan: koreksi operator (H-037) menang atas keluaran model; tanpa koreksi, usulan Spark dipakai
   untuk run uji.
-- "Disetujui" (`schema_approved`) = record aktif berasal dari operator (`source = "operator"`), atau record membawa tanda
-  eksplisit `operator_approved = true`. Usulan agen, belum diputus operator (H-074: v1 Spark UU PT belum disetujui).
+- "Disetujui" (`schema_approved`) = HANYA record `source = "operator"` (koreksi W9 atau berkas fallback H-055; H-075).
+  Jalur flag `operator_approved` dihapus: menyetujui v1 Spark tanpa perubahan = operator menyimpan salinan lewat W9 dengan
+  `operator_note`. Record Spark tak pernah disetujui, apa pun isi field lainnya.
   Run dengan skema belum disetujui boleh untuk uji, tetapi amplop grid menandainya `schema_approved: false`.
 """
 
@@ -18,11 +19,11 @@ from backend.chunking.schema_chunker import schema_identity
 from backend.grid.types import Setting, compute_setting_id, setting_content
 
 CHUNKER = "structure_schema"
-APPROVAL_RULE = "source == operator (latest operator version) or explicit operator_approved flag"
+APPROVAL_RULE = "source == operator (H-075)"
 
 
 def is_approved(record: Mapping[str, Any]) -> bool:
-    return record.get("source") == "operator" or record.get("operator_approved") is True
+    return record.get("source") == "operator"
 
 
 def pick_active(records: Sequence[Mapping[str, Any]]) -> Mapping[str, Any] | None:

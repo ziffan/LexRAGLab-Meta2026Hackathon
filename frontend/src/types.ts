@@ -64,7 +64,7 @@ export interface Frac {
   total: number;
 }
 
-/** GridPoint (DATA-CONTRACTS ง10). `exact` memuat pecahan eksak sebagai string "a/b". */
+/** GridPoint (DATA-CONTRACTS ยง10). `exact` memuat pecahan eksak sebagai string "a/b". */
 export interface GridPoint {
   setting_id: string;
   split: SplitName | null;
@@ -146,7 +146,7 @@ export interface Grid {
   grid_run_id: string;
 }
 
-/** ItemMetrics (DATA-CONTRACTS ง10) ditambah field bantu dari API. */
+/** ItemMetrics (DATA-CONTRACTS ยง10) ditambah field bantu dari API. */
 export interface ItemMetrics {
   item_id: string;
   setting_id: string;
@@ -190,7 +190,7 @@ export interface Snapshot {
   schema_diff?: SchemaDiff | null;
   schemas_rejected?: SchemaRejected[];
   header_b?: HeaderBView;
-  /** Laporan per butir (build_report). Opsional: sumber data held-out/transfer belum diputus (I-53). */
+  /** Laporan per butir (build_report, H-077): held-out UU PT atau transfer akta; null bila belum ada grid (API.md section 4). */
   report?: Report | null;
 }
 
@@ -436,4 +436,14 @@ export interface Report {
   title: string;
   rows: ReportRow[];
   summary: { n_items: number; mean_span_recall: number | null; mean_token_precision: number | null; fully_covered: ReportCount };
+  by_origin: Record<string, ReportGroup>;
+  by_mode: Record<string, ReportGroup>;
+}
+
+/** Ringkasan satu asal/mode di `Report` (build_report `_groups`). */
+export interface ReportGroup {
+  n_items: number;
+  n_gold: number;
+  mean_span_recall: number | null;
+  mean_token_precision: number | null;
 }

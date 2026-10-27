@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "draft",
   "locale": "en",
   "entries": [
@@ -101,7 +101,7 @@
     {
       "id": "metric.transfer_test",
       "title": "Transfer test",
-      "body": "The synthetic deeds are not split into tune and held-out. They are reported item by item to show whether the approach carries over to a family without a handwritten parser, and no profile is selected from them."
+      "body": "The synthetic deeds are not divided into separate groups for choosing and for reporting. Each deed item is reported on its own, as a transfer test, to show whether the approach carries over to a family without a handwritten parser, and no profile is selected from them."
     },
     {
       "id": "role.a",

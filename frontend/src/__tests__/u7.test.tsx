@@ -184,6 +184,7 @@ describe("S20(h) akta", () => {
     family: "akta", title: "Transfer results",
     rows: [{ item_id: "a1", split: "Transfer", origin: "operator", mode: "literal", span_recall: { numerator: 12, denominator: 12, text: "12 of 12" }, token_precision: { numerator: 3, denominator: 6, text: "3 of 6" }, reciprocal_rank: 1, recall_at_k: 1, fully_covered: true, note: null }],
     summary: { n_items: 1, mean_span_recall: 1, mean_token_precision: 0.5, fully_covered: { numerator: 1, denominator: 1, text: "1 of 1" } },
+    by_origin: {}, by_mode: {},
   };
   it("judul Transfer results, tanpa kata held-out di luar pratinjau JSON", () => {
     for (const phase of [{ kind: "idle" }, { kind: "ready", profile: AKTA }] as ExportPhase[]) {
@@ -239,8 +240,17 @@ describe("keadaan snapshot dan hint", () => {
     mock.state = { ...blankState(), snapshot: { status: "error", code: "http_500", message: "kaput" } };
     expect(renderToStaticMarkup(<ProfilePanel client={client().c} />)).toContain("kaput");
   });
-  it("hint metric.tune_heldout hanya di UU PT, tidak di akta (A15)", () => {
+  it("hint metric.tune_heldout hanya di UU PT; akta memakai metric.transfer_test tanpa kata held-out (A15, H-078)", () => {
     expect(view({ exportPhase: { kind: "ready", profile: UUPT } })).toContain("About: Tune vs held-out");
-    expect(view({ family: "akta" })).not.toContain("About:");
+    const akta = stripPreview(view({ family: "akta" }));
+    expect(akta).toContain("About: Transfer test");
+    expect(akta).not.toContain("Tune vs held-out");
+    expect(akta).not.toMatch(/held[- ]?out/i);
+  });
+  it("teks hint metric.transfer_test sendiri tanpa held-out", async () => {
+    const { getHint } = await import("../lib/hints");
+    const h = getHint("metric.transfer_test");
+    expect(h).toBeTruthy();
+    expect(`${h!.title} ${h!.body}`).not.toMatch(/held[- ]?out/i);
   });
 });

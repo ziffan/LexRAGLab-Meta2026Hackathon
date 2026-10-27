@@ -1,0 +1,182 @@
+{
+  "akta": {
+    "by_mode": {
+      "literal": {
+        "mean_span_recall": 1.0,
+        "mean_token_precision": 0.5,
+        "n_gold": 1,
+        "n_items": 2
+      },
+      "paraphrase": {
+        "mean_span_recall": 0.5,
+        "mean_token_precision": 0.2,
+        "n_gold": 1,
+        "n_items": 1
+      }
+    },
+    "by_origin": {
+      "operator": {
+        "mean_span_recall": 0.75,
+        "mean_token_precision": 0.35,
+        "n_gold": 2,
+        "n_items": 3
+      }
+    },
+    "family": "akta",
+    "rows": [
+      {
+        "fully_covered": true,
+        "item_id": "a1",
+        "mode": "literal",
+        "note": null,
+        "origin": "operator",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "span_recall": {
+          "denominator": 10,
+          "numerator": 10,
+          "text": "10 of 10"
+        },
+        "split": "Transfer",
+        "token_precision": {
+          "denominator": 20,
+          "numerator": 10,
+          "text": "10 of 20"
+        }
+      },
+      {
+        "fully_covered": false,
+        "item_id": "a2",
+        "mode": "paraphrase",
+        "note": null,
+        "origin": "operator",
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 0.5,
+        "span_recall": {
+          "denominator": 10,
+          "numerator": 5,
+          "text": "5 of 10"
+        },
+        "split": "Transfer",
+        "token_precision": {
+          "denominator": 20,
+          "numerator": 4,
+          "text": "4 of 20"
+        }
+      },
+      {
+        "fully_covered": null,
+        "item_id": "a3",
+        "mode": "literal",
+        "note": "no gold (must abstain)",
+        "origin": "operator",
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "span_recall": null,
+        "split": "Transfer",
+        "token_precision": null
+      }
+    ],
+    "summary": {
+      "fully_covered": {
+        "denominator": 2,
+        "numerator": 1,
+        "text": "1 of 2"
+      },
+      "mean_span_recall": 0.75,
+      "mean_token_precision": 0.35,
+      "n_items": 3
+    },
+    "title": "Transfer results"
+  },
+  "uupt": {
+    "by_mode": {
+      "literal": {
+        "mean_span_recall": 1.0,
+        "mean_token_precision": 0.5,
+        "n_gold": 1,
+        "n_items": 2
+      },
+      "paraphrase": {
+        "mean_span_recall": 0.5,
+        "mean_token_precision": 0.2,
+        "n_gold": 1,
+        "n_items": 1
+      }
+    },
+    "by_origin": {
+      "operator": {
+        "mean_span_recall": 0.75,
+        "mean_token_precision": 0.35,
+        "n_gold": 2,
+        "n_items": 3
+      }
+    },
+    "family": "uupt",
+    "rows": [
+      {
+        "fully_covered": true,
+        "item_id": "a1",
+        "mode": "literal",
+        "note": null,
+        "origin": "operator",
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "span_recall": {
+          "denominator": 10,
+          "numerator": 10,
+          "text": "10 of 10"
+        },
+        "split": "held_out",
+        "token_precision": {
+          "denominator": 20,
+          "numerator": 10,
+          "text": "10 of 20"
+        }
+      },
+      {
+        "fully_covered": false,
+        "item_id": "a2",
+        "mode": "paraphrase",
+        "note": null,
+        "origin": "operator",
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 0.5,
+        "span_recall": {
+          "denominator": 10,
+          "numerator": 5,
+          "text": "5 of 10"
+        },
+        "split": "held_out",
+        "token_precision": {
+          "denominator": 20,
+          "numerator": 4,
+          "text": "4 of 20"
+        }
+      },
+      {
+        "fully_covered": null,
+        "item_id": "a3",
+        "mode": "literal",
+        "note": "no gold (must abstain)",
+        "origin": "operator",
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "span_recall": null,
+        "split": "held_out",
+        "token_precision": null
+      }
+    ],
+    "summary": {
+      "fully_covered": {
+        "denominator": 2,
+        "numerator": 1,
+        "text": "1 of 2"
+      },
+      "mean_span_recall": 0.75,
+      "mean_token_precision": 0.35,
+      "n_items": 3
+    },
+    "title": "Held-out results"
+  }
+}
