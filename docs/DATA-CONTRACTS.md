@@ -282,7 +282,7 @@ Koreksi operator **HARUS** disimpan sebagai versi baru; versi lama tidak ditimpa
 |---|---|---|---|
 | `chunk_id` | string | harus sama dengan potongan yang diminta | Spark, diperiksa Sistem |
 | `header` | string | teks header | Spark |
-| `granularity` | enum `pasal` / `ayat` | H-038 | Sistem dari konfigurasi |
+| `granularity` | enum `pasal` / `ayat` / `fixed_size` | H-038; `fixed_size` = header untuk potongan `fixed_size` (H-069), satu header per `chunk_id` | Sistem dari konfigurasi |
 | `prompt_version` | string | | Sistem |
 | `tokens_local` | int | token header, masuk anggaran (H-004) | Sistem |
 | `run_id` | string | | Sistem |
