@@ -219,3 +219,22 @@ def test_should4_unknown_grid_item_is_422(tmp_path):
     r = c.get(url("uupt", H.P1["setting_id"]))
     assert r.status_code == 422 and r.json()["error"]["code"] == "validation_failed" and "unknown item" in r.json()["error"]["message"]
     assert not (tmp_path / "profiles").exists()
+
+
+# ---------- W12: build_deps nyata memuat akta dari config/corpus_akta.toml ----------
+def test_w12_real_deps_serve_deed_family(tmp_path):
+    from backend.grid.expand import expand_grid
+
+    svc = Service(runs_dir=tmp_path / "runs")
+    app = create_app(svc, env={}, replay=False, spark_transport=Boom())  # tanpa profile_deps: jalur build_deps
+    c = TestClient(app, raise_server_exceptions=False)
+    sid = next(iter(expand_grid(svc.cfg("grid"), "akta"))).setting_id
+    r = c.get(url("akta", sid))
+    assert r.status_code == 200, r.text  # bukan 422 "No corpus is loaded"
+    prof = r.json()
+    assert prof["family"] == "akta" and len(prof["corpus_hash"]) == 64
+    ok = c.post("/api/profiles/import", json=prof)
+    assert ok.status_code == 200 and ok.json()["ok"] is True  # corpus_hash tidak ditolak
+    prof["corpus_hash"] = "0" * 64
+    bad = c.post("/api/profiles/import", json=prof)
+    assert bad.status_code == 409 and "corpus hash" in bad.json()["error"]["message"]

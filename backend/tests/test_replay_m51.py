@@ -111,7 +111,7 @@ def test_export_matches_the_live_api_response(world):
 def test_static_health_lists_only_profiles_with_stored_answers(world):
     h = json.loads(world["files"]["health.json"])
     assert h["replay"] is True and h["static"] is True
-    assert h["model_profiles"] and all(p["available"] is False for p in h["model_profiles"])  # tidak ada run tersimpan di fixture
+    assert h["model_profiles"] == []  # tidak ada run tersimpan di fixture: profil dev tidak diekspos
     assert not [k for k in world["files"] if k.startswith("answers/")]
 
 
@@ -241,4 +241,75 @@ def test_export_answers_layout_and_profile_availability(monkeypatch):
     assert key in files and not [k for k in files if k.startswith("answers/") and k != key]
     assert posted and all(p["live"] is False for p in posted)
     h = json.loads(files["health.json"])
-    assert {p["model_profile"]: p["available"] for p in h["model_profiles"]} == {"meta": True, "glim": False}
+    assert {p["model_profile"]: p["available"] for p in h["model_profiles"]} == {"meta": True}  # glim tanpa jawaban tersimpan: tidak dicantumkan
+
+
+# ---- W12: determinisme ekspor ----
+def test_export_is_byte_deterministic_with_injected_clock(world):
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 10, 27, 10, 0, 0, tzinfo=timezone.utc)
+    a = build_files(world["app"], families=("uupt",), retrieval=False, answers=False, now=now)
+    b = build_files(world["app"], families=("uupt",), retrieval=False, answers=False, now=now)
+    assert a == b and list(a) == list(b)
+    m = json.loads(a["manifest.json"])
+    assert m["generated_at"] == "2026-10-27T10:00:00Z"
+    assert list(m["files"]) == sorted(m["files"])
+    raw = a["manifest.json"].decode("utf-8")
+    assert raw.index('"config_hash"') < raw.index('"files"') < raw.index('"generated_at"') < raw.index('"static"')  # sort_keys
+    assert all(blob.endswith(b"\n") and b"\r" not in blob for blob in a.values())
+    for blob in a.values():
+        obj = json.loads(blob)
+        assert blob == (json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+def test_source_date_epoch_fixes_generated_at():
+    from backend.replay.export import source_date
+
+    assert source_date({}) is None and source_date({"SOURCE_DATE_EPOCH": "abc"}) is None
+    assert source_date({"SOURCE_DATE_EPOCH": "1793095200"}).strftime("%Y-%m-%dT%H:%M:%SZ") == "2026-10-27T10:00:00Z"
+
+
+# ---- W12: env_secrets dan CLI --check dengan env palsu ----
+def test_env_secrets_classifies_names_and_skips_short_values():
+    from backend.replay.scan import env_secrets
+
+    keys, urls = env_secrets({
+        "MUSE_API_KEY": FAKE_KEY, "OPENROUTER_API_KEY": '"' + FAKE_KEY + 'ZZ"', "SHORT_KEY": "abc",
+        "MUSE_BASE_URL": "http://gateway.invalid:9", "OTHER_URL": "http://other.invalid", "PATH": "C:\\bin;C:\\x", "NOTE": "nilai-biasa-panjang"})
+    assert FAKE_KEY in keys and FAKE_KEY + "ZZ" in keys and "abc" not in keys and len(keys) == 2
+    assert urls == ["http://gateway.invalid:9", "http://other.invalid"]
+    assert env_secrets({}) == ([], [])
+
+
+def test_cli_check_uses_process_env_key_and_url(tmp_path, monkeypatch, capsys):
+    secret = "zq" + "Xv" * 9  # tanpa pola sk-: hanya terdeteksi lewat nilai dari lingkungan proses
+    d = tmp_path / "data"
+    d.mkdir()
+    (d / "a.json").write_text(json.dumps({"x": "prefix " + secret + " suffix"}), encoding="utf-8")
+    monkeypatch.delenv("FAKE_W12_KEY", raising=False)
+    assert export_main(["--check", str(tmp_path)]) == 0  # env tanpa rahasia: bersih
+    monkeypatch.setenv("FAKE_W12_KEY", secret)
+    assert export_main(["--check", str(tmp_path)]) == 1
+    out = capsys.readouterr().out
+    assert "secret_value" in out and secret not in out
+    monkeypatch.delenv("FAKE_W12_KEY")
+    (d / "a.json").write_text('{"u":"gateway-w12.invalid/v1"}', encoding="utf-8")
+    assert export_main(["--check", str(tmp_path)]) == 0
+    monkeypatch.setenv("FAKE_W12_BASE_URL", "gateway-w12.invalid/v1")
+    assert export_main(["--check", str(tmp_path)]) == 1
+    assert "base_url_value" in capsys.readouterr().out
+
+
+def test_cli_export_passes_source_date_epoch_as_clock(monkeypatch, tmp_path):
+    import backend.api.app as appmod
+    import backend.replay.export as ex
+
+    seen = {}
+    monkeypatch.setattr(appmod, "create_app", lambda **kw: object())
+    monkeypatch.setattr(ex, "export_static", lambda out, app, **kw: seen.update(kw) or {"n_files": 0, "bytes": 0, "data_dir": str(out)})
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "1793095200")
+    assert export_main(["--out", str(tmp_path)]) == 0
+    assert seen["now"].strftime("%Y-%m-%dT%H:%M:%SZ") == "2026-10-27T10:00:00Z"
+    monkeypatch.delenv("SOURCE_DATE_EPOCH")
+    assert export_main(["--out", str(tmp_path)]) == 0 and seen["now"] is None

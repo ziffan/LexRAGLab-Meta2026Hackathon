@@ -151,9 +151,9 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
         if q is not None:
             files[f"proposals/{fam}.json"] = dump(q)
 
-    # Pilihan model di versi statis: hanya profil yang punya jawaban tersimpan yang bisa dipilih (H-053).
+    # Pilihan model di versi statis: hanya profil yang punya jawaban tersimpan dicantumkan (H-053); profil dev tidak diekspos.
     static_health = {**health, "replay": True, "static": True,
-                     "model_profiles": [{**p, "available": p["model_profile"] in stored_profiles} for p in health.get("model_profiles", [])]}
+                     "model_profiles": [{**p, "available": True} for p in health.get("model_profiles", []) if p["model_profile"] in stored_profiles]}
     files["health.json"] = dump(static_health)
     ts = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     files["manifest.json"] = dump({
@@ -185,6 +185,12 @@ def export_static(out_dir: Path, app: Any, *, secrets: Iterable[str] = (), base_
     return {"data_dir": str(data), "n_files": len(files), "bytes": sum(len(v) for v in files.values())}
 
 
+def source_date(environ: Mapping[str, str]) -> datetime | None:
+    """`SOURCE_DATE_EPOCH` (detik UTC) membuat `generated_at` tetap, jadi dua ekspor identik byte."""
+    v = (environ.get("SOURCE_DATE_EPOCH") or "").strip()
+    return datetime.fromtimestamp(int(v), timezone.utc) if v.isdigit() else None
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Export the replay mode as a static snapshot (H-051). No model calls.")
     ap.add_argument("--out", type=Path, help="output directory (e.g. dist-static); data goes to <out>/data")
@@ -193,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--check", type=Path, help="only scan an existing <dir>/data for keys, local paths, hosts")
     args = ap.parse_args(argv)
     keys, urls = env_secrets(os.environ)  # lingkungan proses; .env tidak dibaca di sini
+    now = source_date(os.environ)
     if args.check:
         findings: list[Finding] = scan_dir(args.check / "data", secrets=keys, base_urls=urls)
         print(f"snapshot check: {len(findings)} finding(s)")
@@ -205,7 +212,7 @@ def main(argv: list[str] | None = None) -> int:
 
     app = create_app(replay=True)
     try:
-        info = export_static(args.out, app, secrets=keys, base_urls=urls, retrieval=not args.no_retrieval, answers=not args.no_answers)
+        info = export_static(args.out, app, secrets=keys, base_urls=urls, retrieval=not args.no_retrieval, answers=not args.no_answers, now=now)
     except SnapshotLeak as exc:
         print(f"export refused, nothing written: {exc}", file=sys.stderr)
         return 1

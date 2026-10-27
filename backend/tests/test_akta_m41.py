@@ -300,3 +300,23 @@ def test_projection_of_induction_a_makes_no_call(tmp_path, docs):
         out[label] = (call["est_input"], call["max_output_tokens"], proj.total_micros)
     assert out["all"][0] > out["one"][0] and out["all"][2] > out["one"][2]
     assert rig.tr.calls == 0
+
+
+# ---------------------------------------------------------------- W12: NIT
+def test_schema_address_range_end_exactly_at_next_marker(docs):
+    d = docs["akta-01"]
+    fn = schema_address_fn(d, record())
+    p1 = d.text.index("\nPasal 1\n") + 1
+    p2 = d.text.index("\nPasal 2\n") + 1  # end eksklusif tepat di penanda berikutnya: Pasal 2 bukan bagian rentang
+    assert fn(p1, p2, "batang_tubuh")[0] == "Akta 01 › Pasal 1"
+    assert fn(p1, p2 + 1, "batang_tubuh")[0] == "Akta 01 › Pasal 1 – Akta 01 › Pasal 2"
+
+
+def test_loader_trims_trailing_blank_lines(tmp_path):
+    raw = (DATA / "akta-01.txt").read_bytes()
+    base = load_corpus("akta-01")
+    padded = tmp_path / "pad.txt"
+    padded.write_bytes(raw.rstrip(b"\n") + b"\n\n\n\n")
+    d = load_corpus("akta-01", path=padded, verify_hash=False)
+    assert d.text == base.text and d.text.endswith("\n") and not d.text.endswith("\n\n")
+    assert d.clean_sha256 == base.clean_sha256 and d.char_count == base.char_count and d.sections == base.sections

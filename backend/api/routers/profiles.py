@@ -36,7 +36,7 @@ def build_deps(request: Request) -> ProfileDeps:
     retrieval, grid = svc.cfg("retrieval"), svc.cfg("grid")
 
     def docs(family: str) -> list[Any]:
-        return [svc.doc(d["doc_id"]) for d in svc.cfg("corpus")["documents"] if d["family"] == family]
+        return svc.family_docs(family)
 
     def settings(family: str) -> list[dict[str, Any]]:
         return [{"setting_id": s.setting_id, **setting_content(s)} for s in expand_grid(grid, family)]
