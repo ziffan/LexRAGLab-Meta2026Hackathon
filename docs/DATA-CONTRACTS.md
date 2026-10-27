@@ -258,6 +258,8 @@ Koreksi operator **HARUS** disimpan sebagai versi baru; versi lama tidak ditimpa
 
 **Aturan semantik** (keluaran Spark dan koreksi operator, sama): struktur sesuai skema di atas; `levels` tidak kosong; `order` naik ketat; `parent_order` null atau `order` yang lebih awal; `default_chunk_level` ada dan `is_chunk_unit = true`; `marker_pattern` dikompilasi (`re.MULTILINE`), tidak cocok string kosong, tanpa kuantor bersarang, maks 500 karakter; tiap `examples` satu baris (maks 300 karakter), cocok dengan pola levelnya, dan ditemukan persis di sampel; `family` sama dengan yang diminta.
 
+**Semantik induk** (H-084): `parent_order` menunjuk induk paling spesifik; bila penanda level itu tidak muncul di teks, induk = level berikutnya pada rantai `parent_order` (pengelompokan terdekat yang ada; untuk peraturan per Lampiran II UU 12/2011: Paragraf, else Bagian, else Bab, else Buku, else tanpa induk). Skema dan validator tidak berubah.
+
 **Keluaran ditolak.** Keluaran Spark yang gagal aturan semantik bukan `SchemaRecord`: disimpan di `runs/schemas/<family>/rejected/<run_id>.json` sebagai `{run_id, cache_key, family, body, errors[], created_at, sample}`, tidak berversi dan tidak dipakai chunker. R3 membawanya di `schemas_rejected` untuk U5.
 
 ## 7. HeaderB — keluaran Spark peran B
