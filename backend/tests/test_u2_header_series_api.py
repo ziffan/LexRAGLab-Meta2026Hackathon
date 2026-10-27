@@ -101,3 +101,81 @@ def test_stored_grid_prefers_header_run_then_falls_back(tmp_path, monkeypatch):
     store.write("HKEY", {"key": "HKEY", "record": {"failed_settings": []}})
     seen.clear()
     assert svc.stored_grid("uupt")[1]["key"] == "HKEY" and seen == [True]
+
+
+# --- jalur 422 HeaderError dan penyempitan except di header_binding (W7) ---
+import logging
+
+import pytest
+from fastapi.testclient import TestClient
+
+from backend.api.app import create_app
+from backend.api.errors import ApiError
+from backend.config import ConfigError
+from backend.grid.headers import HeaderMissingError
+from backend.pipeline.grid_run import GridRunError
+from backend.pipeline.pipeline import SettingNotAvailable
+from backend.tokenizer import get_tokenizer
+
+from .spark_fakes import BASE, K, budget_cfg, model_cfg
+
+FAM = "/api/families/uupt"
+
+
+class _Raising:
+    def __init__(self, exc):
+        self.exc = exc
+
+    def retrieve(self, s, item):
+        raise self.exc
+
+
+def _retrieval_client(tmp_path, monkeypatch, exc):
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs")
+    monkeypatch.setattr(svc, "find_setting", lambda family, sid: object())
+    monkeypatch.setattr(svc, "items", lambda family: [{"id": "i1", "family": "uupt", "origin": "o", "mode": "m", "clean_sha256": "0" * 64,
+                                                       "gold_spans": [], "query": "q"}])
+    monkeypatch.setattr(svc, "pipeline", lambda: _Raising(exc))
+    app = create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg())
+    return TestClient(app, raise_server_exceptions=False)
+
+
+def test_retrieval_header_error_is_422_with_message(tmp_path, monkeypatch):
+    c = _retrieval_client(tmp_path, monkeypatch, HeaderMissingError("header_missing: chunk c1", setting_id="s", chunk_id="c1"))
+    r = c.get(f"{FAM}/retrieval", params={"setting_id": "s", "item_id": "i1"})
+    assert r.status_code == 422
+    assert r.json() == {"error": {"code": "validation_failed", "message": "header_missing: chunk c1"}}
+
+
+def test_retrieval_setting_not_available_is_422(tmp_path, monkeypatch):
+    c = _retrieval_client(tmp_path, monkeypatch, SettingNotAvailable("x not available"))
+    assert c.get(f"{FAM}/retrieval", params={"setting_id": "s", "item_id": "i1"}).status_code == 422
+
+
+def test_retrieval_other_error_is_not_422(tmp_path, monkeypatch):
+    c = _retrieval_client(tmp_path, monkeypatch, RuntimeError("boom"))
+    assert c.get(f"{FAM}/retrieval", params={"setting_id": "s", "item_id": "i1"}).status_code == 500
+
+
+@pytest.mark.parametrize("exc", [GridRunError("bad scope"), ConfigError("missing"), OSError("io"), ValueError("v"), KeyError("k"), TypeError("t")])
+def test_header_binding_unreadable_config_means_none_and_is_logged(tmp_path, monkeypatch, caplog, exc):
+    (tmp_path / "headers").mkdir()
+
+    def boom(**kw):
+        raise exc
+
+    monkeypatch.setattr("backend.api.service.load_header_binding", boom)
+    with caplog.at_level(logging.WARNING, logger="backend.api.service"):
+        assert Service(runs_dir=tmp_path).header_binding() is None
+    assert any("header B binding unavailable" in r.getMessage() and type(exc).__name__ in r.getMessage() for r in caplog.records)
+
+
+def test_header_binding_unexpected_bug_is_not_swallowed(tmp_path, monkeypatch):
+    (tmp_path / "headers").mkdir()
+
+    def boom(**kw):
+        raise RuntimeError("bug")
+
+    monkeypatch.setattr("backend.api.service.load_header_binding", boom)
+    with pytest.raises(RuntimeError):
+        Service(runs_dir=tmp_path).header_binding()

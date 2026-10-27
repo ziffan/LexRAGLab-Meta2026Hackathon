@@ -14,6 +14,7 @@ vi.mock("../state", async (orig) => {
 
 import { SettingSpace, failReason, frontierLine, plottable } from "../components/SettingSpace";
 import { availableSettings, frontierIds } from "../lib/settings";
+import { seriesGroups } from "../lib/series";
 
 const pt = (id: string, x: number | null, y: number | null, header_b?: boolean): GridPoint => ({
   setting_id: id, split: "held_out", budget_tokens: 2000, mean_span_recall: y, mean_token_precision: 0.1, mrr: 0.5, mean_retrieved_tokens: x,
@@ -55,6 +56,30 @@ describe("U2 two series", () => {
     const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
     expect(dots.map((d) => d.headerOn)).toEqual([true, false]);
   });
+  it("point label wins over the setting's own header_b (label off, setting on)", () => {
+    const sn = snap();
+    sn.grid!.held_out.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
+    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    expect(dots.map((d) => [d.setting.setting_id, d.headerOn])).toEqual([["on", false], ["off", true]]);
+  });
+  it("seriesGroups keeps off and on dots in separate, correctly named groups per chunker", () => {
+    const sn = snap();
+    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    const g = seriesGroups(dots, ["structure_handwritten", "structure_schema", "fixed_size"] as const);
+    expect(g.map((x) => [x.key, x.on, x.name, x.data.map((d) => d.setting.setting_id)])).toEqual([
+      ["off-structure_handwritten", false, "Header B off · structure_handwritten", ["off"]],
+      ["off-fixed_size", false, "Header B off · fixed_size", ["fx"]],
+      ["on-structure_handwritten", true, "Header B on · structure_handwritten", ["on"]],
+    ]);
+  });
+  it("seriesGroups follows the dot's headerOn, not the setting's own flag", () => {
+    const sn = snap();
+    sn.grid!.held_out.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
+    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    const g = seriesGroups(dots, ["structure_handwritten", "structure_schema", "fixed_size"] as const);
+    expect(g.find((x) => !x.on)?.data.map((d) => d.setting.setting_id)).toEqual(["on"]);
+    expect(g.find((x) => x.on)?.data.map((d) => d.setting.setting_id)).toEqual(["off"]);
+  });
   it("legend names both series; chart label counts header-on points", () => {
     const h = render(snap());
     expect(h).toContain('data-testid="legend-off"');
@@ -94,6 +119,9 @@ describe("U2 failed header-on settings", () => {
   });
   it("keeps unknown reason codes visible and tolerates unknown setting ids", () => {
     expect(failReason("something_new")).toBe("something_new");
+    expect(failReason("header_invalid")).toBe("header is empty (header_invalid)");
+    expect(failReason("header_stale")).toBe("header comes from a different clean text (header_stale)");
+    expect(failReason("granularity_mismatch")).toBe("header granularity does not match (granularity_mismatch)");
     const h = render(snap({ failed_settings: [{ setting_id: "zzzzzzzzzzzzzzzzzz", reason: "header_stale", chunk_id: null }] }));
     expect(h).toContain("zzzzzzzzzzzz");
     expect(h).toContain("header_stale");

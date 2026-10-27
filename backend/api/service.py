@@ -6,6 +6,7 @@ Tanpa Model API.
 
 from __future__ import annotations
 
+import logging
 import threading
 from pathlib import Path
 from typing import Any, Callable
@@ -13,6 +14,7 @@ from typing import Any, Callable
 from backend import config
 from backend.api.errors import ApiError
 from backend.chunking import ChunkOffsetError, chunk_document
+from backend.config import ConfigError
 from backend.corpus import CorpusDoc, CorpusError, load_corpus
 from backend.grid.expand import expand_grid
 from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError
@@ -24,6 +26,9 @@ from backend.retrieval.dense import CACHE_DIR, Encoder, encoder_from_config
 from backend.tokenizer import get_tokenizer
 
 FAMILIES = ("uupt", "akta")
+log = logging.getLogger(__name__)
+# Galat yang berarti config/prompt B tak terbaca atau cacat; selain ini (bug) dibiarkan naik.
+_BINDING_UNREADABLE = (GridRunError, ConfigError, OSError, ValueError, KeyError, TypeError)
 
 
 class Service:
@@ -77,7 +82,8 @@ class Service:
             return None
         try:
             hb = load_header_binding(runs_dir=self.runs_dir, config_dir=self.config_dir)
-        except Exception:  # config/prompt B tak terbaca: anggap tak ada store
+        except _BINDING_UNREADABLE as exc:  # config/prompt B tak terbaca: anggap tak ada store (dicatat, tanpa isi config)
+            log.warning("header B binding unavailable: %s", type(exc).__name__)
             return None
         store = hb.store
         if isinstance(store, DirHeaderStore):

@@ -2,6 +2,7 @@ import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAx
 import { useStore } from "../state";
 import { exactStr, fixed3, intStr, orNa, xOfY } from "../lib/format";
 import { chunkerLabel, settingShort, splitLabel } from "../lib/labels";
+import { seriesGroups } from "../lib/series";
 import { availableSettings, frontierIds, pointOf } from "../lib/settings";
 import type { GridPoint, Setting, Snapshot, SplitName } from "../types";
 import { EmptyBlock, SnapshotPanel } from "./Shell";
@@ -120,10 +121,6 @@ function Body({ snap }: { snap: Snapshot }) {
   const onDots = dots.filter((d) => d.headerOn).length;
   const failed = grid.failed_settings ?? [];
   const byId = new Map(snap.settings.map((s) => [s.setting_id, s]));
-  const SERIES: { on: boolean; label: string }[] = [
-    { on: false, label: "Header B off" },
-    { on: true, label: "Header B on" },
-  ];
 
   return (
     <>
@@ -183,13 +180,11 @@ function Body({ snap }: { snap: Snapshot }) {
               />
               <Tooltip content={<Tip />} isAnimationActive={false} cursor={{ strokeDasharray: "3 3" }} />
               <Scatter name="Frontier" data={line} line={{ stroke: COLOR_LINE, strokeWidth: 2 }} shape={() => <g />} legendType="none" tooltipType="none" isAnimationActive={false} />
-              {SERIES.flatMap((ser) => chunkers.map((c) => ({ ser, c }))).map(({ ser, c }) => {
-                const data = dots.filter((d) => d.setting.chunker === c && d.headerOn === ser.on);
-                if (data.length === 0) return null;
+              {seriesGroups(dots, chunkers).map(({ key, chunker: c, name, data }) => {
                 return (
                   <Scatter
-                    key={`${ser.on ? "on" : "off"}-${c}`}
-                    name={`${ser.label} · ${c}`}
+                    key={key}
+                    name={name}
                     data={data}
                     isAnimationActive={false}
                     shape={(p: unknown) => {
