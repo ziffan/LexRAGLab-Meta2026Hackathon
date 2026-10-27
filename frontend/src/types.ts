@@ -47,7 +47,7 @@ export interface Item {
   doc_id: string;
   gold_spans: Span[];
   clean_sha256: string;
-  mode: "literal" | "parafrase";
+  mode: "literal" | "parafrase" | "tolak";
   origin: "operator" | "spark_disetujui";
   scene_checked?: boolean;
 }

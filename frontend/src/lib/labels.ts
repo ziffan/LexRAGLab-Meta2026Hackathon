@@ -19,7 +19,8 @@ export function settingShort(s: Setting): string {
   return `${c} · ${s.retrieval_mode} · header ${s.header_b ? "on" : "off"}`;
 }
 
-export const modeLabel = (m: Item["mode"]): string => (m === "literal" ? "Literal" : "Paraphrase");
+export const modeLabel = (m: Item["mode"] | "unanswerable" | (string & {})): string =>
+  m === "literal" ? "Literal" : m === "tolak" ? "Must refuse" : m === "unanswerable" ? "Unanswerable" : m === "parafrase" ? "Paraphrase" : m;
 export const originLabel = (o: Item["origin"]): string => (o === "operator" ? "Operator-written" : "Spark-proposed, approved");
 export const splitLabel = (s: SplitName | null | undefined): string => (s === "tune" ? "Tune" : s === "held_out" ? "Held-out" : "n/a");
 

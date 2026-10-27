@@ -8,11 +8,24 @@ export interface Span {
 
 export interface ProposalBody {
   query: string;
-  mode: "literal" | "parafrase";
+  mode: "literal" | "parafrase" | "unanswerable";
   doc_id: string;
-  teks_gold: string;
-  start: number | null;
-  end: number | null;
+  /** Hanya mode literal/parafrase. */
+  teks_gold?: string;
+  start?: number | null;
+  end?: number | null;
+  /** Hanya mode unanswerable (H-087, H-092). */
+  alasan_kode?: string;
+  alasan_teks?: string;
+}
+
+export interface AbsenceCheck {
+  status: "ok" | "doubtful";
+  reasons: string[];
+  max_cov: { num: number; den: number };
+  max_cosine: number | null;
+  top_k: { source: "bm25" | "dense"; rank: number; unit_text: string }[];
+  config_hash: string;
 }
 
 export interface ProposalRecord {
@@ -20,7 +33,10 @@ export interface ProposalRecord {
   family: string;
   body: ProposalBody;
   resolved_span: Span | null;
-  validation: { offset_found: boolean; text_matches: boolean };
+  /** `null` pada usulan unanswerable. */
+  validation: { offset_found: boolean; text_matches: boolean } | null;
+  absence_check?: AbsenceCheck | null;
+  duplicate_of?: string | null;
   review_status: "usulan" | "disetujui" | "diubah" | "ditolak";
   edited: { query: string; gold_spans: Span[]; mode: string } | null;
   operator_note: string | null;
@@ -32,7 +48,46 @@ export interface ProposalRecord {
 export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
 /** Kartu boleh di-Approve hanya bila validasi span dari server lolos (U6 "Aturan"). */
-export const canApprove = (p: ProposalRecord): boolean => p.validation.text_matches && p.resolved_span !== null;
+export const canApprove = (p: ProposalRecord): boolean =>
+  p.body.mode === "unanswerable" || (p.validation !== null && p.validation.text_matches && p.resolved_span !== null);
+
+export const isUnanswerable = (p: ProposalRecord): boolean => p.body.mode === "unanswerable";
+
+/** Peta kode ke label UI Inggris (H-018, SU19). Kode tak dikenal ditampilkan apa adanya. */
+export const ALASAN_LABELS: Record<string, string> = {
+  data_tidak_dimuat: "Data not included",
+  di_luar_akta: "Outside the deed",
+  rincian_tidak_diatur: "Detail not regulated",
+};
+export const FLAG_LABELS: Record<string, string> = {
+  lexical_overlap: "Shares distinctive terms with the deed",
+  dense_similar: "Semantically close passage",
+  no_distinctive_terms: "No distinctive terms",
+  dense_unavailable: "Semantic check unavailable",
+};
+export const alasanLabel = (k: string | undefined): string => (k ? ALASAN_LABELS[k] ?? k : "");
+export const flagLabel = (k: string): string => FLAG_LABELS[k] ?? k;
+
+/** Penghitung butir wajib tolak yang disetujui (status `disetujui`/`diubah`), total dan per `doc_id` (H-087). */
+export function mustRefuseCounts(all: ProposalRecord[]): { total: number; perDoc: Record<string, number> } {
+  const perDoc: Record<string, number> = {};
+  let total = 0;
+  for (const p of all) {
+    if (!isUnanswerable(p)) continue;
+    perDoc[p.body.doc_id] ??= 0;
+    if (p.review_status === "disetujui" || p.review_status === "diubah") {
+      perDoc[p.body.doc_id] += 1;
+      total += 1;
+    }
+  }
+  return { total, perDoc };
+}
+
+export const mustRefuseLabel = (n: number): string => (n === 0 ? "No must-refuse item approved yet" : `Must-refuse approved: ${n}`);
+
+/** Tanda `Check settings changed`: hanya bila config sekarang diketahui dan beda dari hash rekaman (SU9). */
+export const checkStale = (p: ProposalRecord, currentHash: string | null): boolean =>
+  currentHash !== null && !!p.absence_check && p.absence_check.config_hash !== currentHash;
 
 export const REVIEW_FAMILIES = ["uupt", "akta"] as const;
 
@@ -139,7 +194,7 @@ export function splitHighlight(ctx: ContextView): [string, string, string] {
 // ---------- pengendali ----------
 export interface EditState {
   query: string;
-  mode: "literal" | "parafrase";
+  mode: "literal" | "parafrase" | "tolak";
   spans: Span[];
   error: string | null;
 }
@@ -148,6 +203,10 @@ export interface ReviewState {
   load: "idle" | "loading" | "ready" | "error";
   loadMessage: string;
   proposals: ProposalRecord[]; // hanya yang masih `usulan`
+  /** Semua rekaman keluarga (semua status), untuk penghitung butir wajib tolak. */
+  all: ProposalRecord[];
+  /** Hash konfigurasi pemeriksaan sekarang bila server melaporkannya (`check_config_hash`); selain itu null. */
+  checkConfigHash: string | null;
   docs: Record<string, string>;
   contextLines: number;
   busyId: string | null;
@@ -191,7 +250,7 @@ export class ReviewController {
     this.fetchFn = fetchFn;
     this.family = family;
     this.s = {
-      load: "idle", loadMessage: "", proposals: [], docs: {}, contextLines: DEFAULT_CONTEXT_LINES, busyId: null,
+      load: "idle", loadMessage: "", proposals: [], all: [], checkConfigHash: null, docs: {}, contextLines: DEFAULT_CONTEXT_LINES, busyId: null,
       confirmingId: null, editingId: null, edit: null, notes: {}, errors: {},
     };
   }
@@ -217,7 +276,7 @@ export class ReviewController {
     try {
       const res = await this.fetchFn(`/api/families/${encodeURIComponent(this.family)}/proposals`);
       if (!res.ok) throw new Error(await readError(res));
-      const body = (await res.json()) as { proposals: ProposalRecord[]; context_lines?: number };
+      const body = (await res.json()) as { proposals: ProposalRecord[]; context_lines?: number; check_config_hash?: string | null };
       const pending = body.proposals.filter((p) => p.review_status === "usulan");
       const docs: Record<string, string> = {};
       for (const id of new Set(pending.map((p) => p.body.doc_id))) {
@@ -225,7 +284,7 @@ export class ReviewController {
         if (!r.ok) throw new Error(await readError(r));
         docs[id] = ((await r.json()) as { text: string }).text;
       }
-      this.set({ load: "ready", proposals: pending, docs, contextLines: body.context_lines ?? DEFAULT_CONTEXT_LINES });
+      this.set({ load: "ready", proposals: pending, all: body.proposals, checkConfigHash: body.check_config_hash ?? null, docs, contextLines: body.context_lines ?? DEFAULT_CONTEXT_LINES });
     } catch (e) {
       this.set({ load: "error", loadMessage: e instanceof Error ? e.message : "Backend unreachable." });
     }
@@ -270,8 +329,11 @@ export class ReviewController {
       return false;
     }
     const { [id]: _n, ...notes } = this.s.notes;
+    const dec = body.decision as ProposalRecord["review_status"];
+    const edited = body.edited as ProposalRecord["edited"];
+    const all = this.s.all.map((p) => (p.proposal_id === id ? { ...p, review_status: dec, edited } : p));
     this.set({
-      busyId: null, proposals: this.s.proposals.filter((p) => p.proposal_id !== id), notes,
+      busyId: null, all, proposals: this.s.proposals.filter((p) => p.proposal_id !== id), notes,
       confirmingId: null, editingId: null, edit: null,
     });
     return true;
@@ -301,7 +363,7 @@ export class ReviewController {
     if (!p || this.s.busyId !== null) return;
     this.set({
       editingId: id, confirmingId: null,
-      edit: { query: p.body.query, mode: p.body.mode, spans: [], error: null },
+      edit: { query: p.body.query, mode: p.body.mode === "unanswerable" ? "tolak" : p.body.mode, spans: [], error: null },
     });
   }
 
@@ -339,6 +401,7 @@ export class ReviewController {
     const n = Array.from(this.s.docs[p.body.doc_id] ?? "").length;
     let error: string | null = null;
     if (e.query.trim() === "") error = "Enter a query.";
+    else if (p.body.mode === "unanswerable") error = null;
     else if (e.spans.length === 0) error = "Select at least one span.";
     else if (e.spans.some((s) => !(Number.isInteger(s.start) && Number.isInteger(s.end) && s.start >= 0 && s.start < s.end && s.end <= n))) {
       error = "Each span needs 0 <= start < end <= document length.";
@@ -346,6 +409,9 @@ export class ReviewController {
     if (error !== null) {
       this.set({ edit: { ...e, error } });
       return Promise.resolve(false);
+    }
+    if (p.body.mode === "unanswerable") {
+      return this.send(id, { decision: "diubah", edited: { query: e.query, gold_spans: [], mode: "tolak" }, operator_note: this.noteOf(id) });
     }
     return this.send(id, {
       decision: "diubah", edited: { query: e.query, gold_spans: e.spans.map((s) => ({ start: s.start, end: s.end })), mode: e.mode },

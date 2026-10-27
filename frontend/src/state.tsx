@@ -129,7 +129,7 @@ function initialState(): State {
     compare: q.get("compare") === "1",
     filters: {
       origin: oneOf(q.get("origin"), ["all", "operator", "spark_disetujui"] as const, "all"),
-      mode: oneOf(q.get("mode"), ["all", "literal", "parafrase"] as const, "all"),
+      mode: oneOf(q.get("mode"), ["all", "literal", "parafrase", "tolak"] as const, "all"),
       split: oneOf(q.get("fsplit"), ["all", "tune", "held_out"] as const, "all"),
     },
   };

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiFailure, fetchProfileExport, postProfileImport } from "../api";
 import { fixed3, orNa, xOfY } from "../lib/format";
+import { modeLabel } from "../lib/labels";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { useStore } from "../state";
 import type { ImportResult, Profile, Report, Snapshot } from "../types";
@@ -165,7 +166,7 @@ function HeldOutSummary({ profile }: { profile: Profile }) {
   );
 }
 
-function ReportTable({ report }: { report: Report }) {
+export function ReportTable({ report }: { report: Report }) {
   return (
     <div className="table-wrap">
       <table className="data">
@@ -176,7 +177,7 @@ function ReportTable({ report }: { report: Report }) {
         <tbody>
           {report.rows.map((r) => (
             <tr key={r.item_id}>
-              <td className="mono">{r.item_id}</td><td>{r.split}</td><td>{r.origin}</td><td>{r.mode}</td>
+              <td className="mono">{r.item_id}</td><td>{r.split}</td><td>{r.origin}</td><td>{modeLabel(r.mode)}</td>
               <td>{r.span_recall ? r.span_recall.text : "n/a"}</td>
               <td>{r.token_precision ? r.token_precision.text : "n/a"}{r.note ? ` (${r.note})` : ""}</td>
             </tr>

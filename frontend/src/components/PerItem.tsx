@@ -54,6 +54,7 @@ function Body({ snap }: { snap: Snapshot }) {
             <option value="all">All</option>
             <option value="literal">Literal</option>
             <option value="parafrase">Paraphrase</option>
+            <option value="tolak">{modeLabel("tolak")}</option>
           </select>
         </label>
         <label className="field">
