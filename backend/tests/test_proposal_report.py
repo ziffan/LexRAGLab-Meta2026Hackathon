@@ -130,4 +130,6 @@ def test_snapshot_serves_summary_and_origin_report(tmp_path):
     assert set(rep) == {"operator", "spark_disetujui"}
     held_ops = [i for i in d["items"] if i["origin"] == "operator" and i["split"] == "held_out"]
     assert rep["operator"]["n_items"] == len(held_ops) == d["items_summary"]["control_in_held_out"]
-    assert rep["spark_disetujui"]["n_items"] == 0 and rep["spark_disetujui"]["mean_span_recall"] is None
+    # data v12: strata spark literal 4 -> round(1.6) = 2 held-out; spark parafrase 7 -> round(2.8) = 3; total 5 (split v1 dari nol, runs_dir kosong)
+    held_sp = [i for i in d["items"] if i["origin"] == "spark_disetujui" and i["split"] == "held_out"]
+    assert rep["spark_disetujui"]["n_items"] == len(held_sp) == 5

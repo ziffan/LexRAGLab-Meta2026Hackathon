@@ -135,9 +135,15 @@ def test_w1_runs_grid_then_cached(client, world):
 
 
 # ---- R3 sesudah run ----
+# Asal angka (data/butir/uupt.v12.jsonl, 20 butir; runs_dir sementara kosong -> split v1 dibuat dari nol, bukan perluasan; rasio 0.4 config/grid):
+# strata (origin, mode): operator-literal 4, operator-parafrase 5, spark-literal 4, spark-parafrase 7.
+# held_out = round(0.4*n): 2 + 2 + 2 + 3 = 9; tune = 20 - 9 = 11; kontrol di held_out = 2 + 2 = 4 (>= 3, tanpa pemindahan).
+S_V12_BY_SPLIT = {"tune": 11, "held_out": 9}
+
+
 def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
     d = client.get(f"{FAM}/snapshot").json()
-    assert d["split"]["split_version"] == 1 and d["items_summary"]["by_split"] == {"tune": 5, "held_out": 4}
+    assert d["split"]["split_version"] == 1 and d["items_summary"]["by_split"] == S_V12_BY_SPLIT
     assert d["items_summary"]["control_in_held_out"] >= 3 and {i["split"] for i in d["items"]} == {"tune", "held_out"}
     g = d["grid"]
     assert set(g["tune"]) == {"points", "frontier"} and set(g["held_out"]) == {"points", "frontier"}
@@ -146,7 +152,7 @@ def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
     assert g["selected"]["tune_point"]["split"] == "tune" and g["selected"]["budget_tokens"] == 2000
     assert len(g["skipped"]) == 12 and all(s["reason"] for s in g["skipped"])
     assert g["quality_comparison"]["selected_setting_id"] == g["selected"]["setting_id"]
-    assert len(d["metrics"]) == 6 * 9 and {m["split"] for m in d["metrics"]} == {"tune", "held_out"}
+    assert len(d["metrics"]) == 6 * 20 and {m["split"] for m in d["metrics"]} == {"tune", "held_out"}
     assert len(d["quality"]) == 6 and {"entity_preservation", "boundary_coherence", "recall_at_k", "k"} <= set(d["quality"][0])
     d1000 = client.get(f"{FAM}/snapshot", params={"budget_tokens": 1000}).json()
     assert d1000["grid"]["selected"]["budget_tokens"] == 1000 and d1000["grid"]["tune"]["frontier"]["budget_tokens"] == 1000

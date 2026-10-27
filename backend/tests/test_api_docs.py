@@ -75,9 +75,13 @@ def setting(snap, chunker):
     return next(s for s in m11_settings(snap) if s["chunker"] == chunker)
 
 
+# data/butir/uupt.v12.jsonl (operator, H-011): 9 kontrol (operator) + 11 spark_disetujui = 20 butir. Naik bila operator menambah butir.
+N_ITEMS_V12 = 20
+
+
 def test_snapshot_exposes_items_and_the_two_m11_settings(snap):
     assert snap["family"] == "uupt" and snap["replay"] is False and snap["budget_tokens"] == 2000
-    assert [i["id"] for i in snap["items"]][:2] == ["kontrol-K-01", "kontrol-K-02"] and len(snap["items"]) == 9
+    assert [i["id"] for i in snap["items"]][:2] == ["kontrol-K-01", "kontrol-K-02"] and len(snap["items"]) == N_ITEMS_V12
     assert [s["chunker"] for s in m11_settings(snap)] == ["structure_handwritten", "fixed_size"]
     assert len(snap["settings"]) == 36 and snap["split"] is None and snap["items_summary"]["by_split"] is None
     fx = config.load("grid")["fixed_size"]
@@ -85,7 +89,7 @@ def test_snapshot_exposes_items_and_the_two_m11_settings(snap):
     assert (f["chunk_size_tokens"], f["overlap_tokens"]) == (fx["chunk_size_tokens"], fx["overlap_tokens"])
     assert len({s["setting_id"] for s in snap["settings"]}) == 36
     assert snap["corpus"][0]["clean_sha256"] == real_doc().clean_sha256 and "text" not in snap["corpus"][0]
-    assert snap["grid"] is None and snap["metrics"] == [] and snap["items_summary"]["n_items"] == 9
+    assert snap["grid"] is None and snap["metrics"] == [] and snap["items_summary"]["n_items"] == N_ITEMS_V12
 
 
 def test_setting_id_is_hash_of_canonical_content(snap):
