@@ -326,15 +326,18 @@ class SparkClient:
                         self._sleep(wait)
                     continue
                 code, msg = self._map_status(status, exc.response)
-                return self._fail(ctx, code, msg)
+                # H-063: 5xx = mungkin sudah menghasilkan tanpa usage -> proyeksi; 4xx ditolak sebelum generasi.
+                return self._fail(ctx, code, msg, projected=projected if status >= 500 else None)
             except Exception as exc:  # noqa: BLE001 - dikelompokkan, pesan tidak memakai str(exc)
                 if _is_timeout(exc):
                     if timeouts < lim.max_retries:
                         timeouts += 1
                         continue
                     return self._fail(ctx, "timeout",
-                                      f"timeout after {_fmt_num(lim.timeout_s)} s ({attempts} attempts)")
-                return self._fail(ctx, "model_unavailable", "connection to the Model API failed")
+                                      f"timeout after {_fmt_num(lim.timeout_s)} s ({attempts} attempts)",
+                                      projected=projected)
+                return self._fail(ctx, "model_unavailable", "connection to the Model API failed",
+                                  projected=projected)
             return self._interpret(ctx, projected, http, schema, validator)
 
     def _map_status(self, status: int, response: Any) -> tuple[str, str]:
