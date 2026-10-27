@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-058.
+Sumber keputusan: H-001 sampai H-059.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -67,6 +67,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-056 | Blanko PPAT tidak dipakai; keluarga akta hanya lima akta sintetis (menutup H-P23, merevisi H-040) | 2026-10-26 |
 | H-057 | OpenRouter hanya untuk dev dan uji: profil `openrouter_dev` (model ID `meta/muse-spark-1.3-contributor`) dan `meta` (`muse-spark-1.3-contributor`) di `config/model`; `RunRecord` mencatat `provider`; run OpenRouter tidak dipakai untuk angka yang dilaporkan, run final lewat Meta Model API (H-027, H-028); tetap Responses API + `strict: true` (H-016), bila OpenRouter tidak mendukung jalur itu berhenti, tidak turun ke Chat Completions; pengecualian "tanpa key kedua" AGENTS.md hanya untuk dev. *Dikonfirmasi operator di sesi 26 Okt malam; dicatat agen di sini; operator menyalin ke log keputusan operator 27 Okt* | 2026-10-27 |
 | H-058 | Nilai grid H-012 di `config/grid` v1: `fixed_size` 512/64 (satu ukuran, sekaligus baseline C H-036), anggaran 2.000 + pembanding 1.000, `packing = stop`, `held_out_ratio = 0.4`, seed 20261026, urutan sederhana H-034; 36 titik UU PT. Ditetapkan setelah butir kontrol ditulis, sebelum run apa pun | 2026-10-27 |
+| H-059 | Kontrak `DATA-CONTRACTS` §10 untuk penyebut nol dan akta: (1) M1.4 A12 alt. (b): `split = null` untuk akta di `ItemMetrics`, `GridPoint`, `Frontier`; "transfer" hanya label laporan (H-054); (2) M1.5 A5 alt. N1: penyebut nol (E, Bnd, agregat Recall@K tanpa butir ber-gold) → `null`, UI "n/a"; `QualityMetrics` `number \| null`; (3) default "Dipilih" skenario M1.2 berlaku, termasuk A7b (`GridPoint.mean_token_precision` `null` bila semua butir null) dan A3 (truncate `r ≤ 0`: potongan tidak masuk, pengemasan berhenti). Skenario M1.2, M1.4, M1.5 disetujui. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen di sini; operator menyalin ke log keputusan operator* | 2026-10-27 |
 
 ## Pending
 
@@ -118,3 +119,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
 | 2026-10-27 | H-058 ditambahkan (nilai grid H-012), `config/grid.toml` dibuat |
 | 2026-10-27 | Pending H-P24 dibuka (kredit Baseten Spark Open diterima; Discord mengonfirmasi verifikasi partner) |
+| 2026-10-27 | H-059 ditambahkan (kontrak §10 nullable: split akta, penyebut nol; skenario M1.2, M1.4, M1.5 disetujui; I-27 ditutup). I-25 (OpenRouter ditinggalkan, dev lewat Meta) dan I-26 (metode selisih dua titik) ditutup operator tanpa keputusan H baru; belum ada di log keputusan operator, disalin operator |

@@ -1,7 +1,7 @@
 # DATA-CONTRACTS — bentuk setiap data
 
 Tujuan: menetapkan nama field, tipe, dan pemilik isi setiap data, serta JSON Schema keluaran Spark A, B, C, D yang patuh `strict: true`.
-Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054.
+Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054, H-059.
 
 Semua contoh memakai placeholder (`"<query>"`, offset `0`), bukan butir nyata.
 
@@ -415,7 +415,7 @@ Status `diubah` diperlakukan sebagai disetujui setelah diubah; `origin` tetap `s
 | Field | Tipe | Isi |
 |---|---|---|
 | `item_id`, `setting_id` | string | |
-| `split` | enum `tune` / `held_out` | dari `SplitRecord` |
+| `split` | enum `tune` / `held_out` \| null | dari `SplitRecord`; `null` untuk akta (tanpa split, H-054, H-059) |
 | `gold_chars` | int | |
 | `covered_gold_chars` | int | |
 | `span_recall` | number \| null | `null` bila tanpa gold |
@@ -434,18 +434,18 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 | Field | Tipe | Isi |
 |---|---|---|
 | `setting_id` | string | |
-| `split` | enum | |
+| `split` | enum `tune` / `held_out` \| null | `null` untuk akta (H-054, H-059) |
 | `budget_tokens` | int | |
 | `mean_span_recall` | number | |
-| `mean_token_precision` | number | |
+| `mean_token_precision` | number \| null | rata-rata atas nilai non-null; `null` bila semua butir null (M1.2 A7b, H-059) |
 | `mrr` | number | |
 | `mean_retrieved_tokens` | number | sumbu X frontier |
 | `fully_covered_count` | `{covered: int, total: int}` | "covered x of y" |
 | `dominated` | bool | |
 
-**Frontier**: `{family, split, budget_tokens, point_ids: array of string, grid_run_id}`.
+**Frontier**: `{family, split, budget_tokens, point_ids: array of string, grid_run_id}`. `split` `null` untuk akta; "transfer" hanya label laporan, bukan nilai data (H-054, H-059).
 
-**QualityMetrics** (per setting): `{setting_id, entity_preservation: number, boundary_coherence: number, recall_at_k: number, k: int}`. Definisi di `docs/EVAL-SPEC.md` §6–§7.
+**QualityMetrics** (per setting): `{setting_id, entity_preservation: number | null, boundary_coherence: number | null, recall_at_k: number | null, k: int}`. Penyebut nol (`|E| = 0`, `|Bnd| = 0`, atau agregat Recall@K tanpa butir ber-gold) → `null`, UI "n/a" (M1.5 A5 alt. N1, H-059). Definisi di `docs/EVAL-SPEC.md` §6–§7.
 
 ## 11. Profile
 
