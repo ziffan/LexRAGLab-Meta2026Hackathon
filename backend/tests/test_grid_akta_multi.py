@@ -295,3 +295,158 @@ def test_s2_w1_akta_without_items_is_clear_422(world, monkeypatch, tmp_path):
     empty.mkdir()
     r = _client(world, empty, monkeypatch).post("/api/families/akta/grid/run", json={})
     assert r.status_code == 422 and "no approved akta items" in r.text
+
+
+# ---- W44: test susulan temuan W39 (mutan M7, M11-M14, M18) + NIT-1 --------------------------------------------------
+class SmallEnc(FakeEncoder):
+    """Encoder palsu dengan batas urutan 5: potongan A (9 kata + 2 = 11) dan B (4 kata + 2 = 6) sama-sama terpotong."""
+
+    max_seq_length = 5
+
+
+def _handwritten_dense(env, budget=BUDGET_HI):
+    return next(s for s in env["settings_run"] if s["chunker"] == "structure_handwritten" and s["retrieval_mode"] == "dense"
+                and s["budget_tokens"] == budget and not s["header_b"])
+
+
+def test_w44_m7_config_hash_akta_follows_corpus_akta_but_uupt_does_not(world, tmp_path):
+    """FAMILY_CONFIGS['akta'] memasukkan config/corpus_akta ke config_hash akta; hash UU PT tak berubah."""
+    cfg2 = akta_config_dir(tmp_path / "cfg2")
+    f = cfg2 / "corpus_akta.toml"
+    t = f.read_bytes().decode("utf-8")
+    assert 'loader_rules_version = "akta-1"' in t
+    f.write_bytes(t.replace('loader_rules_version = "akta-1"', 'loader_rules_version = "akta-9"').encode("utf-8"))
+    docs = list(world["docs"].values())
+    kw = dict(tokenizer=ToyWs(), butir_dir=world["butir"], runs_dir=world["runs"], create_split=False)
+    a1 = make_plan("akta", docs=docs, config_dir=world["cfg"], **kw)
+    a2 = make_plan("akta", docs=docs, config_dir=cfg2, **kw)
+    assert "corpus_akta" in a1.cfgs and a1.config_hash != a2.config_hash and a1.key != a2.key
+    u = u_doc()
+    ub = tmp_path / "ubutir"
+    write_toy_butir(ub, u.clean_sha256)
+    ukw = dict(doc=u, tokenizer=ToyWs(), butir_dir=ub, runs_dir=world["runs"], create_split=False)
+    u1 = make_plan("uupt", config_dir=world["cfg"], **ukw)
+    u2 = make_plan("uupt", config_dir=cfg2, **ukw)
+    assert "corpus_akta" not in u1.cfgs and u1.config_hash == u2.config_hash and u1.key == u2.key
+
+
+@pytest.mark.parametrize("rules", [("akta-1", "akta-2"), ("akta-2", "akta-1")])
+def test_w44_m11_loader_rules_version_joins_all_documents(world, rules):
+    docs = {"akta-x1": replace(world["docs"]["akta-x1"], loader_rules_version=rules[0]),
+            "akta-x2": replace(world["docs"]["akta-x2"], loader_rules_version=rules[1])}
+    res, _ = run(world, docs=docs)
+    assert res.record["loader_rules_version"] == "akta-1,akta-2"
+    assert [d["loader_rules_version"] for d in res.envelope["docs"]] == list(rules)
+    same, _ = run({**world, "runs": world["runs"] / "dua"}, docs=world["docs"])
+    assert same.record["loader_rules_version"] == "akta-1"  # satu nilai bersama tidak digandakan
+
+
+def test_w44_m12_n_truncated_sums_across_deeds(world):
+    """Kunci chunker structure_handwritten: A (1 potongan, 11 > 5) + B (1 potongan, 6 > 5) = 2 (satu dokumen saja = 1)."""
+    out: list = []
+    res, _ = run(world, enc=SmallEnc(), pipeline_out=out)
+    s = _handwritten_dense(res.envelope)
+    from backend.grid.types import Setting
+    key = out[0].pipes["akta-x1"].chunk_set(Setting(**s)).chunker_key
+    assert key == out[0].pipes["akta-x2"].chunk_set(Setting(**s)).chunker_key
+    per_doc = [p.n_truncated() for p in out[0].pipes.values()]
+    assert [d[key] for d in per_doc] == [1, 1]
+    assert out[0].n_truncated()[key] == 2 and res.envelope["n_truncated_by_chunker"][key] == 2
+    assert res.envelope["n_truncated_by_chunker"] == {k: sum(d.get(k, 0) for d in per_doc) for k in {k for d in per_doc for k in d}}
+    assert res.record["embedder"]["n_truncated"] == sum(res.envelope["n_truncated_by_chunker"].values())
+
+
+def test_w44_m13_quality_counts_pool_all_documents(world):
+    """A: entitas 'Pasal 1','Pasal 2' (2); B: 'Pasal 1' (1) -> den 3. Satu potongan per akta, tiap potongan rapi: batas den 2.
+    Bila hanya akta pertama dihitung: entity_den 2, bnd_den 1."""
+    res, _ = run(world)
+    env = res.envelope
+    s = _handwritten_dense(env)
+    q = next(x for x in env["quality"] if x["setting_id"] == s["setting_id"])
+    assert q["counts"] == {"entity_num": 3, "entity_den": 3, "bnd_num": 2, "bnd_den": 2}
+    assert q["entity_preservation"] == 1.0 and q["boundary_coherence"] == 1.0
+    assert len(env["quality"]) == len(env["settings_run"]) == 12
+
+
+def test_w44_m14_boundary_diff_is_per_doc_id(world):
+    from backend import config
+    from backend.chunking import boundary_diff, chunk_document
+    from backend.grid.expand import expand_grid
+    from backend.grid.schemas import SchemaBinding
+    from backend.pipeline.grid_run import schema_report
+    rec = {"family": "akta", "schema_version": 1, "source": "operator",
+           "body": {"family": "akta", "default_chunk_level": 1,
+                    "levels": [{"order": 1, "name": "pasal", "parent_order": None, "marker_pattern": r"^Pasal\s+\d+",
+                                "is_chunk_unit": True, "examples": []}]}}
+    b = SchemaBinding("akta", (rec,))
+    gcfg, rcfg = config.load("grid", world["cfg"]), config.load("retrieval", world["cfg"])
+    s = next(x for x in expand_grid(gcfg, "akta") if x.chunker == "structure_schema" and not x.header_b)
+    s = replace(s, schema_version=1)
+    docs = list(world["docs"].values())
+    pipe = MultiDocPipeline(docs, tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg, encoder=FakeEncoder(), schemas=b)
+    rep = schema_report(pipe, [s], b)
+    assert set(rep["boundary_diff"]) == {"1"} and set(rep["boundary_diff"]["1"]) == {"akta-x1", "akta-x2"}
+    scope = list(rcfg["scope_sections"])
+    for did, p in pipe.pipes.items():
+        hand = chunk_document(p.doc, {"chunker": "structure_handwritten"}, tokenizer=p.tok, retrieval_cfg=p.rcfg)
+        assert rep["boundary_diff"]["1"][did] == boundary_diff(p.doc, hand, p.chunk_set(s).chunks, sections=scope)
+    # A punya dua Pasal (skema memecah, handwritten satu potongan); B satu Pasal: selisihnya berbeda per akta
+    assert rep["boundary_diff"]["1"]["akta-x1"] != rep["boundary_diff"]["1"]["akta-x2"]
+    assert rep["schemas_used"][0]["schema_version"] == 1 and rep["schema_approved"] is True
+
+
+def _header_store(docs_by_id, chunks_by_doc, *, only):
+    """Header lengkap hanya untuk akta di `only` (run B per akta, clean_sha256 akta itu)."""
+    from backend.grid.headers import MemoryHeaderStore
+    recs, runs = {}, {}
+    for did in only:
+        runs[f"b-{did}"] = docs_by_id[did].clean_sha256
+        for c in chunks_by_doc[did]:
+            recs[c.chunk_id] = {"chunk_id": c.chunk_id, "header": f"Hdr {c.start}", "granularity": "ayat", "run_id": f"b-{did}"}
+    return MemoryHeaderStore(recs, runs)
+
+
+def test_w44_m18_header_on_checks_every_deed_before_first_item(world):
+    from backend import config
+    from backend.grid.expand import expand_grid
+    from backend.grid.headers import HeaderBinding, HeaderMissingError
+    gcfg, rcfg = config.load("grid", world["cfg"]), config.load("retrieval", world["cfg"])
+    cand = [x for x in expand_grid(gcfg, "akta") if x.chunker == "structure_handwritten" and x.retrieval_mode == "dense"
+            and x.budget_tokens == BUDGET_HI]
+    off, on = next(x for x in cand if not x.header_b), next(x for x in cand if x.header_b)
+    items = to_grid_items([json.loads(x) for x in (world["butir"] / "akta.v1.jsonl").read_text(encoding="utf-8").splitlines()])
+    plain = MultiDocPipeline(list(world["docs"].values()), tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg, encoder=FakeEncoder())
+    chunks = {d: plain.pipes[d].chunk_set(off).chunks for d in world["docs"]}
+    x1_ids, x2_ids = ({c.chunk_id for c in chunks[d]} for d in ("akta-x1", "akta-x2"))
+    assert x1_ids and x2_ids and not x1_ids & x2_ids
+
+    def build(only):
+        enc = FakeEncoder()
+        hb = HeaderBinding(_header_store(world["docs"], chunks, only=only), "ayat", "all", "ph", "m")
+        return MultiDocPipeline(list(world["docs"].values()), tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg, encoder=enc,
+                                cache_dir=world["emb"], headers=hb), enc
+
+    # header akta-x2 hilang, akta-x1 lengkap: galat menunjuk potongan x2 dan tak ada butir akta-x1 yang sempat di-embed
+    p, enc = build(["akta-x1"])
+    with pytest.raises(HeaderMissingError) as ei:
+        p(on, items)
+    assert ei.value.chunk_id in x2_ids and ei.value.setting_id == on.setting_id and enc.encode_calls == 0
+    # sebaliknya (x1 hilang, x2 lengkap)
+    p, enc = build(["akta-x2"])
+    with pytest.raises(HeaderMissingError) as ei:
+        p(on, items)
+    assert ei.value.chunk_id in x1_ids and enc.encode_calls == 0
+    # hanya akta yang dirujuk butir diperiksa: butir akta-x1 saja, header x2 tak ada -> lolos
+    p, _ = build(["akta-x1"])
+    assert [m.item_id for m in p(on, [i for i in items if i.doc_id == "akta-x1"])] == ["a1", "a2"]
+    # kedua akta lengkap -> semua butir terjawab, urutan butir dipertahankan
+    p, _ = build(["akta-x1", "akta-x2"])
+    assert [m.item_id for m in p(on, items)] == ["a1", "a2", "b1"]
+
+
+@pytest.mark.xfail(strict=True, raises=MultiDocError,
+                   reason="NIT-1 W39: butir ber-family salah di berkas akta lolos check_items_against_docs lalu MultiDocError, bukan GridRunError")
+def test_w44_nit1_wrong_family_item_in_akta_file_is_grid_run_error(world):
+    write_akta_butir(world["butir"], world["docs"], version=2, a1={"family": "uupt"})
+    with pytest.raises(GridRunError):
+        run(world)

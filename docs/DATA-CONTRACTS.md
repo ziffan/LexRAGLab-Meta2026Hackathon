@@ -428,6 +428,12 @@ Status `diubah` diperlakukan sebagai disetujui setelah diubah; `origin` tetap `s
 | `header_b` | bool | |
 | `budget_tokens` | int | |
 
+**GridItem** (butir untuk grid; `item_set_hash` atasnya ikut kunci cache): `{id, family, origin, mode, clean_sha256, gold_spans, query, doc_id}`.
+
+| Field | Tipe | Isi |
+|---|---|---|
+| `doc_id` | string | keluarga multi-dokumen (akta, H-086): `doc_id` dokumen yang dirujuk butir; retrieval butir itu hanya atas dokumen tersebut. String kosong `""` untuk keluarga satu dokumen (UU PT), walau berkas butir UU PT memuat `doc_id`. Bila kosong, field ini dibuang dari baris `item_set_hash`, sehingga hash butir UU PT sama persis dengan sebelum H-086; bila terisi, ikut hash |
+
 **ItemMetrics**
 
 | Field | Tipe | Isi |
@@ -514,3 +520,9 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `status` | enum `ok` / `error` / `cached` / `replay` | |
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |
 | `failed_settings` | array of `{setting_id: string, reason: string, chunk_id: string \| null}` | hanya `kind=grid`; setting header-on yang gagal karena header hilang/kosong/basi/granularitas tak cocok (H-069). `reason` = `header_missing` / `header_invalid` / `header_stale` / `granularity_mismatch`; `chunk_id` = potongan pertama (offset awal naik) yang bermasalah. Setting itu tanpa `GridPoint`; run lanjut. Kosong `[]` bila tidak ada |
+
+**Keluarga multi-dokumen (akta, H-086)**: `kind=grid` untuk akta menyimpan hash korpus keluarga, bukan hash satu dokumen.
+- `corpus_hash` dan `clean_sha256` sama-sama berisi `family_corpus_hash`: sha256 atas JSON kanonik daftar pasangan `[doc_id, clean_sha256]` terurut menurut `doc_id` (tidak bergantung urutan masukan). Ini hash atas teks bersih (`clean_sha256`), bukan `sha256` berkas mentah; `corpus_hash` keluarga satu dokumen dan `Profile.corpus_hash` (§11) tetap seperti semula.
+- `loader_rules_version` = nilai `loader_rules_version` yang berbeda antar dokumen, terurut dan digabung dengan koma (satu nilai bersama tampil sekali).
+- `cache_key` memakai `family_corpus_hash` sebagai komponen korpus dan `split_version` `null` (akta tanpa split, H-054).
+- Amplop `runs/grid/<kunci>.json` untuk akta: `split: null`, `selections: {}` (tanpa pemilihan profil), `quality_comparison: []`, dan `docs: [{doc_id, clean_sha256, loader_rules_version, n_items}]` terurut menurut `doc_id`. `metrics`, `points`, `frontiers` membawa `split: null`. `n_truncated_by_chunker` dijumlah lintas dokumen. `boundary_diff` (skema A) berbentuk `{versi: {doc_id: selisih}}`; untuk UU PT `{versi: selisih}`. Amplop UU PT tidak memuat `docs`.

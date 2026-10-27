@@ -166,3 +166,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-27 | H-086 ditambahkan (retrieval akta per akta, grid per dokumen diagregasi); I-61 ditutup |
 | 2026-10-27 | H-087 ditambahkan (mode D `unanswerable` untuk butir wajib tolak akta); review 69 usulan D akta selesai (67 disetujui, 2 diubah; akta v70) |
 | 2026-10-27 | H-088 ditambahkan (skema A akta v2 varian (ii), gerbang G-1..G-6); memperluas H-076 (alamat non-Pasal akta) |
+| 2026-10-27 | Plafon kumulatif Model API orkestrasi dinaikkan operator (lewat L1, 27 Okt malam) dari 15.000.000 menjadi 20.000.000 micro-USD; Baseten tetap 10.000.000. Gerbang per batch tetap: proyeksi batas atas dengan faktor ulang G-36 > 2.000.000 micro-USD, atau kumulatif > 80% plafon (16.000.000), berhenti dan naik ke operator. Cap per peran `config/budget` tidak berubah (bukan keputusan struktural, tanpa H) |
