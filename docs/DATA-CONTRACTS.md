@@ -1,7 +1,7 @@
 # DATA-CONTRACTS — bentuk setiap data
 
 Tujuan: menetapkan nama field, tipe, dan pemilik isi setiap data, serta JSON Schema keluaran Spark A, B, C, D yang patuh `strict: true`.
-Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054, H-059, H-060.
+Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054, H-059, H-060, H-061.
 
 Semua contoh memakai placeholder (`"<query>"`, offset `0`), bukan butir nyata.
 
@@ -436,10 +436,10 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 | `setting_id` | string | |
 | `split` | enum `tune` / `held_out` \| null | `null` untuk akta (H-054, H-059) |
 | `budget_tokens` | int | |
-| `mean_span_recall` | number | |
+| `mean_span_recall` | number \| null | `null` bila tanpa butir bergold (H-061) |
 | `mean_token_precision` | number \| null | rata-rata atas nilai non-null; `null` bila semua butir null (M1.2 A7b, H-059) |
-| `mrr` | number | |
-| `mean_retrieved_tokens` | number | sumbu X frontier |
+| `mrr` | number \| null | `null` bila tanpa butir bergold (H-061) |
+| `mean_retrieved_tokens` | number \| null | sumbu X frontier; atas butir bergold (M1.2 A8); `null` bila tanpa butir bergold (H-061) |
 | `fully_covered_count` | `{covered: int, total: int}` | "covered x of y" |
 | `dominated` | bool | |
 

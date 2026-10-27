@@ -28,6 +28,13 @@ def test_config_hash_is_order_independent():
 
 
 def test_model_ids_are_contributor_only():
+    # H-028: semua profil Contributor, kecuali pembanding peran C (H-060: Spark Open di Baseten),
+    # yang hanya boleh peran C dan tidak pernah untuk angka yang dilaporkan.
     m = config.load("model")
+    comparators = {"meta-models/muse-spark-open-1026"}
     for prof in m["profiles"].values():
+        if prof["model"] in comparators:
+            assert prof["roles"] == ["c"] and prof["for_reported_numbers"] is False
+            continue
         assert prof["model"].endswith("muse-spark-1.3-contributor")
+    assert m["profiles"][m["default_profile"]]["model"] == "muse-spark-1.3-contributor"

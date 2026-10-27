@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-060.
+Sumber keputusan: H-001 sampai H-061.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -69,6 +69,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-058 | Nilai grid H-012 di `config/grid` v1: `fixed_size` 512/64 (satu ukuran, sekaligus baseline C H-036), anggaran 2.000 + pembanding 1.000, `packing = stop`, `held_out_ratio = 0.4`, seed 20261026, urutan sederhana H-034; 36 titik UU PT. Ditetapkan setelah butir kontrol ditulis, sebelum run apa pun | 2026-10-27 |
 | H-059 | Kontrak `DATA-CONTRACTS` §10 untuk penyebut nol dan akta: (1) M1.4 A12 alt. (b): `split = null` untuk akta di `ItemMetrics`, `GridPoint`, `Frontier`; "transfer" hanya label laporan (H-054); (2) M1.5 A5 alt. N1: penyebut nol (E, Bnd, agregat Recall@K tanpa butir ber-gold) → `null`, UI "n/a"; `QualityMetrics` `number \| null`; (3) default "Dipilih" skenario M1.2 berlaku, termasuk A7b (`GridPoint.mean_token_precision` `null` bila semua butir null) dan A3 (truncate `r ≤ 0`: potongan tidak masuk, pengemasan berhenti). Skenario M1.2, M1.4, M1.5 disetujui. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen di sini; disalin ke log keputusan operator 27 Okt (repo catatan `2bd99d8`)* | 2026-10-27 |
 | H-060 | Pembanding C (stretch, M2.5) = Glimmer lokal (H-047) **dan** Spark Open di Baseten (`meta-models/muse-spark-open-1026`), masing-masing run terpisah, tidak dicampur dengan Contributor; hasil utama tetap Contributor (H-028). Hanya peran C; A, B, D, verifier, penilai tetap Contributor. VRAM bergantian tetap (H-047). Jalur Baseten: Responses API + `strict: true` lebih dulu; hanya bila tidak didukung, pengecualian H-016: Chat Completions `response_format` json_schema + validasi skema sisi klien (seperti Glimmer); hasil smoke dicatat G-33. Key `BASETEN_API_KEY` diizinkan. Klaim bonus open-weight hanya setelah run tersimpan ada (sumber verifikasi partner: Discord Baseten 27 Okt). Merevisi H-047 ("Spark Open tidak dikerjakan"), H-053 (daftar model W6), H-032 (host); menutup H-P24. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; disalin ke log keputusan operator 27 Okt (repo catatan `2bd99d8`); AGENTS.md diperbarui `e6f9bad` (I-32)* | 2026-10-27 |
+| H-061 | Perluasan H-059: (1) M1.5 A12 K0-a — K = 0 menghasilkan top-K kosong dan Recall@0 = 0,0 untuk butir ber-gold; K negatif atau bukan integer = galat (I-31); (2) `GridPoint.mean_span_recall`, `mrr`, `mean_retrieved_tokens` menjadi `number \| null` di DATA-CONTRACTS §10, `null` bila kelompok tanpa butir bergold, konsisten N1 (I-33). *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; operator/L1 menyalin ke log keputusan operator* | 2026-10-27 |
 
 ## Pending
 
@@ -120,5 +121,6 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
 | 2026-10-27 | H-058 ditambahkan (nilai grid H-012), `config/grid.toml` dibuat |
 | 2026-10-27 | Pending H-P24 dibuka (kredit Baseten Spark Open diterima; Discord mengonfirmasi verifikasi partner) |
+| 2026-10-27 | H-061 ditambahkan (K0-a, GridPoint nullable), I-31 dan I-33 ditutup |
 | 2026-10-27 | H-060 ditambahkan (pembanding C: Glimmer lokal dan Spark Open di Baseten), H-P24 ditutup; baris H-032, H-047, H-053 direvisi H-060 |
 | 2026-10-27 | H-059 ditambahkan (kontrak §10 nullable: split akta, penyebut nol; skenario M1.2, M1.4, M1.5 disetujui; I-27 ditutup). I-25 (OpenRouter ditinggalkan, dev lewat Meta) dan I-26 (metode selisih dua titik) ditutup operator tanpa keputusan H baru; belum ada di log keputusan operator, disalin operator |

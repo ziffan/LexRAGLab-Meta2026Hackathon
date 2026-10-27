@@ -168,9 +168,8 @@ def test_S13_batas_k():
         validate_k(True)
 
 
-@pytest.mark.pending_operator
 def test_S13_k0_cabang_K0a_menunggu_I31():
-    """Menunggu I-31: K0-a (Recall@0 = 0,0)."""
+    """K0-a (Recall@0 = 0,0), diputus operator 27 Okt (I-31, H-061)."""
     assert top_k(["a", "b"], 0) == []
     assert agg(SS, RANK_S, 0) == 0
     assert agg(FF, RANK_F, 0) == 0
