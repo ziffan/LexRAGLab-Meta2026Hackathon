@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-073.
+Sumber keputusan: H-001 sampai H-074.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -82,6 +82,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-071 | Proyeksi biaya per upaya yang timeout: timeout dua upaya = 2 × proyeksi; timeout lalu sukses = biaya usage + 1 × proyeksi (I-41, memperluas H-063; Tier 1 M0.1, review atas diff). *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; operator/L1 menyalin ke log keputusan operator* | 2026-10-27 |
 | H-072 | Kontrak `SchemaRecord` (I-45): field sistem informatif `created_at`, `operator_note`, `sample`, `sample_checked`, `cache_key` masuk DATA-CONTRACTS §6; versi dinomori urut dengan `source` (`spark`/`operator`) sebagai pembeda ("v1 = Spark" tidak mutlak); keluaran Spark yang gagal validasi semantik disimpan sebagai berkas `rejected` terpisah (bukan `SchemaRecord`) untuk U5; W9 di mode replay → `409 replay_mode` atau 400 sesuai rekomendasi ISSUES dicatat di API.md; aturan semantik tambahan (order naik ketat, `parent_order` ke order lebih awal, `default_chunk_level` level potong, tolak regex kuantor bersarang) diterima. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; operator/L1 menyalin ke log keputusan operator* | 2026-10-27 |
 | H-073 | Hint penjelasan di UI (opsional, tertutup default): ikon info di samping label (tooltip/popover, bisa dibuka keyboard, `aria-describedby`) dan satu panel "About / Glossary" (tujuan app, target pengguna, cara membaca frontier). Teks bahasa Inggris (H-018), istilah hukum Indonesia dengan gloss. Isi di satu berkas konten berversi, bukan literal tersebar. Tanpa angka yang tidak berasal dari run tersimpan. Ikut ekspor statis replay (H-051). Draf teks direview operator sebelum final. Komponen Tier 3 + uji visual Claude in Chrome. Rincian di `docs/UI-SPEC.md`. Uji visual frontend lewat Claude in Chrome diizinkan: tab baru, hanya `127.0.0.1`, satu pemegang browser, tanpa memicu W6 live di luar gerbang belanja. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator, addendum 3); dicatat agen; operator/L1 menyalin ke log keputusan operator* | 2026-10-27 |
+| H-074 | Granularitas B UU PT = **per Pasal** (H-038, dari angka M3.1: 344 panggilan, expected ≈ 76.750 micro-USD); header untuk potongan `fixed_size` (104 panggilan) tetap dijalankan sesuai H-069. Batch B dijalankan setelah proyeksi dan pemanas, dengan guard: berhenti bila 10 panggilan pertama setelah pemanas menunjukkan rasio token cached < 80% (nilai di `config/header_b`). Skema A v1 UU PT belum disetujui: operator memeriksa dan mengoreksi lewat CLI bila perlu. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; operator/L1 menyalin ke log keputusan operator* | 2026-10-27 |
 
 ## Pending
 
@@ -140,3 +141,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-27 | H-064 (heading Pasal di potongan ayat pertama, I-38), H-065 (Recall@K panel held-out, I-39), H-066 (anggaran C = teks sumber, `flags`, I-40), H-067 (aturan verifier M2.3), H-068 (skenario M2.1, M2.4, M4.3) ditambahkan (putusan operator 3); I-38, I-39, I-40 ditutup |
 | 2026-10-27 | H-069 (skenario M3.2, B untuk fixed_size), H-070 (label unit di potongan multi-unit, I-44), H-071 (proyeksi per upaya timeout, I-41), H-072 (SchemaRecord, I-45) ditambahkan (putusan operator 4); I-41, I-44, I-45 ditutup |
 | 2026-10-27 | H-073 ditambahkan (hint UI dan uji visual Claude in Chrome, addendum 3 operator) |
+| 2026-10-27 | H-074 ditambahkan (granularitas B per Pasal, guard cached ratio batch B) |
