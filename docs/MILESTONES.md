@@ -12,10 +12,10 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 | Milestone | Tanggal | Isi | Slice | Estimasi (jam, sudah × 1,5) | Status |
 |---|---|---|---|---|---|
 | M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
-| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | berjalan |
-| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (skenario Tier 1 menunggu operator) |
-| M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | belum mulai |
-| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | belum mulai |
+| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | kode + review selesai; screenshot ulang pada grid v2 menunggu pass visual |
+| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (M2.1–M2.3 kode ter-review; menunggu review butir D oleh operator) |
+| M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | berjalan (M3.1–M3.3 backend ter-review; batch B per Pasal, U2, M3.4 berjalan) |
+| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | berjalan (akta sintetis ditulis; M4.3 backend berjalan) |
 | M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | belum mulai |
 | **Jumlah** | | | **21** | **55,5** | |
 
@@ -148,7 +148,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau dengan golden sample beberapa pasal, screenshot panel.
 **Tier review**: 2. Batas potongan diuji dengan golden sample yang dipilih operator.
 **Estimasi**: 3 jam.
-**Status**: berjalan — kode `4e18c57` (+ kunci tokenizer `8450e1d`), review Tier 2 independen boleh dipromosikan (`_kerja/orkestrasi/l3/G3-periksa.md`). Screenshot `_kerja/orkestrasi/bukti/M1.1-*.png`. Belum selesai: golden sample menunggu konfirmasi operator (I-36); fixed_size per section (I-35) dan heading Pasal di luar potongan (I-38) menunggu operator.
+**Status**: selesai 2026-10-27 (kriteria kode) — kode `4e18c57`, chunker v2 `8e94269`, `80da6c9` (H-062 fixed_size lintas Pasal/section, H-064 heading Pasal di potongan ayat pertama); golden sample disetujui operator (I-36); review Tier 2 lulus (`_kerja/orkestrasi/l3/G3-periksa.md`, `W2-chunk-periksa-hasil.md`). Screenshot `_kerja/orkestrasi/bukti/M1.1-*.png` dari chunker v1; screenshot ulang v2 di pass visual.
 
 ### M1.2 — BM25 dan metrik span pada anggaran
 **Slice**: Untuk satu setting, tabel per butir menampilkan span recall, precision token, dan MRR pada anggaran token default, dengan retrieval BM25 + Sastrawi.
@@ -163,7 +163,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk kasus hitung tangan, tabel per butir.
 **Tier review**: 1. Kalkulator ini yang menentukan "optimal" (H-005). Skenario test disusun agen sebelum kode, dicek pemeriksa independen, disetujui operator (H-052); penulis kode tidak memilih skenarionya sendiri.
 **Estimasi**: 3 jam.
-**Status**: berjalan — kalkulator + BM25 `5b9bb04`, `6c4e19b`; review Tier 1 0 BLOCKER (`l3/G4a-periksa.md`); integrasi `8450e1d`. Sisa: tabel per butir UI (frontend berjalan), review integrasi.
+**Status**: selesai 2026-10-27 — kalkulator + BM25 `5b9bb04`, `6c4e19b` (Tier 1 0 BLOCKER, `l3/G4a-periksa.md`); integrasi `8450e1d` (Tier 1 `l3/INTa-periksa.md`); tabel per butir `1789c4f` (review `l3/INTb-periksa.md`). Bukti `bukti/M1.2-table.png`.
 
 ### M1.3 — Dense dan hybrid
 **Slice**: Tabel yang sama menampilkan tiga mode retrieval (dense, BM25, hybrid RRF) berdampingan.
@@ -176,7 +176,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau, tabel tiga mode untuk butir kontrol.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: berjalan — dense bge-m3 GPU + hybrid RRF `bd7a9bf`, `dc8a5c5`; review Tier 2 boleh dipromosikan (`l3/G5-periksa.md`). Sisa: pemilih mode UI.
+**Status**: selesai 2026-10-27 — dense bge-m3 GPU + hybrid RRF `bd7a9bf`, `dc8a5c5` (Tier 2, `l3/G5-periksa.md`); pemilih mode `1789c4f`. Bukti `bukti/M1.3-modes.png`.
 
 ### M1.4 — Grid, split, dan Pareto frontier
 **Slice**: Run grid menghasilkan frontier span recall vs token untuk UU PT. Klik satu titik mengubah panel potongan dan tabel per butir. Pemilihan profil terbaik memakai set tune, angka yang dilaporkan dari held-out.
@@ -191,7 +191,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk split dan frontier, screenshot frontier, catatan run grid.
 **Tier review**: 1. Kebocoran held-out membuat "optimal" palsu.
 **Estimasi**: 3 jam.
-**Status**: berjalan — split/frontier/pemilihan `1aac9e7`, `f970448` (review Tier 1 dua putaran, 0 BLOCKER); run grid UU PT nyata `8450e1d` (`runs/grid/b8d0d6ea….json`, 12 setting dijalankan, 24 dilewati sampai M3; split v1 tune 5 / held-out 4). Sisa: grafik frontier UI, review Tier 1 integrasi, I-35/I-38 sebelum run yang dilaporkan.
+**Status**: selesai 2026-10-27 (kriteria kode) — split/frontier/pemilihan `1aac9e7`, `f970448` (Tier 1 dua putaran); integrasi `8450e1d` (Tier 1 INTa); grafik frontier `1789c4f` (INTb). Run grid v2 UU PT `23b606e` (`runs/grid/a822c0c1….json`: 12 setting jalan, 24 dilewati sampai header B/skema A; split v1 tune 5 / held-out 4). Bukti `bukti/M1.4-*.png` (v1), `bukti/grid-v2.txt`. Grid diulang dengan header B (M3.2) dan skema A (M3.4).
 
 ### M1.5 — Metrik janji form
 **Slice**: Untuk setting terpilih, layar menampilkan Recall@K, entity preservation, dan boundary coherence, struktur vs ukuran tetap.
@@ -203,7 +203,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau, panel metrik.
 **Tier review**: 1. Metrik yang dijanjikan di form.
 **Estimasi**: 2 jam.
-**Status**: berjalan — metrik `2e90254` (review Tier 1), Recall@K produksi `8450e1d` (S-1); QualityMetrics run nyata di `runs/grid/b8d0d6ea….json`. Sisa: panel UI.
+**Status**: selesai 2026-10-27 — metrik `2e90254` (Tier 1), Recall@K produksi `8450e1d`, panel `1789c4f`; cakupan held-out (H-065, `165f597`). Bukti `bukti/M1.5-metrics.png`.
 
 ## M2 — Spark D dan C (29–31 Okt)
 
@@ -218,7 +218,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk transisi status, contoh usulan parafrase, screenshot layar periksa.
 **Tier review**: 1. Transisi status menentukan butir mana yang sah (H-006).
 **Estimasi**: 3 jam.
-**Status**: belum mulai.
+**Status**: berjalan — kode `79b970a`, `7021427` (Tier 1 lulus, `l3/W2-M21-periksa.md`); run live D 13 usulan UU PT `dd39dcb` (5.696 micro-USD). Bukti `bukti/M2.1-review-1440.jpg`. Menunggu operator: review 13 usulan di U6 (H-006; target H-011 15–20 butir sah).
 
 Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-011).
 
@@ -233,7 +233,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau, catatan run, screenshot dua kolom.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: berjalan — backend + W6 + prompt C v1 `a61f7c9`, test review `2e59f6f`; review Tier 2 boleh dipromosikan (`_kerja/orkestrasi/l3/M22-periksa.md`). Bukti live K-02: `runs/spark/records/18b443f5….json` (577) dan `6b318801….json` (506), ulangan cached 0. Sisa: panel bukti U3 (frontend), I-40 (label alamat di luar anggaran).
+**Status**: berjalan — backend `a61f7c9`, `2e59f6f` (Tier 2), panel bukti U3 `7e090d1` (Tier 3, `l3/W4-FE-periksa.md`), label alamat di luar anggaran (H-066). Sisa: screenshot dua kolom U3 (pass visual). Bukti live K-02 `runs/spark/records/18b443f5….json`, `6b318801….json`.
 
 ### M2.3 — Verifier uji ada dan setia
 **Slice**: Setiap kutipan di panel bukti diberi tanda lulus/gagal untuk uji 1 dan 2. Ringkasan 2×2 penolakan tampil per profil.
@@ -245,7 +245,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau untuk kasus operator, screenshot.
 **Tier review**: 1, ditambah Tier 4 domain review oleh operator atas kasus test.
 **Estimasi**: 3 jam.
-**Status**: belum mulai.
+**Status**: berjalan — verifier + 2×2 + prompt C v2 + label unit `ae372db`, `de4933d` (Tier 1 lulus, `l3/W3-M23-hasil.md`; H-067, H-070). Sisa: Tier 4 domain review operator atas kasus test; screenshot tanda dan ringkasan U3.
 
 ### M2.4 — Uji berlaku tiga nilai (stretch, H-017)
 **Slice**: Kutipan diberi status `berlaku`, `dicabut`, atau `berlaku_bersyarat` pada tanggal acuan butir.
@@ -289,7 +289,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: catatan run, proyeksi biaya.
 **Tier review**: 2.
 **Estimasi**: 1,5 jam.
-**Status**: belum mulai.
+**Status**: berjalan — backend `e1244aa`, `f833b07`, `013c304`, `c85c893` (Tier 2 lulus, `l3/W2-M31-periksa.md`); granularitas per Pasal + guard cached ratio (H-074) `94de71c`. Run: sampel 3 × 10 `e930876` (5.848), batch per Pasal parsial `76256fd` (49.127; 231 record). Sisa: batch per Pasal penuh dan `fixed_size` (H-069), proyeksi `runs/headers/projection/`.
 
 Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 31 Okt malam, "hanya frontier" berlaku otomatis.
 
@@ -303,7 +303,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: test hijau untuk akuntansi anggaran, screenshot dua deret.
 **Tier review**: 1. Akuntansi token header menentukan keadilan perbandingan.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — backend sumbu grid `1a9bacf`, `12528f5` (Tier 1 lulus, `l3/W3-M32-hasil.md`). Sisa: deret on/off U2 (WIP, review berjalan), run grid `--with-headers` setelah batch B, screenshot dua deret.
 
 ### M3.3 — Induksi skema A untuk UU PT
 **Slice**: Spark membaca UU PT dan mengeluarkan skema hierarki. Layar menampilkan skema itu berdampingan dengan koreksi operator, operator mengoreksi lewat editor di layar (H-037), dan versi skema tersimpan.
@@ -316,7 +316,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: skema v1 (Spark) dan v2 (koreksi), screenshot.
 **Tier review**: 2, ditambah Tier 4 domain review oleh operator.
 **Estimasi**: 5,5 jam (3 jam induksi + 2,5 jam editor, H-037).
-**Status**: belum mulai.
+**Status**: berjalan — backend `496624b`, `1ff71e5`, `f2f18ee` (Tier 2 lulus, `l3/W2-M33-periksa.md`); panel + editor U5 `7e090d1` (Tier 3). Run induksi UU PT `1558986` (`runs/schemas/uupt/v1.json`, 5.700). Menunggu operator: persetujuan/koreksi skema v1 (H-074) + Tier 4 domain review.
 
 ### M3.4 — Chunker digerakkan skema
 **Slice**: Chunker yang membaca skema A masuk grid. Frontier menampilkannya di samping parser tulisan tangan, dengan selisih batas potongan.
@@ -328,7 +328,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: test hijau, tabel selisih batas, frontier.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — chunker skema + binding (WIP L2#2), integrasi pipeline/grid dan test sedang ditulis.
 
 ## M4 — Transfer ke akta, ekspor (2 Nov)
 
@@ -368,7 +368,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: test hijau round-trip, contoh profil UU PT dan akta.
 **Tier review**: 1. Profil adalah keluaran yang dijanjikan ke pemakai RAG.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — skenario disetujui (H-068); backend profil sedang ditulis (I-42, I-43 ditangani eksekutor).
 
 ## M5 — Demo dan submit (3–4 Nov)
 

@@ -1,19 +1,19 @@
 # CONTEXT — keadaan terkini
 
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
-Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-059, H-060, H-061.
+Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-074.
 
-diperbarui: 2026-10-27 sore WIB, sesi orkestrasi berlapis di mesin otoritatif (M0 tutup, M1 dibangun, skenario M2–M4)
+diperbarui: 2026-10-27 09:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
 
 ## Status
 
-- M0 **selesai**. M0.1 klien Spark (`7d23b7e`, `ff252b4`, `7dee80d`; review Tier 1 dua putaran, 0 BLOCKER); bukti live `runs/spark/records/` (393 uncached, 92 cached micro-USD). M0.2 selesai (`01d9043`, metode kalibrasi disetujui I-26).
-- M1 **berjalan**, kode lengkap dan ter-review per modul: M1.1 chunker + panel (`4e18c57`), M1.2 kalkulator + BM25 (`6c4e19b`), M1.3 dense bge-m3 GPU + hybrid (`dc8a5c5`), M1.4 split/frontier (`f970448`), M1.5 metrik (`2e90254`), integrasi pipeline + API tunggal + run grid UU PT nyata (`8450e1d`, `2d89e7a`; `runs/grid/7f7fa8c6….json`, 12 setting jalan, 24 menunggu M3; split v1 tune 5 / held-out 4), frontend U1/U2/U4/mode/panel M1.5 (`1789c4f`). Belum ditutup karena isu operator I-35, I-36, I-38, I-39 (lihat ISSUES) dan review frontend.
-- M2.2 kode (W6, prompt C v1) `a61f7c9`, bukti live K-02 1.083 micro-USD; review Tier 2 berjalan. Verifier M2.3 belum ditulis (Tier 1, skenario menunggu).
-- Skenario Tier 1 draft + pemeriksa independen dua putaran (0 BLOCKER): M2.1, M2.3, M2.4, M4.3 — lembar keputusan operator `_kerja/orkestrasi/keputusan-skenario-1.md`; M3.2 revisi 2 (lembar 2 menyusul).
-- Keputusan baru: H-059 (§10 nullable, skenario M1.x disetujui), H-060 (pembanding C Glimmer + Spark Open Baseten), H-061 (K0-a, GridPoint nullable). Profil `baseten_open` + harga (I-34); smoke Baseten Responses strict OK (G-33).
-- Belanja Model API kumulatif 2.085 micro-USD (517 sesi 26 Okt + 1.568 sesi ini, dari RunRecord); Baseten 1.702.
-- `uv run pytest -q` 515 passed (mesin otoritatif, `a61f7c9`).
+- M0 **selesai** (M0.1 klien Spark + RunRecord, M0.2 korpus terukur). Perubahan Tier 1 sesudahnya: proyeksi biaya panggilan gagal (H-063) dan per upaya timeout (H-071), `f6e2912`, `8b32031`, `e157544`.
+- M1 **kode dan review selesai** (status per slice di `docs/MILESTONES.md`): chunker v2 (H-062, H-064), grid UU PT v2 `23b606e` (`runs/grid/a822c0c1….json`, 12 setting jalan, 24 menunggu header B/skema A). Sisa: screenshot ulang pada grid v2.
+- M2: M2.1 usulan D + U6 (`79b970a`; 13 usulan live menunggu operator), M2.2 C + U3, M2.3 verifier + 2×2 (`ae372db`) ter-review. M2.4 dan M2.5 stretch.
+- M3: header B backend + sumbu grid (`e1244aa`, `1a9bacf`; H-069, H-074), skema A backend + U5 editor (`496624b`, `7e090d1`) ter-review. Batch B per Pasal dilanjutkan; deret U2 (WIP) dalam review; M3.4 chunker skema sedang ditulis.
+- M4: lima akta sintetis sedang ditulis dari `data/akta/BRIEF.md` (I-46); M4.3 backend profil sedang ditulis (skenario disetujui, H-068).
+- Belanja Model API kumulatif sebelum sesi ini 73.554 micro-USD (dari RunRecord); Baseten 1.702. Plafon sementara 15.000.000 / 10.000.000.
+- Uji terima awal sesi (HEAD `76256fd`): `uv run pytest -q` 862 passed, `npm test` 103 passed, `tsc` bersih, secret scan 0.
 
 ## Pin versi (M0)
 
@@ -31,6 +31,15 @@ diperbarui: 2026-10-27 sore WIB, sesi orkestrasi berlapis di mesin otoritatif (M
 
 Lihat `docs/ISSUES.md` "Menunggu operator" (I-35 sampai I-40) dan `_kerja/orkestrasi/keputusan-skenario-1.md`.
 
+## Menunggu operator
+
+1. Review 13 usulan butir D di U6 (H-006, H-011).
+2. Persetujuan/koreksi skema A v1 UU PT `runs/schemas/uupt/v1.json` (H-074, H-037).
+3. Review lima akta sintetis setelah ditulis (addendum 2 gerbang 4, H-041).
+4. Draf teks hint H-073 setelah review independen (isu menyusul di `docs/ISSUES.md`).
+5. Tier 4 domain review kasus verifier M2.3 dan skema A M3.3.
+6. Pemicu 31 Okt H-017 dinilai 31 Okt malam WIB.
+
 ## Lingkungan
 
 - Mesin GPU otoritatif untuk embedding, grid, dan run Spark; mesin kedua hanya membaca `runs/` (H-027).
@@ -46,7 +55,8 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Operator: putuskan I-35 (fixed_size lintas section), I-38 (heading Pasal di potongan), I-36 (golden sample), I-39, I-40, I-37; setujui skenario M2.1/M2.3/M2.4/M4.3 lewat lembar keputusan.
-2. Setelah I-35/I-38: ulang run grid (tanpa LLM, murah), tutup M1.
-3. Setelah skenario disetujui: kode Tier 1 M2.1, M2.3 (lalu M2.4 stretch); M3.1 header B (Tier 2) bisa jalan tanpa menunggu; M3.2 setelah lembar 2.
-4. Berkas keadaan orkestrasi: `_kerja/orkestrasi/keadaan-L2.md`.
+1. Selesaikan batch B per Pasal dan `fixed_size`, lalu grid `--with-headers`.
+2. Review dan commit U2, hint, M3.4 (Tier 2), M4.3 (Tier 1), akta (pemeriksa H-041).
+3. Pass visual (Claude in Chrome) M1 ulang dan U2/U3/U5/U6/U8.
+4. M5.1 replay dan ekspor statis; persiapan M5.2.
+5. Berkas keadaan orkestrasi: `_kerja/orkestrasi/keadaan-L2.md`.
