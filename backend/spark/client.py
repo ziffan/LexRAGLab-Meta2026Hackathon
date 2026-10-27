@@ -316,18 +316,20 @@ class SparkClient:
                     wait = ra if ra is not None else lim.backoff_base_s * (lim.backoff_factor ** r429)
                     if r429 >= lim.max_429_retries:
                         return self._fail(ctx, "rate_limited",
-                                          f"rate limited (HTTP 429): gave up after {r429} retries")
+                                          f"rate limited (HTTP 429): gave up after {r429} retries",
+                                          projected=projected * timeouts or None)
                     if wait > lim.max_wait_s:
                         return self._fail(ctx, "rate_limited",
                                           f"rate limited (HTTP 429): required wait {_fmt_num(wait)} s "
-                                          f"exceeds max_wait_s {_fmt_num(lim.max_wait_s)} s")
+                                          f"exceeds max_wait_s {_fmt_num(lim.max_wait_s)} s",
+                                          projected=projected * timeouts or None)
                     r429 += 1
                     if wait > 0:
                         self._sleep(wait)
                     continue
                 code, msg = self._map_status(status, exc.response)
                 # H-063: 5xx = mungkin sudah menghasilkan tanpa usage -> proyeksi; 4xx ditolak sebelum generasi.
-                return self._fail(ctx, code, msg, projected=projected if status >= 500 else None)
+                return self._fail(ctx, code, msg, projected=projected * (timeouts + (1 if status >= 500 else 0)) or None)
             except Exception as exc:  # noqa: BLE001 - dikelompokkan, pesan tidak memakai str(exc)
                 if _is_timeout(exc):
                     if timeouts < lim.max_retries:
@@ -337,7 +339,7 @@ class SparkClient:
                                       f"timeout after {_fmt_num(lim.timeout_s)} s ({attempts} attempts)",
                                       projected=projected * (timeouts + 1))  # H-071: per upaya timeout
                 return self._fail(ctx, "model_unavailable", "connection to the Model API failed",
-                                  projected=projected)
+                                  projected=projected * (timeouts + 1))
             return self._interpret(ctx, projected, http, schema, validator, projected * timeouts)
 
     def _map_status(self, status: int, response: Any) -> tuple[str, str]:

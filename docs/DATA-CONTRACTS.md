@@ -503,7 +503,7 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `usage_cached_tokens` | int \| null | `usage.input_tokens_details.cached_tokens` |
 | `usage_output_tokens` | int \| null | termasuk reasoning |
 | `cost_usd_micros` | int \| null | dari `usage` × harga `config/model`; `0` untuk Glimmer lokal |
-| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); diisi pada panggilan berbayar tanpa `usage` sah (usage rusak/hilang) dan pada panggilan gagal tanpa `usage` (timeout, 5xx, galat koneksi; H-063), per upaya timeout (timeout dua upaya = 2 × proyeksi; H-071). Pada record `ok` (atau galat dengan `usage`) yang didahului timeout, `cost_usd_micros` tetap murni usage × harga dan field ini = proyeksi × jumlah upaya timeout. Buku belanja memakai `(cost_usd_micros ?? 0) + (projected_cost_usd_micros ?? 0)` (M0.1 O-3, H-071) |
+| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); diisi pada panggilan berbayar tanpa `usage` sah (usage rusak/hilang) dan pada panggilan gagal tanpa `usage` (timeout, 5xx, galat koneksi; H-063), per upaya timeout (timeout dua upaya = 2 × proyeksi; H-071). Setiap upaya yang timeout menambah 1 × proyeksi apa pun hasil upaya terakhir: timeout lalu 5xx/koneksi/usage rusak = (timeout + 1) × proyeksi; timeout lalu 4xx/429 habis = timeout × proyeksi. Pada record `ok` (atau galat dengan `usage`) yang didahului timeout, `cost_usd_micros` tetap murni usage × harga dan field ini = proyeksi × jumlah upaya timeout. Buku belanja memakai `(cost_usd_micros ?? 0) + (projected_cost_usd_micros ?? 0)` (M0.1 O-3, H-071) |
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |
@@ -511,3 +511,4 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `quantization` | string \| null | kuantisasi Glimmer dari `config/model` (`Q4_K_M`, H-047); `null` untuk Model API |
 | `status` | enum `ok` / `error` / `cached` / `replay` | |
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |
+| `failed_settings` | array of `{setting_id: string, reason: string, chunk_id: string \| null}` | hanya `kind=grid`; setting header-on yang gagal karena header hilang/kosong/basi/granularitas tak cocok (H-069). `reason` = `header_missing` / `header_invalid` / `header_stale` / `granularity_mismatch`; `chunk_id` = potongan pertama (offset awal naik) yang bermasalah. Setting itu tanpa `GridPoint`; run lanjut. Kosong `[]` bila tidak ada |

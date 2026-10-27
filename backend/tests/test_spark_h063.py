@@ -87,10 +87,19 @@ def test_A4_rejected_before_generation_stays_null(tmp_path, label, script, code)
     assert Ledger(rig.runs).spent() == 0
 
 
-def test_A4b_timeout_then_401_stays_null(tmp_path):
+def test_A4b_timeout_then_rejected_projects_timeouts_only(tmp_path):
+    # H-071: tiap upaya timeout = 1 x proyeksi, apa pun hasil upaya terakhir
     rig = Rig(tmp_path, script=[Timeout(), Resp(401, {"error": {"message": "bad"}})])
     r = rig.client.call(**_a()).record
-    assert r.error["code"] == "invalid_api_key" and r.projected_cost_usd_micros is None
+    assert r.error["code"] == "invalid_api_key" and r.cost_usd_micros is None
+    assert r.projected_cost_usd_micros == 400 and Ledger(rig.runs).spent() == 400
+
+
+def test_A4c_timeout_then_5xx_and_connection(tmp_path):
+    r1 = Rig(tmp_path / "a", script=[Timeout(), Resp(503, {"error": {"message": "x"}})]).client.call(**_a()).record
+    assert r1.error["code"] == "model_unavailable" and r1.projected_cost_usd_micros == 800
+    r2 = Rig(tmp_path / "b", script=[Timeout(), _raise_connect]).client.call(**_a()).record
+    assert r2.error["message"] == "connection to the Model API failed" and r2.projected_cost_usd_micros == 800
 
 
 def test_A5_429_exhausted_stays_null(tmp_path):
@@ -185,3 +194,28 @@ def test_A10d_no_timeout_ok_has_no_projected(tmp_path):
     rig = Rig(tmp_path, script=[Resp(200, body_ok(usage=U400))])
     r = rig.client.call(**_a()).record
     assert r.projected_cost_usd_micros is None and Ledger(rig.runs).spent() == 400
+
+
+def test_A5b_timeout_then_429_exhausted_projects_timeouts_only(tmp_path):
+    rig = Rig(tmp_path, script=[Timeout()] + [Resp(429, {"error": {"message": "slow"}})] * 4)
+    r = rig.client.call(**_a()).record
+    assert r.error["code"] == "rate_limited" and r.cost_usd_micros is None
+    assert r.projected_cost_usd_micros == 400 and Ledger(rig.runs).spent() == 400
+    big = Rig(tmp_path / "w", script=[Timeout(), Resp(429, {"error": {"message": "s"}}, headers={"Retry-After": "3600"})])
+    rb = big.client.call(**_a()).record
+    assert rb.error["code"] == "rate_limited" and rb.projected_cost_usd_micros == 400
+
+
+def test_A10e_timeout_then_usage_invalid_adds_both(tmp_path):
+    bad = body_ok(usage={"input_tokens": -1, "output_tokens": 5})
+    rig = Rig(tmp_path, script=[Timeout(), Resp(200, bad)])
+    r = rig.client.call(**_a()).record
+    assert r.error["code"] == "usage_invalid" and r.cost_usd_micros is None
+    assert r.projected_cost_usd_micros == 800 and Ledger(rig.runs).spent() == 800  # timeout 400 + upaya rusak 400
+
+
+def test_A10f_timeout_then_error_with_usage(tmp_path):
+    rig = Rig(tmp_path, script=[Timeout(), Resp(200, body_ok(status="incomplete", usage=U400))])
+    r = rig.client.call(**_a()).record
+    assert r.error["code"] == "incomplete" and r.cost_usd_micros == 400
+    assert r.projected_cost_usd_micros == 400 and Ledger(rig.runs).spent() == 800
