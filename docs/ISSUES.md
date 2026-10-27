@@ -11,12 +11,12 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 |---|---|---|---|---|
 | I-42 | Pemeriksa M4.3 C7: kunci cache `runs/chunks/` (ARCHITECTURE §8) tidak memuat tokenizer; `Chunk[]` dari tokenizer lain bisa tersaji. Kunci chunker sekarang sudah memuat nama + versi tokenizer (`backend/chunking/structure.py` `structure_key`), perlu dipastikan untuk jalur cache `runs/chunks/` | Eksekutor M4.3 memastikan kunci cache = `chunker_key` (memuat tokenizer); bila ARCHITECTURE §8 perlu diubah, itu redaksi spec tanpa keputusan baru | Agen (M4.3) | Sebelum kode M4.3 |
 | I-43 | M4.3 A20: `dense.chunk_set_hash` (kunci cache embedding, ARCHITECTURE §8) berbeda dari `Profile.chunk_set_hash` (A2-X, H-068); dua fungsi bernama sama | Ganti nama salah satu di kode M4.3 (mis. `embedding_cache_key`) tanpa mengubah nilai kunci cache embedding yang ada | Agen (M4.3) | Sebelum kode M4.3 |
-| I-46 | H-039 mensyaratkan lima akta sintetis ditulis agen "dari brief operator"; brief itu belum ada di repo maupun catatan operator. Draf brief usulan L2 (kerangka Pasal 38 UU 2/2014, muatan Pasal 15 UU 40/2007, variasi batas bagian, identitas fiktif tanpa NIK, disclaimer) di `_kerja/orkestrasi/brief-akta-draf.md` | Operator menyetujui atau mengubah draf; agen lalu menulis lima akta, review operator per berkas (H-041) | Operator | Sebelum M4.1 (2 Nov) |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-46 | Brief operator untuk akta sintetis (H-039) | Operator menyetujui draf apa adanya; disalin ke `data/akta/BRIEF.md` | 2026-10-27 |
 | I-41 | Proyeksi retry timeout satu kali | Operator: per upaya yang timeout (H-071) | 2026-10-27 |
 | I-44 | Label unit tengah potongan multi-unit di konteks C | Operator: sisipkan label alamat unit di awal setiap unit (H-070) | 2026-10-27 |
 | I-45 | Celah kontrak SchemaRecord/W9 (M3.3) | Operator: rekomendasi diterima (H-072) | 2026-10-27 |
