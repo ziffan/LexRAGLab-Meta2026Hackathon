@@ -107,3 +107,27 @@ def test_s22_items_summary_counts_items_not_proposals():
                  "by_split": {"tune": 2, "held_out": 6}, "control_in_held_out": 3}
     props = [{"review_status": x} for x in ["usulan"] * 3 + ["ditolak"] * 2 + ["disetujui", "disetujui", "diubah", "disetujui"]]
     assert pending_count(props) == 3 and s["n_items"] == 8
+
+
+# ---------------------------------------------------------------- pemasangan di produksi (snapshot)
+def test_snapshot_serves_summary_and_origin_report(tmp_path):
+    from fastapi.testclient import TestClient
+
+    from backend.api.app import Service, create_app
+    from backend.tokenizer import get_tokenizer
+
+    from .pipeline_fakes import FakeEncoder
+    from .spark_fakes import budget_cfg, model_cfg
+
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs", encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
+    c = TestClient(create_app(svc, env={}, model_config=model_cfg(), budget_config=budget_cfg()), raise_server_exceptions=False)
+    d0 = c.get("/api/families/uupt/snapshot").json()
+    assert d0["origin_report"] is None and d0["split"] is None and d0["items_summary"]["by_split"] is None
+    assert c.post("/api/families/uupt/grid/run", json={"budget_tokens": None}).status_code == 200
+    d = c.get("/api/families/uupt/snapshot").json()
+    assert d["items_summary"] == items_summary(d["items"])
+    rep = d["origin_report"]
+    assert set(rep) == {"operator", "spark_disetujui"}
+    held_ops = [i for i in d["items"] if i["origin"] == "operator" and i["split"] == "held_out"]
+    assert rep["operator"]["n_items"] == len(held_ops) == d["items_summary"]["control_in_held_out"]
+    assert rep["spark_disetujui"]["n_items"] == 0 and rep["spark_disetujui"]["mean_span_recall"] is None

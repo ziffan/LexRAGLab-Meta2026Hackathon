@@ -15,6 +15,7 @@ from backend import config
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
 from backend.api.routers.proposals import get_proposals
+from backend.proposal.report import items_summary, origin_report
 from backend.grid.types import metrics_from_cache
 from backend.schema_a import SchemaStore, SchemaStoreError, snapshot_view
 
@@ -74,12 +75,18 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
         schemas_rejected = _ss.list_rejected(family)
     except SchemaStoreError:
         raise ApiError(500, "storage_error", "Schema storage failed.") from None
+    summary = items_summary(items)
+    if split is None:
+        summary["by_split"], summary["control_in_held_out"] = None, None
+    by_origin_report = None
+    sel = (grid or {}).get("selected") if grid else None
+    if split is not None and sel:
+        rows = [m for m in metrics if m.get("setting_id") == sel.get("setting_id")]
+        by_origin_report = origin_report(items, rows, split="held_out")
     return {
         "family": family, "budget_tokens": budget, "replay": request.app.state.replay, "config_hash": config.config_hash(cfgs),
         "corpus": corpus, "items": items, "split": split.to_dict() if split is not None else None,
-        "items_summary": {"n_items": len(items), "by_origin": dict(Counter(i.get("origin") for i in items)),
-                          "by_mode": dict(Counter(i.get("mode") for i in items)), "by_split": by_split,
-                          "control_in_held_out": split.control_in_held_out if split is not None else None},
+        "items_summary": summary, "origin_report": by_origin_report,
         "settings": svc.settings(family),
         "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schemas_rejected": schemas_rejected, "schema_diff": schema_diff,
         "proposals": get_proposals(request).list_proposals(family), "answers": [], "answers_summary": [], "runs_summary": None,

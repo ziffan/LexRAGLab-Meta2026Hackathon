@@ -369,3 +369,15 @@ def test_s15d_w4_does_not_overwrite_w5_decision(tmp_path):
     l1 = env.ps.get(ids["L1"])
     assert l1["review_status"] == "disetujui" and l1["item_id"] and len(env.spark_items()) == 1
     _invariant(env)
+
+
+def test_s16_commit_failure_restores_record_and_leaves_no_orphans(tmp_path):
+    hooks = Hooks()
+    env, ids = fresh(tmp_path, hooks=hooks, modes=("literal",))
+    before = env.record_bytes(ids["L1"])
+    hooks.before_item_commit = _boom  # catatan sudah ditulis, rename butir gagal
+    _assert_clean_error(env.decide(ids["L1"], approve()))
+    assert env.record_bytes(ids["L1"]) == before and not env.spark_items()
+    assert not list(env.butir.glob("*.tmp")) and sorted(p.name for p in env.butir.glob("uupt.v*.jsonl")) == ["uupt.v1.jsonl"]
+    hooks.before_item_commit = None
+    assert env.decide(ids["L1"], approve()).status_code == 200 and len(env.spark_items()) == 1

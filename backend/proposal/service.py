@@ -57,7 +57,8 @@ class DocInfo:
 class Hooks:
     """Seam uji (A27). Semua opsional; produksi tidak memakainya."""
     after_read: Callable[[], None] | None = None           # W5: sesudah baca status, sebelum kunci tulis
-    before_item_write: Callable[[], None] | None = None    # W5: sebelum menulis berkas butir
+    before_item_write: Callable[[], None] | None = None    # W5: sebelum menulis berkas butir (tmp)
+    before_item_commit: Callable[[], None] | None = None   # W5: sesudah catatan ditulis, sebelum rename butir
     before_record_write: Callable[[], None] | None = None  # W5: sebelum menulis ProposalRecord
     before_w4_write: Callable[[], None] | None = None      # W4: sesudah baca, sebelum menulis rekaman baru
 
@@ -67,13 +68,39 @@ def _call(h: Callable[[], None] | None) -> None:
         h()
 
 
-def _write_atomic(path: Path, data: bytes) -> None:
+def _retry(fn: Callable[[], None], tries: int = 6) -> None:
+    """Retry singkat pada PermissionError Windows (G-34: berkas baru dikunci sesaat)."""
+    for i in range(tries):
+        try:
+            return fn()
+        except PermissionError:
+            if i == tries - 1:
+                raise
+            time.sleep(0.05 * (i + 1))
+
+
+def _stage(path: Path, data: bytes) -> Path:
+    """Tulis ke berkas .tmp (fsync) tanpa mengubah target."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
     try:
         with open(tmp, "wb") as fh:
             fh.write(data)
-        os.replace(tmp, path)
+            fh.flush()
+            os.fsync(fh.fileno())
+    except BaseException:
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+        raise
+    return tmp
+
+
+def _write_atomic(path: Path, data: bytes) -> None:
+    tmp = _stage(path, data)
+    try:
+        _retry(lambda: os.replace(tmp, path))
     except BaseException:
         try:
             tmp.unlink()
@@ -279,28 +306,35 @@ class ProposalService:
             item = {**draft, "operator_note": note, "created_at": now} if draft is not None else None
             new = {**rec, "review_status": decision, "edited": edited, "operator_note": note, "reviewed_at": now,
                    "item_id": item["id"] if item else None}
-            made: Path | None = None
+            staged: tuple[Path, Path] | None = None
+            old_bytes = (self.records_dir / f"{proposal_id}.json").read_bytes()
+            wrote = False
             try:
                 if item is not None:
                     _call(self.hooks.before_item_write)
-                    made = self._append_item(item)
+                    staged = self._stage_item(item)
                 _call(self.hooks.before_record_write)
                 self._put(new)
-            except ApiError:
-                self._rollback(made)
-                raise
-            except Exception:  # noqa: BLE001
-                self._rollback(made)
+                wrote = True
+                if staged is not None:
+                    _call(self.hooks.before_item_commit)
+                    _retry(lambda: os.replace(staged[0], staged[1]))
+            except BaseException as exc:  # noqa: BLE001
+                if staged is not None:
+                    self._unlink(staged[0])
+                if wrote:  # catatan sudah berubah tetapi butir gagal: pulihkan catatan lama
+                    _write_atomic(self.records_dir / f"{proposal_id}.json", old_bytes)
+                if isinstance(exc, ApiError):
+                    raise
                 raise ApiError(500, "storage_error", "Could not save decision. Nothing was changed.") from None
             return {"proposal": new, "item": item}
 
     @staticmethod
-    def _rollback(path: Path | None) -> None:
-        if path is not None:
-            try:
-                path.unlink()
-            except OSError:
-                pass
+    def _unlink(path: Path) -> None:
+        try:
+            path.unlink()
+        except OSError:
+            pass
 
     def _plan(self, proposal_id: str, body: Any) -> tuple[dict[str, Any], str, Any, Any, dict[str, Any] | None]:
         """Prioritas galat A26: 404, 400/422 bentuk badan, 409 transisi, 409 hash, 422 isi dan gerbang span."""
@@ -384,7 +418,7 @@ class ProposalService:
         text = files[-1][1].read_bytes().decode("utf-8")
         return [json.loads(ln) for ln in text.split("\n") if ln.strip()]
 
-    def _append_item(self, item: dict[str, Any]) -> Path:
+    def _stage_item(self, item: dict[str, Any]) -> tuple[Path, Path]:
         """Berkas versi BARU = isi versi terbaru (byte persis) + satu baris. Versi lama tidak disentuh; v1 tidak ditulis."""
         family = item["family"]
         files = self._item_files(family)
@@ -400,5 +434,4 @@ class ProposalService:
             raise OSError("item file version exists")
         if set(item) != set(ITEM_KEYS):
             raise OSError("item has unexpected keys")
-        _write_atomic(path, prev + _dump(item))
-        return path
+        return _stage(path, prev + _dump(item)), path
