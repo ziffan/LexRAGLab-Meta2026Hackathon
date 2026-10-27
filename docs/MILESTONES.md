@@ -289,7 +289,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: catatan run, proyeksi biaya.
 **Tier review**: 2.
 **Estimasi**: 1,5 jam.
-**Status**: berjalan — backend `e1244aa`, `f833b07`, `013c304`, `c85c893` (Tier 2, `l3/W2-M31-periksa.md`); per Pasal + guard H-074 `94de71c`. Run: sampel 3 × 10 `e930876`; batch per Pasal lengkap `76256fd` + `472ffc8` (342/343 unit berheader); `fixed_size` `92fbb4c` (100/103). Proyeksi `runs/headers/projection/`. Sisa: I-47 (Pasal 128 dan 3 potongan fixed_size > 40 token setelah 4 upaya).
+**Status**: berjalan — backend `e1244aa` … `94de71c` (Tier 2); prompt B v2 + rejected + maxLength (H-079) `67d6427` (Tier 1/2, `l3/W21-hb-periksa-hasil.md`), smoke maxLength diterima (G-35). Header v1: Pasal 342/343, fixed_size 100/103 (`472ffc8`, `92fbb4c`); v2: Pasal 343/343, fixed_size 101/103 (`cb35b01`, 132.115 micro-USD). Menunggu operator: I-56, I-57.
 
 Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 31 Okt malam, "hanya frontier" berlaku otomatis.
 
@@ -303,7 +303,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: test hijau untuk akuntansi anggaran, screenshot dua deret.
 **Tier review**: 1. Akuntansi token header menentukan keadilan perbandingan.
 **Estimasi**: 2 jam.
-**Status**: berjalan — backend `1a9bacf`, `12528f5` (Tier 1, `l3/W3-M32-hasil.md`); U2 deret on/off `4d64878` (Tier 2/3, `l3/W6-U2-periksa-hasil.md`), test `b7166d7`, toggle `294ec6c`. Grid uji `--with-headers --with-schema` `ebe7f91` (`runs/grid/58d1864b….json`): semua 9 kembaran header-on gagal `header_missing` (I-47). Menunggu operator: I-47, I-48; screenshot dua deret setelah I-47.
+**Status**: berjalan — backend `1a9bacf`, `12528f5` (Tier 1); U2 deret + toggle `4d64878`, `294ec6c` (frontier gabungan, I-48 ditutup). Grid v2 `5a9486e` (`runs/grid/334717886e24….json`): 9 kembaran header-on frontier gagal `header_missing` (I-56 potongan skema tanpa header, I-57 satu potongan fixed_size). Screenshot dua deret setelah putusan.
 
 ### M3.3 — Induksi skema A untuk UU PT
 **Slice**: Spark membaca UU PT dan mengeluarkan skema hierarki. Layar menampilkan skema itu berdampingan dengan koreksi operator, operator mengoreksi lewat editor di layar (H-037), dan versi skema tersimpan.

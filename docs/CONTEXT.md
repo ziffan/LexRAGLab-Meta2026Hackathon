@@ -3,16 +3,16 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-074.
 
-diperbarui: 2026-10-27 10:55 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
+diperbarui: 2026-10-27 13:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
 
 ## Status
 
 - M0 **selesai**. M1 **kode dan review selesai** (screenshot ulang grid v2 tersisa).
 - M2: M2.1 D + U6, M2.2 C + U3, M2.3 verifier ter-review. Menunggu review 13 usulan D (H-006). M2.4/M2.5 stretch.
-- M3: header B batch Pasal (342/343) dan fixed_size (100/103) selesai (`472ffc8`, `92fbb4c`); U2 deret on/off + toggle (`4d64878`, `294ec6c`); M3.4 chunker skema di grid (`a65e1c2`). Grid uji `--with-headers --with-schema` `ebe7f91`: semua kembaran header-on gagal `header_missing` (I-47).
+- M3: header B batch Pasal (342/343) dan fixed_size (100/103) selesai (`472ffc8`, `92fbb4c`); U2 deret on/off + toggle (`4d64878`, `294ec6c`); M3.4 chunker skema di grid (`a65e1c2`). Header B v2 (H-079) `cb35b01`; grid `5a9486e`: kembaran header-on masih gagal (I-56, I-57).
 - M4: lima akta sintetis (`2c81ef9`, review operator I-51); M4.1 pemuat akta + alamat (`2e33331`); M4.3 backend profil W7/W8 (`f48cbda`) + U7 (`df4a545`, `051615e`), Tier 1; R4 versi skema untuk panel akta.
 - M5: M5.1 replay + ekspor statis (`2e33331`, `25eaf4c`), hint + Glossary (`93525a0`), README draf (`585880d`).
-- Belanja Model API kumulatif 139.803 micro-USD (RunRecord; L2#3 66.249); Baseten 1.702.
+- Belanja Model API kumulatif 271.401 micro-USD (RunRecord; termasuk header B v2 H-079 132.115); Baseten 1.702.
 - HEAD `051615e` bersih (archive): pytest 1029, vitest 200, tsc bersih; secret scan semua ref 0.
 
 ## Pin versi (M0)
@@ -29,7 +29,7 @@ diperbarui: 2026-10-27 10:55 UTC, sesi orkestrasi berlapis (L2#3) di mesin otori
 
 ## Menunggu operator
 
-Lihat `docs/ISSUES.md` "Menunggu operator": I-47 (header > 40 token; deret on kosong), I-48, I-49 (teks hint), I-50 (skema disetujui), I-51 (review akta), I-52 (konvensi akta), I-53 (sumber laporan held-out), I-54 (adegan 4: butir `scene_checked`, run ulang C), I-55 (celah spec U7/R4). Juga: review 13 usulan D di U6, skema A v1 UU PT (H-074), Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/push/Pages.
+Lihat `docs/ISSUES.md` "Menunggu operator": I-49 (teks hint), I-51 (review akta), I-54 (butir demo `scene_checked`; kandidat `_kerja/orkestrasi/kandidat-butir-demo.md`), I-56, I-57 (header-on). Juga: review 13 usulan D di U6, skema A v1 UU PT (H-074), Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/push/Pages.
 
 ## Lingkungan
 
