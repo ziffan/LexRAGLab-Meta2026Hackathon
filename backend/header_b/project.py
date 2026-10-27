@@ -15,7 +15,6 @@ from typing import Any, Mapping
 
 from backend.spark import compute_cost_micros
 
-from .caller import WARM_MAX_OUTPUT
 from .render import WARM_UNIT, DocPrefix, render_suffix
 from .units import Unit
 
@@ -28,14 +27,14 @@ def _seconds(calls: int, rpm: int, latency_ms: int) -> dict[str, int]:
 
 
 def project_units(units: list[Unit], prefix: DocPrefix, tokenizer: Any, pricing: Mapping[str, Any], *, rpm: int,
-                  expected_output_tokens: int, max_output_tokens: int, assumed_latency_ms: int) -> dict[str, Any]:
+                  expected_output_tokens: int, max_output_tokens: int, warm_max_output_tokens: int, assumed_latency_ms: int) -> dict[str, Any]:
     """Proyeksi untuk `units` ditambah satu request pemanas."""
     suffixes = [tokenizer.count(render_suffix(prefix, u)) for u in units]
     warm_suffix = tokenizer.count(render_suffix(prefix, WARM_UNIT))
     p = prefix.tokens
 
     def total(cached: bool, out: int) -> int:
-        warm = compute_cost_micros({"input": p + warm_suffix, "cached": 0, "output": min(out, WARM_MAX_OUTPUT)}, pricing)
+        warm = compute_cost_micros({"input": p + warm_suffix, "cached": 0, "output": min(out, warm_max_output_tokens)}, pricing)
         body = sum(compute_cost_micros({"input": p + s, "cached": p if cached else 0, "output": out}, pricing)
                    for s in suffixes)
         return warm + body

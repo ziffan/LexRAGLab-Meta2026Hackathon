@@ -20,7 +20,6 @@ from .render import WARM_UNIT, DocPrefix, render_input, render_suffix
 from .units import Unit
 
 ROLE = "b"
-WARM_MAX_OUTPUT = 300
 
 
 @dataclass
@@ -52,7 +51,7 @@ def make_validator(unit: Unit, tokenizer: Any, max_header_tokens: int) -> Callab
 
 
 def make_call(prompt: PromptB, prefix: DocPrefix, unit: Unit, tokenizer: Any, *, max_header_tokens: int,
-              max_output_tokens: int, meta: dict[str, Any]) -> dict[str, Any]:
+              max_output_tokens: int, warm_max_output_tokens: int, meta: dict[str, Any]) -> dict[str, Any]:
     validate_schema()
     warm = unit is WARM_UNIT
     est = prefix.tokens + tokenizer.count(render_suffix(prefix, unit))
@@ -63,7 +62,7 @@ def make_call(prompt: PromptB, prefix: DocPrefix, unit: Unit, tokenizer: Any, *,
         validator = make_validator(unit, tokenizer, max_header_tokens)
     return dict(role=ROLE, prompt_version=prompt.version, prompt_hash=prompt.prompt_hash, input=render_input(prefix, unit),
                 schema=HEADER_B_SCHEMA, schema_name=SCHEMA_NAME, schema_hash=schema_hash(),
-                prompt_cache_key=prefix.cache_key, max_output_tokens=WARM_MAX_OUTPUT if warm else max_output_tokens,
+                prompt_cache_key=prefix.cache_key, max_output_tokens=warm_max_output_tokens if warm else max_output_tokens,
                 est_input=est, validator=validator, meta=dict(meta))
 
 
@@ -89,11 +88,12 @@ def _save(path: Path, rec: dict[str, Any]) -> None:
 
 def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: list[Unit], *, granularity: str,
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
-                max_consecutive_errors: int, meta: dict[str, Any], warm: bool = True) -> HeaderRun:
+                max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True) -> HeaderRun:
     run = HeaderRun()
     if warm and units:
         w = client.call(**make_call(prompt, prefix, WARM_UNIT, tokenizer, max_header_tokens=max_header_tokens,
-                                    max_output_tokens=max_output_tokens, meta=meta))
+                                    max_output_tokens=max_output_tokens,
+                                    warm_max_output_tokens=warm_max_output_tokens, meta=meta))
         run.warm = w.record
         if w.output is None:
             run.stopped_reason = "warm_failed"
@@ -102,7 +102,8 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
     for u in units:
         try:
             res = client.call(**make_call(prompt, prefix, u, tokenizer, max_header_tokens=max_header_tokens,
-                                          max_output_tokens=max_output_tokens, meta=meta))
+                                          max_output_tokens=max_output_tokens,
+                                          warm_max_output_tokens=warm_max_output_tokens, meta=meta))
         except BudgetExceeded:
             run.stopped_reason = "budget_exceeded"
             return run

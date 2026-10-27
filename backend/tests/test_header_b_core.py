@@ -54,7 +54,7 @@ def units():
 
 def run(rig, prompt, prefix, us, tmp_path, gran="ayat", warm=True):
     return run_headers(rig.client, prompt, prefix, us, granularity=gran, tokenizer=Tok(), headers_dir=tmp_path / "h",
-                       max_header_tokens=MAXH, max_output_tokens=1000, max_consecutive_errors=3, meta={}, warm=warm)
+                       max_header_tokens=MAXH, max_output_tokens=1000, max_consecutive_errors=3, warm_max_output_tokens=777, meta={}, warm=warm)
 
 
 def test_schema_is_strict_and_matches_contract():
@@ -145,10 +145,10 @@ def test_pasal_unit_header_is_shared_by_all_member_chunks(tmp_path):
 def test_call_args_est_input_covers_prefix(tmp_path):
     prompt = load_prompt(MAXH)
     prefix = build_prefix(prompt, doc_stub(), Tok())
-    a = make_call(prompt, prefix, units()[0], Tok(), max_header_tokens=MAXH, max_output_tokens=1000, meta={})
+    a = make_call(prompt, prefix, units()[0], Tok(), max_header_tokens=MAXH, max_output_tokens=1000, warm_max_output_tokens=777, meta={})
     assert a["est_input"] > prefix.tokens and a["role"] == "b" and a["schema_hash"] == schema_hash()
-    w = make_call(prompt, prefix, WARM_UNIT, Tok(), max_header_tokens=MAXH, max_output_tokens=1000, meta={})
-    assert w["max_output_tokens"] == 300
+    w = make_call(prompt, prefix, WARM_UNIT, Tok(), max_header_tokens=MAXH, max_output_tokens=1000, warm_max_output_tokens=777, meta={})
+    assert w["max_output_tokens"] == 777
 
 
 def test_projection_hand_computed_micro_usd():
@@ -160,7 +160,7 @@ def test_projection_hand_computed_micro_usd():
     us = [Unit(f"u{i}", "a", "t", 5, (f"u{i}",)) for i in range(3)]
     pr = {"input": PRICING["input_per_mtok_micros"], "cached": PRICING["cached_per_mtok_micros"],
           "output": PRICING["output_per_mtok_micros"]}
-    p = project_units(us, prefix, Const(), pr, rpm=60, expected_output_tokens=450, max_output_tokens=1000,
+    p = project_units(us, prefix, Const(), pr, rpm=60, expected_output_tokens=450, max_output_tokens=1000, warm_max_output_tokens=300,
                       assumed_latency_ms=3000)
     # pemanas: 1010*0.1 + 300*0.2 = 161. expected/panggilan: 10*0.1 + 1000*0.002 + 450*0.2 = 93.
     assert p["cost_usd_micros"] == {"expected": 161 + 3 * 93, "upper_cached": 161 + 3 * 203, "upper_no_cache": 161 + 3 * 301}
@@ -219,5 +219,21 @@ def test_projection_rpm_floor_at_150():
     prefix = DocPrefix(text="x", nonce="n", tokens=10, cache_key="k")
     us = [Unit(f"u{i}", "a", "t", 1, (f"u{i}",)) for i in range(299)]
     pr = {"input": 1, "cached": 1, "output": 1}
-    p = project_units(us, prefix, Const(), pr, rpm=150, expected_output_tokens=1, max_output_tokens=1, assumed_latency_ms=1)
+    p = project_units(us, prefix, Const(), pr, rpm=150, expected_output_tokens=1, max_output_tokens=1, warm_max_output_tokens=1, assumed_latency_ms=1)
     assert p["calls"] == 300 and p["time"]["rpm_floor_seconds"] == 120  # 300 * 60 / 150
+
+
+def test_warm_limit_comes_from_config_and_reaches_request_and_projection(tmp_path):
+    from backend.header_b.run import load_header_cfg
+    hc = load_header_cfg()
+    assert hc["warm_max_output_tokens"] >= 1000  # 300 memotong pemanas (reasoning, G-31)
+    rig, prompt, prefix = setup(tmp_path)
+    run_headers(rig.client, prompt, prefix, units()[:1], granularity="ayat", tokenizer=Tok(), headers_dir=tmp_path / "h",
+                max_header_tokens=MAXH, max_output_tokens=900, max_consecutive_errors=3, warm_max_output_tokens=654, meta={})
+    assert [r["body"]["max_output_tokens"] for r in rig.tr.requests] == [654, 900]
+    pr = {"input": 100000, "cached": 2000, "output": 200000}
+    a = project_units(units(), DocPrefix("x", "n", 1000, "k"), Tok(), pr, rpm=60, expected_output_tokens=2000,
+                      max_output_tokens=2000, warm_max_output_tokens=100, assumed_latency_ms=1)
+    b = project_units(units(), DocPrefix("x", "n", 1000, "k"), Tok(), pr, rpm=60, expected_output_tokens=2000,
+                      max_output_tokens=2000, warm_max_output_tokens=1000, assumed_latency_ms=1)
+    assert b["cost_usd_micros"]["expected"] - a["cost_usd_micros"]["expected"] == 900 * 200000 // 1_000_000

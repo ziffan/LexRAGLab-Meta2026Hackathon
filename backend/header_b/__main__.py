@@ -87,6 +87,7 @@ def main(argv: list[str] | None = None) -> int:
         res = run_headers(client, p.prompt, p.prefix, p.units[:a.sample], granularity=source, tokenizer=tok,
                           headers_dir=config.REPO_ROOT / "runs" / "headers", max_header_tokens=hc["max_header_tokens"],
                           max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
+                          warm_max_output_tokens=hc["warm_max_output_tokens"],
                           meta=meta)
     except BudgetExceeded as exc:
         print(f"error: budget_exceeded: {exc}", file=sys.stderr)

@@ -16,7 +16,7 @@ from .render import DocPrefix, build_prefix
 from .units import SOURCES, Unit, build_units
 
 DEFAULT_DOC = "uupt-40-2007"
-KEYS = ("max_header_tokens", "max_output_tokens", "expected_output_tokens", "assumed_latency_ms", "max_consecutive_errors")
+KEYS = ("max_header_tokens", "max_output_tokens", "warm_max_output_tokens", "expected_output_tokens", "assumed_latency_ms", "max_consecutive_errors")
 
 
 class HeaderConfigError(ValueError):
@@ -65,6 +65,7 @@ def project(p: Prepared, tokenizer: Any, header_cfg: dict[str, Any], model_cfg: 
     out = project_units(units, p.prefix, tokenizer, pricing, rpm=rpm or model_cfg["limits"]["max_rpm"],
                         expected_output_tokens=header_cfg["expected_output_tokens"],
                         max_output_tokens=header_cfg["max_output_tokens"],
+                        warm_max_output_tokens=header_cfg["warm_max_output_tokens"],
                         assumed_latency_ms=header_cfg["assumed_latency_ms"])
     out.update({"source": p.source, "doc_id": p.doc.doc_id, "profile": profile, "prompt_version": p.prompt.version,
                 "prompt_hash": p.prompt.prompt_hash, "clean_sha256": p.doc.clean_sha256})

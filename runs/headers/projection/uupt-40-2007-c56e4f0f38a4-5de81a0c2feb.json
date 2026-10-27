@@ -1,5 +1,5 @@
 {
- "created_at": "2026-10-27T06:09:05Z",
+ "created_at": "2026-10-27T06:21:52Z",
  "projections": {
   "ayat": {
    "assumed_latency_ms": 3000,
@@ -11,9 +11,9 @@
    "calls": 1071,
    "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
    "cost_usd_micros": {
-    "expected": 220051,
-    "upper_cached": 337751,
-    "upper_no_cache": 5259531
+    "expected": 220081,
+    "upper_cached": 337891,
+    "upper_no_cache": 5259671
    },
    "doc_id": "uupt-40-2007",
    "prefix_tokens": 46937,
@@ -31,36 +31,6 @@
    },
    "units": 1070
   },
-  "ayat:sample": {
-   "assumed_latency_ms": 3000,
-   "assumptions": {
-    "expected_output_tokens": 450,
-    "max_output_tokens": 1000,
-    "prefix_fully_cached_after_warmup": true
-   },
-   "calls": 21,
-   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
-   "cost_usd_micros": {
-    "expected": 8982,
-    "upper_cached": 11182,
-    "upper_no_cache": 103178
-   },
-   "doc_id": "uupt-40-2007",
-   "prefix_tokens": 46937,
-   "profile": "meta",
-   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
-   "prompt_version": "v1",
-   "rpm": 140,
-   "source": "ayat",
-   "source_tokens_total": 2840,
-   "suffix_tokens_total": 5301,
-   "time": {
-    "estimated_seconds": 63,
-    "rpm_floor_seconds": 9,
-    "sequential_seconds": 63
-   },
-   "units": 20
-  },
   "fixed_size": {
    "assumed_latency_ms": 3000,
    "assumptions": {
@@ -71,9 +41,9 @@
    "calls": 104,
    "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
    "cost_usd_micros": {
-    "expected": 30491,
-    "upper_cached": 41821,
-    "upper_no_cache": 515593
+    "expected": 30521,
+    "upper_cached": 41961,
+    "upper_no_cache": 515733
    },
    "doc_id": "uupt-40-2007",
    "prefix_tokens": 46937,
@@ -91,36 +61,6 @@
    },
    "units": 103
   },
-  "fixed_size:sample": {
-   "assumed_latency_ms": 3000,
-   "assumptions": {
-    "expected_output_tokens": 450,
-    "max_output_tokens": 1000,
-    "prefix_fully_cached_after_warmup": true
-   },
-   "calls": 21,
-   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
-   "cost_usd_micros": {
-    "expected": 9756,
-    "upper_cached": 11956,
-    "upper_no_cache": 103951
-   },
-   "doc_id": "uupt-40-2007",
-   "prefix_tokens": 46937,
-   "profile": "meta",
-   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
-   "prompt_version": "v1",
-   "rpm": 140,
-   "source": "fixed_size",
-   "source_tokens_total": 10244,
-   "suffix_tokens_total": 13046,
-   "time": {
-    "estimated_seconds": 63,
-    "rpm_floor_seconds": 9,
-    "sequential_seconds": 63
-   },
-   "units": 20
-  },
   "pasal": {
    "assumed_latency_ms": 3000,
    "assumptions": {
@@ -131,9 +71,9 @@
    "calls": 344,
    "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
    "cost_usd_micros": {
-    "expected": 76750,
-    "upper_cached": 114480,
-    "upper_no_cache": 1692206
+    "expected": 76780,
+    "upper_cached": 114620,
+    "upper_no_cache": 1692346
    },
    "doc_id": "uupt-40-2007",
    "prefix_tokens": 46937,
@@ -150,36 +90,6 @@
     "sequential_seconds": 1032
    },
    "units": 343
-  },
-  "pasal:sample": {
-   "assumed_latency_ms": 3000,
-   "assumptions": {
-    "expected_output_tokens": 450,
-    "max_output_tokens": 1000,
-    "prefix_fully_cached_after_warmup": true
-   },
-   "calls": 21,
-   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
-   "cost_usd_micros": {
-    "expected": 9171,
-    "upper_cached": 11371,
-    "upper_no_cache": 103369
-   },
-   "doc_id": "uupt-40-2007",
-   "prefix_tokens": 46937,
-   "profile": "meta",
-   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
-   "prompt_version": "v1",
-   "rpm": 140,
-   "source": "pasal",
-   "source_tokens_total": 4794,
-   "suffix_tokens_total": 7216,
-   "time": {
-    "estimated_seconds": 63,
-    "rpm_floor_seconds": 9,
-    "sequential_seconds": 63
-   },
-   "units": 20
   }
  }
 }
