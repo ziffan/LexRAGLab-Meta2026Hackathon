@@ -89,6 +89,7 @@ def metrics_to_cache(m: ItemMetrics) -> dict[str, Any]:
         "rank": m.rank, "parts_total": m.parts_total, "parts_hit": m.parts_hit,
         "item_id": m.item_id, "setting_id": m.setting_id, "split": m.split,
         "retrieved_chunk_ids": list(m.retrieved_chunk_ids),
+        **({"gold_chars_outside_units": m.gold_chars_outside_units} if m.gold_chars_outside_units is not None else {}),
     }
 
 

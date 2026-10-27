@@ -11,3 +11,13 @@ a = 500000
 b = 1000000
 c = 500000
 d = 250000
+
+[batch_gate]
+# H-092 P10 / G-36: gerbang proyeksi batch Spark (fungsi murni backend/proposal/gate.py). Ditolak bila
+# batas_atas > batch_cap_micros ATAU kumulatif_terpakai + batas_atas > cumulative_cap_micros * cumulative_pct / 100.
+# factor_bp = faktor ulang G-36 dalam basis point (15700 = 1,57); ASUMSI dari peran B (121.725 / 77.533 = 1,56997), belum
+# diukur untuk D. Plafon kumulatif 20.000.000 = putusan operator 27 Okt malam (bukan cap dev_total di atas).
+factor_bp = 15700
+batch_cap_micros = 2000000
+cumulative_cap_micros = 20000000
+cumulative_pct = 80

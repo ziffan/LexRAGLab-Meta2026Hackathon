@@ -77,6 +77,8 @@ class ItemMetrics:
     setting_id: str = ""
     split: str | None = None
     retrieved_chunk_ids: tuple[str, ...] = field(default_factory=tuple)
+    # H-090 P7 (hanya akta; None = tidak dilaporkan, UU PT): karakter gold (setelah digabung) di luar semua unit peta alamat.
+    gold_chars_outside_units: int | None = None
 
     @property
     def has_gold(self) -> bool:

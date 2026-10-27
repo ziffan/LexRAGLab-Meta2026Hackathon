@@ -12,8 +12,10 @@ from typing import Any, Iterable, Mapping
 
 from backend.api.errors import ApiError
 
+from .item import ITEM_MODES, MODE_TOLAK
+
 ORIGINS = ("operator", "spark_disetujui")
-MODES = ("literal", "parafrase")
+MODES = ITEM_MODES  # H-092: literal, parafrase, tolak (enum Item.mode)
 SPLITS = ("tune", "held_out")
 
 
@@ -35,7 +37,7 @@ def items_summary(items: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     """`items_summary` API 4: lima kunci. Hanya `Item` (bukan usulan) yang dihitung."""
     rows = list(items)
     return {"n_items": len(rows), "by_origin": dict(Counter(i.get("origin") for i in rows)),
-            "by_mode": dict(Counter(i.get("mode") for i in rows)),
+            "by_mode": {**dict.fromkeys(ITEM_MODES, 0), **Counter(i.get("mode") for i in rows)},  # tiga kunci selalu ada (H-092)
             "by_split": dict(Counter(i["split"] for i in rows if i.get("split") is not None)),
             "control_in_held_out": sum(1 for i in rows if i.get("origin") == "operator" and i.get("split") == "held_out")}
 
@@ -55,9 +57,21 @@ def _mean(xs: list[Fraction]) -> float | None:
     return float(sum(xs) / len(xs)) if xs else None
 
 
-def origin_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], *, split: str = "held_out") -> dict[str, dict[str, Any]]:
-    """Laporan per asal untuk satu split. Kedua asal selalu ada (baris kosong tetap muncul)."""
-    if split not in SPLITS:
+def origin_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], *, split: str | None = "held_out") -> dict[str, dict[str, Any]]:
+    """Laporan per asal untuk satu split. Kedua asal selalu ada (baris kosong tetap muncul). `split=None` = keluarga tanpa split
+    (akta, H-054): semua butir, tanpa filter split."""
+    return _group_report(items, metrics, split, "origin", ORIGINS)
+
+
+def mode_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], *, split: str | None = "held_out") -> dict[str, dict[str, Any]]:
+    """Laporan per mode `Item` (bentuk baris sama dengan `origin_report`); `literal`, `parafrase`, `tolak` selalu ada.
+    Butir wajib tolak (`tolak`) tidak bergold: `n_with_gold = 0`, rata-rata `null` (P7)."""
+    return _group_report(items, metrics, split, "mode", ITEM_MODES)
+
+
+def _group_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], split: str | None, key: str,
+                  groups: tuple[str, ...]) -> dict[str, dict[str, Any]]:
+    if split is not None and split not in SPLITS:
         raise ApiError(400, "invalid_request", f"split must be one of {list(SPLITS)}.")
     all_items = list(items)
     by_id = {i["id"]: i for i in all_items}
@@ -70,8 +84,8 @@ def origin_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], *,
             raise ReportError(f"duplicate metrics row for item_id {str(iid)[:40]!r}")
         rows[iid] = m
     out: dict[str, dict[str, Any]] = {}
-    for origin in ORIGINS:
-        sel = [i for i in all_items if i.get("origin") == origin and i.get("split") == split]
+    for origin in groups:
+        sel = [i for i in all_items if i.get(key) == origin and (split is None or i.get("split") == split)]
         recalls: list[Fraction] = []
         precisions: list[Fraction] = []
         n_gold = n_no_gold = n_missing = covered = total = 0
@@ -96,3 +110,17 @@ def origin_report(items: Iterable[Mapping[str, Any]], metrics: Iterable[Any], *,
                        "mean_span_recall": _mean(recalls), "mean_token_precision": _mean(precisions),
                        "fully_covered": {"covered": covered, "total": total}}
     return out
+
+
+def must_abstain_summary(items: Iterable[Mapping[str, Any]], answers: Iterable[Mapping[str, Any]]) -> dict[str, int]:
+    """Baris laporan "no gold (must abstain)" (P8, EVAL-SPEC §10): atas `AnswerRecord` satu kombinasi (setting, slot, profil),
+    hanya jawaban untuk butir `tolak`. `abstained_correct` = C berstatus `tolak`/`bukti_tidak_cukup`; `n` = jumlah jawaban butir
+    wajib tolak. Bukan jumlah sel "Abstained, correctly" (yang bisa memuat butir bergold yang golnya tak ada di konteks)."""
+    must = {i["id"] for i in items if i.get("mode") == MODE_TOLAK}
+    n = ok = 0
+    for a in answers:
+        if a.get("item_id") not in must:
+            continue
+        n += 1
+        ok += 1 if (a.get("output") or {}).get("status") in ("tolak", "bukti_tidak_cukup") else 0
+    return {"n": n, "abstained_correct": ok}

@@ -13,6 +13,7 @@ from fastapi import APIRouter, Body, Request
 
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
+from backend.proposal.absence import load_absence_config, service_checker_provider
 from backend.proposal.report import pending_count
 from backend.proposal.service import DocInfo, ProposalService
 from backend.spark import SparkClient
@@ -35,7 +36,8 @@ def get_proposals(request: Request) -> ProposalService:
             return DocInfo(d.doc_id, d.family, d.text, d.clean_sha256)
 
         svc = ProposalService(runs_dir=base.runs_dir, butir_dir=base.butir_dir, doc_provider=docs,
-                              count_tokens=lambda t: int(base.tok().count(t)))
+                              count_tokens=lambda t: int(base.tok().count(t)), config_dir=base.config_dir,
+                              checker_provider=service_checker_provider(base))
         st.proposals = svc
     return svc
 
@@ -71,4 +73,5 @@ def get_queue(request: Request, family: str) -> dict[str, Any]:
     check_family(family)
     svc = get_proposals(request)
     recs = svc.list_proposals(family)
-    return {"proposals": recs, "pending": pending_count(recs), "context_lines": svc.context_lines}
+    return {"proposals": recs, "pending": pending_count(recs), "context_lines": svc.context_lines,
+            "check_config_hash": svc.check_config_hash()}

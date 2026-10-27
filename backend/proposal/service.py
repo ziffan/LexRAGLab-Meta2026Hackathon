@@ -31,7 +31,9 @@ from backend.spark.settings import effort_for
 from backend.spark.store import canonical_json, sha256_hex
 
 from . import prompt as promptmod
-from .prompt import MODES, PROPOSAL_D_SCHEMA, SCHEMA_NAME, PromptD
+from .absence import AbsenceChecker, load_absence_config, normalize_query
+from .item import MODE_TOLAK, item_mode_problem
+from .prompt import MODE_U, MODES, MODES_SPAN, PromptD
 from .span import span_in_bounds, validate_span
 
 ROLE = "d"
@@ -121,7 +123,9 @@ class ProposalService:
     def __init__(self, *, runs_dir: Path, butir_dir: Path, doc_provider: Callable[[str], DocInfo | None],
                  clock: Callable[[], float] = time.time, prompt_provider: Callable[[], PromptD] = promptmod.load_prompt,
                  count_tokens: Callable[[str], int] | None = None, max_proposals: int | None = None,
-                 hooks: Hooks | None = None, config_dir: Path | None = None) -> None:
+                 hooks: Hooks | None = None, config_dir: Path | None = None,
+                 prompt_provider_u: Callable[[], PromptD] | None = None,
+                 checker_provider: Callable[[DocInfo], AbsenceChecker] | None = None) -> None:
         self.runs_dir = Path(runs_dir)
         self.butir_dir = Path(butir_dir)
         self.doc_provider = doc_provider
@@ -133,6 +137,11 @@ class ProposalService:
         self.context_lines = int(pcfg["context_lines"])
         self.hooks = hooks or Hooks()
         self._lock = threading.RLock()
+        # H-092: mode `unanswerable` (prompt v2, skema ProposalU, pemeriksaan ketiadaan jawaban lokal)
+        self.prompt_provider_u = prompt_provider_u or (lambda: promptmod.load_prompt(mode=MODE_U))
+        self.checker_provider = checker_provider
+        self.absence_cfg = load_absence_config(config_dir, pcfg)
+        self.max_per_call = self.absence_cfg.max_per_call
 
     # ------------------------------------------------------------------ jalur
     @property
@@ -184,7 +193,11 @@ class ProposalService:
         return next((r["run"] for r in self._runs() if r["run"]["run_id"] == run_id), None)
 
     def list_proposals(self, family: str | None = None) -> list[dict[str, Any]]:
-        """Semua `ProposalRecord`, urut run lalu urutan keluaran. Catatan yang hilang dilewati."""
+        """Semua `ProposalRecord`, urut run lalu urutan keluaran. Catatan yang hilang dilewati. Rekaman `unanswerable` membawa
+        `duplicate_of` (informatif, dihitung di sini; tidak disimpan)."""
+        return self._view_all(self._raw_list(family))
+
+    def _raw_list(self, family: str | None = None) -> list[dict[str, Any]]:
         out = []
         for r in self._runs():
             if family is not None and r.get("family") != family:
@@ -195,12 +208,60 @@ class ProposalService:
                     out.append(rec)
         return out
 
+    def _dup_index(self) -> dict[str, str | None]:
+        """P14: untuk tiap rekaman `unanswerable`, `proposal_id` rekaman TERDAHULU (urut run) dengan `doc_id` dan query
+        ternormalisasi sama; rekaman pertama dan rekaman lain = None. Informatif: tidak membuang atau memblokir."""
+        first: dict[tuple[str, str], str] = {}
+        out: dict[str, str | None] = {}
+        for rec in self._raw_list():
+            b = rec["body"]
+            if b.get("mode") != MODE_U:
+                continue
+            key = (b["doc_id"], normalize_query(b["query"]))
+            out[rec["proposal_id"]] = first.get(key)
+            first.setdefault(key, rec["proposal_id"])
+        return out
+
+    def _view_all(self, recs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if not any(r["body"].get("mode") == MODE_U for r in recs):
+            return recs
+        dup = self._dup_index()
+        return [{**r, "duplicate_of": dup.get(r["proposal_id"])} if r["body"].get("mode") == MODE_U else r for r in recs]
+
+    def _view(self, rec: dict[str, Any]) -> dict[str, Any]:
+        return self._view_all([rec])[0]
+
+    def recheck(self, proposal_id: str) -> dict[str, Any]:
+        """Hitung ulang `absence_check` rekaman `unanswerable` atas query ASLINYA dengan config sekarang. Seam uji dan CLI: lokal,
+        deterministik, tanpa Model API; tidak menulis apa pun."""
+        rec = self.get(proposal_id)
+        if rec is None:
+            raise ApiError(404, "not_found", "Unknown proposal_id.")
+        if rec["body"].get("mode") != MODE_U:
+            raise ApiError(400, "invalid_request", "Only 'unanswerable' proposals have an absence check.")
+        doc = self.doc_provider(rec["body"]["doc_id"])
+        if doc is None:
+            raise ApiError(404, "not_found", "Unknown doc_id.")
+        return self._checker(doc).check(rec["body"]["query"])
+
+    def check_config_hash(self) -> str:
+        """Hash konfigurasi pemeriksaan sekarang (U6: `Check settings changed` bila beda dari `absence_check.config_hash`)."""
+        from .absence import config_hash_of
+        return config_hash_of(self.absence_cfg)
+
+    def _checker(self, doc: DocInfo) -> AbsenceChecker:
+        if self.checker_provider is None:
+            raise ApiError(503, "model_unavailable", "The absence check is not configured.")
+        return self.checker_provider(doc)
+
     # ---------------------------------------------------------------------- W4
     def generate(self, family: str, doc_id: Any, modes: Any, *, profile: str, model_config: Mapping[str, Any],
                  client_factory: Callable[[], SparkClient], replay: bool = False) -> dict[str, Any]:
         if (not isinstance(modes, list) or not modes or any(not isinstance(m, str) for m in modes)
                 or any(m not in MODES for m in modes)):
             raise ApiError(400, "invalid_request", f"modes must be a non-empty list drawn from {list(MODES)}.")
+        if MODE_U in modes and family != "akta":  # P13: butir tolak UU PT milik operator (H-011); sebelum panggilan apa pun
+            raise ApiError(400, "invalid_request", "Mode 'unanswerable' is only available for family 'akta'.")
         modes = list(dict.fromkeys(modes))
         if not isinstance(doc_id, str):
             raise ApiError(400, "invalid_request", "doc_id must be a string.")
@@ -212,24 +273,31 @@ class ProposalService:
             effort = effort_for(model_config, ROLE)
         except ConfigInvalid as exc:
             raise ApiError(503, "model_unavailable", str(exc)[:300]) from None
-        prm = self.prompt_provider()
-        promptmod.validate_schema()
-        sch = promptmod.schema_hash()
-        keys = {m: sha256_hex(canonical_json([ROLE, prof.get("provider"), prof.get("model"), effort, prm.prompt_hash, sch,
-                                              doc.clean_sha256, doc.doc_id, m, self.max_proposals])) for m in modes}
+        # Mode ber-span: prompt v1 + ProposalD + batas max_proposals (kunci lama byte-identik). `unanswerable`: prompt v2 + ProposalU + max_per_call.
+        prms = {m: (self.prompt_provider_u() if m == MODE_U else self.prompt_provider()) for m in modes}
+        schs = {m: promptmod.schema_hash(m) for m in modes}
+        for m in modes:
+            promptmod.validate_schema(m)
+        caps = {m: (self.max_per_call if m == MODE_U else self.max_proposals) for m in modes}
+        keys = {m: sha256_hex(canonical_json([ROLE, prof.get("provider"), prof.get("model"), effort, prms[m].prompt_hash, schs[m],
+                                              doc.clean_sha256, doc.doc_id, m, caps[m]])) for m in modes}
         hits = {m: self._index(keys[m]) for m in modes}
         misses = [m for m in modes if hits[m] is None]
         if replay and misses:
             raise ApiError(409, "replay_no_stored_run", "No stored run for this request. Replay mode does not call the Model API.")
         calls: dict[str, dict[str, Any]] = {}
         client: SparkClient | None = None
+        checker: AbsenceChecker | None = None
         try:
+            if MODE_U in misses:  # sebelum membayar Spark: unit cari dan pemeriksa harus bisa dibangun
+                checker = self._checker(doc)
             if misses:
                 client = client_factory()
             for m in misses:
-                text = promptmod.render_input(prm, doc.doc_id, doc.text, m, self.max_proposals, doc.clean_sha256)
+                prm, (schema, schema_name) = prms[m], promptmod.schema_for(m)
+                text = promptmod.render_input(prm, doc.doc_id, doc.text, m, caps[m], doc.clean_sha256)
                 calls[m] = dict(role=ROLE, prompt_version=prm.version, prompt_hash=prm.prompt_hash, input=text,
-                                schema=PROPOSAL_D_SCHEMA, schema_name=SCHEMA_NAME, schema_hash=sch,
+                                schema=schema, schema_name=schema_name, schema_hash=schs[m],
                                 prompt_cache_key=prm.prompt_cache_key, max_output_tokens=prm.max_output_tokens,
                                 est_input=int(self.count_tokens(text)),
                                 meta={"clean_sha256": doc.clean_sha256, "corpus_hash": doc.clean_sha256})
@@ -259,7 +327,7 @@ class ProposalService:
                 err = res.record.error or {"code": "model_error", "message": "call failed"}
                 status, code = _MAP_ERR.get(err["code"], (502, "model_error"))
                 raise ApiError(status, code, f"{m}: {err['message']}"[:300])
-            runs.append(self._store_run(family, doc, m, keys[m], res.record.to_dict(), res.parsed))
+            runs.append(self._store_run(family, doc, m, keys[m], res.record.to_dict(), res.parsed, checker))
         proposals: list[dict[str, Any]] = []  # dari disk: keputusan yang sudah ada tidak ter-reset
         for m in modes:
             idx = hits[m] or self._index(keys[m])
@@ -267,20 +335,28 @@ class ProposalService:
                 rec = self.get(pid)
                 if rec is not None:
                     proposals.append(rec)
-        return {"proposals": proposals, "runs": runs}
+        return {"proposals": self._view_all(proposals), "runs": runs}
 
     def _store_run(self, family: str, doc: DocInfo, mode: str, d_key: str, run: dict[str, Any],
-                   out: Mapping[str, Any]) -> dict[str, Any]:
-        kept = [u for u in out.get("usulan", []) if u.get("doc_id") == doc.doc_id and u.get("mode") == mode]  # A5
-        kept = kept[: self.max_proposals]  # A6: sesudah pembuangan
+                   out: Mapping[str, Any], checker: AbsenceChecker | None = None) -> dict[str, Any]:
+        if mode == MODE_U:
+            kept = self._keep_u(doc, out)
+        else:
+            kept = [u for u in out.get("usulan", []) if u.get("doc_id") == doc.doc_id and u.get("mode") == mode]  # A5
+            kept = kept[: self.max_proposals]  # A6: sesudah pembuangan
         recs = []
         for i, u in enumerate(kept):
+            base = {"proposal_id": sha256_hex(canonical_json([d_key, i]))[:16], "family": family, "review_status": "usulan",
+                    "edited": None, "operator_note": None, "reviewed_at": None, "item_id": None, "run_id": run["run_id"]}
+            if mode == MODE_U:  # P5: tanpa span; pemeriksaan ketiadaan jawaban lokal direkam di rekaman
+                assert checker is not None
+                recs.append({**base, "body": {"query": u["query"], "mode": MODE_U, "doc_id": u["doc_id"],
+                                              "alasan_kode": u["alasan_kode"], "alasan_teks": u["alasan_teks"]},
+                             "resolved_span": None, "validation": None, "absence_check": checker.check(u["query"])})
+                continue
             chk = validate_span(doc.text, u["teks_gold"], u["start"], u["end"])
-            recs.append({"proposal_id": sha256_hex(canonical_json([d_key, i]))[:16], "family": family, "body": dict(u),
-                         "resolved_span": chk.resolved_span,
-                         "validation": {"offset_found": chk.offset_found, "text_matches": chk.text_matches},
-                         "review_status": "usulan", "edited": None, "operator_note": None, "reviewed_at": None,
-                         "item_id": None, "run_id": run["run_id"]})
+            recs.append({**base, "body": dict(u), "resolved_span": chk.resolved_span,
+                         "validation": {"offset_found": chk.offset_found, "text_matches": chk.text_matches}})
         try:
             _call(self.hooks.before_w4_write)
             with self._lock:
@@ -296,16 +372,32 @@ class ProposalService:
             raise ApiError(500, "storage_error", "Could not save the proposals.") from None
         return run
 
+    def _keep_u(self, doc: DocInfo, out: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        """Pembuangan semantik `unanswerable`: doc_id lain (A5), query atau alasan_teks kosong, duplikat dalam satu panggilan
+        (SU21); lalu batas `max_per_call` (P9), sesudah pembuangan, urutan dipertahankan."""
+        kept, seen = [], set()
+        for u in out.get("usulan", []):
+            if u.get("doc_id") != doc.doc_id or not u["query"].strip() or not u["alasan_teks"].strip():
+                continue
+            key = normalize_query(u["query"])
+            if key in seen:
+                continue
+            seen.add(key)
+            kept.append(u)
+        return kept[: self.max_per_call]
+
     # ---------------------------------------------------------------------- W5
     def decide(self, proposal_id: str, body: Any) -> dict[str, Any]:
         self._plan(proposal_id, body)  # baca dan putuskan tanpa menulis; galat menurut prioritas A26
         _call(self.hooks.after_read)
         with self._lock:
-            rec, decision, edited, note, draft = self._plan(proposal_id, body)  # cek ulang di bawah kunci (CAS)
+            rec, decision, edited, note, draft, absence = self._plan(proposal_id, body, final=True)  # cek ulang di bawah kunci (CAS)
             now = self._now()
             item = {**draft, "operator_note": note, "created_at": now} if draft is not None else None
             new = {**rec, "review_status": decision, "edited": edited, "operator_note": note, "reviewed_at": now,
                    "item_id": item["id"] if item else None}
+            if absence is not None:  # diubah pada `unanswerable`: dihitung ulang atas query baru (P6)
+                new["absence_check"] = absence
             staged: tuple[Path, Path] | None = None
             old_bytes = (self.records_dir / f"{proposal_id}.json").read_bytes()
             wrote = False
@@ -327,7 +419,7 @@ class ProposalService:
                 if isinstance(exc, ApiError):
                     raise
                 raise ApiError(500, "storage_error", "Could not save decision. Nothing was changed.") from None
-            return {"proposal": new, "item": item}
+            return {"proposal": self._view(new), "item": item}
 
     @staticmethod
     def _unlink(path: Path) -> None:
@@ -336,7 +428,8 @@ class ProposalService:
         except OSError:
             pass
 
-    def _plan(self, proposal_id: str, body: Any) -> tuple[dict[str, Any], str, Any, Any, dict[str, Any] | None]:
+    def _plan(self, proposal_id: str, body: Any, final: bool = False
+              ) -> tuple[dict[str, Any], str, Any, Any, dict[str, Any] | None, dict[str, Any] | None]:
         """Prioritas galat A26: 404, 400/422 bentuk badan, 409 transisi, 409 hash, 422 isi dan gerbang span."""
         rec = self.get(proposal_id)
         if rec is None:
@@ -359,22 +452,41 @@ class ProposalService:
         if decision == "ditolak":
             if edited is not None:
                 raise ApiError(422, "validation_failed", "edited is only allowed with decision 'diubah'.")
-            return rec, decision, None, note, None
+            return rec, decision, None, note, None, None
         doc = self.doc_provider(rec["body"]["doc_id"])
         run = self._run_by_id(rec["run_id"])
         if doc is None or run is None or run.get("clean_sha256") != doc.clean_sha256:
             raise ApiError(409, "hash_mismatch", "The document text changed since this proposal was made.")
         b = rec["body"]
+        is_u = b.get("mode") == MODE_U
         if decision == "disetujui":
             if edited is not None:
                 raise ApiError(422, "validation_failed", "edited is only allowed with decision 'diubah'.")
+            if is_u:  # tanpa gerbang span (validation null); doubtful tidak memblokir (P3)
+                return rec, decision, None, note, self._draft(rec, doc, decision, b["query"], MODE_TOLAK, []), None
             if not rec["validation"]["text_matches"] or rec["resolved_span"] is None:
                 raise ApiError(422, "validation_failed", "This proposal failed span validation; edit it or reject it.")
             spans = [dict(rec["resolved_span"])]
-            return rec, decision, None, note, self._draft(rec, doc, decision, b["query"], b["mode"], spans)
+            return rec, decision, None, note, self._draft(rec, doc, decision, b["query"], b["mode"], spans), None
+        if is_u:
+            self._check_edited_u(edited)
+            assert edited is not None
+            absence = self._checker(doc).check(edited["query"]) if final else None
+            return rec, decision, edited, note, self._draft(rec, doc, decision, edited["query"], MODE_TOLAK, []), absence
         spans = self._check_edited(edited, doc)
         assert edited is not None
-        return rec, decision, edited, note, self._draft(rec, doc, decision, edited["query"], edited["mode"], spans)
+        return rec, decision, edited, note, self._draft(rec, doc, decision, edited["query"], edited["mode"], spans), None
+
+    @staticmethod
+    def _check_edited_u(edited: Any) -> None:
+        """P6 revisi 2: `{query tak kosong, gold_spans: [], mode: "tolak"}` tepat; selain itu 422."""
+        bad = ApiError(422, "validation_failed", "edited is not valid.")
+        if not isinstance(edited, dict) or set(edited) != EDITED_KEYS:
+            raise bad
+        if not isinstance(edited["query"], str) or not edited["query"].strip() or edited["mode"] != MODE_TOLAK:
+            raise bad
+        if not isinstance(edited["gold_spans"], list) or edited["gold_spans"]:
+            raise bad
 
     @staticmethod
     def _check_edited(edited: Any, doc: DocInfo) -> list[dict[str, int]]:
@@ -382,7 +494,7 @@ class ProposalService:
         if not isinstance(edited, dict) or set(edited) != EDITED_KEYS:
             raise bad
         q, mode, spans = edited["query"], edited["mode"], edited["gold_spans"]
-        if not isinstance(q, str) or not q.strip() or not isinstance(mode, str) or mode not in MODES:
+        if not isinstance(q, str) or not q.strip() or not isinstance(mode, str) or mode not in MODES_SPAN:
             raise bad
         if not isinstance(spans, list) or not spans:
             raise bad
@@ -434,4 +546,6 @@ class ProposalService:
             raise OSError("item file version exists")
         if set(item) != set(ITEM_KEYS):
             raise OSError("item has unexpected keys")
+        if item_mode_problem(item):
+            raise OSError("item violates the mode invariant")
         return _stage(path, prev + _dump(item)), path

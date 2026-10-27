@@ -5,3 +5,25 @@ version = 1
 max_proposals_per_call = 20
 # Jumlah baris sebelum/sesudah span yang ditampilkan di kartu Review (A19).
 context_lines = 2
+
+[unanswerable]
+# H-092 (P2, P9): mode D `unanswerable` (butir wajib tolak akta). Nilai AWAL, belum dikalibrasi; operator boleh ubah.
+# Mengubah nilai tabel ini TIDAK mengubah kunci cache D dan tidak memanggil Spark (pemeriksaan lokal, deterministik);
+# yang berubah hanya `config_hash` pemeriksaan pada rekaman baru.
+# Jumlah potongan teratas per ranker (BM25 dan dense) yang diperiksa.
+check_top_k = 3
+# Ambang `max_cov >= ini` (inklusif) = lexical_overlap. Pecahan eksak (tanpa float): dibaca sebagai desimal.
+lexical_coverage_threshold = 0.5
+# Token yang muncul di unit dengan df/N > ini dianggap generik dan tidak dihitung di T*.
+generic_df_ratio = 0.5
+# Ambang cosine maksimum (inklusif) = dense_similar.
+dense_cosine_threshold = 0.80
+# Perangkat encoder dense untuk pemeriksaan (H-047: Glimmer di LM Studio dan embedding tidak bersamaan di VRAM). CLI --device menimpa.
+# Produksi selalu mencoba dense; encoder tidak bisa dimuat -> alasan dense_unavailable (SU7 d).
+device = "cpu"
+# Batas keras usulan per panggilan, sesudah pembuangan semantik (P9); terpisah dari max_proposals_per_call.
+max_per_call = 3
+# Proyeksi batch (P10): asumsi keluaran per panggilan, token (reasoning ikut ditagih sebagai output, G-31). Sumber: median keluaran
+# 12 run D akta tersimpan = sekitar 2.300 token untuk 5-11 usulan; mode ini 2-3 usulan tanpa span, jadi 2000 adalah asumsi
+# konservatif, BELUM diukur untuk mode ini.
+projection_expected_output_tokens = 2000

@@ -30,6 +30,7 @@ from backend.grid.types import (MULTI_DOC_FAMILIES, NO_SPLIT_FAMILY, GridItem, S
                                 family_corpus_hash, item_set_hash, metrics_to_cache)
 from backend.metrics.run_record import run_record_parts
 from backend.pipeline.multi import MultiDocPipeline
+from backend.proposal.item import item_mode_problem
 from backend.pipeline.pipeline import Pipeline, unavailable_reason
 from backend.quality.aggregate import quality_metrics
 from backend.quality.types import ChunkSpan, QualityDoc
@@ -38,7 +39,9 @@ from backend.spark.runrecord import RunRecord
 
 RECALL_ITEM_SCOPES = ("all", "tune", "held_out")
 CONFIGS = ("grid", "retrieval", "tokenizer", "corpus")
-FAMILY_CONFIGS = {"akta": ("corpus_akta",)}  # config korpus tambahan yang ikut config_hash keluarga itu saja (UU PT tetap)
+UNIT_MAP_CONFIG = "akta_unitmap"  # H-090: unit_map_version + aturan Recall@K akta; berkas terpisah agar hash UU PT tidak bergeser
+UNIT_MAP_FAMILY = "akta"
+FAMILY_CONFIGS = {"akta": ("corpus_akta", UNIT_MAP_CONFIG)}  # config tambahan yang ikut config_hash keluarga itu saja (UU PT tetap)
 GRID_FAMILIES = ("uupt", *MULTI_DOC_FAMILIES)
 _ITEM_FILE = re.compile(r"^(\w+)\.v(\d+)\.jsonl$")
 
@@ -61,9 +64,13 @@ def load_items(family: str, butir_dir: Path) -> tuple[list[dict[str, Any]], str 
     for ln, line in enumerate(files[-1][1].read_bytes().decode("utf-8").split("\n"), 1):
         if line.strip():
             try:
-                out.append(json.loads(line))
+                row = json.loads(line)
             except json.JSONDecodeError:
                 raise GridRunError(f"item file {files[-1][1].name} line {ln} is not valid JSON") from None
+            bad = item_mode_problem(row) if isinstance(row, dict) and "mode" in row else None  # H-092: enum Item.mode, tolak
+            if bad:
+                raise GridRunError(f"item file {files[-1][1].name} line {ln} is invalid: {bad}")
+            out.append(row)
     return out, files[-1][1].name
 
 
@@ -118,15 +125,18 @@ class Plan:
 
 
 def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers: HeaderBinding | None = None,
-                         schema_a: list[dict[str, Any]] | None = None) -> str:
+                         schema_a: list[dict[str, Any]] | None = None, unit_map: dict[str, Any] | None = None) -> str:
     """Hash konfigurasi run. Dengan header B (A10): hash isi store header, granularitas, `prompt_hash` B, model, dan
     `header_b.scope` ikut; `run_id` B tidak. Dengan skema A (M3.4): versi, hash isi, dan sumber tiap skema yang dipakai
-    setting `structure_schema` yang bisa jalan ikut (`schema_a` kosong/None = hash sama seperti sebelum M3.4)."""
+    setting `structure_schema` yang bisa jalan ikut (`schema_a` kosong/None = hash sama seperti sebelum M3.4).
+    `unit_map` (H-090, hanya akta): identitas skema AKTIF (peta unit semua setting) + `unit_map_version`; None = tak berubah."""
     parts: dict[str, Any] = {**cfgs, "_tokenizer_info": {"name": tok_info.name, "version": tok_info.version}}
     if headers is not None:
         parts["_header_b"] = headers.identity()
     if schema_a:
         parts["_schema_a"] = schema_a
+    if unit_map is not None:
+        parts["_unit_map"] = unit_map
     return config.config_hash(parts)
 
 
@@ -184,6 +194,32 @@ def schema_report(pipe: Pipeline, executed: list[Setting], schemas: SchemaBindin
     return {"schemas_used": desc, "schema_approved": all(d["schema_approved"] for d in desc), "boundary_diff": diffs}
 
 
+def unit_map_identity(cfgs: dict[str, dict[str, Any]], schemas: SchemaBinding | None) -> dict[str, Any]:
+    """Komponen kunci grid akta (H-090 P2): skema A aktif (versi, hash isi, sumber; None bila tak ada) dan `unit_map_version`,
+    walau grid tanpa setting `structure_schema` (peta unit berlaku untuk semua setting)."""
+    return {"schema": schemas.identity() if schemas is not None else None, "unit_map_version": cfgs[UNIT_MAP_CONFIG]["unit_map_version"]}
+
+
+def unit_map_kind(pipe: Any) -> tuple[str, list[str]]:
+    """("schema" | "fallback", doc_id dokumen akta yang memakai peta cadangan). Satu dokumen cadangan = seluruh keluarga bertanda."""
+    fb = sorted(p.doc.doc_id for p in _doc_pipes(pipe) if p.akta_unit_map()[1] == "fallback")
+    return ("fallback" if fb else "schema"), fb
+
+
+def unit_map_report(pipe: Any, schemas: SchemaBinding | None, unit_cfg: dict[str, Any], metrics: list[Any]) -> dict[str, Any]:
+    """Blok amplop `unit_map` (H-090 P1, P7, P10; hanya akta): identitas skema aktif + persetujuan, `unit_map_version`, tanda
+    peta cadangan, `recall_unit`, dan hitungan butir. `metrics` = ItemMetrics satu setting (peta sama untuk semua setting)."""
+    act = schemas.active() if schemas is not None else None
+    desc = schemas.describe(act) if act is not None and schemas is not None else None
+    kind, fb = unit_map_kind(pipe)
+    return {"unit_map_version": unit_cfg["unit_map_version"],
+            "schema_version": desc["schema_version"] if desc else None, "schema_hash": desc["schema_hash"] if desc else None,
+            "source": desc["source"] if desc else None, "schema_approved": desc["schema_approved"] if desc else None,
+            "kind": kind, "fallback_doc_ids": fb, "recall_unit": unit_cfg["recall"]["unit"],
+            "n_items_recall_null": sum(1 for m in metrics if m.gold_chars > 0 and m.parts_total == 0),
+            "n_items_gold_partly_outside": sum(1 for m in metrics if m.parts_total > 0 and (m.gold_chars_outside_units or 0) > 0)}
+
+
 def make_plan(family: str, *, doc: Any = None, tokenizer: Any, butir_dir: Path, runs_dir: Path, config_dir: Path | None = None,
               create_split: bool, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None,
               docs: Any = None) -> Plan:
@@ -219,7 +255,8 @@ def make_plan(family: str, *, doc: Any = None, tokenizer: Any, butir_dir: Path, 
         except SplitError as exc:
             if create_split:
                 raise GridRunError(str(exc)) from None
-    chash = pipeline_config_hash(cfgs, tokenizer.info, headers, schema_identities(runnable, schemas))
+    chash = pipeline_config_hash(cfgs, tokenizer.info, headers, schema_identities(runnable, schemas),
+                                 unit_map_identity(cfgs, schemas) if family == UNIT_MAP_FAMILY else None)
     corpus_key = family_corpus_hash(docs) if multi else doc.clean_sha256
     if split:
         key: str | None = grid_cache_key(corpus_key, chash, item_set_hash(items), split.split_version)
@@ -298,17 +335,22 @@ def _quality_doc(p: Pipeline, s: Setting) -> QualityDoc:
     return QualityDoc(p.doc.text, tuple(ChunkSpan(c.start, c.end) for c in cs.chunks), bounds)
 
 
-def quality_for(pipe: Pipeline, s: Setting, metrics: list[Any]) -> dict[str, Any]:
-    """QualityMetrics satu setting: potongan seluruh korpus + Recall@K per butir dari ItemMetrics (fungsi produksi M1.2)."""
+def quality_for(pipe: Pipeline, s: Setting, metrics: list[Any], unit_cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    """QualityMetrics satu setting: potongan seluruh korpus + Recall@K per butir dari ItemMetrics (fungsi produksi M1.2).
+    `unit_cfg` (config akta_unitmap, hanya akta; I-65/H-090): cakupan butir dan label dari `[recall]`, plus `recall_unit` dan
+    `unit_map_kind`; None = aturan `[quality].recall_items` (UU PT, tidak berubah)."""
     q = pipe.rcfg["quality"]
     qdocs = [_quality_doc(p, s) for p in _doc_pipes(pipe)]  # multi-dokumen: hitungan entitas/batas digabung lintas dokumen
-    scope = q.get("recall_items", "all")
+    scope = q.get("recall_items", "all") if unit_cfg is None else unit_cfg["recall"]["items"]
     if scope not in RECALL_ITEM_SCOPES:
-        raise GridRunError(f"[quality].recall_items must be one of {list(RECALL_ITEM_SCOPES)}, got {scope!r}")
+        raise GridRunError(f"[quality].recall_items (akta: {UNIT_MAP_CONFIG} [recall].items) must be one of {list(RECALL_ITEM_SCOPES)}, got {scope!r}")
     used = [x for x in metrics if scope == "all" or x.split == scope]
     m = quality_metrics(s.setting_id, qdocs, pipe.k, [x.recall_at_k for x in used], q["entity_patterns"], q["abbreviations"])
     d = asdict(m)
-    d["items_scope"] = scope  # label cakupan butir Recall@K (I-39)
+    d["items_scope"] = scope if unit_cfg is None else unit_cfg["recall"]["label"]  # label cakupan butir Recall@K (I-39; akta: "transfer")
+    if unit_cfg is not None:
+        d["recall_unit"] = unit_cfg["recall"]["unit"]
+        d["unit_map_kind"] = unit_map_kind(pipe)[0]
     d["recall_n_items"] = sum(1 for x in used if x.recall_at_k is not None)
     return d
 
@@ -381,7 +423,8 @@ def run_family_grid(family: str, *, doc: Any = None, tokenizer: Any, runs_dir: P
     for m in res.metrics:
         per_setting.setdefault(m.setting_id, []).append(m)
     executed = [s for s in plan.runnable if s.setting_id in per_setting]  # tanpa kembaran di luar scope dan setting gagal
-    quality = [quality_for(pipe, s, per_setting[s.setting_id]) for s in executed]
+    ucfg = plan.cfgs.get(UNIT_MAP_CONFIG) if family == UNIT_MAP_FAMILY else None
+    quality = [quality_for(pipe, s, per_setting[s.setting_id], ucfg) for s in executed]
     q_by_id = {q["setting_id"]: q for q in quality}
     comparison = []
     for budget, sel in sorted(res.selections.items()):
@@ -426,6 +469,8 @@ def run_family_grid(family: str, *, doc: Any = None, tokenizer: Any, runs_dir: P
         "selections": {str(b): selection_dict(s) for b, s in sorted(res.selections.items())},
         "quality": quality, "quality_comparison": comparison,
         **schema_report(pipe, executed, schemas),
+        **({"unit_map": unit_map_report(pipe, schemas, ucfg, per_setting[executed[0].setting_id] if executed else []),
+            "recall_unit": ucfg["recall"]["unit"]} if ucfg is not None else {}),
     }
     store.write(plan.key, envelope)
     return GridResult(plan.key, False, record, envelope, store.path(plan.key))

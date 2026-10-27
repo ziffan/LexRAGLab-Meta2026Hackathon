@@ -67,6 +67,7 @@ def compute_item_metrics(
     item_id: str = "",
     setting_id: str = "",
     split: str | None = None,
+    report_outside: bool = False,
 ) -> ItemMetrics:
     gold = iv.merge(gold_spans)
     packed = pack(doc, ranked, budget, tokenizer, packing)
@@ -89,4 +90,5 @@ def compute_item_metrics(
         setting_id=setting_id,
         split=split,
         retrieved_chunk_ids=tuple(p.chunk_id for p in packed if p.chunk_id is not None),
+        gold_chars_outside_units=(iv.size(gold) - sum(e - s for s, e in parts)) if report_outside else None,
     )

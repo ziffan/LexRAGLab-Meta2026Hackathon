@@ -62,12 +62,13 @@ Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028,
 
 | Aspek | Isi |
 |---|---|
-| Masukan | Satu dokumen sumber + mode yang diminta (`literal`, `parafrase`) |
-| Keluaran | `ProposalD` (§9): daftar `{query, mode, doc_id, teks_gold, start, end}` |
+| Masukan | Satu dokumen sumber + mode yang diminta (`literal`, `parafrase`, `unanswerable`) |
+| Keluaran | `ProposalD` (§9): daftar `{query, mode, doc_id, teks_gold, start, end}`; mode `unanswerable` (H-092, akta saja): `ProposalU`, daftar `{query, doc_id, alasan_kode, alasan_teks}` tanpa span |
 | Maksud prompt | Usulkan pertanyaan yang jawabannya ada di span dokumen yang mencakup semua ayat yang dibutuhkan, tidak lebih (H-048), dengan span dikutip persis. Mode parafrase wajib: pertanyaan tidak boleh berbagi kata kunci literal dengan span (melawan bias BM25, H-006) |
 | Batasan prompt | Span harus dikutip persis dari dokumen. Tidak boleh mengusulkan pertanyaan yang jawabannya butuh dokumen lain. Jumlah usulan per panggilan dibatasi konfigurasi |
 | Validasi semantik | Sistem mencari `teks_gold` di dokumen; offset Spark (bila ada) harus cocok. Hasilnya ditampilkan di layar Review (`offset found`, `text matches`) |
 | Cache | Kunci per hash dokumen + mode + prompt. Dokumen sebagai prefix tetap |
+| Mode `unanswerable` (H-087, H-092) | Prompt `prompts/d/v2.md` (hanya mode ini; v1 tetap untuk `literal`/`parafrase`): 2-3 pertanyaan wajar untuk akta yang jawabannya tidak ada (kandidat baik: data tidak dimuat H-041 seperti NIK/NPWP/rekening, fakta di luar akta, rincian tidak diatur; kandidat buruk: jawaban tersirat), tanpa span, dengan `alasan_kode` + `alasan_teks`. Batas keras `max_per_call = 3`. Sistem memeriksa lokal (BM25/dense top-K atas potongan skema A aktif) dan menandai kandidat meragukan; butir lahir `mode = tolak` hanya lewat persetujuan operator. Proyeksi batch: `python -m backend.proposal unanswerable --family akta --project-only`, faktor ulang G-36 `factor_bp` di `config/budget [batch_gate]` (asumsi) |
 | Perkiraan biaya | Contributor < $0,50 untuk beberapa puluh usulan (estimasi pra-acara) |
 | Pemeriksa | **Operator memeriksa setiap usulan** dan menyetujui, mengubah, atau menolak (H-006). Agen pengembang tidak menyetujui butir. Hasil dilaporkan per asal |
 | Slice | M2.1, M4.2 |

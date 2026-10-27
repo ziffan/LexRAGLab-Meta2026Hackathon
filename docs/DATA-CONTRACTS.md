@@ -139,9 +139,9 @@ Alamat diberikan dari peta alamat yang sama untuk semua chunker (prinsip keadila
 | `family` | enum `uupt` / `akta` | | Operator |
 | `query` | string | | Operator, atau Spark lalu disetujui operator |
 | `doc_id` | string | dokumen gold | Operator |
-| `gold_spans` | array of `{start: int, end: int}` | span gold atas teks bersih; boleh kosong = butir wajib tolak. Span menandai semua ayat yang dibutuhkan untuk menjawab: boleh beberapa ayat, sampai seluruh Pasal bila semuanya relevan, tidak lebih (H-048). Sistem memecahnya di batas ayat menjadi bagian-ayat sebelum metrik dihitung (`docs/EVAL-SPEC.md` §6); operator tidak memecahnya sendiri | Operator |
+| `gold_spans` | array of `{start: int, end: int}` | span gold atas teks bersih; kosong = butir wajib tolak (mode `tolak`, H-092; butir lama `parafrase` + gold kosong, mis. `kontrol-K-08`, tetap sah). Span menandai semua ayat yang dibutuhkan untuk menjawab: boleh beberapa ayat, sampai seluruh Pasal bila semuanya relevan, tidak lebih (H-048). Sistem memecahnya di batas ayat menjadi bagian-ayat sebelum metrik dihitung (`docs/EVAL-SPEC.md` §6); operator tidak memecahnya sendiri | Operator |
 | `clean_sha256` | string | teks bersih tempat span ditulis (H-046) | Sistem |
-| `mode` | enum `literal` / `parafrase` | | Operator |
+| `mode` | enum `literal` / `parafrase` / `tolak` | `tolak` = butir wajib tolak akta (H-092): invarian `mode = tolak` ⟹ `gold_spans = []`; arah sebaliknya tidak dipaksa. Sementara hanya `family = akta` (I-66); pemuat butir menolak `tolak` untuk `uupt`, `tolak` ber-gold, dan nilai di luar enum (mis. `unanswerable`, nama `ProposalRecord.body.mode`). Sumber: H-092 | Operator |
 | `origin` | enum `operator` / `spark_disetujui` | asal (H-006) | Sistem dari jalur masuk |
 | `review_status` | enum `disetujui` / `diubah` / null | hanya untuk `spark_disetujui`; `null` untuk `operator` | Operator |
 | `proposal_id` | string \| null | rujukan `ProposalD` | Sistem |
@@ -392,7 +392,32 @@ Definisi sel di `docs/EVAL-SPEC.md` §10.
 }
 ```
 
-Sistem mencari `teks_gold` di dokumen untuk menetapkan offset. Bila Spark memberi offset, offset itu harus cocok dengan teks.
+Sistem mencari `teks_gold` di dokumen untuk menetapkan offset. Bila Spark memberi offset, offset itu harus cocok dengan teks. Enum `mode` skema `ProposalD` = {`literal`, `parafrase`} (tidak berubah; `schema_hash` tetap).
+
+**Varian `unanswerable` (H-092, P1/P5)** — skema keluaran terpisah `ProposalU` (`strict: true`, prompt `prompts/d/v2.md`, hanya `family = akta`):
+
+```json
+{"type": "object", "additionalProperties": false, "required": ["usulan"],
+ "properties": {"usulan": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+   "required": ["query", "doc_id", "alasan_kode", "alasan_teks"],
+   "properties": {"query": {"type": "string"}, "doc_id": {"type": "string"},
+     "alasan_kode": {"type": "string", "enum": ["data_tidak_dimuat", "di_luar_akta", "rincian_tidak_diatur"]},
+     "alasan_teks": {"type": "string"}}}}}}
+```
+
+Tanpa `mode`, `teks_gold`, `start`, `end`. `ProposalRecord` varian ini: `body` = `{query, mode: "unanswerable", doc_id, alasan_kode, alasan_teks}` (`mode` diisi sistem), `resolved_span = null`, `validation = null`, field baru `absence_check` dan `duplicate_of`:
+
+| Field | Tipe | Isi |
+|---|---|---|
+| `absence_check.status` | `ok` / `doubtful` | `doubtful` bila ada >= 1 alasan; tetap disimpan dan dapat di-Approve (P3) |
+| `absence_check.reasons` | array, urutan tetap | `lexical_overlap`, `dense_similar`, `no_distinctive_terms`, `dense_unavailable` |
+| `absence_check.max_cov` | `{num: int, den: int}` | irisan terbesar token distingtif query dengan top-K; `den` = jumlah token distingtif; `0/0` = tidak ada (tanpa float) |
+| `absence_check.max_cosine` | number \| null | cosine maksimum top-K dense; null bila dense mati atau tak tersedia |
+| `absence_check.top_k` | array `{source: bm25/dense, rank, unit_text}` | daftar BM25 lalu dense, tanpa dedup, maks 2K |
+| `absence_check.config_hash` | string | hash `config/proposals [unanswerable]` saat dihitung (R: daftar usulan melaporkan hash sekarang di `check_config_hash`) |
+| `duplicate_of` | string \| null | informatif, dihitung server saat daftar/simpan (tidak disimpan): `proposal_id` rekaman `unanswerable` terdahulu dengan `doc_id` dan query ternormalisasi sama; tidak membuang usulan |
+
+Pemeriksaan ketiadaan jawaban lokal dan deterministik atas potongan `structure_schema` skema A akta aktif (BM25 produksi dan dense bge-m3 opsional; satu fungsi tokenisasi). Nilai di `config/proposals.toml` `[unanswerable]`. Pada `diubah`, `absence_check` dihitung ulang atas query baru; `body` tidak berubah. Sumber: H-092.
 
 **Penyimpanan `ProposalRecord`**
 
@@ -450,6 +475,7 @@ Status `diubah` diperlakukan sebagai disetujui setelah diubah; `origin` tetap `s
 | `recall_at_k` | number \| null | |
 | `fully_covered` | bool \| null | semua span gold tertutup |
 | `retrieved_chunk_ids` | array of string | |
+| `gold_chars_outside_units` | int \| absen | **hanya akta** (H-090 P7): karakter gold (setelah digabung) di luar semua unit peta alamat. Absen untuk UU PT (baris metrik UU PT byte-identik dengan sebelumnya). Butir ber-gold yang seluruh gold-nya di luar unit: `parts_total = 0`, `recall_at_k = null` (tidak dihitung di rata-rata, tidak hilang diam-diam: dihitung di `unit_map.n_items_recall_null`) |
 
 Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitungan mentah.
 
@@ -466,6 +492,14 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 | `mean_retrieved_tokens` | number \| null | sumbu X frontier; atas butir bergold (M1.2 A8); `null` bila tanpa butir bergold (H-061) |
 | `fully_covered_count` | `{covered: int, total: int}` | "covered x of y" |
 | `dominated` | bool | |
+
+**Peta unit akta (H-090, M4.1)**: untuk `family = akta`, `ChunkSet.amap` dan `units` (unit pemecah gold Recall@K, label C, V5, boundary coherence) = `schema_address_map(doc, skema A akta AKTIF)` untuk SEMUA setting grid (juga `fixed_size`; setting yang dipin ke versi skema non-aktif tetap memakai peta aktif, P11). Unit = penanda `default_chunk_level` (Pasal, Kepala Akta, Komparisi, Penutup Akta, dst.) tanpa spasi tepi; ayat/huruf = `Rincian` (alamat sah di V5, tidak memecah gold, P3). Skema aktif Spark tetap dipakai dan ditandai `schema_approved: false` (P1). Teks di luar unit (LF antar unit, teks sebelum penanda pertama) tidak berunit (P7). Akta tanpa skema aktif atau tanpa penanda di dokumen itu: peta cadangan = satu unit `<awalan> › Batang Tubuh` + peringatan di `AddressMap.notes`, bertanda `kind = "fallback"` (P8); `Batang Tubuh` tidak sah di V5 bila peta skema dipakai (P6). UU PT tidak berubah satu byte.
+- Kunci: `config_hash` grid akta memuat `_unit_map = {schema: {family, schema_version, schema_hash, source} | null, unit_map_version}` (`SchemaBinding.identity()` skema aktif) walau grid tanpa setting `structure_schema`. `unit_map_version` ada di `config/akta_unitmap.toml` (dimuat lewat `FAMILY_CONFIGS["akta"]` di `backend/pipeline/grid_run.py`, ikut `cfgs` akta saja; bukan `retrieval`/`grid`). Hash dan kunci UU PT tidak berubah.
+- Amplop `runs/grid/<kunci>.json` akta memuat blok `unit_map`: `{unit_map_version, schema_version, schema_hash, source, schema_approved, kind: "schema" | "fallback", fallback_doc_ids: [doc_id], recall_unit, n_items_recall_null, n_items_gold_partly_outside}` (`schema_*`/`source`/`schema_approved` null bila tak ada skema aktif) dan `recall_unit: "default_chunk_level"` di tingkat atas. `n_items_recall_null` = butir ber-gold dengan `parts_total = 0`; `n_items_gold_partly_outside` = butir dengan `parts_total > 0` dan `gold_chars_outside_units > 0` (dihitung atas setting pertama yang dijalankan; peta sama untuk semua setting). Amplop UU PT tidak memuat `unit_map` maupun `recall_unit`.
+- `QualityMetrics` akta menambah `recall_unit` (P10: unit = penanda level default, TIDAK sebanding dengan unit ayat UU PT, H-048) dan `unit_map_kind` (`schema` / `fallback`, tanda "peta cadangan" untuk Recall@K/boundary, P8). Entri UU PT tidak memuatnya.
+- Identitas peta saat run (S14): versi + hash skema + `unit_map_version` di blok `unit_map` amplop run; kunci grid berubah bila peta berubah, sehingga run dengan peta lama tidak dipakai ulang. Menampilkan verdict/jawaban tersimpan yang dibuat dengan peta lama sebagai "peta lama" (stale) adalah tugas replay (belum ada field identitas peta di rekaman jawaban; diteruskan ke slice replay).
+
+**Cakupan butir Recall@K (I-65, H-090)**: `QualityMetrics.items_scope` UU PT = `[quality].recall_items` (`held_out`, H-065, tidak berubah). Keluarga tanpa split (akta): cakupan = semua butir ber-gold (`config/akta_unitmap.toml` `[recall].items = "all"`), `items_scope = "transfer"` (label dari `[recall].label`; bukan nilai split, H-054, tanpa kata held-out, H-078).
 
 **Frontier**: `{family, split, budget_tokens, point_ids: array of string, grid_run_id}`. `split` `null` untuk akta; "transfer" hanya label laporan, bukan nilai data (H-054, H-059).
 

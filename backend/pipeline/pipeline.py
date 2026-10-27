@@ -15,6 +15,7 @@ from types import SimpleNamespace
 from typing import Any, Callable, Sequence
 
 from backend.chunking import AddressMap, Chunk, build_address_map, chunk_document
+from backend.chunking.akta_address import schema_address_map
 from backend.chunking.schema_chunker import schema_identity
 from backend.grid.headers import HeaderBinding, index_text, resolve_headers
 from backend.grid.schemas import SchemaBinding
@@ -26,6 +27,7 @@ from backend.metrics.types import ItemMetrics, RankedChunk
 from backend.retrieval.dense import EmbeddingSet, Encoder, embed_chunks
 from backend.retrieval.registry import chunk_texts, rank
 
+AKTA_FAMILY = "akta"
 AVAILABLE_CHUNKERS = ("structure_handwritten", "fixed_size")  # `structure_schema` tersedia bila ada `SchemaBinding` (M3.4)
 
 
@@ -76,6 +78,7 @@ class ChunkSet:
     view_off: IndexView | None = None
     view_on: IndexView | None = None
     headers: dict[str, str] | None = None  # header tervalidasi (hanya bila lolos semua pemeriksaan)
+    unit_map_kind: str = "parser"  # "parser" (UU PT), "schema" (akta, H-090) atau "fallback" (akta tanpa penanda, P8)
 
 
 @dataclass
@@ -103,6 +106,7 @@ class Pipeline:
         self._rank_cache: dict[tuple, list[tuple[str, float]]] = {}
         self._infos: list[Any] = []
         self.calls = 0  # jumlah panggilan pipeline (bukti nol hitung pada cache)
+        self._akta_unit_map: tuple[AddressMap, str] | None = None
 
     # --- komponen ---
     @property
@@ -130,6 +134,35 @@ class Pipeline:
         ident = schema_identity(rec)
         return (*chunk_params(s), ident["schema_version"], ident["schema_hash"])
 
+    @property
+    def is_akta(self) -> bool:
+        return getattr(self.doc, "family", None) == AKTA_FAMILY
+
+    def _scope_prefix(self) -> tuple[set[str], str]:
+        return set(self.rcfg["scope_sections"]), self.doc.metadata.get("address_prefix") or self.doc.doc_id
+
+    def parser_map(self) -> AddressMap:
+        scope, prefix = self._scope_prefix()
+        return build_address_map(self.doc.text, self.doc.sections, prefix, scope,
+                                 dict(self.rcfg.get("chunking", {}).get("section_labels", {})))
+
+    def akta_unit_map(self) -> tuple[AddressMap, str]:
+        """Peta unit akta (H-090): `schema_address_map` atas skema A AKTIF, sama untuk semua setting (juga `fixed_size`;
+        setting dipin ke versi non-aktif tetap memakai peta aktif, P11). Skema aktif Spark tetap dipakai (P1). Tanpa skema
+        aktif atau tanpa penanda di akta ini: peta parser (satu unit `Batang Tubuh`) + peringatan di `notes` (P8), kind "fallback"."""
+        if self._akta_unit_map is None:
+            scope, prefix = self._scope_prefix()
+            rec = self.schemas.active() if self.schemas is not None else None
+            amap = schema_address_map(self.doc, rec, prefix) if rec is not None else None
+            if amap is not None and amap.in_sections(scope):
+                self._akta_unit_map = (amap, "schema")
+            else:
+                fb = self.parser_map()
+                why = "no active schema A" if rec is None else f"active schema A v{rec['schema_version']} has no marker in this deed"
+                fb.notes.append(f"unit map fallback (peta cadangan): {why}; single unit per section")
+                self._akta_unit_map = (fb, "fallback")
+        return self._akta_unit_map
+
     def chunk_set(self, s: Setting) -> ChunkSet:
         reason = unavailable_reason(s, headers=self.headers is not None, schemas=self.schemas)
         if reason:
@@ -140,11 +173,14 @@ class Pipeline:
             chunks = chunk_document(self.doc, setting_content(s), tokenizer=self.tok, retrieval_cfg=self.rcfg, grid_cfg=self.gcfg,
                                     schema_record=self.schema_record(s))
             scope = set(self.rcfg["scope_sections"])
-            prefix = self.doc.metadata.get("address_prefix") or self.doc.doc_id
-            amap = build_address_map(self.doc.text, self.doc.sections, prefix, scope,
-                                     dict(self.rcfg.get("chunking", {}).get("section_labels", {})))
+            kind = "parser"
+            if self.is_akta:
+                amap, kind = self.akta_unit_map()
+            else:
+                amap = self.parser_map()
             units = [(u.start, u.end) for u in amap.in_sections(scope)]
-            cs = ChunkSet(chunks, chunks[0].chunker_key if chunks else "", {c.chunk_id: c for c in chunks}, units, amap)
+            cs = ChunkSet(chunks, chunks[0].chunker_key if chunks else "", {c.chunk_id: c for c in chunks}, units, amap,
+                          unit_map_kind=kind)
             self._sets[key] = cs
         return cs
 
@@ -215,7 +251,8 @@ class Pipeline:
         hdr = self.headers_for(s) if s.header_b else {}
         ranked = [RankedChunk(cs.by_id[cid].start, cs.by_id[cid].end, hdr.get(cid, ""), cid) for cid, _ in ranking]
         m = compute_item_metrics(self.doc.text, item.gold_spans, ranked, s.budget_tokens, self.tok, packing=self.packing,
-                                 k=self.k, units=cs.units, item_id=item.id, setting_id=s.setting_id)
+                                 k=self.k, units=cs.units, item_id=item.id, setting_id=s.setting_id,
+                                 report_outside=self.is_akta)
         packed = pack(self.doc.text, ranked, s.budget_tokens, self.tok, self.packing)
         return Retrieval(m, list(ranking), packed, dict(ranking))
 

@@ -1,0 +1,14 @@
+# config/akta_unitmap — peta unit keluarga akta (H-090, M4.1). Berkas terpisah dengan sengaja: dimuat lewat
+# FAMILY_CONFIGS["akta"] (grid_run), sehingga ikut config_hash grid akta SAJA. Menaruhnya di retrieval/grid akan
+# menggeser hash dan kunci cache UU PT.
+version = 1
+# Naikkan bila aturan penurunan peta unit akta dari skema A berubah (mis. granularitas unit). Masuk kunci cache grid akta.
+unit_map_version = 1
+
+[recall]
+# I-65 (H-090): keluarga tanpa split tidak punya held-out; Recall@K dihitung atas semua butir ber-gold, berlabel "transfer".
+# UU PT tidak membaca bagian ini (tetap [quality].recall_items di config/retrieval).
+items = "all"
+label = "transfer"
+# P10: unit pemecah gold = penanda default_chunk_level skema A; tidak sebanding dengan unit ayat UU PT (H-048).
+unit = "default_chunk_level"

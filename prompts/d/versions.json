@@ -6,6 +6,18 @@
       "role": "d",
       "max_output_tokens": 8000,
       "note": "Instruksi peran D (docs/SPARK-ROLES.md 5). Satu instruksi untuk semua mode; mode dan batas jumlah ada di akhir masukan."
+    },
+    "v2": {
+      "file": "v2.md",
+      "role": "d",
+      "max_output_tokens": 8000,
+      "modes": [
+        "unanswerable"
+      ],
+      "note": "H-087/H-092: instruksi peran D hanya untuk mode unanswerable (butir wajib tolak akta), skema ProposalU. v1 tetap untuk literal dan parafrase (kunci cache lama tidak berubah)."
     }
+  },
+  "by_mode": {
+    "unanswerable": "v2"
   }
 }

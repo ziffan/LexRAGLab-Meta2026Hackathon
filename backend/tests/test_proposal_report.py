@@ -103,7 +103,7 @@ def test_s21c_item_without_metrics_row_is_counted_not_zeroed():
 # ---------------------------------------------------------------- S22
 def test_s22_items_summary_counts_items_not_proposals():
     s = items_summary(ITEMS)
-    assert s == {"n_items": 8, "by_origin": {"operator": 4, "spark_disetujui": 4}, "by_mode": {"literal": 5, "parafrase": 3},
+    assert s == {"n_items": 8, "by_origin": {"operator": 4, "spark_disetujui": 4}, "by_mode": {"literal": 5, "parafrase": 3, "tolak": 0},
                  "by_split": {"tune": 2, "held_out": 6}, "control_in_held_out": 3}
     props = [{"review_status": x} for x in ["usulan"] * 3 + ["ditolak"] * 2 + ["disetujui", "disetujui", "diubah", "disetujui"]]
     assert pending_count(props) == 3 and s["n_items"] == 8

@@ -11,6 +11,7 @@ from fractions import Fraction
 from typing import Any, Iterable, Mapping, Sequence
 
 from backend.metrics.types import ItemMetrics
+from backend.proposal.item import ITEM_MODES
 
 ORIGINS = ("operator", "spark_disetujui")
 NO_GOLD_NOTE = "no gold (must abstain)"
@@ -76,8 +77,10 @@ def _row(it: Mapping[str, Any], m: ItemMetrics, split_label: str) -> dict[str, A
     }
 
 
-def _groups(by_id: Mapping[str, Mapping[str, Any]], rows: Sequence[ItemMetrics], key: str) -> dict[str, dict[str, Any]]:
-    keys = sorted({_origin_of(by_id, m)[key] for m in rows})
+def _groups(by_id: Mapping[str, Mapping[str, Any]], rows: Sequence[ItemMetrics], key: str,
+            always: Sequence[str] = ()) -> dict[str, dict[str, Any]]:
+    """`always` = kunci yang selalu ada walau kosong (rata-rata null; H-061, H-092 `by_mode`)."""
+    keys = sorted({_origin_of(by_id, m)[key] for m in rows} | set(always))
     out: dict[str, dict[str, Any]] = {}
     for k in keys:
         s = summarize([m for m in rows if by_id[m.item_id][key] == k])
@@ -105,5 +108,5 @@ def build_report(family: str, items: Iterable[Mapping[str, Any]], metrics: Itera
         "summary": {"n_items": s["n_items"], "mean_span_recall": s["mean_span_recall"],
                     "mean_token_precision": s["mean_token_precision"],
                     "fully_covered": _count(s["fully_covered"]["covered"], s["fully_covered"]["total"])},
-        "by_origin": _groups(by_id, used, "origin"), "by_mode": _groups(by_id, used, "mode"),
+        "by_origin": _groups(by_id, used, "origin"), "by_mode": _groups(by_id, used, "mode", ITEM_MODES),  # H-092 rev3: tiga kunci selalu ada
     }
