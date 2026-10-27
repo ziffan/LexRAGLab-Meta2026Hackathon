@@ -419,3 +419,18 @@ def test_structure_h064_no_overlap_round_trip_and_uncovered_chars(doc, structure
         covered[c.start:c.end] = b"\x01" * (c.end - c.start)
     unc = sum(1 for s in doc.sections if s["section"] in SCOPE for i in range(s["start"], s["end"]) if not doc.text[i].isspace() and not covered[i])
     assert unc == 1074  # karakter bukan-spasi dalam cakupan di luar potongan struktur; sebelum H-064: 4725 (diukur di HEAD sebelumnya)
+
+
+def test_structure_h064_penjelasan_with_opening_text_ayat_1_does_not_start_at_heading():
+    # Penjelasan Pasal dengan isi pembuka sebelum "Ayat (1)": unit tingkat-Pasal (heading + pembuka) sudah memuat heading,
+    # jadi chunk Ayat (1) TIDAK boleh melebar ke heading (akan tumpang-tindih). Mematikan mutan M7 (cabang `not has_pre`).
+    t = "#### Penjelasan Pasal 3\nUraian pembuka.\nAyat (1)\nCukup jelas.\nAyat (2)\nJjj kkk.\n"
+    d = make_doc(t, [("penjelasan_pasal", 0, len(t))])
+    cs = chunk_structure(d, tokenizer=ToyWs(), retrieval_cfg=RCFG)
+    assert [d.text[c.start:c.end] for c in cs] == [
+        "#### Penjelasan Pasal 3\nUraian pembuka.", "Ayat (1)\nCukup jelas.", "Ayat (2)\nJjj kkk.",
+    ]
+    assert cs[0].address == f"{PREFIX}{SEP}Penjelasan{SEP}Pasal 3"
+    assert cs[1].address.endswith("Ayat (1)") and cs[1].start == t.index("Ayat (1)")
+    assert all(a.end <= b.start for a, b in zip(cs, cs[1:])), "tanpa tumpang-tindih"
+    verify_chunks(d, cs, SCOPE)

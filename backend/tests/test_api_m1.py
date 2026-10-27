@@ -132,7 +132,7 @@ def test_r3_is_read_only(client, world):
 # ---- R4 ----
 def test_r4_chunks_for_grid_setting_and_unavailable_setting(client, world):
     r = client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": sid(world, "fixed_size", "dense")})
-    assert r.status_code == 200 and len(r.json()["chunks"]) > 50  # fixed_size berurutan lintas Pasal: 103 potongan (H-062)
+    assert r.status_code == 200 and len(r.json()["chunks"]) == 103  # korpus beku, fixed_size berurutan (H-062)
     clean_error(client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": sid(world, "structure_schema", "bm25")}), 422, "validation_failed")
     clean_error(client.get(f"{FAM}/docs/uupt-40-2007", params={"setting_id": "0" * 64}), 404, "not_found")
 
