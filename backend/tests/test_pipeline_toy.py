@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import json
 from fractions import Fraction
 
@@ -183,8 +185,9 @@ def test_make_plan_without_creating_split_writes_nothing(world):
 def _set_recall_scope(cfg_dir, scope):
     p = cfg_dir / "retrieval.toml"
     t = p.read_bytes().decode("utf-8")
-    assert 'recall_items = "all"' in t
-    p.write_bytes(t.replace('recall_items = "all"', f'recall_items = "{scope}"').encode("utf-8"))
+    t2, n = re.subn(r'(?m)^recall_items = "[a-z_]+"', f'recall_items = "{scope}"', t)
+    assert n == 1
+    p.write_bytes(t2.encode("utf-8"))
 
 
 @pytest.mark.parametrize("scope", ["all", "tune", "held_out"])

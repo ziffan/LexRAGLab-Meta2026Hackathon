@@ -68,5 +68,5 @@ entity_patterns = [
 # (peka huruf besar-kecil) terhadap deretan huruf tepat sebelum titik.
 abbreviations = ["No", "dst", "dll"]
 # Butir mana yang masuk Recall@K di QualityMetrics: "all" (tune + held-out), "tune", atau "held_out".
-# Usulan agen: "all" sampai operator memutus (I-39). Dilabel di keluaran sebagai `items_scope`; bukan klaim held-out.
-recall_items = "all"
+# Diputus operator (H-065, I-39): angka hasil dari held-out; tune boleh tampil berlabel "tune". Dilabel sebagai `items_scope`.
+recall_items = "held_out"
