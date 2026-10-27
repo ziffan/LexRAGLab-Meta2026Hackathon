@@ -140,3 +140,16 @@ def test_invalid_json_is_clear_error(monkeypatch):
     monkeypatch.setattr(measure.urllib.request, "urlopen", lambda req, timeout: R(b"not json"))
     with pytest.raises(measure.MeasureError, match="invalid JSON"):
         measure.count_endpoint("x", "m", "https://example.invalid/v1", "k")
+
+
+def test_method_status_follows_config(monkeypatch):
+    # Pemeriksa G2: status bukan konstanta; mengikuti config/tokenizer [calibration].status.
+    real = config.load
+
+    def fake(name, *a, **k):
+        cfg = real(name, *a, **k)
+        if name == "tokenizer":
+            cfg = dict(cfg, calibration=dict(cfg["calibration"], status="sementara"))
+        return cfg
+    monkeypatch.setattr(config, "load", fake)
+    assert measure.method_status() == "sementara"

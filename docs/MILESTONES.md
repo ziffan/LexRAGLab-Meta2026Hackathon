@@ -11,7 +11,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 
 | Milestone | Tanggal | Isi | Slice | Estimasi (jam, sudah × 1,5) | Status |
 |---|---|---|---|---|---|
-| M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | berjalan |
+| M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | berjalan (M0.2 selesai) |
 | M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | belum mulai |
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | belum mulai |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | belum mulai |
@@ -126,7 +126,7 @@ Prasyarat terpenuhi: format korpus dan aturan pemuat dikunci di H-046. Aturan pe
 **Bukti verifikasi yang wajib disetor**: tabel per bagian dengan token terukur, hash, jumlah anotasi terurai, dan contoh dua ketentuan yang berubah (teks bersih vs baris status).
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: berjalan — kode dan bukti selesai di mesin otoritatif (pemuat `bb40dba`, token dan kalibrasi: commit G3), review Tier 2 independen 0 BLOCKER (`_kerja/l3/REVIEW-G2.md`, `REVIEW-G3.md`, tidak di-commit). Bukti: `uv run pytest -q`; `uv run python -m backend.corpus` (`runs/corpus/uupt-40-2007.c56e4f0f38a4.txt`); `uv run python -m backend.measure --offline` (`runs/measure/5db7720bc1f5a121.json`). Hash diverifikasi di mesin kedua 27 Okt (I-30 ditutup). Belum `selesai` karena satu kriteria menunggu operator: metode baseline kalibrasi `sementara` (I-26, G-30).
+**Status**: selesai 2026-10-27 — pemuat `bb40dba`, token dan kalibrasi `415b9b8`, status metode dari config `33d7c9d` (+ test mutan di commit penutupan). Metode baseline selisih dua titik disetujui operator 27 Okt (I-26 ditutup, `config/tokenizer` `status = "disetujui"`); run tersimpan `runs/measure/5db7720bc1f5a121.json` tidak ditulis ulang (status saat run `sementara`). Review Tier 2 independen 0 BLOCKER (pemuat dan token: `_kerja/l3/REVIEW-G2.md`, `REVIEW-G3.md`; penutupan: `_kerja/orkestrasi/l3/G2-periksa-hasil.md`, tidak di-commit). Bukti: `uv run pytest -q`; `uv run python -m backend.corpus`; `uv run python -m backend.measure --offline`. Hash diverifikasi di mesin kedua (I-30). Catatan: `[status_default]` `config/corpus` tetap usulan milik operator (H-009), bukan kriteria M0.2.
 
 Operator, di akhir M0: kunci nilai grid H-012 setelah melihat panjang pasal, lalu mulai menulis butir kontrol (H-011) dengan aturan span gold H-048: span menandai semua ayat yang dibutuhkan, boleh multi-ayat, tidak lebih.
 
