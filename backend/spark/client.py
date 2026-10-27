@@ -15,6 +15,7 @@ import logging
 import re
 import time
 import uuid
+from datetime import timezone
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -85,6 +86,8 @@ def parse_retry_after(raw: Any, now_epoch: float) -> float | None:
         return float(s)
     try:
         dt = email.utils.parsedate_to_datetime(s)
+        if dt.tzinfo is None:  # tanpa zona dibaca UTC, bukan zona lokal mesin
+            dt = dt.replace(tzinfo=timezone.utc)
         return max(0.0, dt.timestamp() - now_epoch)
     except Exception:
         return None
@@ -101,10 +104,19 @@ def _is_timeout(exc: BaseException) -> bool:
     return False
 
 
+_SDK_LOGGERS = ("openai", "httpx", "httpx2", "httpcore", "httpcore2")
+
+
 def _quiet_sdk_loggers() -> None:
     """SDK/httpx mencetak URL (host) dan detail request pada INFO/DEBUG; matikan (T7, S10)."""
+    # Logger induk: level CRITICAL dan propagate=False, sehingga logger anak yang dibuat belakangan
+    # (level NOTSET) tidak sampai ke handler root.
+    for top in _SDK_LOGGERS:
+        lg = logging.getLogger(top)
+        lg.setLevel(logging.CRITICAL)
+        lg.propagate = False
     for name in list(logging.root.manager.loggerDict):
-        if name.split(".")[0] in ("openai", "httpx", "httpx2", "httpcore", "httpcore2"):
+        if name.split(".")[0] in _SDK_LOGGERS:
             lg = logging.getLogger(name)
             lg.disabled = True
             lg.propagate = False
