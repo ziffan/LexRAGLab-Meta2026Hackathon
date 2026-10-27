@@ -383,7 +383,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: screenshot semua adegan dalam mode putar ulang dan dari ekspor statis yang dibuka lokal.
 **Tier review**: 2, ditambah Tier 4 UX review atas alur adegan.
 **Estimasi**: 2 jam, ditambah sekitar 2–3 jam ekspor statis (H-051) yang belum masuk jumlah Ringkasan; ekspor statis di bawah lantai H-017 (dipotong lebih dulu daripada A–D dan video).
-**Status**: berjalan — middleware replay (`X-Replay` semua respons, W5 ditolak), ekspor statis + pemindai bocor, build frontend statis `2e33331` (Tier 2 lulus, `l3/W11-M51-periksa-hasil.md`). Sisa: adegan 4 (I-54), hint di bundel, screenshot semua adegan (replay dan statis lokal).
+**Status**: berjalan — middleware replay, ekspor statis + pemindai bocor, build statis `2e33331` (Tier 2, `l3/W11-M51-periksa-hasil.md`), perbaikan `25eaf4c`; hint ikut bundel `93525a0`. Uji visual statis lokal 375/768/1440 tanpa scroll horizontal, console 0 error, 0 request `/api` (`_kerja/orkestrasi/bukti/visual-L2-3.txt`). Sisa: adegan 4 (I-54), screenshot semua adegan setelah data operator.
 
 ### M5.2 — Gate pra-submit
 **Slice**: Daftar periksa pra-submit lulus semua dan tercatat di repo.
@@ -401,7 +401,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: daftar periksa terisi, hasil secret scan.
 **Tier review**: Tier 4 security review.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan (persiapan) — README draf submission `585880d`; daftar periksa terisi di `_kerja/orkestrasi/l3/W13-M52-siap-hasil.md` (secret scan tree + histori `main` 0; snapshot statis `--check` 0). Menunggu operator/L1: `LICENSE` Apache-2.0 resmi, kutipan Official Rules, review akta (I-51), n final setelah review D, tautan Pages, push/publik (H-029, H-051).
 
 ### M5.3 — Video (operator)
 **Slice**: Video direkam dari mode putar ulang mengikuti storyboard dan jadwal produksi di `docs/VIDEO.md`, dengan butir adegan yang sudah dicocokkan manual ke teks.

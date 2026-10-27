@@ -3,17 +3,17 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-074.
 
-diperbarui: 2026-10-27 09:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
+diperbarui: 2026-10-27 10:50 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
 
 ## Status
 
-- M0 **selesai** (M0.1 klien Spark + RunRecord, M0.2 korpus terukur). Perubahan Tier 1 sesudahnya: proyeksi biaya panggilan gagal (H-063) dan per upaya timeout (H-071), `f6e2912`, `8b32031`, `e157544`.
-- M1 **kode dan review selesai** (status per slice di `docs/MILESTONES.md`): chunker v2 (H-062, H-064), grid UU PT v2 `23b606e` (`runs/grid/a822c0c1….json`, 12 setting jalan, 24 menunggu header B/skema A). Sisa: screenshot ulang pada grid v2.
-- M2: M2.1 usulan D + U6 (`79b970a`; 13 usulan live menunggu operator), M2.2 C + U3, M2.3 verifier + 2×2 (`ae372db`) ter-review. M2.4 dan M2.5 stretch.
-- M3: header B backend + sumbu grid (`e1244aa`, `1a9bacf`; H-069, H-074), skema A backend + U5 editor (`496624b`, `7e090d1`) ter-review. Batch B per Pasal dilanjutkan; deret U2 (WIP) dalam review; M3.4 chunker skema sedang ditulis.
-- M4: lima akta sintetis sedang ditulis dari `data/akta/BRIEF.md` (I-46); M4.3 backend profil sedang ditulis (skenario disetujui, H-068).
-- Belanja Model API kumulatif sebelum sesi ini 73.554 micro-USD (dari RunRecord); Baseten 1.702. Plafon sementara 15.000.000 / 10.000.000.
-- Uji terima awal sesi (HEAD `76256fd`): `uv run pytest -q` 862 passed, `npm test` 103 passed, `tsc` bersih, secret scan 0.
+- M0 **selesai**. M1 **kode dan review selesai** (screenshot ulang grid v2 tersisa).
+- M2: M2.1 D + U6, M2.2 C + U3, M2.3 verifier ter-review. Menunggu review 13 usulan D (H-006). M2.4/M2.5 stretch.
+- M3: header B batch Pasal (342/343) dan fixed_size (100/103) selesai (`472ffc8`, `92fbb4c`); U2 deret on/off + toggle (`4d64878`, `294ec6c`); M3.4 chunker skema di grid (`a65e1c2`). Grid uji `--with-headers --with-schema` `ebe7f91`: semua kembaran header-on gagal `header_missing` (I-47).
+- M4: lima akta sintetis (`2c81ef9`, review operator I-51); M4.1 pemuat akta + alamat (`2e33331`); M4.3 backend profil W7/W8 (`f48cbda`, Tier 1). U7 dan R4 versi skema sedang ditulis.
+- M5: M5.1 replay + ekspor statis (`2e33331`, `25eaf4c`), hint + Glossary (`93525a0`), README draf (`585880d`).
+- Belanja Model API kumulatif 139.803 micro-USD (RunRecord; L2#3 66.249); Baseten 1.702.
+- HEAD bersih (archive): pytest 1021, vitest 158, tsc bersih.
 
 ## Pin versi (M0)
 
@@ -29,16 +29,7 @@ diperbarui: 2026-10-27 09:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otori
 
 ## Menunggu operator
 
-Lihat `docs/ISSUES.md` "Menunggu operator" (I-35 sampai I-40) dan `_kerja/orkestrasi/keputusan-skenario-1.md`.
-
-## Menunggu operator
-
-1. Review 13 usulan butir D di U6 (H-006, H-011).
-2. Persetujuan/koreksi skema A v1 UU PT `runs/schemas/uupt/v1.json` (H-074, H-037).
-3. Review lima akta sintetis setelah ditulis (addendum 2 gerbang 4, H-041).
-4. Draf teks hint H-073 setelah review independen (isu menyusul di `docs/ISSUES.md`).
-5. Tier 4 domain review kasus verifier M2.3 dan skema A M3.3.
-6. Pemicu 31 Okt H-017 dinilai 31 Okt malam WIB.
+Lihat `docs/ISSUES.md` "Menunggu operator": I-47 (header > 40 token; deret on kosong), I-48, I-49 (teks hint), I-50 (skema disetujui), I-51 (review akta), I-52 (konvensi akta), I-53 (sumber laporan held-out), I-54 (adegan 4: butir `scene_checked`, run ulang C). Juga: review 13 usulan D di U6, skema A v1 UU PT (H-074), Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/push/Pages.
 
 ## Lingkungan
 
