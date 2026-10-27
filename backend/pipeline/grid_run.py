@@ -19,9 +19,11 @@ from pathlib import Path
 from typing import Any, Callable
 
 from backend import config
+from backend.chunking import boundary_diff, chunk_document, schema_identity
 from backend.grid.expand import expand_grid
 from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding
 from backend.grid.runner import GridError, grid_cache_key, run_grid
+from backend.grid.schemas import SchemaBinding, bind_schema_versions, is_approved
 from backend.grid.split import SplitError, ensure_split, load_latest_split_record, make_split
 from backend.grid.types import GridItem, Setting, SplitRecord, canonical_json, item_set_hash, metrics_to_cache
 from backend.metrics.run_record import run_record_parts
@@ -73,7 +75,8 @@ class Plan:
     cfgs: dict[str, dict[str, Any]]
     config_hash: str
     headers: HeaderBinding | None
-    settings: list[Setting]  # semua hasil ekspansi
+    schemas: SchemaBinding | None
+    settings: list[Setting]  # semua hasil ekspansi (structure_schema ber-versi aktif konkret bila ada skema)
     runnable: list[Setting]
     skipped: list[dict[str, Any]]
     items: list[GridItem]
@@ -82,12 +85,16 @@ class Plan:
     key: str | None
 
 
-def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers: HeaderBinding | None = None) -> str:
+def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers: HeaderBinding | None = None,
+                         schema_a: list[dict[str, Any]] | None = None) -> str:
     """Hash konfigurasi run. Dengan header B (A10): hash isi store header, granularitas, `prompt_hash` B, model, dan
-    `header_b.scope` ikut; `run_id` B tidak. Tanpa binding hash sama seperti sebelum M3.2."""
+    `header_b.scope` ikut; `run_id` B tidak. Dengan skema A (M3.4): versi, hash isi, dan sumber tiap skema yang dipakai
+    setting `structure_schema` yang bisa jalan ikut (`schema_a` kosong/None = hash sama seperti sebelum M3.4)."""
     parts: dict[str, Any] = {**cfgs, "_tokenizer_info": {"name": tok_info.name, "version": tok_info.version}}
     if headers is not None:
         parts["_header_b"] = headers.identity()
+    if schema_a:
+        parts["_schema_a"] = schema_a
     return config.config_hash(parts)
 
 
@@ -107,16 +114,50 @@ def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, heade
     return HeaderBinding(store, hc["granularity"], scope, prompt.prompt_hash, mc["profiles"][mc["default_profile"]]["model"])
 
 
+def schema_identities(settings: list[Setting], schemas: SchemaBinding | None) -> list[dict[str, Any]]:
+    """Identitas (versi + hash isi + sumber) skema yang dipakai `settings`, urut menurut versi; kosong bila tak ada."""
+    if schemas is None:
+        return []
+    recs: dict[int, Any] = {}
+    for s in settings:
+        rec = schemas.resolve(s.schema_version) if s.chunker == "structure_schema" else None
+        if rec is not None:
+            recs[rec["schema_version"]] = rec
+    return [{**schema_identity(rec), "source": rec.get("source")} for _, rec in sorted(recs.items())]
+
+
+def schema_report(pipe: Pipeline, executed: list[Setting], schemas: SchemaBinding | None) -> dict[str, Any]:
+    """Bagian amplop skema A (M3.4). `schemas_used`: identitas + `schema_approved` tiap versi yang dijalankan;
+    `schema_approved`: semuanya disetujui (None bila tak ada skema dipakai); `boundary_diff`: per versi skema, selisih
+    batas terhadap `structure_handwritten` per section. Selisih ada di amplop grid (bukan berkas `runs/` terpisah)
+    agar ikut kunci cache dan hash config yang sama."""
+    used: dict[int, Setting] = {}
+    for s in executed:
+        if s.chunker == "structure_schema" and s.schema_version is not None:
+            used.setdefault(s.schema_version, s)
+    if not used or schemas is None:
+        return {"schemas_used": [], "schema_approved": None, "boundary_diff": {}}
+    scope = list(pipe.rcfg["scope_sections"])
+    hand = chunk_document(pipe.doc, {"chunker": "structure_handwritten"}, tokenizer=pipe.tok, retrieval_cfg=pipe.rcfg)
+    desc, diffs = [], {}
+    for v, s in sorted(used.items()):
+        rec = schemas.resolve(v)
+        assert rec is not None
+        desc.append(schemas.describe(rec))
+        diffs[str(v)] = boundary_diff(pipe.doc, hand, pipe.chunk_set(s).chunks, sections=scope)
+    return {"schemas_used": desc, "schema_approved": all(d["schema_approved"] for d in desc), "boundary_diff": diffs}
+
+
 def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_dir: Path, config_dir: Path | None = None,
-              create_split: bool, headers: HeaderBinding | None = None) -> Plan:
+              create_split: bool, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None) -> Plan:
     """Rencana run. `create_split=False` (R3): split dihitung murni dari record tersimpan, tanpa menulis; tanpa record -> split None."""
     cfgs = {n: config.load(n, config_dir) for n in CONFIGS}
-    settings = expand_grid(cfgs["grid"], family)
+    settings = bind_schema_versions(expand_grid(cfgs["grid"], family), schemas)
     hb = headers is not None
-    runnable = [s for s in settings if unavailable_reason(s, headers=hb) is None]
+    runnable = [s for s in settings if unavailable_reason(s, headers=hb, schemas=schemas) is None]
     skipped = [{"setting_id": s.setting_id, "chunker": s.chunker, "retrieval_mode": s.retrieval_mode, "header_b": s.header_b,
-                "budget_tokens": s.budget_tokens, "reason": unavailable_reason(s, headers=hb)}
-               for s in settings if unavailable_reason(s, headers=hb)]
+                "budget_tokens": s.budget_tokens, "reason": unavailable_reason(s, headers=hb, schemas=schemas)}
+               for s in settings if unavailable_reason(s, headers=hb, schemas=schemas)]
     raw, fname = load_items(family, butir_dir)
     for it in raw:
         if it.get("clean_sha256") != doc.clean_sha256:
@@ -137,9 +178,9 @@ def make_plan(family: str, *, doc: Any, tokenizer: Any, butir_dir: Path, runs_di
         except SplitError as exc:
             if create_split:
                 raise GridRunError(str(exc)) from None
-    chash = pipeline_config_hash(cfgs, tokenizer.info, headers)
+    chash = pipeline_config_hash(cfgs, tokenizer.info, headers, schema_identities(runnable, schemas))
     key = grid_cache_key(doc.clean_sha256, chash, item_set_hash(items), split.split_version) if split else None
-    return Plan(family, cfgs, chash, headers, settings, runnable, skipped, items, fname, split, key)
+    return Plan(family, cfgs, chash, headers, schemas, settings, runnable, skipped, items, fname, split, key)
 
 
 # ---------- penyimpanan amplop ----------
@@ -240,13 +281,14 @@ class GridResult:
 def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, butir_dir: Path, config_dir: Path | None = None,
                     encoder: Encoder | None = None, encoder_factory: Callable[[], Encoder] | None = None,
                     embed_cache_dir: Path | None = None, pipeline_out: list | None = None,
-                    log: Callable[[str], None] = lambda _m: None, headers: HeaderBinding | None = None) -> GridResult:
+                    log: Callable[[str], None] = lambda _m: None, headers: HeaderBinding | None = None,
+                    schemas: SchemaBinding | None = None) -> GridResult:
     """Jalankan (atau baca dari cache) grid satu keluarga. Tanpa Model API."""
     t0 = time.perf_counter()
     if family != "uupt":
         raise GridRunError(f"grid for family {family!r} is not available in M1")
     plan = make_plan(family, doc=doc, tokenizer=tokenizer, butir_dir=butir_dir, runs_dir=runs_dir, config_dir=config_dir, create_split=True,
-                     headers=headers)
+                     headers=headers, schemas=schemas)
     if not plan.items:
         raise GridRunError(f"no items for family {family!r}")
     assert plan.split is not None and plan.key is not None
@@ -260,10 +302,14 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
 
     g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
     pipe = Pipeline(doc, tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
-                    encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers)
+                    encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers,
+                    schemas=schemas)
     if pipeline_out is not None:
         pipeline_out.append(pipe)
     log(f"run {len(plan.runnable)} settings, skipped {len(plan.skipped)}, items {len(plan.items)}")
+    for sid in schema_identities(plan.runnable, schemas):
+        log(f"schema A: v{sid['schema_version']} {sid['schema_hash'][:12]} source={sid['source']} "
+            f"approved={is_approved(schemas.resolve(sid['schema_version']))}")  # type: ignore[union-attr]
     if headers is not None:
         log(f"header B: scope={headers.scope} granularity={headers.granularity}")
     res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=doc.clean_sha256,
@@ -312,6 +358,7 @@ def run_family_grid(family: str, *, doc: Any, tokenizer: Any, runs_dir: Path, bu
                        "grid_run_id": f.grid_run_id} for f in res.frontiers],
         "selections": {str(b): selection_dict(s) for b, s in sorted(res.selections.items())},
         "quality": quality, "quality_comparison": comparison,
+        **schema_report(pipe, executed, schemas),
     }
     store.write(plan.key, envelope)
     return GridResult(plan.key, False, record, envelope, store.path(plan.key))
@@ -369,6 +416,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--butir-dir", type=Path, default=config.REPO_ROOT / "data" / "butir")
     ap.add_argument("--with-headers", action="store_true",
                     help="sertakan kembaran header-on (store runs/headers, scope dari config/header_b); tanpa Model API")
+    ap.add_argument("--with-schema", action="store_true",
+                    help="aktifkan structure_schema dari skema A di runs/schemas/<family> (versi aktif; yang belum disetujui "
+                         "ditandai di amplop); tanpa Model API")
     args = ap.parse_args(argv)
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     from backend.corpus import load_corpus
@@ -378,7 +428,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         res = run_family_grid(args.family, doc=load_corpus(), tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
                               butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True),
-                              headers=load_header_binding(runs_dir=args.runs_dir) if args.with_headers else None)
+                              headers=load_header_binding(runs_dir=args.runs_dir) if args.with_headers else None,
+                              schemas=SchemaBinding.from_store(args.runs_dir, args.family) if args.with_schema else None)
     except (GridRunError, GridError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

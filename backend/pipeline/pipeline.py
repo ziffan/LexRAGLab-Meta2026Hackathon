@@ -15,7 +15,9 @@ from types import SimpleNamespace
 from typing import Any, Callable, Sequence
 
 from backend.chunking import AddressMap, Chunk, build_address_map, chunk_document
+from backend.chunking.schema_chunker import schema_identity
 from backend.grid.headers import HeaderBinding, index_text, resolve_headers
+from backend.grid.schemas import SchemaBinding
 from backend.grid.types import GridItem, Setting, setting_content
 from backend.metrics.item import compute_item_metrics
 from backend.metrics.packing import pack
@@ -24,17 +26,24 @@ from backend.metrics.types import ItemMetrics, RankedChunk
 from backend.retrieval.dense import EmbeddingSet, Encoder, embed_chunks
 from backend.retrieval.registry import chunk_texts, rank
 
-AVAILABLE_CHUNKERS = ("structure_handwritten", "fixed_size")
+AVAILABLE_CHUNKERS = ("structure_handwritten", "fixed_size")  # `structure_schema` tersedia bila ada `SchemaBinding` (M3.4)
 
 
 class SettingNotAvailable(Exception):
     """Setting memakai komponen yang belum ada di M1 (chunker skema, header B)."""
 
 
-def unavailable_reason(s: Setting, *, headers: bool = False) -> str | None:
-    """Alasan setting tidak bisa dijalankan, atau None bila bisa. `headers=True`: ada store header B (M3.2)."""
-    if s.chunker not in AVAILABLE_CHUNKERS:
-        return f"chunker {s.chunker} needs schema A (available from M3)"
+def unavailable_reason(s: Setting, *, headers: bool = False, schemas: SchemaBinding | None = None) -> str | None:
+    """Alasan setting tidak bisa dijalankan, atau None bila bisa. `headers=True`: ada store header B (M3.2);
+    `schemas`: skema A keluarga (M3.4) — `structure_schema` jalan hanya bila rekamannya ada untuk `schema_version`."""
+    if s.chunker == "structure_schema":
+        if schemas is None:
+            return f"chunker {s.chunker} needs schema A (available from M3)"
+        if schemas.resolve(s.schema_version) is None:
+            want = "an active version" if s.schema_version is None else f"version {s.schema_version}"
+            return f"chunker {s.chunker}: schema A record for {s.family} has no {want}"
+    elif s.chunker not in AVAILABLE_CHUNKERS:
+        return f"chunker {s.chunker} is unknown"
     if s.header_b and not headers:
         return "header B is available from M3"
     return None
@@ -82,9 +91,10 @@ class Retrieval:
 class Pipeline:
     def __init__(self, doc: Any, *, tokenizer: Any, retrieval_cfg: dict[str, Any], grid_cfg: dict[str, Any],
                  encoder: Encoder | None = None, encoder_factory: Callable[[], Encoder] | None = None,
-                 cache_dir: Any = None, headers: HeaderBinding | None = None):
+                 cache_dir: Any = None, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None):
         self.doc, self.tok = doc, tokenizer
         self.headers = headers
+        self.schemas = schemas
         self.rcfg, self.gcfg = retrieval_cfg, grid_cfg
         self._encoder, self._encoder_factory, self.cache_dir = encoder, encoder_factory, cache_dir
         self.packing: str = grid_cfg["packing"]["rule"]
@@ -105,14 +115,30 @@ class Pipeline:
     def encoder_used(self) -> bool:
         return self._encoder is not None
 
+    def schema_record(self, s: Setting) -> Any:
+        """`SchemaRecord` untuk setting `structure_schema` (None untuk chunker lain)."""
+        if s.chunker != "structure_schema" or self.schemas is None:
+            return None
+        return self.schemas.resolve(s.schema_version)
+
+    def params(self, s: Setting) -> tuple:
+        """Kunci cache potongan = `chunk_params` + identitas skema (versi dan hash isi) bagi `structure_schema`:
+        skema berubah = potongan berbeda = kunci berbeda."""
+        rec = self.schema_record(s)
+        if rec is None:
+            return chunk_params(s)
+        ident = schema_identity(rec)
+        return (*chunk_params(s), ident["schema_version"], ident["schema_hash"])
+
     def chunk_set(self, s: Setting) -> ChunkSet:
-        reason = unavailable_reason(s, headers=self.headers is not None)
+        reason = unavailable_reason(s, headers=self.headers is not None, schemas=self.schemas)
         if reason:
             raise SettingNotAvailable(reason)
-        key = chunk_params(s)
+        key = self.params(s)
         cs = self._sets.get(key)
         if cs is None:
-            chunks = chunk_document(self.doc, setting_content(s), tokenizer=self.tok, retrieval_cfg=self.rcfg, grid_cfg=self.gcfg)
+            chunks = chunk_document(self.doc, setting_content(s), tokenizer=self.tok, retrieval_cfg=self.rcfg, grid_cfg=self.gcfg,
+                                    schema_record=self.schema_record(s))
             scope = set(self.rcfg["scope_sections"])
             prefix = self.doc.metadata.get("address_prefix") or self.doc.doc_id
             amap = build_address_map(self.doc.text, self.doc.sections, prefix, scope,
@@ -170,7 +196,7 @@ class Pipeline:
 
     def ranking(self, s: Setting, item: GridItem) -> list[tuple[str, float]]:
         cs = self.chunk_set(s)
-        key = (chunk_params(s), s.header_b, s.retrieval_mode, item.id, item.query)
+        key = (self.params(s), s.header_b, s.retrieval_mode, item.id, item.query)
         hit = self._rank_cache.get(key)
         if hit is None:
             needs_dense = s.retrieval_mode in ("dense", "hybrid")
