@@ -6,9 +6,12 @@ import { availableSettings, frontierIds, pointOf } from "../lib/settings";
 import type { GridPoint, Setting, Snapshot, SplitName } from "../types";
 import { EmptyBlock, SnapshotPanel } from "./Shell";
 
-// U2 Setting space (docs/UI-SPEC.md U2). Deret header B on belum ada di M1 (dihitung dari M3).
+// U2 Setting space (docs/UI-SPEC.md U2). Dua deret: header B off (biru) dan on (oranye, M3.2). Titik header-on yang gagal
+// tidak digambar; alasannya tampil di daftar "Failed header-on settings".
 
 const COLOR_OFF = "#1f4e8c";
+const COLOR_ON = "#b4540a";
+const colorOf = (on: boolean): string => (on ? COLOR_ON : COLOR_OFF);
 const COLOR_LINE = "#46515e";
 
 interface Dot {
@@ -17,6 +20,7 @@ interface Dot {
   point: GridPoint;
   setting: Setting;
   onFrontier: boolean;
+  headerOn: boolean;
 }
 
 /** Titik yang bisa digambar (x dan y non-null) dan yang tidak (butir bergold tidak ada di split ini, H-061). */
@@ -31,16 +35,26 @@ export function plottable(points: GridPoint[], settings: Setting[], frontier: Se
       hidden += 1;
       continue;
     }
-    dots.push({ x: p.mean_retrieved_tokens, y: p.mean_span_recall, point: p, setting, onFrontier: frontier.has(p.setting_id) });
+    dots.push({ x: p.mean_retrieved_tokens, y: p.mean_span_recall, point: p, setting, onFrontier: frontier.has(p.setting_id), headerOn: p.header_b ?? setting.header_b });
   }
   return { dots, hidden };
 }
 
+const FAIL_TEXT: Record<string, string> = {
+  header_missing: "header missing for a chunk",
+  header_invalid: "header is empty",
+  header_stale: "header comes from a different clean text",
+  granularity_mismatch: "header granularity does not match",
+};
+/** Alasan gagal (kode dari RunRecord.failed_settings) dalam bahasa Inggris, dengan kode aslinya. */
+export const failReason = (code: string): string => (FAIL_TEXT[code] ? `${FAIL_TEXT[code]} (${code})` : code);
+
 export const frontierLine = (dots: Dot[]): Dot[] => dots.filter((d) => d.onFrontier).sort((a, b) => a.x - b.x || b.y - a.y);
 
-function MarkerShape({ cx, cy, chunker, hollow, selected }: { cx: number; cy: number; chunker: Setting["chunker"]; hollow: boolean; selected: boolean }) {
-  const fill = hollow ? "#ffffff" : COLOR_OFF;
-  const common = { fill, stroke: COLOR_OFF, strokeWidth: 2 };
+function MarkerShape({ cx, cy, chunker, hollow, selected, on }: { cx: number; cy: number; chunker: Setting["chunker"]; hollow: boolean; selected: boolean; on: boolean }) {
+  const color = colorOf(on);
+  const fill = hollow ? "#ffffff" : color;
+  const common = { fill, stroke: color, strokeWidth: 2 };
   const r = 7;
   return (
     <g>
@@ -74,6 +88,7 @@ function Tip({ active, payload }: TipProps) {
       <div>MRR: {exactStr(p.exact, "mrr")}</div>
       <div>Tokens (local tokenizer), mean: {orNa(p.mean_retrieved_tokens, intStr)}</div>
       <div>{xOfY(p.fully_covered_count.covered, p.fully_covered_count.total, "items fully covered")}</div>
+      <div>{d.headerOn ? "Header B on" : "Header B off"}</div>
       <div>{d.onFrontier ? "Frontier" : "Dominated"}</div>
     </div>
   );
@@ -102,6 +117,13 @@ function Body({ snap }: { snap: Snapshot }) {
   const pick = (id: string) => dispatch({ type: "select_setting", id });
   const sel = settings.find((s) => s.setting_id === selected);
   const chunkers: Setting["chunker"][] = ["structure_handwritten", "structure_schema", "fixed_size"];
+  const onDots = dots.filter((d) => d.headerOn).length;
+  const failed = grid.failed_settings ?? [];
+  const byId = new Map(snap.settings.map((s) => [s.setting_id, s]));
+  const SERIES: { on: boolean; label: string }[] = [
+    { on: false, label: "Header B off" },
+    { on: true, label: "Header B on" },
+  ];
 
   return (
     <>
@@ -138,7 +160,7 @@ function Body({ snap }: { snap: Snapshot }) {
       {dots.length === 0 ? (
         <EmptyBlock>No plottable points in this split: every item here lacks gold.</EmptyBlock>
       ) : (
-        <div className="chart" role="img" aria-label={`Span recall against tokens (local tokenizer), ${dots.length} settings, ${line.length} on the frontier`}>
+        <div className="chart" role="img" aria-label={`Span recall against tokens (local tokenizer), ${dots.length} settings, ${line.length} on the frontier, ${onDots} with header B on`}>
           <ResponsiveContainer width="100%" height={340}>
             <ScatterChart margin={{ top: 12, right: 20, bottom: 36, left: 16 }}>
               <CartesianGrid stroke="#c5ccd4" />
@@ -161,13 +183,13 @@ function Body({ snap }: { snap: Snapshot }) {
               />
               <Tooltip content={<Tip />} isAnimationActive={false} cursor={{ strokeDasharray: "3 3" }} />
               <Scatter name="Frontier" data={line} line={{ stroke: COLOR_LINE, strokeWidth: 2 }} shape={() => <g />} legendType="none" tooltipType="none" isAnimationActive={false} />
-              {chunkers.map((c) => {
-                const data = dots.filter((d) => d.setting.chunker === c);
+              {SERIES.flatMap((ser) => chunkers.map((c) => ({ ser, c }))).map(({ ser, c }) => {
+                const data = dots.filter((d) => d.setting.chunker === c && d.headerOn === ser.on);
                 if (data.length === 0) return null;
                 return (
                   <Scatter
-                    key={c}
-                    name={c}
+                    key={`${ser.on ? "on" : "off"}-${c}`}
+                    name={`${ser.label} · ${c}`}
                     data={data}
                     isAnimationActive={false}
                     shape={(p: unknown) => {
@@ -180,6 +202,7 @@ function Body({ snap }: { snap: Snapshot }) {
                           aria-pressed={payload.setting.setting_id === selected}
                           data-testid="point"
                           data-setting={payload.setting.setting_id}
+                          data-series={payload.headerOn ? "on" : "off"}
                           style={{ cursor: "pointer" }}
                           onClick={() => pick(payload.setting.setting_id)}
                           onKeyDown={(e) => {
@@ -189,7 +212,7 @@ function Body({ snap }: { snap: Snapshot }) {
                             }
                           }}
                         >
-                          <MarkerShape cx={cx} cy={cy} chunker={c} hollow={!payload.onFrontier} selected={payload.setting.setting_id === selected} />
+                          <MarkerShape cx={cx} cy={cy} chunker={c} hollow={!payload.onFrontier} selected={payload.setting.setting_id === selected} on={payload.headerOn} />
                         </g>
                       );
                     }}
@@ -204,11 +227,33 @@ function Body({ snap }: { snap: Snapshot }) {
       <ul className="legend-list" aria-label="Legend">
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Structure (handwritten parser)</li>
         <li><svg width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Fixed-size</li>
-        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Frontier (filled), joined by a line</li>
-        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="#fff" stroke={COLOR_OFF} strokeWidth="2" /></svg> Dominated (hollow)</li>
-        <li><span className="swatch on" aria-hidden="true" /> Header B off (all points)</li>
-        <li className="muted"><span className="swatch none" aria-hidden="true" /> Header B on: not run yet</li>
+        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="#6b7480" stroke="#6b7480" strokeWidth="2" /></svg> Frontier (filled), joined by a line</li>
+        <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="#fff" stroke="#6b7480" strokeWidth="2" /></svg> Dominated (hollow)</li>
+        <li data-testid="legend-off"><span className="swatch" style={{ background: COLOR_OFF }} aria-hidden="true" /> Header B off</li>
+        {onDots > 0 ? (
+          <li data-testid="legend-on"><span className="swatch" style={{ background: COLOR_ON }} aria-hidden="true" /> Header B on</li>
+        ) : (
+          <li className="muted" data-testid="legend-on"><span className="swatch none" aria-hidden="true" /> Header B on: no points</li>
+        )}
       </ul>
+      {grid.header_scope === "frontier_only" && onDots > 0 && <p className="note">Header B computed for frontier settings only.</p>}
+      {failed.length > 0 && (
+        <section aria-label="Failed header-on settings" data-testid="failed-settings">
+          <h3 className="detail-title">Failed header-on settings</h3>
+          <p className="note">These settings are not plotted: their header-on run failed.</p>
+          <ul className="failed-list">
+            {failed.map((f) => {
+              const st = byId.get(f.setting_id);
+              return (
+                <li key={f.setting_id}>
+                  <strong>{st ? settingShort(st) : f.setting_id.slice(0, 12)}</strong>: {failReason(f.reason)}
+                  {f.chunk_id ? ` (chunk ${f.chunk_id.slice(0, 12)})` : ""}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
       {hidden > 0 && <p className="note">{hidden} point{hidden > 1 ? "s" : ""} not plotted: no gold items in this split (n/a).</p>}
 
       <h3 className="detail-title">Selected setting</h3>

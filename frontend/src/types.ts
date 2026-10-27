@@ -75,6 +75,8 @@ export interface GridPoint {
   mean_retrieved_tokens: number | null;
   fully_covered_count: Frac;
   dominated: boolean;
+  /** Deret U2: true = header B on. Titik lama tanpa label dianggap off. */
+  header_b?: boolean;
   n_gold: number;
   no_gold_count: number;
   exact: Record<string, string> | null;
@@ -126,12 +128,21 @@ export interface QualityComparison {
   selected: QualityWithCounts;
 }
 
+/** RunRecord.failed_settings (DATA-CONTRACTS 12): setting header-on yang gagal; reason = kode (header_missing, ...). */
+export interface FailedSetting {
+  setting_id: string;
+  reason: string;
+  chunk_id: string | null;
+}
+
 export interface Grid {
   tune: GridSplit;
   held_out: GridSplit;
   selected: { setting_id: string } | null;
   quality_comparison: QualityComparison | null;
   skipped: Skipped[];
+  failed_settings?: FailedSetting[];
+  header_scope?: string | null;
   grid_run_id: string;
 }
 

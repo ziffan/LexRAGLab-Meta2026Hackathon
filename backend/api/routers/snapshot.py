@@ -27,21 +27,33 @@ CORPUS_FIELDS = ("doc_id", "family", "title", "path", "sha256", "clean_sha256", 
                  "tokens_local", "tokens_endpoint", "calibration_ratio", "sections", "annotations")
 
 
-def grid_view(env: dict[str, Any], budget: int) -> tuple[dict[str, Any] | None, list[dict[str, Any]], list[dict[str, Any]]]:
-    """(grid, metrics, quality) untuk satu anggaran; grid None bila anggaran itu tidak ada di run tersimpan."""
+def grid_view(env: dict[str, Any], budget: int, settings: list[dict[str, Any]] | None = None, header_scope: str | None = None
+              ) -> tuple[dict[str, Any] | None, list[dict[str, Any]], list[dict[str, Any]]]:
+    """(grid, metrics, quality) untuk satu anggaran; grid None bila anggaran itu tidak ada di run tersimpan.
+
+    U2 dua deret (M3.2): tiap titik membawa `header_b` (dari envelope; titik lama tanpa label dilengkapi dari `settings_run`).
+    `failed_settings` = setting header-on yang gagal pada run tersimpan (`record.failed_settings`: setting_id, reason, chunk_id),
+    disaring ke anggaran ini lewat `settings` bila diberikan. `header_scope` = scope header B bila run memuat titik header-on."""
     ids = {s["setting_id"] for s in env["settings_run"] if s["budget_tokens"] == budget}
     if not ids:
         return None, [], []
+    hdr = {s["setting_id"]: bool(s.get("header_b")) for s in env["settings_run"]}
+    budget_of = {s["setting_id"]: s["budget_tokens"] for s in (settings or [])}
     grid: dict[str, Any] = {}
     for split in ("tune", "held_out"):
         grid[split] = {
-            "points": [p for p in env["points"] if p["split"] == split and p["budget_tokens"] == budget],
+            "points": [{**p, "header_b": bool(p["header_b"]) if "header_b" in p else hdr.get(p["setting_id"], False)}
+                       for p in env["points"] if p["split"] == split and p["budget_tokens"] == budget],
             "frontier": next((f for f in env["frontiers"] if f["split"] == split and f["budget_tokens"] == budget), None),
         }
     grid["selected"] = env["selections"].get(str(budget))
     grid["quality_comparison"] = next((c for c in env["quality_comparison"] if c["budget_tokens"] == budget), None)
     grid["skipped"] = [s for s in env["skipped"] if s["budget_tokens"] == budget]
     grid["grid_run_id"] = env["key"]
+    failed = [f for f in (env.get("record") or {}).get("failed_settings") or []
+              if isinstance(f, dict) and (not budget_of or budget_of.get(f.get("setting_id")) == budget)]
+    grid["failed_settings"] = [{"setting_id": f.get("setting_id"), "reason": f.get("reason"), "chunk_id": f.get("chunk_id")} for f in failed]
+    grid["header_scope"] = header_scope if any(hdr.values()) or failed else None
     metrics = [metrics_from_cache(m).to_dict() for m in env["metrics"] if m["setting_id"] in ids]
     quality = [q for q in env["quality"] if q["setting_id"] in ids]
     return grid, metrics, quality
@@ -115,7 +127,9 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     split_of = split.split_of() if split is not None else {}
     if split is not None:
         items = [{**i, "split": split_of.get(i["id"])} for i in items]
-    grid, metrics, quality = grid_view(env, budget) if env is not None else (None, [], [])
+    hb = svc.header_binding() if env is not None else None
+    grid, metrics, quality = (grid_view(env, budget, svc.settings(family), hb.scope if hb is not None else None)
+                              if env is not None else (None, [], []))
     by_split = dict(Counter(split_of.values())) if split is not None else None
     try:
         _ss = SchemaStore(svc.runs_dir)
