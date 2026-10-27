@@ -1,0 +1,10 @@
+{
+  "current": "v1",
+  "versions": {
+    "v1": {
+      "file": "v1.md",
+      "role": "b",
+      "note": "Instruksi peran B (docs/SPARK-ROLES.md 3). Placeholder {max_header_tokens} diisi dari config/header_b; hash prompt atas teks yang sudah dirender."
+    }
+  }
+}

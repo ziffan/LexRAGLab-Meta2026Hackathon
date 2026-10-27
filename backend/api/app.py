@@ -15,7 +15,7 @@ from fastapi import FastAPI
 
 from backend import config as cfg
 from backend.api.errors import ApiError, install_error_handlers
-from backend.api.routers import answers, corpus, grid, proposals, retrieval, schemas, snapshot, system
+from backend.api.routers import answers, corpus, grid, headers, proposals, retrieval, schemas, snapshot, system
 from backend.api.service import FAMILIES, Service
 from backend.spark.settings import load_configs
 
@@ -42,6 +42,6 @@ def create_app(service: Service | None = None, *, env: Mapping[str, str] | None 
     app.state.replay = replay
     app.state.config_hash = cfg.config_hash({"model": dict(model_config), "budget": dict(budget_config)})
     install_error_handlers(app)
-    for module in (system, corpus, snapshot, retrieval, grid, answers, proposals, schemas):
+    for module in (system, corpus, snapshot, retrieval, grid, answers, proposals, schemas, headers):
         app.include_router(module.router)
     return app
