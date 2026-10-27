@@ -12,7 +12,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 | Milestone | Tanggal | Isi | Slice | Estimasi (jam, sudah × 1,5) | Status |
 |---|---|---|---|---|---|
 | M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
-| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | belum mulai |
+| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | berjalan |
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | belum mulai |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | belum mulai |
 | M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | belum mulai |
@@ -148,7 +148,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau dengan golden sample beberapa pasal, screenshot panel.
 **Tier review**: 2. Batas potongan diuji dengan golden sample yang dipilih operator.
 **Estimasi**: 3 jam.
-**Status**: belum mulai.
+**Status**: berjalan — kode `4e18c57` (+ kunci tokenizer `8450e1d`), review Tier 2 independen boleh dipromosikan (`_kerja/orkestrasi/l3/G3-periksa.md`). Screenshot `_kerja/orkestrasi/bukti/M1.1-*.png`. Belum selesai: golden sample menunggu konfirmasi operator (I-36); fixed_size per section (I-35) dan heading Pasal di luar potongan (I-38) menunggu operator.
 
 ### M1.2 — BM25 dan metrik span pada anggaran
 **Slice**: Untuk satu setting, tabel per butir menampilkan span recall, precision token, dan MRR pada anggaran token default, dengan retrieval BM25 + Sastrawi.
@@ -163,7 +163,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk kasus hitung tangan, tabel per butir.
 **Tier review**: 1. Kalkulator ini yang menentukan "optimal" (H-005). Skenario test disusun agen sebelum kode, dicek pemeriksa independen, disetujui operator (H-052); penulis kode tidak memilih skenarionya sendiri.
 **Estimasi**: 3 jam.
-**Status**: belum mulai.
+**Status**: berjalan — kalkulator + BM25 `5b9bb04`, `6c4e19b`; review Tier 1 0 BLOCKER (`l3/G4a-periksa.md`); integrasi `8450e1d`. Sisa: tabel per butir UI (frontend berjalan), review integrasi.
 
 ### M1.3 — Dense dan hybrid
 **Slice**: Tabel yang sama menampilkan tiga mode retrieval (dense, BM25, hybrid RRF) berdampingan.
@@ -176,7 +176,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau, tabel tiga mode untuk butir kontrol.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — dense bge-m3 GPU + hybrid RRF `bd7a9bf`, `dc8a5c5`; review Tier 2 boleh dipromosikan (`l3/G5-periksa.md`). Sisa: pemilih mode UI.
 
 ### M1.4 — Grid, split, dan Pareto frontier
 **Slice**: Run grid menghasilkan frontier span recall vs token untuk UU PT. Klik satu titik mengubah panel potongan dan tabel per butir. Pemilihan profil terbaik memakai set tune, angka yang dilaporkan dari held-out.
@@ -191,7 +191,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk split dan frontier, screenshot frontier, catatan run grid.
 **Tier review**: 1. Kebocoran held-out membuat "optimal" palsu.
 **Estimasi**: 3 jam.
-**Status**: belum mulai.
+**Status**: berjalan — split/frontier/pemilihan `1aac9e7`, `f970448` (review Tier 1 dua putaran, 0 BLOCKER); run grid UU PT nyata `8450e1d` (`runs/grid/b8d0d6ea….json`, 12 setting dijalankan, 24 dilewati sampai M3; split v1 tune 5 / held-out 4). Sisa: grafik frontier UI, review Tier 1 integrasi, I-35/I-38 sebelum run yang dilaporkan.
 
 ### M1.5 — Metrik janji form
 **Slice**: Untuk setting terpilih, layar menampilkan Recall@K, entity preservation, dan boundary coherence, struktur vs ukuran tetap.
@@ -203,7 +203,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau, panel metrik.
 **Tier review**: 1. Metrik yang dijanjikan di form.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — metrik `2e90254` (review Tier 1), Recall@K produksi `8450e1d` (S-1); QualityMetrics run nyata di `runs/grid/b8d0d6ea….json`. Sisa: panel UI.
 
 ## M2 — Spark D dan C (29–31 Okt)
 
