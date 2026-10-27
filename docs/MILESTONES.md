@@ -368,7 +368,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: test hijau round-trip, contoh profil UU PT dan akta.
 **Tier review**: 1. Profil adalah keluaran yang dijanjikan ke pemakai RAG.
 **Estimasi**: 2 jam.
-**Status**: berjalan — backend W7/W8 + laporan `f48cbda` (Tier 1, `l3/W7-M43-periksa-hasil.md`, perbaikan W10); U7 panel ekspor/impor `df4a545`, `051615e` (Tier 1 S20, `l3/W15-U7-periksa-hasil.md`). I-42, I-43 ditutup. Sisa: sumber laporan per butir (I-53), setting akta (I-55), contoh profil UU PT dan akta setelah skema/grid final.
+**Status**: berjalan — backend W7/W8 + laporan `f48cbda` (Tier 1, `l3/W7-M43-periksa-hasil.md`, perbaikan W10); U7 panel ekspor/impor `df4a545`, `051615e` (Tier 1 S20, `l3/W15-U7-periksa-hasil.md`). I-42, I-43 ditutup. Sisa: sumber laporan per butir (I-53), setting akta (I-55), contoh profil UU PT dan akta setelah skema/grid final. Update L2#5: contoh profil UU PT `profiles/uupt/d7a9dd24….json` (structure_schema v2 dense B2000; impor ulang `chunk_set_hash_matches: true`, corpus_hash beda ditolak) `25fc358`; perbaikan W7/W8 setting terikat versi skema aktif + W6 replay tidak menulis `runs/answers` `bcf9431` (Tier 1 W52). Profil akta terblok operator (skema akta v2, I-62..I-65).
 
 ## M5 — Demo dan submit (3–4 Nov)
 
