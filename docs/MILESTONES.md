@@ -11,7 +11,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 
 | Milestone | Tanggal | Isi | Slice | Estimasi (jam, sudah × 1,5) | Status |
 |---|---|---|---|---|---|
-| M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | berjalan (M0.2 selesai) |
+| M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
 | M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | belum mulai |
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | belum mulai |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | belum mulai |
@@ -107,7 +107,7 @@ Sebelum slice (operator, sekitar 2 jam):
 **Bukti verifikasi yang wajib disetor**: output test hijau, contoh catatan run dua panggilan (dengan dan tanpa cache), hasil grep bahwa key tidak ada di repo.
 **Tier review**: 1. Penanganan secret dan perhitungan biaya.
 **Estimasi**: 2 jam.
-**Status**: belum mulai — skenario disetujui operator 27 Okt (`docs/scenarios/M0.1.md`). Smoke provider 27 Okt (bukan kode slice): G-29..G-31.
+**Status**: selesai 2026-10-27 — kode `7d23b7e`, perbaikan review `ff252b4`, `7dee80d` (170 test `-k spark`, S1–S42). Review Tier 1 independen dua putaran: 0 BLOCKER, 28/32 lalu semua mutan non-ekuivalen mati (`_kerja/orkestrasi/l3/G1-periksa.md`, tidak di-commit). Bukti live (Meta, profil `meta`): `runs/spark/records/cc80b58f….json` (input 3.113, cached 0, output 406, 393 micro-USD) dan `0f5378da….json` (cached 3.064, 92 micro-USD). Grep key: secretscan histori + tree 0 (terbukti menggigit). Terbuka untuk operator: I-37 (belanja panggilan gagal tanpa usage), cap per peran a/b/c/d usulan agen di `config/budget`.
 
 ### M0.2 — Korpus UU PT termuat dan terukur
 Prasyarat terpenuhi: format korpus dan aturan pemuat dikunci di H-046. Aturan pemuat dan uji penolakan R1–R13 ada di `docs/DATA-CONTRACTS.md` §2.
