@@ -17,7 +17,7 @@ from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 SCOPES = ("frontier_only", "all")
 FIXED_SIZE = "fixed_size"
-STRUCTURE_SCHEMA = "structure_schema"  # H-080: store sendiri; header di sini dipanggil sendiri atau dipakai ulang dari Pasal (`reused_from`)
+STRUCTURE_SCHEMA = "structure_schema"  # H-082: store sendiri; B dipanggil untuk semua potongan skema (tanpa reuse header Pasal)
 GRANULARITY_DIRS = ("pasal", "ayat", FIXED_SIZE, STRUCTURE_SCHEMA)
 
 
@@ -80,13 +80,6 @@ class HeaderStore(Protocol):
         """Hash isi store (pasangan chunk_id -> teks header). `run_id` tidak ikut (A10)."""
 
 
-def pair_text(header: Any, reused_from: Any = None) -> str:
-    """Teks identitas satu header di hash store. `reused_from` (H-080) ikut hanya bila ada, jadi hash header tanpa reuse
-    tidak berubah; header yang sama dengan asal berbeda (atau dipanggil sendiri) berhash beda."""
-    h = str(header if header is not None else "")
-    return h if not isinstance(reused_from, str) or not reused_from else f"{h}\x00reused_from={reused_from}"
-
-
 def _pairs_hash(pairs: Iterable[tuple[str, str]]) -> str:
     rows = sorted(pairs)
     return hashlib.sha256(json.dumps(rows, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
@@ -108,7 +101,7 @@ class MemoryHeaderStore:
         return self.runs.get(run_id)
 
     def content_hash(self) -> str:
-        return _pairs_hash((cid, pair_text(r.get("header", ""), r.get("reused_from"))) for cid, r in self.records.items())
+        return _pairs_hash((cid, str(r.get("header", ""))) for cid, r in self.records.items())
 
 
 class DirHeaderStore:
@@ -150,11 +143,10 @@ class DirHeaderStore:
         for g in GRANULARITY_DIRS:
             for p in sorted((self.headers_dir / g / self.prompt12).glob("*.json")):
                 try:
-                    d = json.loads(p.read_bytes().decode("utf-8"))
-                    h = pair_text(d.get("header", ""), d.get("reused_from"))
+                    h = json.loads(p.read_bytes().decode("utf-8")).get("header", "")
                 except (OSError, ValueError, AttributeError):
                     h = ""
-                pairs.append((f"{g}/{p.stem}", h))
+                pairs.append((f"{g}/{p.stem}", str(h)))
         return _pairs_hash(pairs)
 
 
@@ -172,7 +164,7 @@ class HeaderBinding:
             raise ValueError(f"header_b.scope must be one of {list(SCOPES)}, got {self.scope!r}")
 
     def expected_granularity(self, chunker: str) -> str:
-        """`fixed_size` dan `structure_schema` memakai store sendiri (H-069, H-080); `structure_handwritten` memakai
+        """`fixed_size` dan `structure_schema` memakai store sendiri (H-069, H-082); `structure_handwritten` memakai
         granularitas config."""
         return chunker if chunker in (FIXED_SIZE, STRUCTURE_SCHEMA) else self.granularity
 

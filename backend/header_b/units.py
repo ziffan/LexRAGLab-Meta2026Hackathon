@@ -13,7 +13,7 @@ from backend.chunking import chunk_document
 
 SEP = " › "
 SOURCES = ("pasal", "ayat", "fixed_size")
-SCHEMA_SOURCE = "structure_schema"  # H-080: potongan skema A aktif; butuh `schema_record`
+SCHEMA_SOURCE = "structure_schema"  # H-082: potongan skema A aktif; butuh `schema_record`
 ALL_SOURCES = (*SOURCES, SCHEMA_SOURCE)
 
 
@@ -24,7 +24,7 @@ class Unit:
     text: str
     tokens: int  # token teks sumber (tokenizer lokal)
     chunk_ids: tuple[str, ...]  # chunk penerima header (ayat/fixed: key saja; pasal: semua potongan Pasal)
-    start: int | None = None  # rentang [start,end) di doc.text; dipakai pencocokan reuse H-080
+    start: int | None = None  # rentang [start,end) di doc.text; info rentang unit (H-082: tidak dipakai untuk reuse)
     end: int | None = None
 
 

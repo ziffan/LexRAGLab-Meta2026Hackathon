@@ -16,7 +16,7 @@ from backend.tokenizer import get_tokenizer
 
 from .caller import run_headers
 from .project import write_projection
-from .reuse import plan_schema, project_schema, write_reuse
+from .schema import plan_schema, project_schema
 from .run import (DEFAULT_DOC, HeaderConfigError, find_unit, load_all_configs, prepare, project, run_smoke,
                   smoke_projection)
 from .units import SOURCES
@@ -42,9 +42,7 @@ def _schema_record(a):
 
 
 def _fmt_schema(r: dict) -> str:
-    head = (f"  structure_schema chunks={r['chunks']} reused={r['reused']} already_stored={r['already_stored']} "
-            f"to_call={r['to_call']} near_miss={len(r['near_miss'])} "
-            f"(reused with address label differing: {r['address_differs']})")
+    head = f"  structure_schema chunks={r['chunks']} already_stored={r['already_stored']} to_call={r['to_call']}"
     if not r["to_call"]:
         return head + "\n  cost micro-USD (to_call only): 0"
     return head + "\n" + _fmt({**r["projection"], "source": "schema/call"})
@@ -87,10 +85,10 @@ def _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw) -> int:
     return {"accepted": 0, "rejected_by_api": 1}.get(out["status"], 4)
 
 
-def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw, rcfg, gcfg) -> int:
+def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw) -> int:
     p = prepare("structure_schema", **kw)
     hdir = config.REPO_ROOT / "runs" / "headers"
-    plan = plan_schema(p, headers_dir=hdir, tokenizer=tok, retrieval_cfg=rcfg, grid_cfg=gcfg, limit=a.sample or None)
+    plan = plan_schema(p, headers_dir=hdir, limit=a.sample or None)
     res = project_schema(p, plan, tok, hc, model_cfg, profile=a.profile, rpm=a.rpm)
     print(_fmt_schema(res))
     if a.project_only:
@@ -108,7 +106,6 @@ def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw, rcfg, gcfg) -> int:
     if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
-    print(f"reuse written: {write_reuse(plan, headers_dir=hdir, prompt=p.prompt)} (no calls)")
     if not plan.call:
         return 0
     client = _client(a, model_cfg, budget_cfg)
@@ -133,8 +130,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m backend.header_b")
     ap.add_argument("--granularity", choices=("pasal", "ayat"))
     ap.add_argument("--chunker", choices=("structure_handwritten", "fixed_size", "structure_schema"), default="structure_handwritten",
-                    help="fixed_size (H-069): satu header per potongan fixed_size; structure_schema (H-080): potongan skema A aktif, "
-                         "header Pasal dipakai ulang bila rentang+teks identik; granularity diabaikan")
+                    help="fixed_size (H-069): satu header per potongan fixed_size; structure_schema (H-082): potongan skema A aktif, "
+                         "B dipanggil untuk semua potongan (tanpa reuse header Pasal); granularity diabaikan")
     ap.add_argument("--family", default="uupt", help="keluarga skema A untuk --chunker structure_schema")
     ap.add_argument("--sample", type=int, default=0, help="N unit pertama (urutan dokumen)")
     ap.add_argument("--project-only", action="store_true")
@@ -157,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         kw["schema_record"] = rec
         if not a.smoke:
-            return _schema_main(a, hc, model_cfg, budget_cfg, tok, kw, rcfg, gcfg)
+            return _schema_main(a, hc, model_cfg, budget_cfg, tok, kw)
 
     if a.project_only:
         first = prepare(SOURCES[0], **kw)
