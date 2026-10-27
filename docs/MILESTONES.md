@@ -15,8 +15,8 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 | M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | kode + review selesai; screenshot ulang pada grid v2 menunggu pass visual |
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (M2.1–M2.3 kode ter-review; menunggu review butir D oleh operator) |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | berjalan (M3.1–M3.3 backend ter-review; batch B per Pasal, U2, M3.4 berjalan) |
-| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | berjalan (akta sintetis ditulis; M4.3 backend berjalan) |
-| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | belum mulai |
+| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | berjalan (M4.1 dan M4.3 backend ter-review; menunggu review akta operator) |
+| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | berjalan (M5.1 kode ter-review) |
 | **Jumlah** | | | **21** | **55,5** | |
 
 Acara mulai 26 Okt 2026 23:00 WIB. Commit pertama repo ini dibuat setelah jam itu. Butir kontrol, akta sintetis, dan kode ditulis setelah jam mulai.
@@ -289,7 +289,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: catatan run, proyeksi biaya.
 **Tier review**: 2.
 **Estimasi**: 1,5 jam.
-**Status**: berjalan — backend `e1244aa`, `f833b07`, `013c304`, `c85c893` (Tier 2 lulus, `l3/W2-M31-periksa.md`); granularitas per Pasal + guard cached ratio (H-074) `94de71c`. Run: sampel 3 × 10 `e930876` (5.848), batch per Pasal parsial `76256fd` (49.127; 231 record). Sisa: batch per Pasal penuh dan `fixed_size` (H-069), proyeksi `runs/headers/projection/`.
+**Status**: berjalan — backend `e1244aa`, `f833b07`, `013c304`, `c85c893` (Tier 2, `l3/W2-M31-periksa.md`); per Pasal + guard H-074 `94de71c`. Run: sampel 3 × 10 `e930876`; batch per Pasal lengkap `76256fd` + `472ffc8` (342/343 unit berheader); `fixed_size` `92fbb4c` (100/103). Proyeksi `runs/headers/projection/`. Sisa: I-47 (Pasal 128 dan 3 potongan fixed_size > 40 token setelah 4 upaya).
 
 Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 31 Okt malam, "hanya frontier" berlaku otomatis.
 
@@ -303,7 +303,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: test hijau untuk akuntansi anggaran, screenshot dua deret.
 **Tier review**: 1. Akuntansi token header menentukan keadilan perbandingan.
 **Estimasi**: 2 jam.
-**Status**: berjalan — backend sumbu grid `1a9bacf`, `12528f5` (Tier 1 lulus, `l3/W3-M32-hasil.md`). Sisa: deret on/off U2 (WIP, review berjalan), run grid `--with-headers` setelah batch B, screenshot dua deret.
+**Status**: berjalan — backend `1a9bacf`, `12528f5` (Tier 1, `l3/W3-M32-hasil.md`); U2 deret on/off `4d64878` (Tier 2/3, `l3/W6-U2-periksa-hasil.md`), test `b7166d7`, toggle `294ec6c`. Grid uji `--with-headers --with-schema` `ebe7f91` (`runs/grid/58d1864b….json`): semua 9 kembaran header-on gagal `header_missing` (I-47). Menunggu operator: I-47, I-48; screenshot dua deret setelah I-47.
 
 ### M3.3 — Induksi skema A untuk UU PT
 **Slice**: Spark membaca UU PT dan mengeluarkan skema hierarki. Layar menampilkan skema itu berdampingan dengan koreksi operator, operator mengoreksi lewat editor di layar (H-037), dan versi skema tersimpan.
@@ -328,7 +328,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: test hijau, tabel selisih batas, frontier.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: berjalan — chunker skema + binding (WIP L2#2), integrasi pipeline/grid dan test sedang ditulis.
+**Status**: berjalan — chunker skema + integrasi grid `a65e1c2` (Tier 2 lulus, `l3/W7-M34-periksa-hasil.md`), test tambahan `8503367`. Bukti: selisih batas v1 UU PT di envelope `runs/grid/58d1864b….json` (same 686, hand_only 1454, schema_only 0); test hijau. Menunggu operator: skema v1 belum disetujui (H-074), tafsir disetujui/aktif (I-50); frontier dengan skema yang disetujui.
 
 ## M4 — Transfer ke akta, ekspor (2 Nov)
 
@@ -344,7 +344,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: skema akta v1/v2, screenshot.
 **Tier review**: 2, ditambah Tier 4 domain review oleh operator.
 **Estimasi**: 2,5 jam.
-**Status**: belum mulai.
+**Status**: berjalan — pemuat akta, alamat, store skema per keluarga, R2, pemilih keluarga `2e33331` (Tier 2 lulus, `l3/W11-M41-periksa-hasil.md`). Lima akta sintetis `2c81ef9` (pemeriksa 0 BLOCKER). Menunggu operator: review akta (I-51), tafsir pemuat/alamat (I-52); lalu induksi A akta live (proyeksi 3.408 micro-USD batas atas) dan panel potongan akta (R4 versi skema).
 
 ### M4.2 — Frontier akta
 **Slice**: Butir akta (usulan D disetujui ditambah tulisan operator) dijalankan di grid, dan frontier akta tampil.
@@ -368,7 +368,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: test hijau round-trip, contoh profil UU PT dan akta.
 **Tier review**: 1. Profil adalah keluaran yang dijanjikan ke pemakai RAG.
 **Estimasi**: 2 jam.
-**Status**: berjalan — skenario disetujui (H-068); backend profil sedang ditulis (I-42, I-43 ditangani eksekutor).
+**Status**: berjalan — backend profil W7/W8, laporan held-out/transfer `f48cbda` (+ `1d3a1fc`), Tier 1 lulus (`l3/W7-M43-periksa-hasil.md`; perbaikan SHOULD `l3/W10-M43-perbaiki-hasil.md`, diff diperiksa L2). I-42, I-43 ditutup. Sisa: U7 frontend (tombol ekspor, laporan; I-53 sumber data laporan), contoh profil UU PT dan akta.
 
 ## M5 — Demo dan submit (3–4 Nov)
 
@@ -383,7 +383,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: screenshot semua adegan dalam mode putar ulang dan dari ekspor statis yang dibuka lokal.
 **Tier review**: 2, ditambah Tier 4 UX review atas alur adegan.
 **Estimasi**: 2 jam, ditambah sekitar 2–3 jam ekspor statis (H-051) yang belum masuk jumlah Ringkasan; ekspor statis di bawah lantai H-017 (dipotong lebih dulu daripada A–D dan video).
-**Status**: belum mulai.
+**Status**: berjalan — middleware replay (`X-Replay` semua respons, W5 ditolak), ekspor statis + pemindai bocor, build frontend statis `2e33331` (Tier 2 lulus, `l3/W11-M51-periksa-hasil.md`). Sisa: adegan 4 (I-54), hint di bundel, screenshot semua adegan (replay dan statis lokal).
 
 ### M5.2 — Gate pra-submit
 **Slice**: Daftar periksa pra-submit lulus semua dan tercatat di repo.
