@@ -94,7 +94,7 @@ def test_warmup_then_same_cache_key_and_sequential(tmp_path):
     assert all(r["body"]["text"]["format"]["strict"] is True for r in reqs)
     assert [o.unit.key for o in res.outcomes] == ["id1", "id2"]
     h = load_header(tmp_path / "h", "ayat", prompt, "id1")
-    assert h == {"chunk_id": "id1", "header": "Konteks singkat", "granularity": "ayat", "prompt_version": "v1",
+    assert h == {"chunk_id": "id1", "header": "Konteks singkat", "granularity": "ayat", "prompt_version": prompt.version,
                  "tokens_local": 2, "run_id": res.outcomes[0].run.run_id}
 
 

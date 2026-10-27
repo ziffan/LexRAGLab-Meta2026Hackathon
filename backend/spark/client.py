@@ -46,6 +46,9 @@ Validator = Callable[[dict], "str | None"]
 class CallResult:
     output: str | None  # JSON terkanon (sort_keys, separator tetap) atau None
     record: RunRecord
+    # H-079: keluaran terkanon yang lolos skema tetapi gagal validasi semantik (`semantic_invalid`), untuk diagnosis.
+    # Bukan hasil sukses: tidak pernah masuk cache. Hanya teks keluaran model; tanpa key, base URL, atau header.
+    rejected_output: str | None = None
 
     @property
     def parsed(self) -> Any:
@@ -415,7 +418,9 @@ class SparkClient:
         canonical = store.canonical_json(out)
         reason = self._semantic(canonical, validator)
         if reason:
-            return err("semantic_invalid", reason)
+            res = err("semantic_invalid", reason)
+            res.rejected_output = canonical
+            return res
         rec = self._record(ctx, status="ok", usage=usage, cost=cost, projected=tp, t_end=self._now())
         store.cache_write(self._runs, ctx.role, ctx.cache_key, canonical, rec)
         store.save_record(self._runs, rec)

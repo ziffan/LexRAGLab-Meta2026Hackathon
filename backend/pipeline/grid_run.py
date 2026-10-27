@@ -108,7 +108,7 @@ def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, heade
         raise GridRunError(f"config/header_b: scope must be one of {list(SCOPES)}, got {scope!r}")
     if hc.get("granularity") not in ("pasal", "ayat"):
         raise GridRunError("config/header_b: granularity must be 'pasal' or 'ayat'")
-    prompt = load_prompt(int(hc["max_header_tokens"]))
+    prompt = load_prompt(int(hc["max_header_tokens"]), hc.get("prompt_version"))  # H-079: versi dari config, sama dengan CLI B
     mc = config.load("model", config_dir)
     store = DirHeaderStore(headers_dir or Path(runs_dir) / "headers", prompt.prompt_hash, runs_dir)
     return HeaderBinding(store, hc["granularity"], scope, prompt.prompt_hash, mc["profiles"][mc["default_profile"]]["model"])

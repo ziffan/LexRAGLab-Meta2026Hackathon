@@ -16,7 +16,8 @@ from backend.tokenizer import get_tokenizer
 
 from .caller import run_headers
 from .project import write_projection
-from .run import DEFAULT_DOC, load_all_configs, prepare, project
+from .run import (DEFAULT_DOC, HeaderConfigError, find_unit, load_all_configs, prepare, project, run_smoke,
+                  smoke_projection)
 from .units import SOURCES
 
 
@@ -31,6 +32,43 @@ def _fmt(p: dict) -> str:
             f"rpm_floor={t['rpm_floor_seconds']}s sequential={t['sequential_seconds']}s estimated={t['estimated_seconds']}s")
 
 
+def _client(a, model_cfg, budget_cfg):
+    from dotenv import dotenv_values
+    env = {k: v for k, v in dotenv_values(config.REPO_ROOT / ".env").items() if v}
+    return SparkClient(a.profile or model_cfg["default_profile"], model_config=model_cfg, budget_config=budget_cfg,
+                       env=env, runs_dir=config.REPO_ROOT / "runs")
+
+
+def _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw) -> int:
+    if not a.unit:
+        print("error: --smoke requires --unit <address|chunk_id>", file=sys.stderr)
+        return 2
+    p = prepare(source, **kw)
+    try:
+        unit = find_unit(p, a.unit)
+    except HeaderConfigError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    sm = smoke_projection(p, unit, tok, hc, model_cfg, profile=a.profile, rpm=a.rpm)
+    print(_fmt(sm))
+    print(f"  smoke: 1 call, no warm-up request (cost above includes one warm-up that is NOT sent), "
+          f"prompt {p.prompt.version} {p.prompt.prompt_hash[:12]}, schema maxLength={hc.get('schema_max_length_chars')}")
+    caps = effective_caps(budget_cfg, None)
+    ledger = Ledger(config.REPO_ROOT / "runs")
+    cost = sm["cost_usd_micros"]["upper_no_cache"]
+    if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
+        print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
+        return 3
+    client = _client(a, model_cfg, budget_cfg)
+    meta = {"corpus_hash": config.config_hash({"docs": [p.doc.sha256]}), "clean_sha256": p.doc.clean_sha256,
+            "loader_rules_version": p.doc.loader_rules_version, "tokenizer": {"name": tok.info.name, "version": tok.info.version}}
+    out = run_smoke(client, p, unit, tokenizer=tok, header_cfg=hc, headers_dir=config.REPO_ROOT / "runs" / "headers", meta=meta)
+    print(f"{out['status']} error_code={out['error_code']} unit={out['unit']} run_id={out['run_id']}")
+    if out["header"]:
+        print(f"header: {out['header']}")
+    return {"accepted": 0, "rejected_by_api": 1}.get(out["status"], 4)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m backend.header_b")
     ap.add_argument("--granularity", choices=("pasal", "ayat"))
@@ -38,6 +76,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="fixed_size (H-069): satu header per potongan fixed_size; granularity diabaikan")
     ap.add_argument("--sample", type=int, default=0, help="N unit pertama (urutan dokumen)")
     ap.add_argument("--project-only", action="store_true")
+    ap.add_argument("--smoke", action="store_true",
+                    help="H-079: tepat SATU panggilan untuk --unit, tanpa pemanas; cetak accepted|rejected_by_api + kode galat; "
+                         "header sukses tidak disimpan ke store")
+    ap.add_argument("--unit", default=None, help="alamat atau chunk_id unit (dengan --smoke)")
     ap.add_argument("--rpm", type=int, default=None, help="default [limits].max_rpm di config/model")
     ap.add_argument("--profile", default=None)
     a = ap.parse_args(argv)
@@ -65,6 +107,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"written: {path.relative_to(config.REPO_ROOT)}")
         return 0
 
+    if a.smoke:
+        return _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw)
+
     if a.sample < 1:
         print("error: --sample N (N >= 1) is required for a live run", file=sys.stderr)
         return 2
@@ -77,10 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
-    from dotenv import dotenv_values
-    env = {k: v for k, v in dotenv_values(config.REPO_ROOT / ".env").items() if v}
-    client = SparkClient(a.profile or model_cfg["default_profile"], model_config=model_cfg, budget_config=budget_cfg,
-                         env=env, runs_dir=config.REPO_ROOT / "runs")
+    client = _client(a, model_cfg, budget_cfg)
     meta = {"corpus_hash": config.config_hash({"docs": [p.doc.sha256]}), "clean_sha256": p.doc.clean_sha256,
             "loader_rules_version": p.doc.loader_rules_version, "tokenizer": {"name": tok.info.name, "version": tok.info.version}}
     try:
@@ -89,7 +131,7 @@ def main(argv: list[str] | None = None) -> int:
                           max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
                           warm_max_output_tokens=hc["warm_max_output_tokens"],
                           cache_guard_calls=hc["cache_guard_calls"], cache_guard_min_ratio=hc["cache_guard_min_ratio"],
-                          meta=meta)
+                          meta=meta, max_length_chars=hc.get("schema_max_length_chars"))
     except BudgetExceeded as exc:
         print(f"error: budget_exceeded: {exc}", file=sys.stderr)
         return 3

@@ -2,6 +2,8 @@
 
 Cache hasil per hash (instruksi, dokumen, potongan, model, effort) ditangani `SparkClient`. `HeaderB` (DATA-CONTRACTS 7)
 disimpan di `runs/headers/<granularity>/<prompt_hash[:12]>/<chunk_id>.json`, tidak menimpa berkas yang sudah ada.
+Keluaran yang lolos skema tetapi gagal validasi semantik (H-079) disimpan terpisah di
+`.../<prompt_hash[:12]>/rejected/<chunk_id>.<n>.json` (diagnosis; bukan cache sukses, tidak dibaca store header).
 Guard biaya klien menganggap seluruh masukan tak ter-cache (konservatif), jadi dipakai `call` per unit, bukan `run_batch`
 (proyeksi batch klien akan menolak korpus penuh walau awalan ter-cache); proyeksi sadar-cache ada di `project.py`."""
 
@@ -16,7 +18,7 @@ from typing import Any, Callable
 
 from backend.spark import BudgetExceeded, RunRecord, SparkClient
 
-from .prompt import HEADER_B_SCHEMA, SCHEMA_NAME, PromptB, schema_hash, validate_schema
+from .prompt import SCHEMA_NAME, PromptB, header_schema, schema_hash, validate_schema
 from .render import WARM_UNIT, DocPrefix, render_input, render_suffix
 from .units import Unit
 
@@ -52,8 +54,9 @@ def make_validator(unit: Unit, tokenizer: Any, max_header_tokens: int) -> Callab
 
 
 def make_call(prompt: PromptB, prefix: DocPrefix, unit: Unit, tokenizer: Any, *, max_header_tokens: int,
-              max_output_tokens: int, warm_max_output_tokens: int, meta: dict[str, Any]) -> dict[str, Any]:
-    validate_schema()
+              max_output_tokens: int, warm_max_output_tokens: int, meta: dict[str, Any],
+              max_length_chars: int | None = None) -> dict[str, Any]:
+    validate_schema(max_length_chars)
     warm = unit is WARM_UNIT
     est = prefix.tokens + tokenizer.count(render_suffix(prefix, unit))
     if warm:
@@ -62,7 +65,7 @@ def make_call(prompt: PromptB, prefix: DocPrefix, unit: Unit, tokenizer: Any, *,
     else:
         validator = make_validator(unit, tokenizer, max_header_tokens)
     return dict(role=ROLE, prompt_version=prompt.version, prompt_hash=prompt.prompt_hash, input=render_input(prefix, unit),
-                schema=HEADER_B_SCHEMA, schema_name=SCHEMA_NAME, schema_hash=schema_hash(),
+                schema=header_schema(max_length_chars), schema_name=SCHEMA_NAME, schema_hash=schema_hash(max_length_chars),
                 prompt_cache_key=prefix.cache_key, max_output_tokens=warm_max_output_tokens if warm else max_output_tokens,
                 est_input=est, validator=validator, meta=dict(meta))
 
@@ -78,6 +81,36 @@ def load_header(headers_dir: Path, granularity: str, prompt: PromptB, chunk_id: 
         return None
 
 
+def rejected_dir(headers_dir: Path, granularity: str, prompt: PromptB) -> Path:
+    return store_dir(headers_dir, granularity, prompt) / "rejected"
+
+
+def _save_rejected(headers_dir: Path, granularity: str, prompt: PromptB, unit: Unit, res: Any, tokenizer: Any) -> None:
+    """Simpan teks keluaran yang gagal validasi semantik; `<chunk_id>.<n>.json`, n = upaya berikutnya (mulai 1)."""
+    try:
+        out = json.loads(res.rejected_output)
+    except (TypeError, ValueError):
+        return
+    text = out.get("header") if isinstance(out, dict) else None
+    text = text if isinstance(text, str) else ""
+    err = res.record.error or {}
+    rec = {"chunk_id": unit.key, "chunk_id_returned": out.get("chunk_id") if isinstance(out, dict) else None,
+           "granularity": granularity, "prompt_version": prompt.version, "text": text,
+           "tokens_local": tokenizer.count(text.strip()), "error_code": err.get("code"),
+           "error_message": err.get("message"), "run_id": res.record.run_id}
+    d = rejected_dir(headers_dir, granularity, prompt)
+    d.mkdir(parents=True, exist_ok=True)
+    body = (json.dumps(rec, sort_keys=True, ensure_ascii=False, indent=1) + "\n").encode("utf-8")
+    n = 1
+    while True:
+        try:
+            with open(d / f"{unit.key}.{n}.json", "xb") as f:  # eksklusif: tidak menimpa upaya sebelumnya
+                f.write(body)
+            return
+        except FileExistsError:
+            n += 1
+
+
 def _save(path: Path, rec: dict[str, Any]) -> None:
     if path.exists():
         return
@@ -90,7 +123,8 @@ def _save(path: Path, rec: dict[str, Any]) -> None:
 def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: list[Unit], *, granularity: str,
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
                 max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True,
-                cache_guard_calls: int | None = None, cache_guard_min_ratio: Fraction | None = None) -> HeaderRun:
+                cache_guard_calls: int | None = None, cache_guard_min_ratio: Fraction | None = None,
+                max_length_chars: int | None = None, save_headers: bool = True) -> HeaderRun:
     """Guard cache (H-074): setelah `cache_guard_calls` panggilan berbayar (bukan cache hit lokal, tanpa pemanas) rasio
     agregat cached/input < `cache_guard_min_ratio` (inklusif: sama dengan batas lanjut) -> berhenti `cache_ratio_low`."""
     run = HeaderRun()
@@ -98,7 +132,8 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
     if warm and units:
         w = client.call(**make_call(prompt, prefix, WARM_UNIT, tokenizer, max_header_tokens=max_header_tokens,
                                     max_output_tokens=max_output_tokens,
-                                    warm_max_output_tokens=warm_max_output_tokens, meta=meta))
+                                    warm_max_output_tokens=warm_max_output_tokens, meta=meta,
+                                    max_length_chars=max_length_chars))
         run.warm = w.record
         if w.output is None:
             run.stopped_reason = "warm_failed"
@@ -108,7 +143,8 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
         try:
             res = client.call(**make_call(prompt, prefix, u, tokenizer, max_header_tokens=max_header_tokens,
                                           max_output_tokens=max_output_tokens,
-                                          warm_max_output_tokens=warm_max_output_tokens, meta=meta))
+                                          warm_max_output_tokens=warm_max_output_tokens, meta=meta,
+                                          max_length_chars=max_length_chars))
         except BudgetExceeded:
             run.stopped_reason = "budget_exceeded"
             return run
@@ -121,6 +157,8 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
             guard_stop = (paid == cache_guard_calls and cache_guard_min_ratio is not None
                           and Fraction(cached_tok, max(in_tok, 1)) < cache_guard_min_ratio)
         if res.output is None:
+            if res.rejected_output is not None:
+                _save_rejected(headers_dir, granularity, prompt, u, res, tokenizer)
             err = res.record.error or {"code": "model_error", "message": "call failed"}
             run.outcomes.append(HeaderOutcome(u, res.record, [], dict(err)))
             consecutive += 1
@@ -137,7 +175,7 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
         recs = [{"chunk_id": cid, "header": header, "granularity": granularity, "prompt_version": prompt.version,
                  "tokens_local": n, "run_id": res.record.run_id} for cid in u.chunk_ids]
         d = store_dir(headers_dir, granularity, prompt)
-        for r in recs:
+        for r in recs if save_headers else ():
             _save(d / f"{r['chunk_id']}.json", r)
         run.outcomes.append(HeaderOutcome(u, res.record, recs))
         if guard_stop:

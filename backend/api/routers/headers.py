@@ -74,7 +74,7 @@ def post_headers_run(request: Request, family: str, body: HeadersBody) -> dict[s
                           max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
                           warm_max_output_tokens=hc["warm_max_output_tokens"],
                           cache_guard_calls=hc["cache_guard_calls"], cache_guard_min_ratio=hc["cache_guard_min_ratio"],
-                          meta=meta, warm=not st.replay)
+                          meta=meta, warm=not st.replay, max_length_chars=hc.get("schema_max_length_chars"))
     except BudgetExceeded as exc:
         raise ApiError(402, "budget_exceeded", str(exc)[:300]) from None
     except ConfigInvalid as exc:

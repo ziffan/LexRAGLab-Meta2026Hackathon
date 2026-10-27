@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from dataclasses import dataclass
@@ -21,18 +22,36 @@ HEADER_B_SCHEMA: dict = {
 }
 
 
+def header_schema(max_length_chars: int | None = None) -> dict:
+    """Skema `HeaderB`. `max_length_chars` (config `schema_max_length_chars`, H-079) menambah `maxLength` pada `header`;
+    None (bawaan) = skema v1 tanpa `maxLength` (hash skema sama, cache lama utuh)."""
+    schema = copy.deepcopy(HEADER_B_SCHEMA)
+    if max_length_chars is not None:
+        schema["properties"]["header"]["maxLength"] = int(max_length_chars)
+    return schema
+
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def schema_hash() -> str:
-    return sha256_text(json.dumps(HEADER_B_SCHEMA, sort_keys=True, ensure_ascii=False, separators=(",", ":")))
+def schema_hash(max_length_chars: int | None = None) -> str:
+    return sha256_text(json.dumps(header_schema(max_length_chars), sort_keys=True, ensure_ascii=False, separators=(",", ":")))
 
 
-def validate_schema() -> None:
-    bad = check_schema_name(SCHEMA_NAME) or check_strict(HEADER_B_SCHEMA)
+def validate_schema(max_length_chars: int | None = None) -> None:
+    """Pra-validasi strict lokal. `maxLength` hanya sah bila flag `max_length_chars` aktif (bilangan bulat >= 1)."""
+    if max_length_chars is not None and (not isinstance(max_length_chars, int) or isinstance(max_length_chars, bool)
+                                         or max_length_chars < 1):
+        raise ValueError("HeaderB schema_max_length_chars must be a positive integer or unset")
+    schema = header_schema(max_length_chars)
+    bad = check_schema_name(SCHEMA_NAME) or check_strict(schema)
     if bad:
         raise ValueError(f"HeaderB schema is not strict-compliant: {bad}")
+    for name, sub in schema["properties"].items():
+        has = "maxLength" in sub
+        if has and not (name == "header" and max_length_chars is not None):
+            raise ValueError(f"HeaderB schema: maxLength on '{name}' is not allowed unless schema_max_length_chars is set")
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,5 @@
 # config/header_b — peran B (contextual chunking), M3.1. Nilai bertanda "usulan agen" boleh diubah operator.
-version = 1
+version = 2
 
 # H-074: granularitas B = pasal (diputus operator); fixed_size tetap dijalankan. Nilai: "pasal" | "ayat".
 granularity = "pasal"
@@ -11,6 +11,16 @@ scope = "frontier_only"
 # Usulan agen: batas panjang header (token lokal). Potongan ayat rata-rata sekitar 43 token (UU PT, chunker v2),
 # jadi header 40 token sudah kira-kira setara satu potongan; lebih panjang dari itu mengikis keuntungan anggaran (H-004).
 max_header_tokens = 40
+
+# H-079 (I-47 opsi B): versi prompt B di prompts/b/versions.json. "v2" = aturan penyingkatan judul Bab/Bagian panjang + contoh.
+# "v1" tetap dapat dipilih; header v1 tetap tersimpan di direktori prompt_hash-nya sendiri (tidak ditimpa).
+prompt_version = "v2"
+
+# H-079: maxLength (karakter) pada properti `header` skema HeaderB. Tidak diisi = tidak dipakai (skema v1, hash skema sama).
+# Isi hanya setelah smoke (`python -m backend.header_b --smoke --unit <alamat|chunk_id>`) membuktikan strict Responses menerimanya.
+# Usulan agen: 190. Sumber: 1.067 header pasal + 100 header fixed_size v1 yang lolos (runs/headers/*/5de81a0c2feb): maks 180
+# karakter (pasal p99 160, fixed_size p99 172); 190 = maks + margin sekitar 5%. 40 token lokal setara sekitar 4,5 karakter/token.
+# schema_max_length_chars = 190
 
 # Usulan agen: ruang keluaran per panggilan. Reasoning ditagih sebagai output dan sekitar 83% keluaran (G-31);
 # smoke M0.1 mencatat output 445-452 token pada effort low, jadi 1000 memberi ruang tanpa memotong (G-09).

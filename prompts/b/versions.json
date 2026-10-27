@@ -1,10 +1,15 @@
 {
-  "current": "v1",
+  "current": "v2",
   "versions": {
     "v1": {
       "file": "v1.md",
       "role": "b",
       "note": "Instruksi peran B (docs/SPARK-ROLES.md 3). Placeholder {max_header_tokens} diisi dari config/header_b; hash prompt atas teks yang sudah dirender."
+    },
+    "v2": {
+      "file": "v2.md",
+      "role": "b",
+      "note": "H-079 (I-47 opsi B): v1 + aturan 3a penyingkatan judul Bab/Bagian panjang + 2 contoh header patuh (UU 40/2007). Dipilih lewat config/header_b prompt_version; v1 tetap dapat dipilih."
     }
   }
 }

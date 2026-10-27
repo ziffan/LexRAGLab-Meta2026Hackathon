@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction
 from pathlib import Path
 from typing import Any
@@ -11,6 +11,7 @@ from backend import config
 from backend.corpus import load_corpus
 from backend.spark.settings import load_configs
 
+from .caller import run_headers
 from .project import project_units
 from .prompt import PromptB, load_prompt
 from .render import DocPrefix, build_prefix
@@ -40,6 +41,13 @@ def load_header_cfg(config_dir: Path | None = None) -> dict[str, Any]:
         raise HeaderConfigError("config/header_b: cache_guard_min_ratio must be a fraction string such as '4/5'") from None
     if not 0 <= c["cache_guard_min_ratio"] <= 1:
         raise HeaderConfigError("config/header_b: cache_guard_min_ratio must be between 0 and 1")
+    pv = c.get("prompt_version")
+    if pv is not None and (not isinstance(pv, str) or not pv):
+        raise HeaderConfigError("config/header_b: prompt_version must be a non-empty string")
+    ml = c.get("schema_max_length_chars")
+    if ml is not None and (not isinstance(ml, int) or isinstance(ml, bool) or ml < 1):
+        raise HeaderConfigError("config/header_b: schema_max_length_chars must be a positive integer or omitted")
+    c["schema_max_length_chars"] = ml
     if c.get("granularity") not in ("pasal", "ayat"):
         raise HeaderConfigError("config/header_b: granularity must be 'pasal' or 'ayat'")
     return c
@@ -60,7 +68,7 @@ def prepare(source: str, *, doc: Any = None, tokenizer: Any, header_cfg: dict[st
     if source not in SOURCES:
         raise HeaderConfigError(f"source must be one of {list(SOURCES)}")
     doc = doc or load_corpus(doc_id, config_dir=config_dir)
-    prompt = prompt or load_prompt(header_cfg["max_header_tokens"])
+    prompt = prompt or load_prompt(header_cfg["max_header_tokens"], header_cfg.get("prompt_version"))
     prefix = build_prefix(prompt, doc, tokenizer)
     units = build_units(doc, source, tokenizer=tokenizer, retrieval_cfg=retrieval_cfg, grid_cfg=grid_cfg)
     return Prepared(doc, prompt, prefix, units, source)
@@ -87,3 +95,50 @@ def load_all_configs(config_dir: Path | None = None) -> tuple[dict, dict, dict, 
     hc = load_header_cfg(config_dir)
     model_cfg, budget_cfg = load_configs(config_dir)
     return hc, model_cfg, budget_cfg, config.load("retrieval", config_dir), config.load("grid", config_dir)
+
+
+def find_unit(p: Prepared, ref: str) -> Unit:
+    """Unit dengan `chunk_id` (key) atau alamat yang sama persis dengan `ref`; ambigu atau tak ada -> HeaderConfigError."""
+    hits = [u for u in p.units if u.key == ref or u.address == ref]
+    if not hits:
+        raise HeaderConfigError(f"no unit with chunk_id or address {ref!r} in source {p.source!r}")
+    if len(hits) > 1:
+        raise HeaderConfigError(f"{ref!r} matches {len(hits)} units in source {p.source!r}; use the chunk_id")
+    return hits[0]
+
+
+def smoke_status(outcome: Any | None, stopped: str | None) -> tuple[str, str | None]:
+    """(`accepted` | `rejected_by_api` | `inconclusive`, kode galat). `accepted` = API menerima request (termasuk bila keluaran
+    kemudian ditolak validasi semantik lokal: itu masuk `rejected/`). `rejected_by_api` = HTTP 4xx dari API (mis. skema)."""
+    if outcome is None:
+        return "inconclusive", stopped
+    if outcome.error is None:
+        return "accepted", None
+    code = outcome.error.get("code")
+    if code == "semantic_invalid":
+        return "accepted", code
+    if code == "invalid_request" and str(outcome.error.get("message", "")).startswith("HTTP 4"):
+        return "rejected_by_api", code
+    return "inconclusive", code
+
+
+def smoke_projection(p: Prepared, unit: Unit, tokenizer: Any, header_cfg: dict[str, Any], model_cfg: dict[str, Any], *,
+                     profile: str | None = None, rpm: int | None = None) -> dict[str, Any]:
+    """Proyeksi satu panggilan. Biaya memuat satu request pemanas yang TIDAK dikirim smoke (batas atas konservatif)."""
+    return project(replace(p, units=[unit]), tokenizer, header_cfg, model_cfg, profile=profile, rpm=rpm)
+
+
+def run_smoke(client: Any, p: Prepared, unit: Unit, *, tokenizer: Any, header_cfg: dict[str, Any], headers_dir: Path,
+              meta: dict[str, Any]) -> dict[str, Any]:
+    """Tepat satu panggilan untuk `unit`, tanpa pemanas. Header sukses TIDAK disimpan ke store header (smoke = diagnosis;
+    hasilnya tetap ada di cache klien dan RunRecord). Keluaran yang ditolak validasi semantik disimpan di `rejected/`."""
+    res = run_headers(client, p.prompt, p.prefix, [unit], granularity=p.source, tokenizer=tokenizer, headers_dir=headers_dir,
+                      max_header_tokens=header_cfg["max_header_tokens"], max_output_tokens=header_cfg["max_output_tokens"],
+                      max_consecutive_errors=header_cfg["max_consecutive_errors"],
+                      warm_max_output_tokens=header_cfg["warm_max_output_tokens"], meta=meta, warm=False,
+                      max_length_chars=header_cfg.get("schema_max_length_chars"), save_headers=False)
+    o = res.outcomes[0] if res.outcomes else None
+    status, code = smoke_status(o, res.stopped_reason)
+    return {"status": status, "error_code": code, "unit": unit.key, "address": unit.address,
+            "run_id": o.run.run_id if o else None,
+            "header": o.headers[0]["header"] if o and o.headers else None, "stopped": res.stopped_reason}
