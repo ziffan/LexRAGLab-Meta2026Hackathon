@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa definisi Perseroan Terbatas menurut Pasal 1 Undang-Undang Nomor 40 Tahun 2007?",
+  "start": null,
+  "teks_gold": "Perseroan Terbatas, yang selanjutnya disebut Perseroan, adalah badan hukum yang merupakan persekutuan modal, didirikan berdasarkan perjanjian, melakukan kegiatan usaha dengan modal dasar yang seluruhnya terbagi dalam saham atau badan hukum perorangan yang memenuhi kriteria usaha mikro dan kecil sebagaimana diatur dalam peraturan perundang-undangan mengenai usaha mikro dan kecil."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "953f6f8b6202a3f6",
+ "resolved_span": {
+  "end": 9039,
+  "start": 8658
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

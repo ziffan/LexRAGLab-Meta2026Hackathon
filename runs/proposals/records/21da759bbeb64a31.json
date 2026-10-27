@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa persen minimal dari modal dasar yang harus ditempatkan dan disetor penuh?",
+  "start": null,
+  "teks_gold": "(1) Paling sedikit 25% (dua puluh lima persen) dari modal dasar sebagaimana dimaksud dalam Pasal 32 harus ditempatkan dan disetor penuh."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "21da759bbeb64a31",
+ "resolved_span": {
+  "end": 49211,
+  "start": 49075
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

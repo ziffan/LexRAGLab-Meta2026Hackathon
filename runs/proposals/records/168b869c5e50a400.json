@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa lama kesempatan kreditur mengajukan tuntutan pasca pemberitahuan bubar?",
+  "start": null,
+  "teks_gold": "Jangka waktu pengajuan tagihan sebagaimana dimaksud pada ayat (2) huruf d adalah 60 (enam puluh) hari terhitung sejak tanggal pengumuman sebagaimana dimaksud pada ayat (1)."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "168b869c5e50a400",
+ "resolved_span": {
+  "end": 195256,
+  "start": 195084
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

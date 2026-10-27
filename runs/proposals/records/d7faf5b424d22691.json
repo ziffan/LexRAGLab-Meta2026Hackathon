@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jumlah pendiri minimal dan bahasa akta untuk pendirian Perseroan?",
+  "start": null,
+  "teks_gold": "(1) Perseroan didirikan oleh 2 (dua) orang atau lebih dengan akta notaris yang dibuat dalam bahasa Indonesia."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "d7faf5b424d22691",
+ "resolved_span": {
+  "end": 16266,
+  "start": 16157
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Perseroan mana yang wajib melaksanakan Tanggung Jawab Sosial dan Lingkungan?",
+  "start": null,
+  "teks_gold": "(1) Perseroan yang menjalankan kegiatan usahanya di bidang dan/atau berkaitan dengan sumber daya alam wajib melaksanakan Tanggung Jawab Sosial dan Lingkungan."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "825a42724835aa9e",
+ "resolved_span": {
+  "end": 99096,
+  "start": 98938
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

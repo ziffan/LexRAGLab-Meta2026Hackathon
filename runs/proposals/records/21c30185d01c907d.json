@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Bagaimana tanggung jawab pemegang saham Perseroan atas perikatan dan kerugian Perseroan?",
+  "start": null,
+  "teks_gold": "(1) Pemegang saham Perseroan tidak bertanggung jawab secara pribadi atas perikatan yang dibuat atas nama Perseroan dan tidak bertanggung jawab atas kerugian Perseroan melebihi saham yang dimiliki."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "21c30185d01c907d",
+ "resolved_span": {
+  "end": 12538,
+  "start": 12342
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

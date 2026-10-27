@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Apa konsekuensi bagi penerima cicilan keuntungan tengah periode bila pembukuan akhir minus?",
+  "start": null,
+  "teks_gold": "Dalam hal setelah tahun buku berakhir ternyata Perseroan menderita kerugian, dividen interim yang telah dibagikan harus dikembalikan oleh pemegang saham kepada Perseroan."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "39b491484033b2f4",
+ "resolved_span": {
+  "end": 97027,
+  "start": 96857
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

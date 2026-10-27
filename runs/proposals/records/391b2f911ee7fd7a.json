@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa batas durasi menyimpan surat berharga treasuri oleh emiten?",
+  "start": null,
+  "teks_gold": "Saham yang dibeli kembali Perseroan sebagaimana dimaksud pada ayat (1) hanya boleh dikuasai Perseroan paling lama 3 (tiga) tahun."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "391b2f911ee7fd7a",
+ "resolved_span": {
+  "end": 58083,
+  "start": 57954
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

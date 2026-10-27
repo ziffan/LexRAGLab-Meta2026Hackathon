@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Bagaimana cara menetapkan ketetapan sah tanpa menggelar forum tatap muka bila seluruh pemilik suara sepakat membubuhkan paraf?",
+  "start": null,
+  "teks_gold": "Pemegang saham dapat juga mengambil keputusan yang mengikat di luar RUPS dengan syarat semua pemegang saham dengan hak suara menyetujui secara tertulis dengan menandatangani usul yang bersangkutan."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "7105659537cdd373",
+ "resolved_span": {
+  "end": 124925,
+  "start": 124728
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

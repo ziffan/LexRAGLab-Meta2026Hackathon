@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "uupt-40-2007",
+  "end": null,
+  "mode": "literal",
+  "query": "Kapan RUPS tahunan wajib diadakan setelah tahun buku berakhir?",
+  "start": null,
+  "teks_gold": "(2) RUPS tahunan wajib diadakan dalam jangka waktu paling lambat 6 (enam) bulan setelah tahun buku berakhir."
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "750b2b3a029cf8d0",
+ "resolved_span": {
+  "end": 104121,
+  "start": 104013
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "0d51924296e948a6988456d4339abfbf",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}
