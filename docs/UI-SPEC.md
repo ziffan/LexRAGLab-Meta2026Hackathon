@@ -126,6 +126,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Interaksi | Tombol `Approve`, `Edit`, `Reject`. `Edit` membuka form query dan pemilih span (seleksi teks di konteks). Catatan operator opsional. Pintasan papan ketik A/E/R dengan konfirmasi untuk Reject |
 | Aturan | Tidak ada jalur dari usulan ke evaluasi tanpa keputusan operator (H-006). Usulan dengan validasi span gagal tidak bisa di-Approve, hanya Edit atau Reject |
 | Loading / empty / error | Skeleton kartu / "No pending proposals" / "Could not save decision: {message}. Nothing was changed." |
+| Keluarga | Pemilih `Family` (label sama dengan U0) di header layar; keluarga dari query `?family=` (`uupt` \| `akta`, lainnya jatuh ke `uupt`). Ganti pilihan memperbarui `?family=` (replaceState) dan memuat ulang antrean; tautan "Review proposals" di U0 membawa keluarga aktif |
 | Label | `Review proposals`, `Pending`, `Approve`, `Edit`, `Reject`, `Literal`, `Paraphrase`, `Span`, `Offset found`, `Text matches`, `Operator note` |
 | Adegan video | 2 (sekilas, menunjukkan butir parafrase disetujui operator) |
 

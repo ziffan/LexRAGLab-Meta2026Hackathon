@@ -34,6 +34,25 @@ export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 /** Kartu boleh di-Approve hanya bila validasi span dari server lolos (U6 "Aturan"). */
 export const canApprove = (p: ProposalRecord): boolean => p.validation.text_matches && p.resolved_span !== null;
 
+export const REVIEW_FAMILIES = ["uupt", "akta"] as const;
+
+/** `?family=` -> keluarga U6; nilai selain uupt/akta jatuh ke uupt. */
+export function parseReviewFamily(search: string): string {
+  const v = new URLSearchParams(search).get("family");
+  return v !== null && (REVIEW_FAMILIES as readonly string[]).includes(v) ? v : "uupt";
+}
+
+/** Query string baru untuk keluarga terpilih; parameter lain (mis. `view=review` mode statis) dipertahankan. */
+export function reviewSearch(search: string, family: string): string {
+  const q = new URLSearchParams(search);
+  q.set("family", family);
+  return `?${q.toString()}`;
+}
+
+/** Tautan U0 -> U6 yang membawa keluarga aktif. */
+export const reviewHref = (family: string, isStaticMode: boolean): string =>
+  isStaticMode ? `?view=review&family=${encodeURIComponent(family)}` : `/review?family=${encodeURIComponent(family)}`;
+
 export const pendingLabel = (n: number): string => `Review proposals (${n} pending)`;
 
 export function provenanceLine(nItems: number, byOrigin: Record<string, number>): string {

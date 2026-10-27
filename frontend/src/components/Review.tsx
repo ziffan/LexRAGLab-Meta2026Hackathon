@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef, useSyncExternalStore, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import {
-  ReviewController, canApprove, codePointToUtf16, isEditableTarget, pendingLabel, splitHighlight,
+  REVIEW_FAMILIES, ReviewController, canApprove, codePointToUtf16, isEditableTarget, parseReviewFamily, pendingLabel, reviewSearch, splitHighlight,
   type ContextView, type EditState, type ProposalRecord, type ReviewState,
 } from "../lib/review";
 import { apiFetch } from "../api";
 import { modeLabel } from "../lib/labels";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
+import { FAMILY_LABELS } from "./Header";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U6 Review proposals (docs/UI-SPEC.md U6): layar terpisah `/review`. Komponen menggambar keadaan `ReviewController`.
@@ -174,16 +175,35 @@ export function ReviewList({ state, ctl }: { state: ReviewState; ctl: ReviewCont
   );
 }
 
+export function ReviewFamilyPicker({ family, onChange }: { family: string; onChange: (v: string) => void }) {
+  return (
+    <label className="family">
+      Family:{" "}
+      <select aria-label="Family" value={family} onChange={(e) => onChange(e.target.value)}>
+        {REVIEW_FAMILIES.map((v) => (
+          <option key={v} value={v}>{FAMILY_LABELS[v] ?? v}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 export function ReviewScreen() {
-  const ctl = useMemo(() => new ReviewController(apiFetch), []);
+  const [family, setFamily] = useState(() => parseReviewFamily(window.location.search));
+  const ctl = useMemo(() => new ReviewController(apiFetch, family), [family]);
   const state = useSyncExternalStore(ctl.subscribe, ctl.getState, ctl.getState);
   useEffect(() => {
     void ctl.load();
   }, [ctl]);
+  const pick = (v: string) => {
+    window.history.replaceState(null, "", reviewSearch(window.location.search, v));
+    setFamily(v);
+  };
   return (
     <div className="app review">
       <header className="app-header">
         <span className="brand">LexRAGLab</span>
+        <ReviewFamilyPicker family={family} onChange={pick} />
         <a href={isStatic() ? "./" : "/"}>Back to overview</a>
       </header>
       <main className="layout">
