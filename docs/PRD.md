@@ -7,18 +7,34 @@ Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013,
 
 Tim RAG hukum memilih ukuran potongan (chunk) dengan menebak. Pada peraturan Indonesia, tebakan itu bisa membelah satu ayat di tengah. LLM lalu menerima setengah aturan dan mengutipnya seolah utuh.
 
-Pemicu: kerja agentic di bidang hukum (legal opinion, legal due diligence, penyusunan kontrak) tidak muat dalam satu context window agen. Bahan untuk satu pekerjaan melampaui jendela 1 juta token, sementara bagian yang benar-benar dipakai hanya sebagian kecil dari bahan utuh. Motivasi ini berasal dari pengalaman kerja operator, bukan dari tren "RAG"; tujuan aplikasi tidak berubah (H-002, H-004, H-005).
+Pemicu: kerja agentic di bidang hukum (legal opinion, legal due diligence, penyusunan kontrak) tidak muat dalam satu context window agen. Bahan untuk satu pekerjaan melampaui jendela 1 juta token, sementara bagian yang benar-benar dipakai hanya sekitar 3% sampai 10% dari bahan utuh. Motivasi ini berasal dari pengalaman kerja operator, bukan dari tren "RAG"; tujuan aplikasi tidak berubah (H-002, H-004, H-005). Aplikasi ini bertujuan (aims to) menemukan setting yang menjaga konteks yang dibutuhkan agen tetap kecil; itu hipotesis yang diuji lewat evaluasi, bukan klaim penghematan yang sudah terbukti.
 
-Ukuran masalah. Semua angka di bawah adalah pengukuran operator atas pekerjaan sebelumnya (operator's measurements of prior engagements, tidak disertakan dalam repo ini). Bukan keluaran aplikasi dan tidak diukur di aplikasi ini:
+Ukuran masalah. Semua angka di bawah adalah pengukuran operator atas pekerjaan sebelumnya (operator's measurements of prior engagements, tidak disertakan dalam repo ini). Bukan keluaran aplikasi dan tidak diukur di aplikasi ini.
+
+Angka korpus (penekanan utama):
 
 | Fakta | Angka | Rujukan |
 |---|---|---|
-| Bahan satu perkara hukum dibanding jendela konteks 1 juta token | 1,2× (legal opinion satu transaksi, 1,16 juta token) sampai 5,8× (due diligence berkas utuh, 5,77 juta token) | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
+| Lapisan teks Markdown 579 dokumen klien pada satu due diligence | 14.391.798 token; fakta yang tertambat sebagai atom 414.719 token, sekitar 3% | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
+| Bahan satu pekerjaan legal opinion (satu transaksi) | 1,16 juta token (1,2× jendela 1 juta) | idem |
+| Bahan satu pekerjaan legal due diligence (berkas utuh) | 5,77 juta token (5,8× jendela 1 juta) | idem |
+| Bahan penyusunan kontrak | draf kontrak 2,18 juta token; 2,81 juta token bila pustaka klausul ikut dihitung (pustaka klausul sendiri 623.665) | idem |
 | Satu undang-undang | 319.073 token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | idem |
-| Lapisan teks Markdown 579 dokumen klien pada satu due diligence | 14.391.798 token; fakta yang tertambat sebagai atom 414.719 token, sekitar 3% | idem |
+| Bahan satu perkara dibanding jendela 1 juta token | 1,2× sampai 5,8× | idem |
 | Porsi bahan yang benar-benar dipakai | sekitar 3% sampai 10% dari bahan utuh (3% untuk dokumen klien; sekitar 10% untuk naskah peraturan) | idem |
 | Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan) (Magesh dkk.) |
 | Benchmark RAG hukum Indonesia publik dan standar | tidak ada | idem |
+
+Laju pemakaian agen (pendukung, sekunder). Dihitung dari token transkrip agen lokal operator pada Juli sampai Oktober 2026 dengan tarif list API, bukan tagihan; pengukuran operator atas pekerjaan sebelumnya, tidak disertakan dalam repo ini:
+
+| Pekerjaan | Sesi | Cache read (token) | Output (token) | Biaya (tarif list) |
+|---|---|---|---|---|
+| Engagement A (repositori perkara internal) | 112 | 8.670.114.355 | 19.354.976 | sekitar US$5.630 |
+| Engagement B (legal due diligence) | 7 | 6.499.532.105 | - | sekitar US$2.505 |
+| Engagement C (bahan kerja internal) | 12 | 268.417.029 | - | sekitar US$177 |
+| Penyusunan kontrak | tidak tercatat | tidak tercatat | tidak tercatat | estimasi operator: serupa Engagement C (estimasi, bukan ukuran) |
+
+Angka laju ini menggambarkan skala pemakaian agen pada pekerjaan sebelumnya, bukan hasil aplikasi ini dan bukan bukti bahwa aplikasi menurunkannya.
 
 Akibatnya: memuat semuanya ke konteks tidak cukup, retrieval wajib ada, dan setting retrieval harus cocok dengan pola dokumen. Saat ini tidak ada cara terukur untuk memilih setting itu pada teks hukum Indonesia.
 

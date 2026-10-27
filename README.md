@@ -19,7 +19,17 @@ The output is a **versioned setting profile** you can export and reuse in your o
 
 Legal RAG teams usually pick a chunk size by guess. In Indonesian regulation, a guess can cut an *ayat* (paragraph of an article) in half, and the model then cites half a rule. There is no public, standard benchmark for Indonesian legal RAG. LexRAGLab makes chunking a measurable design decision.
 
-The motivation comes from practice, not from RAG as a trend. Agentic legal work (legal opinions, legal due diligence, contract drafting) does not fit in one agent context window. In the operator's measurements of prior engagements (not included in this repository), one transaction's legal opinion material came to 1.16 million tokens and a full due diligence file to 5.77 million, against a 1-million-token window. A single statute was 319,073 tokens. For one due diligence, the Markdown text of 579 client documents was 14,391,798 tokens, of which 414,719 tokens (about 3%) ended up as anchored facts. These figures are the operator's, not outputs of this app, and nothing in LexRAGLab's results is derived from them.
+The motivation comes from practice, not from RAG as a trend. Agentic legal work (legal opinions, legal due diligence, contract drafting) does not fit in one agent context window. LexRAGLab aims to find settings that keep the context an agent needs small; that is a hypothesis the evaluation tests, not a measured saving.
+
+The corpus figures below are the operator's measurements of prior engagements (not included in this repository). They are not outputs of this app, and nothing in LexRAGLab's results is derived from them.
+
+- For one due diligence, the Markdown text of 579 client documents was 14,391,798 tokens, of which 414,719 tokens (about 3%) ended up as anchored facts.
+- One transaction's legal opinion material came to 1.16 million tokens and a full due diligence file to 5.77 million, which is 1.2 to 5.8 times a 1-million-token window.
+- Contract drafting material was 2.18 million tokens, or 2.81 million with the clause library included (the library alone is 623,665).
+- A single statute was 319,073 tokens.
+- Across these jobs, only about 3% to 10% of the material was actually used.
+
+Supporting, secondary: agent usage rates. These are the operator's measurements of prior engagements, from local agent transcripts at list API rates (computed from tokens, not billed amounts; July to October 2026; not included in this repository). Engagement A (internal matter repository): 112 sessions, 8,670,114,355 cache-read tokens, 19,354,976 output tokens, about $5,630. Engagement B (legal due diligence): 7 sessions, 6,499,532,105 cache-read tokens, about $2,505. Engagement C (internal work materials): 12 sessions, 268,417,029 cache-read tokens, about $177. Contract drafting was not recorded; the operator estimates it to be similar to Engagement C (an estimate, not a measurement). These describe the scale of agent usage, not an effect of this app.
 
 ## How "best" is defined
 
