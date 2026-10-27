@@ -344,7 +344,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: skema akta v1/v2, screenshot.
 **Tier review**: 2, ditambah Tier 4 domain review oleh operator.
 **Estimasi**: 2,5 jam.
-**Status**: berjalan — pemuat akta, alamat, store skema per keluarga, R2, pemilih keluarga `2e33331` (Tier 2 lulus, `l3/W11-M41-periksa-hasil.md`). Lima akta sintetis `2c81ef9` (pemeriksa 0 BLOCKER). Menunggu operator: review akta (I-51), tafsir pemuat/alamat (I-52); lalu induksi A akta live (proyeksi 3.408 micro-USD batas atas) dan panel potongan akta (R4 versi skema).
+**Status**: berjalan — pemuat akta, alamat, store skema per keluarga, R2, pemilih keluarga `2e33331` (Tier 2, `l3/W11-M41-periksa-hasil.md`); R4 `schema_version` + tampilan potongan skema akta `df4a545`, `051615e` (Tier 2, `l3/W15-R4-periksa-hasil.md`). Lima akta sintetis `2c81ef9`. Menunggu operator: I-51, I-52, I-55; lalu induksi A akta live (proyeksi 3.408 micro-USD batas atas) → skema v1/v2 + screenshot.
 
 ### M4.2 — Frontier akta
 **Slice**: Butir akta (usulan D disetujui ditambah tulisan operator) dijalankan di grid, dan frontier akta tampil.
@@ -368,7 +368,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: test hijau round-trip, contoh profil UU PT dan akta.
 **Tier review**: 1. Profil adalah keluaran yang dijanjikan ke pemakai RAG.
 **Estimasi**: 2 jam.
-**Status**: berjalan — backend profil W7/W8, laporan held-out/transfer `f48cbda` (+ `1d3a1fc`), Tier 1 lulus (`l3/W7-M43-periksa-hasil.md`; perbaikan SHOULD `l3/W10-M43-perbaiki-hasil.md`, diff diperiksa L2). I-42, I-43 ditutup. Sisa: U7 frontend (tombol ekspor, laporan; I-53 sumber data laporan), contoh profil UU PT dan akta.
+**Status**: berjalan — backend W7/W8 + laporan `f48cbda` (Tier 1, `l3/W7-M43-periksa-hasil.md`, perbaikan W10); U7 panel ekspor/impor `df4a545`, `051615e` (Tier 1 S20, `l3/W15-U7-periksa-hasil.md`). I-42, I-43 ditutup. Sisa: sumber laporan per butir (I-53), setting akta (I-55), contoh profil UU PT dan akta setelah skema/grid final.
 
 ## M5 — Demo dan submit (3–4 Nov)
 
