@@ -9,7 +9,9 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | (tidak ada) | | | |
+| I-41 | H-063 (f6e2912): panggilan logis yang timeout di dua upaya (retry timeout) diproyeksikan satu kali. Timeout memutus sisi klien; server bisa menagih tiap upaya, jadi buku bisa undercount sampai 2x proyeksi per panggilan logis. Juga: timeout lalu sukses hanya menagih usage upaya kedua. Temuan SHOULD pemeriksa Tier 1 (`_kerja/orkestrasi/l3/W1-H063-periksa.md`) | Proyeksi per upaya yang timeout (konservatif, T6): timeout 2 upaya = 2 × proyeksi; timeout lalu sukses = usage + 1 × proyeksi. Alt.: biarkan satu kali (skenario A1 sekarang). Dampak kecil: harga Contributor rendah, tapi cap bisa terlewati | Operator | Sebelum batch Spark besar (M3.1 penuh) |
+| I-42 | Pemeriksa M4.3 C7: kunci cache `runs/chunks/` (ARCHITECTURE §8) tidak memuat tokenizer; `Chunk[]` dari tokenizer lain bisa tersaji. Kunci chunker sekarang sudah memuat nama + versi tokenizer (`backend/chunking/structure.py` `structure_key`), perlu dipastikan untuk jalur cache `runs/chunks/` | Eksekutor M4.3 memastikan kunci cache = `chunker_key` (memuat tokenizer); bila ARCHITECTURE §8 perlu diubah, itu redaksi spec tanpa keputusan baru | Agen (M4.3) | Sebelum kode M4.3 |
+| I-43 | M4.3 A20: `dense.chunk_set_hash` (kunci cache embedding, ARCHITECTURE §8) berbeda dari `Profile.chunk_set_hash` (A2-X, H-068); dua fungsi bernama sama | Ganti nama salah satu di kode M4.3 (mis. `embedding_cache_key`) tanpa mengubah nilai kunci cache embedding yang ada | Agen (M4.3) | Sebelum kode M4.3 |
 
 ## Ditutup
 
