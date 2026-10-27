@@ -9,7 +9,6 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-49 | Review teks hint H-073 (`frontend/src/content/hints.json` 0.2.0, status `draft`; tabel baca `_kerja/orkestrasi/hint-draf-review.md`, termasuk bagian "Perubahan 0.2.0 untuk operator"). Sudah diperiksa pemeriksa independen (1 BLOCKER + 9 SHOULD diperbaiki) | Operator menilai gloss hukum, klaim tujuan (`app.purpose`, `app.audience`), klaim model (`model.*`, termasuk "open-weight"), `status.*`, `verifier.matrix_2x2`; lalu `status` → `final` | Operator | Sebelum video (M5.3) |
 | I-51 | Review operator lima akta sintetis `data/akta/akta-01.txt` … `akta-05.txt` (H-039, H-041; addendum 2 gerbang 4) sebelum dipakai di run yang dilaporkan. Ditulis agen dari `data/akta/BRIEF.md`; pemeriksa independen 0 BLOCKER, 2 SHOULD diperbaiki (nama mirip tokoh diganti, hitungan renvoi akta-03). Variasi: Pasal 14/17/20/22/25; tanpa saksi pengenal akta-02, 04; renvoi akta-03; 4 pemegang saham akta-05; total 17.241 token lokal | Operator memeriksa: kemiripan nama/PT/notaris dengan pihak nyata (agen tanpa jaringan), kewajaran hukum, modal dasar terhadap aturan pasca UU 6/2023 (belum diverifikasi agen), alamat rekaan | Operator | Sebelum M4.1 run yang dilaporkan |
 | I-54 | Adegan 4 (jawaban C, verifier, 2×2) belum bisa diputar di replay/statis: jawaban tersimpan K-02 dibuat sebelum chunker v2 (`8e94269`, H-062/H-064), sehingga kunci cache tidak cocok (perilaku benar, diagnosa `_kerja/orkestrasi/l3/W11-W6replay-diagnosa-hasil.md`). Belum ada butir `scene_checked = true` di `data/butir/` (H-050) | Operator: (1) tandai butir demo `scene_checked`; (2) putus I-47 dan I-50 (menentukan setting terbaik); lalu agen menjalankan C live prompt v2 untuk butir demo (proyeksi ±1.582 micro-USD per butir, best + baseline) dan mengekspor ulang | Operator | 31 Okt (kunci storyboard) |
 
@@ -17,6 +16,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-49 | Review teks hint H-073 | Operator: konten hint disetujui; `hints.json` 1.0.0 `final` (putusan operator 6, tanpa H) | 2026-10-27 |
 | I-58 | Premis H-080 "input B identik" keliru (input B memuat `chunk_id` dan ALAMAT) | Operator: opsi (c), B dipanggil untuk semua 343 potongan skema, tanpa reuse (H-082) | 2026-10-27 |
 | I-57 | Gagal header B v2 vs v1; satu potongan fixed_size | Operator: ulang sampai 8 upaya, lalu gagal jujur tanpa fallback v1 (H-081) | 2026-10-27 |
 | I-56 | Potongan structure_schema tanpa header B | Operator: opsi (a) bersyarat, reuse hanya bila rentang dan teks identik; selain itu B sendiri; `reused_from` di identitas store (H-080) | 2026-10-27 |
