@@ -38,9 +38,17 @@ Lihat `docs/ISSUES.md` "Menunggu operator" (I-25 s.d. I-30), dan pertanyaan oper
 - Mesin GPU otoritatif untuk embedding, grid, dan run Spark; mesin kedua hanya membaca `runs/` (H-027).
 - Akhir baris LF di semua mesin (`docs/CONVENTIONS.md` bagian "Akhir baris", G-16).
 
+Tiga mesin, dicek 27 Okt (commit `9d13586`):
+
+| Mesin | Peran | Keadaan |
+|---|---|---|
+| Desktop Windows, dua GPU | Otoritatif (H-027) | `uv run pytest -q` 90 passed; `clean_sha256` `c56e4f0f38a4…`; `torch.cuda.is_available()` True |
+| Linux, tanpa GPU, 24/7 | Mesin kedua, hanya membaca `runs/` (H-027) | Di-fast-forward ke `9d13586`, tree bersih, `git ls-files --eol` semua `lf`. Pemuat (`backend.corpus.loader.load_corpus`, hanya stdlib) dijalankan dengan Python 3.12.14 tanpa `uv sync`: hash mentah `a6b38ee5…` dan `clean_sha256` `c56e4f0f38a4…` cocok dengan `config/` (menutup I-30). Venv proyek belum di-sync (torch tidak dibutuhkan untuk membaca `runs/`) |
+| Laptop Windows, tanpa GPU | Dev mobile | Clone disiapkan (autocrlf false, eol lf, exclude lokal alat agen, tree `lf`). uv 0.13.6 + Python 3.12.16, `uv sync --frozen` (torch `2.11.0+cu128`, CUDA False). Tokenizer H-014 (tiga berkas, revisi `0fb02478`, tanpa bobot) diunduh ke cache HF; tanpa itu pemuat jatuh ke `o200k` dan kunci cache `runs/measure/` berbeda (G-32). `uv run pytest -q` 90 passed. Belum ada gitleaks dan ffmpeg |
+
 ## Berikutnya
 
-1. Operator: putuskan I-25..I-30; setujui (atau minta revisi) skenario M0.1, M1.2, M1.4, M1.5; verifikasi hash korpus di mesin kedua (`uv run python -m backend.corpus`).
+1. Operator: putuskan I-25..I-29; setujui (atau minta revisi) skenario M0.1, M1.2, M1.4, M1.5.
 2. Setelah skenario M0.1 disetujui: kode M0.1 (klien Spark) oleh agen, review Tier 1.
 3. Operator, akhir M0: kunci nilai grid H-012 (lihat panjang bagian di `runs/corpus/` dan `runs/measure/`), tulis butir kontrol memakai lembar kerja.
 4. M1 tidak dimulai sebelum butir kontrol dan grid ada.
