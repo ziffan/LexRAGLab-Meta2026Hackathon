@@ -1,5 +1,5 @@
 {
- "created_at": "2026-10-27T06:35:31Z",
+ "created_at": "2026-10-27T08:59:22Z",
  "projections": {
   "ayat": {
    "assumed_latency_ms": 3000,
@@ -31,6 +31,36 @@
    },
    "units": 1070
   },
+  "ayat:sample": {
+   "assumed_latency_ms": 3000,
+   "assumptions": {
+    "expected_output_tokens": 450,
+    "max_output_tokens": 1000,
+    "prefix_fully_cached_after_warmup": true
+   },
+   "calls": 344,
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "cost_usd_micros": {
+    "expected": 73984,
+    "upper_cached": 111824,
+    "upper_no_cache": 1689558
+   },
+   "doc_id": "uupt-40-2007",
+   "prefix_tokens": 46937,
+   "profile": "meta",
+   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
+   "prompt_version": "v1",
+   "rpm": 140,
+   "source": "ayat",
+   "source_tokens_total": 16449,
+   "suffix_tokens_total": 59575,
+   "time": {
+    "estimated_seconds": 1032,
+    "rpm_floor_seconds": 148,
+    "sequential_seconds": 1032
+   },
+   "units": 343
+  },
   "fixed_size": {
    "assumed_latency_ms": 3000,
    "assumptions": {
@@ -61,7 +91,67 @@
    },
    "units": 103
   },
+  "fixed_size:sample": {
+   "assumed_latency_ms": 3000,
+   "assumptions": {
+    "expected_output_tokens": 450,
+    "max_output_tokens": 1000,
+    "prefix_fully_cached_after_warmup": true
+   },
+   "calls": 104,
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "cost_usd_micros": {
+    "expected": 30521,
+    "upper_cached": 41961,
+    "upper_no_cache": 515733
+   },
+   "doc_id": "uupt-40-2007",
+   "prefix_tokens": 46937,
+   "profile": "meta",
+   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
+   "prompt_version": "v1",
+   "rpm": 140,
+   "source": "fixed_size",
+   "source_tokens_total": 52602,
+   "suffix_tokens_total": 67378,
+   "time": {
+    "estimated_seconds": 312,
+    "rpm_floor_seconds": 45,
+    "sequential_seconds": 312
+   },
+   "units": 103
+  },
   "pasal": {
+   "assumed_latency_ms": 3000,
+   "assumptions": {
+    "expected_output_tokens": 450,
+    "max_output_tokens": 1000,
+    "prefix_fully_cached_after_warmup": true
+   },
+   "calls": 344,
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "cost_usd_micros": {
+    "expected": 76780,
+    "upper_cached": 114620,
+    "upper_no_cache": 1692346
+   },
+   "doc_id": "uupt-40-2007",
+   "prefix_tokens": 46937,
+   "profile": "meta",
+   "prompt_hash": "5de81a0c2feb450a3cb1b16641bc7007ed2eadbdd4a65bd9fa6b52acbb564f26",
+   "prompt_version": "v1",
+   "rpm": 140,
+   "source": "pasal",
+   "source_tokens_total": 45633,
+   "suffix_tokens_total": 87481,
+   "time": {
+    "estimated_seconds": 1032,
+    "rpm_floor_seconds": 148,
+    "sequential_seconds": 1032
+   },
+   "units": 343
+  },
+  "pasal:sample": {
    "assumed_latency_ms": 3000,
    "assumptions": {
     "expected_output_tokens": 450,
