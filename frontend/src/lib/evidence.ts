@@ -1,4 +1,5 @@
 import { ApiFailure, postAnswers, type FetchLike } from "../api";
+import { STATIC_DISABLED, isStatic } from "./staticData";
 import type { AnswerRecord, AnswersResponse, Health, ModelProfileInfo, RejectionSummary, RunRecord, Setting, ValidOnDate, VerifierResult } from "../types";
 import { NA } from "./format";
 
@@ -141,7 +142,7 @@ export const SUMMARY_HEADERS = ["Answered, supported", "Answered, unsupported", 
 
 /** Run live: aktif hanya untuk butir `scene_checked` DAN backend terjangkau. Replay server tidak menonaktifkan (H-050, API.md §1); ekspor statis (H-051) atau backend mati menonaktifkan. */
 export function runLiveState(sceneChecked: boolean | undefined, backendUp: boolean): { enabled: boolean; reason: string } {
-  if (!backendUp) return { enabled: false, reason: "Static replay: live calls are disabled" };
+  if (isStatic() || !backendUp) return { enabled: false, reason: STATIC_DISABLED };
   if (!sceneChecked) return { enabled: false, reason: "Live runs are limited to items marked scene_checked by the operator" };
   return { enabled: true, reason: "Run one live Muse Spark call for this item" };
 }

@@ -1,0 +1,64 @@
+# config/corpus_akta — korpus keluarga akta sintetis (H-039, H-041, H-054).
+# Terpisah dari config/corpus.toml dengan sengaja: seluruh isi corpus.toml ikut hash konfigurasi run grid
+# (pipeline CONFIGS, snapshot config_hash, measure). Menambah akta di sana akan mengubah kunci semua run UU PT
+# yang sudah tersimpan. Pemuat menggabungkan kedua berkas (backend/corpus/akta.py). USULAN: operator memutus
+# apakah akta dipindah ke corpus.toml.
+version = 1
+# Dicatat di CorpusDoc.loader_rules_version untuk akta. Naikkan bila aturan teks bersih di bawah berubah.
+loader_rules_version = "akta-1"
+
+[loader_akta]
+# Aturan teks bersih akta (DATA-CONTRACTS §2: pemuat akta hanya memeriksa UTF-8, CR, BOM, dan hash).
+# Baris pertama berkas wajib persis disclaimer ini (H-041). Ia dan baris kosong sesudahnya DIBUANG dari teks bersih
+# (disimpan di metadata), sama seperti disclaimer editorial UU PT: bukan isi akta, tidak boleh masuk sampel peran A,
+# chunker, BM25, atau embedder. Selebihnya teks dipertahankan apa adanya (tanpa normalisasi), sehingga offset
+# teks bersih = offset berkas mentah dikurangi panjang awalan yang dibuang.
+disclaimer = "[SINTETIS — dokumen fiktif untuk uji LexRAGLab; tidak berlaku hukum; identitas rekaan]"
+# Akta tidak punya parser section (sections kosong di DATA-CONTRACTS §2). Chunker skema dan verifikasi offset
+# bekerja per section, jadi pemuat memberi satu rentang bernama ini yang mencakup seluruh teks bersih.
+section = "batang_tubuh"
+
+[[documents]]
+doc_id = "akta-01"
+family = "akta"
+title = "Akta Pendirian PT Gumitir Selaras Perkasa (sintetis)"
+path = "data/akta/akta-01.txt"
+sha256 = "888fb16cb2a9afdae634eaf4d932a39e8d0fa59869da51fce307ccdaea8e1546"
+size_bytes = 15893
+address_prefix = "Akta 01"
+
+[[documents]]
+doc_id = "akta-02"
+family = "akta"
+title = "Akta Pendirian PT Sinar Wiyata Bentarra (sintetis)"
+path = "data/akta/akta-02.txt"
+sha256 = "28d50c125ce9b3d991808abe099044ca41864055ca18ca469c3730c747bf8865"
+size_bytes = 14818
+address_prefix = "Akta 02"
+
+[[documents]]
+doc_id = "akta-03"
+family = "akta"
+title = "Akta Pendirian PT Kalawarna Tirtasambada (sintetis)"
+path = "data/akta/akta-03.txt"
+sha256 = "146b0ddc4608e7a7aed68f0c7f3ba48b96041ef85cae992605550ab9c11ee399"
+size_bytes = 14799
+address_prefix = "Akta 03"
+
+[[documents]]
+doc_id = "akta-04"
+family = "akta"
+title = "Akta Pendirian PT Wanawidya Cendrakirana Prima (sintetis)"
+path = "data/akta/akta-04.txt"
+sha256 = "03246d7f6d8e3d81ea507cca9fdbbfbdc9cfda0456da8abd9ba78096a1aa0909"
+size_bytes = 14713
+address_prefix = "Akta 04"
+
+[[documents]]
+doc_id = "akta-05"
+family = "akta"
+title = "Akta Pendirian PT Pancasona Reksakarya Anugrah (sintetis)"
+path = "data/akta/akta-05.txt"
+sha256 = "b6f84b91181087997275d8adef0eabd91c0597986624b45bcfbf2082dc9ece3d"
+size_bytes = 15012
+address_prefix = "Akta 05"

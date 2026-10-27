@@ -13,9 +13,9 @@ from typing import Any, Callable
 
 from backend import config
 from backend.api.errors import ApiError
-from backend.chunking import ChunkOffsetError, chunk_document
+from backend.chunking import ChunkOffsetError, SchemaChunkerError, chunk_document
 from backend.config import ConfigError
-from backend.corpus import CorpusDoc, CorpusError, load_corpus
+from backend.corpus import CorpusDoc, CorpusError, akta_entries, load_corpus
 from backend.grid.expand import expand_grid
 from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError
 from backend.grid.types import Setting, setting_content
@@ -23,6 +23,7 @@ from backend.pipeline.grid_run import (GridResult, GridRunError, Plan, RunFileSt
                                        run_family_grid, to_grid_items)
 from backend.pipeline.pipeline import Pipeline, SettingNotAvailable, unavailable_reason
 from backend.retrieval.dense import CACHE_DIR, Encoder, encoder_from_config
+from backend.schema_a import SchemaStore, SchemaStoreError
 from backend.tokenizer import get_tokenizer
 
 FAMILIES = ("uupt", "akta")
@@ -66,9 +67,31 @@ class Service:
                     raise ApiError(422, "validation_failed", f"Corpus could not be loaded: {exc}") from None
             return self._docs[doc_id]
 
+    def doc_ids(self, family: str) -> list[str]:
+        """doc_id keluarga, urutan config: `config/corpus.toml` (uupt) lalu `config/corpus_akta.toml` (akta)."""
+        ids = [d["doc_id"] for d in self.cfg("corpus")["documents"] if d.get("family") == family]
+        return ids + [i for i, e in akta_entries(self.config_dir).items() if e.get("family") == family and i not in ids]
+
+    def family_docs(self, family: str) -> list[CorpusDoc]:
+        return [self.doc(i) for i in self.doc_ids(family)]
+
+    def schema_chunks(self, doc: CorpusDoc, schema_version: int) -> list[dict[str, Any]]:
+        """Potongan `doc` menurut skema A tersimpan (`runs/schemas/<keluarga>/v<n>.json`) dengan chunker `structure_schema`.
+        Hanya membaca berkas; tanpa Spark. Keluarga akta: alamat dari skema (M4.1)."""
+        try:
+            rec = SchemaStore(self.runs_dir).get(doc.family, schema_version)
+        except SchemaStoreError:
+            raise ApiError(500, "storage_error", "Schema storage failed.") from None
+        if rec is None:
+            raise ApiError(404, "not_found", f"No schema version {schema_version} for family {doc.family!r}.")
+        try:
+            res = [c.to_dict() for c in chunk_document(doc, {"chunker": "structure_schema"}, tokenizer=self.tokenizer,
+                                                       retrieval_cfg=self.cfg("retrieval"), grid_cfg=self.cfg("grid"), schema_record=rec)]
+        except (ChunkOffsetError, SchemaChunkerError) as exc:
+            raise ApiError(422, "validation_failed", f"Schema chunking failed: {exc}") from None
+        return res
+
     def items(self, family: str) -> list[dict[str, Any]]:
-        if family != "uupt":
-            return []
         try:
             return load_items(family, self.butir_dir)[0]
         except GridRunError as exc:

@@ -28,3 +28,6 @@ cache/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Ekspor statis replay (M5.1, H-051): dibangun ulang, tidak di-commit
+dist-static/

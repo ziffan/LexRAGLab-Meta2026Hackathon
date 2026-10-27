@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 import { ApiFailure, fetchDoc, fetchRetrieval, fetchSnapshot } from "./api";
+import { isStatic } from "./lib/staticData";
 import { availableSettings, fixedFor, matchSetting, resolveSettingParam, settingParam } from "./lib/settings";
 import type { DocResponse, Item, Load, Retrieval, Snapshot, SplitName } from "./types";
 
@@ -34,6 +35,7 @@ export type Action =
   | { type: "snapshot_loading" }
   | { type: "snapshot_error"; code: string; message: string }
   | { type: "snapshot_ready"; data: Snapshot }
+  | { type: "set_family"; value: string }
   | { type: "select_item"; id: string | null }
   | { type: "select_setting"; id: string }
   | { type: "set_budget"; value: number }
@@ -63,6 +65,8 @@ export function reducer(s: State, a: Action): State {
       const sel = fromParam ?? matchSetting(avail, prev) ?? avail.find((x) => x.setting_id === a.data.grid?.selected?.setting_id) ?? avail[0];
       return { ...s, snapshot: { status: "ready", data: a.data }, selectedSettingId: sel?.setting_id ?? null, paramSetting: null, docs: {}, retrievals: {} };
     }
+    case "set_family":
+      return a.value === s.family ? s : { ...blankState(), family: a.value };
     case "select_item":
       return { ...s, selectedItemId: a.id, selectedChunkId: null };
     case "select_setting":
@@ -218,6 +222,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Cermin state ke URL (tanpa riwayat baru).
   useEffect(() => {
+    if (isStatic() && new URLSearchParams(window.location.search).get("view") === "review") return; // layar Review statis tetap di URL-nya
     const q = new URLSearchParams();
     if (state.selectedItemId) q.set("item", state.selectedItemId);
     if (state.compare) q.set("compare", "1");

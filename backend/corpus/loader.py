@@ -14,6 +14,7 @@ from typing import Any
 from backend import config as _config
 
 from . import structure
+from .akta import akta_entries, load_akta
 from .errors import CorpusError
 from .frontmatter import parse_frontmatter
 from .sources import parse_id_date, parse_sources
@@ -127,6 +128,9 @@ def load_corpus(
     cfg_all = _config.load("corpus", config_dir)
     docs = {d["doc_id"]: d for d in cfg_all["documents"]}
     if doc_id not in docs:
+        deeds = akta_entries(config_dir)  # keluarga akta: config/corpus_akta.toml (terpisah agar hash config UU PT tak berubah)
+        if doc_id in deeds:
+            return load_akta(deeds[doc_id], config_dir=config_dir, path=path, verify_hash=verify_hash, expected_sha256=expected_sha256)
         raise CorpusError("R1", f"doc_id {doc_id!r} is not listed in config/corpus.toml")
     entry = docs[doc_id]
     if entry["family"] != "uupt":

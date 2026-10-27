@@ -111,10 +111,7 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     check_family(family)
     grid_cfg = svc.cfg("grid")
     budget = budget_tokens if budget_tokens is not None else grid_cfg["budget"]["default_tokens"]
-    corpus: list[dict[str, Any]] = []
-    if family == "uupt":
-        d = svc.doc("uupt-40-2007")
-        corpus = [{k: getattr(d, k) for k in CORPUS_FIELDS}]
+    corpus = [{k: getattr(d, k) for k in CORPUS_FIELDS} for d in svc.family_docs(family)]
     items = svc.items(family)
     clean = {c["doc_id"]: c["clean_sha256"] for c in corpus}
     for it in items:

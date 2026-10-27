@@ -6,14 +6,18 @@ import { ReviewScreen } from "./components/Review";
 import { RunLogPanel } from "./components/RunLog";
 import { SchemaPanel } from "./components/SchemaPanel";
 import { SettingSpace } from "./components/SettingSpace";
+import { isStatic } from "./lib/staticData";
+
+const reviewView = (): boolean =>
+  window.location.pathname === "/review" || (isStatic() && new URLSearchParams(window.location.search).get("view") === "review");
 
 export function App() {
   // U6 adalah layar terpisah (`/review`), bukan panel di halaman utama (docs/UI-SPEC.md).
-  if (window.location.pathname === "/review") return <ReviewScreen />;
+  if (reviewView()) return <ReviewScreen />;
   return (
     <div className="app">
       <Header />
-      <nav className="app-nav"><a href="/review">Review proposals</a></nav>
+      <nav className="app-nav"><a href={isStatic() ? "?view=review" : "/review"}>Review proposals</a></nav>
       <main className="layout">
         <ChunksVsGold />
         <SettingSpace />

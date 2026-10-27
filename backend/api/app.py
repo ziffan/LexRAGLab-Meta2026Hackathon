@@ -17,6 +17,7 @@ from backend import config as cfg
 from backend.api.errors import ApiError, install_error_handlers
 from backend.api.routers import answers, corpus, grid, headers, profiles, proposals, retrieval, schemas, snapshot, system
 from backend.api.service import FAMILIES, Service
+from backend.replay.middleware import install_replay
 from backend.spark.settings import load_configs
 
 __all__ = ["ApiError", "FAMILIES", "Service", "create_app"]
@@ -42,6 +43,7 @@ def create_app(service: Service | None = None, *, env: Mapping[str, str] | None 
     app.state.replay = replay
     app.state.config_hash = cfg.config_hash({"model": dict(model_config), "budget": dict(budget_config)})
     install_error_handlers(app)
+    install_replay(app)  # header X-Replay di semua respons; W5 ditolak di replay (M5.1)
     for module in (system, corpus, snapshot, retrieval, grid, answers, proposals, schemas, headers, profiles):
         app.include_router(module.router)
     return app

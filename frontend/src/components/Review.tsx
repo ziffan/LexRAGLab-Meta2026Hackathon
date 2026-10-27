@@ -3,7 +3,9 @@ import {
   ReviewController, canApprove, codePointToUtf16, isEditableTarget, pendingLabel, splitHighlight,
   type ContextView, type EditState, type ProposalRecord, type ReviewState,
 } from "../lib/review";
+import { apiFetch } from "../api";
 import { modeLabel } from "../lib/labels";
+import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U6 Review proposals (docs/UI-SPEC.md U6): layar terpisah `/review`. Komponen menggambar keadaan `ReviewController`.
@@ -138,7 +140,7 @@ export function ReviewList({ state, ctl }: { state: ReviewState; ctl: ReviewCont
             proposal={p}
             context={ctl.contextFor(p)}
             docText={state.docs[p.body.doc_id] ?? ""}
-            busy={state.busyId !== null}
+            busy={state.busyId !== null || isStatic()}
             confirming={state.confirmingId === id}
             editing={state.editingId === id}
             edit={state.editingId === id ? state.edit : null}
@@ -173,7 +175,7 @@ export function ReviewList({ state, ctl }: { state: ReviewState; ctl: ReviewCont
 }
 
 export function ReviewScreen() {
-  const ctl = useMemo(() => new ReviewController((url, init) => fetch(url, init)), []);
+  const ctl = useMemo(() => new ReviewController(apiFetch), []);
   const state = useSyncExternalStore(ctl.subscribe, ctl.getState, ctl.getState);
   useEffect(() => {
     void ctl.load();
@@ -182,11 +184,12 @@ export function ReviewScreen() {
     <div className="app review">
       <header className="app-header">
         <span className="brand">LexRAGLab</span>
-        <a href="/">Back to overview</a>
+        <a href={isStatic() ? "./" : "/"}>Back to overview</a>
       </header>
       <main className="layout">
         <section className="panel wide" aria-labelledby="review-title">
           <h2 id="review-title">{state.load === "ready" ? pendingLabel(state.proposals.length) : "Review proposals"}</h2>
+          {isStatic() && <div className="note" role="note">{STATIC_DISABLED}</div>}
           <ReviewList state={state} ctl={ctl} />
         </section>
       </main>

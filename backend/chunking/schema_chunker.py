@@ -26,6 +26,7 @@ from backend.schema_a.schema import compile_marker
 from backend.tokenizer import get_tokenizer
 
 from .address_map import build_address_map
+from .akta_address import schema_address_fn
 from .model import NO_MARKER_WARNING, Chunk, make_chunk_id, make_chunker_key, sha256_hex
 from .structure import context_for
 
@@ -117,6 +118,8 @@ def chunk_schema(doc: Any, record: Mapping[str, Any], *, address_fn: AddressFn |
     rx = _compiled(levels)
     cands = _unit_candidates(body)
     key = schema_key(cfg, record, tok)
+    if address_fn is None and getattr(doc, "family", None) == "akta":  # akta: alamat dari skema, bukan parser tangan (M4.1)
+        address_fn = schema_address_fn(doc, record)
     addr = address_fn or handwritten_address_fn(doc, cfg, amap)
     text = doc.text
     out: list[Chunk] = []

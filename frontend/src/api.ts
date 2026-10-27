@@ -1,3 +1,4 @@
+import { staticAwareFetch } from "./lib/staticData";
 import type { AnswersResponse, DocResponse, Health, Retrieval, RunRecord, SchemaRecord, Snapshot } from "./types";
 
 export class ApiFailure extends Error {
@@ -11,10 +12,13 @@ export class ApiFailure extends Error {
 /** `fetch` yang dapat disuntikkan (test memakai fetch palsu; tanpa jaringan). */
 export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
+/** Satu-satunya jalur jaringan UI: di ekspor statis (H-051) `/api/...` dibaca dari berkas statis dan tulis ditolak. */
+export const apiFetch: FetchLike = (u, i) => staticAwareFetch((x, y) => fetch(x, y))(u, i);
+
 async function requestJson<T>(url: string, init?: RequestInit, fetchFn: FetchLike = (u, i) => fetch(u, i)): Promise<T> {
   let res: Response;
   try {
-    res = await fetchFn(url, init);
+    res = await staticAwareFetch(fetchFn)(url, init);
   } catch {
     throw new ApiFailure("unreachable", "Backend unreachable.");
   }

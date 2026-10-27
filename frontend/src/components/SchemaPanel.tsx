@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from "react";
 import { fetchSnapshot } from "../api";
+import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { useStore } from "../state";
 import {
   DIFF_KIND_LABEL, diffBodies, diffKind, editorReducer, emptyEditor, versionLabel, showValue, submitCorrection,
@@ -206,6 +207,8 @@ export function SchemaEditor({ state, dispatch, readOnlyReason, onSave }: {
   );
 }
 
+const readOnlyText = (): string => (isStatic() ? STATIC_DISABLED : "Replay mode is read-only; schema corrections are not available.");
+
 export function SchemaPanel() {
   const { state, dispatch: storeDispatch } = useStore();
   const snap = state.snapshot.status === "ready" ? state.snapshot.data : null;
@@ -260,12 +263,12 @@ export function SchemaPanel() {
                 {schemas.map((s) => <option key={s.schema_version} value={s.schema_version}>{versionLabel(s)}</option>)}
               </select>
             </label>
-            <button type="button" onClick={() => setEditing((v) => !v)} aria-expanded={editing} disabled={snap?.replay === true} title={snap?.replay ? "Replay mode is read-only; schema corrections are not available." : undefined}>{editing ? "Close editor" : "Edit"}</button>
+            <button type="button" onClick={() => setEditing((v) => !v)} aria-expanded={editing} disabled={snap?.replay === true} title={snap?.replay ? readOnlyText() : undefined}>{editing ? "Close editor" : "Edit"}</button>
           </div>
         )}
         {saved !== null && <div className="tag ok" role="status">Saved as v{saved}. Earlier versions are unchanged.</div>}
         {editing && schemas.length > 0 && (
-          <SchemaEditor state={form} dispatch={formDispatch} readOnlyReason={snap.replay ? "Replay mode is read-only; schema corrections are not available." : null} onSave={() => void save()} />
+          <SchemaEditor state={form} dispatch={formDispatch} readOnlyReason={snap.replay ? readOnlyText() : null} onSave={() => void save()} />
         )}
       </>
     );

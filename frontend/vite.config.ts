@@ -8,8 +8,21 @@ const proxy = {
   "/api": { target: "http://127.0.0.1:8000", headers: { Connection: "close" } },
 };
 
-export default defineConfig({
-  plugins: [react()],
-  server: { host: "127.0.0.1", port: 5173, proxy },
-  preview: { host: "127.0.0.1", port: 4173, proxy },
+// Ekspor statis (M5.1, H-051): `vite build --mode static` (mode "static" menyetel VITE_STATIC=1 saat build). Tanpa backend: UI membaca `data/*.json`
+// yang ditulis `python -m backend.replay.export --out dist-static`. base "./" supaya jalan di sub-jalur GitHub Pages.
+// Keluaran ke ../dist-static (di luar `frontend/dist`, di-gitignore); `emptyOutDir: false` agar `data/` hasil ekspor tidak terhapus.
+export default defineConfig(({ mode }) => {
+  const isStatic = mode === "static";
+  return {
+    plugins: [react()],
+    server: { host: "127.0.0.1", port: 5173, proxy },
+    preview: { host: "127.0.0.1", port: 4173, proxy },
+    ...(isStatic
+      ? {
+          base: "./",
+          define: { "import.meta.env.VITE_STATIC": JSON.stringify("1") },
+          build: { outDir: "../dist-static", emptyOutDir: false },
+        }
+      : {}),
+  };
 });
