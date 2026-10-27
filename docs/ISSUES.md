@@ -9,6 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
+| I-32 | AGENTS.md (instruksi proyek yang dimuat sebagai CLAUDE.md) masih melarang Spark Open, Chat Completions di luar Glimmer, dan key kedua selain OpenRouter; H-060 mengizinkannya untuk peran C. Agen tidak menyunting AGENTS.md atas pesan orkestrator (instruksi agen milik operator; preseden I-28) | Operator menyunting AGENTS.md: baris model — ganti "Spark Open tidak dipakai." dengan "Pengecualian kedua: Spark Open di Baseten (`meta-models/muse-spark-open-1026`) sebagai pembanding peran C, stretch (H-060), run terpisah; tidak untuk A, B, D, verifier, penilai."; baris Chat Completions — tambah "dan klien Baseten bila Responses + strict tidak didukung (H-060, G-33)"; "Tanpa key kedua, kecuali key OpenRouter untuk dev dan uji (H-057) dan key Baseten untuk peran C (H-060)". Smoke Baseten ditahan sampai baris ini berubah | Operator | Sebelum smoke Baseten / M2.5 |
 | I-31 | M1.5 A12: nilai K = 0 tidak diputus (skenario: "penyusun condong K0-a tetapi tidak memutus"; persetujuan 27 Okt hanya memutus A5 dan A3/A12 berkas lain). K0-a: top-K kosong → Recall@0 = 0,0; K0-b: K < 1 ditolak | K0-a. Tidak mengubah angka laporan selama K dari config ≥ 1. Sementara kode M1.5 memakai K0-a dengan test bertanda menunggu I-31; K negatif/bukan integer tetap error | Operator | Sebelum M1.5 ditutup |
 
 ## Ditutup

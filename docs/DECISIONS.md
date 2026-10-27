@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-059.
+Sumber keputusan: H-001 sampai H-060.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -40,7 +40,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-029 | Repo submission publik, Apache-2.0, dibuka di gate M5.2 setelah secret scan; korpus tidak dilisensikan ulang; tokenizer tidak di-commit (dari I-12) | 2026-10-26 |
 | H-030 | SEOJK termasuk Pasal 42 UU 28/2014, diperlakukan sama dengan POJK (penilaian operator, dari I-10) | 2026-10-26 |
 | H-031 | Korpus utama UU 40/2007 konsolidasi operator (*provenance direvisi H-045*) (anotasi UU pengubah, putusan MK); korpus lama dikeluarkan; anotasi dipisah dari teks dan menjadi tabel status; merevisi H-008, H-009 (basis), H-007, H-011 | 2026-10-26 |
-| H-032 | Pembanding on-prem (stretch), tidak dicampur dengan Contributor. *Host dan model direvisi H-047: Glimmer lokal, bukan Spark Open lewat OpenRouter* | 2026-10-26 |
+| H-032 | Pembanding on-prem (stretch), tidak dicampur dengan Contributor. *Host dan model direvisi H-047: Glimmer lokal, bukan Spark Open lewat OpenRouter* *Direvisi H-060: Spark Open di Baseten ditambahkan untuk peran C* | 2026-10-26 |
 | H-033 | Sembilan definisi metrik [usulan] EVAL-SPEC dikunci seperti tertulis (dari I-07); (f) Recall@K diperjelas H-048 | 2026-10-26 |
 | H-034 | Seri atau selisih ≤ 1 butir: pilih setting paling sederhana, lalu pemecah §9 (dari I-20); pemecah akhir `setting_id` (H-055) | 2026-10-26 |
 | H-035 | Usulan D `diubah` = disetujui; `origin` tetap `spark_disetujui`; isi asli disimpan (dari I-05) | 2026-10-26 |
@@ -55,25 +55,26 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-044 | Spec produk pra-acara disalin terseleksi ke repo app sebagai commit berlabel; README "Built before vs during the hackathon"; strategi, nama mesin, rujukan repo private disaring (dari I-16) | 2026-10-26 |
 | H-045 | Korpus UU PT: teks UU, Perppu, putusan MK bebas hak cipta (Pasal 42); masuk dengan anotasinya, tidak dilisensikan ulang; konsolidasi tidak resmi disiapkan operator, sampai 30 Desember 2022; merevisi provenance H-031 (dari I-24, menutup I-23); hash acuan `a6b38ee5…` sejak pembekuan ulang 26 Okt malam | 2026-10-26 |
 | H-046 | Format korpus = berkas beku apa adanya; pemuat memisahkan anotasi, offset atas teks bersih (`clean_sha256`, `loader_rules_version`); MK hanya Pasal 86 ayat (9); Pasal 142 `berlaku` + `note`; aturan status default; tanggal acuan butir ≥ 30 Des 2022; cakupan retrieval default lewat config; kalimat penutup rincian sah (menutup H-P19) | 2026-10-26 |
-| H-047 | Muse Glimmer lokal (LM Studio, endpoint OpenAI-compatible) sebagai pembanding on-prem peran C saja: profil terbaik dan baseline H-036 dijalankan ulang; kuantisasi Q4_K_M, `reasoning_effort` `high` (dipin sebelum run), dan model ID di `config/model` dan `RunRecord`; tidak dicampur dengan Contributor; stretch; Glimmer dan embedding tidak bersamaan (VRAM); Spark Open tidak dikerjakan; klaim bonus open-weight hanya setelah konfirmasi penyelenggara (menutup H-P22, merevisi H-010 dan host H-032) | 2026-10-26 |
+| H-047 | Muse Glimmer lokal (LM Studio, endpoint OpenAI-compatible) sebagai pembanding on-prem peran C saja: profil terbaik dan baseline H-036 dijalankan ulang; kuantisasi Q4_K_M, `reasoning_effort` `high` (dipin sebelum run), dan model ID di `config/model` dan `RunRecord`; tidak dicampur dengan Contributor; stretch; Glimmer dan embedding tidak bersamaan (VRAM); Spark Open tidak dikerjakan; klaim bonus open-weight hanya setelah konfirmasi penyelenggara (menutup H-P22, merevisi H-010 dan host H-032) *Direvisi H-060: Spark Open di Baseten juga pembanding C* | 2026-10-26 |
 | H-048 | Span gold menandai semua ayat yang dibutuhkan (boleh multi-ayat); sistem memecahnya di batas ayat menjadi bagian-ayat; Recall@K = porsi bagian-ayat yang masing-masing utuh di salah satu potongan top-K (dari I-19, memperjelas H-033 f) | 2026-10-26 |
 | H-049 | `held_out_ratio = 0.4` di `config/grid`, per stratum H-015, minimal tiga kontrol di held-out; kontrol ditambahkan ke held-out lebih dulu bila pembulatan kurang (dari I-14) | 2026-10-26 |
 | H-050 | Mode putar ulang membaca `runs/` dan `data/`, tanpa panggilan model kecuali satu panggilan live W6 (dari I-22, merevisi kalimat replay H-020) | 2026-10-26 |
 | H-051 | Live product = ekspor statis mode putar ulang (frontend + snapshot JSON, tanpa backend, key, atau panggilan model) di GitHub Pages setelah repo publik di gate M5.2; pemeriksaan isi snapshot masuk gate (menutup H-P21) | 2026-10-26 |
 | H-052 | Skenario test kesembilan slice Tier 1 disusun agen dengan data sintetis sebelum kode slice, dicek pemeriksa agen independen, disetujui operator; bukan butir evaluasi; ambang verifier M2.3 diusulkan dengan alasan tertulis | 2026-10-26 |
-| H-053 | W6 menerima pilihan model dari daftar `config/model` (Contributor, Glimmer lokal); U3 menampilkan pemilih dan label model, kuantisasi, effort; run Glimmer terpisah; pilihan nonaktif bila server lokal mati; di replay statis hanya hasil tersimpan (melengkapi H-047) | 2026-10-26 |
+| H-053 | W6 menerima pilihan model dari daftar `config/model` (Contributor, Glimmer lokal); U3 menampilkan pemilih dan label model, kuantisasi, effort; run Glimmer terpisah; pilihan nonaktif bila server lokal mati; di replay statis hanya hasil tersimpan (melengkapi H-047) *Direvisi H-060: daftar W6 + Spark Open Baseten* | 2026-10-26 |
 | H-054 | Lima butir akta tidak dibagi tune/held-out; dilaporkan per butir sebagai uji transfer; frontier akta tanpa klaim pemilihan; tidak ada `SplitRecord` akta | 2026-10-26 |
 | H-055 | Bila pemicu 31 Okt H-017 aktif, editor skema A turun ke berkas berversi dan U5 hanya menampilkan diff; pemecah seri akhir = `setting_id` terkecil leksikografis | 2026-10-26 |
 | H-056 | Blanko PPAT tidak dipakai; keluarga akta hanya lima akta sintetis (menutup H-P23, merevisi H-040) | 2026-10-26 |
 | H-057 | OpenRouter hanya untuk dev dan uji: profil `openrouter_dev` (model ID `meta/muse-spark-1.3-contributor`) dan `meta` (`muse-spark-1.3-contributor`) di `config/model`; `RunRecord` mencatat `provider`; run OpenRouter tidak dipakai untuk angka yang dilaporkan, run final lewat Meta Model API (H-027, H-028); tetap Responses API + `strict: true` (H-016), bila OpenRouter tidak mendukung jalur itu berhenti, tidak turun ke Chat Completions; pengecualian "tanpa key kedua" AGENTS.md hanya untuk dev. *Dikonfirmasi operator di sesi 26 Okt malam; dicatat agen di sini; operator menyalin ke log keputusan operator 27 Okt* | 2026-10-27 |
 | H-058 | Nilai grid H-012 di `config/grid` v1: `fixed_size` 512/64 (satu ukuran, sekaligus baseline C H-036), anggaran 2.000 + pembanding 1.000, `packing = stop`, `held_out_ratio = 0.4`, seed 20261026, urutan sederhana H-034; 36 titik UU PT. Ditetapkan setelah butir kontrol ditulis, sebelum run apa pun | 2026-10-27 |
 | H-059 | Kontrak `DATA-CONTRACTS` §10 untuk penyebut nol dan akta: (1) M1.4 A12 alt. (b): `split = null` untuk akta di `ItemMetrics`, `GridPoint`, `Frontier`; "transfer" hanya label laporan (H-054); (2) M1.5 A5 alt. N1: penyebut nol (E, Bnd, agregat Recall@K tanpa butir ber-gold) → `null`, UI "n/a"; `QualityMetrics` `number \| null`; (3) default "Dipilih" skenario M1.2 berlaku, termasuk A7b (`GridPoint.mean_token_precision` `null` bila semua butir null) dan A3 (truncate `r ≤ 0`: potongan tidak masuk, pengemasan berhenti). Skenario M1.2, M1.4, M1.5 disetujui. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen di sini; operator menyalin ke log keputusan operator* | 2026-10-27 |
+| H-060 | Pembanding C (stretch, M2.5) = Glimmer lokal (H-047) **dan** Spark Open di Baseten (`meta-models/muse-spark-open-1026`), masing-masing run terpisah, tidak dicampur dengan Contributor; hasil utama tetap Contributor (H-028). Hanya peran C; A, B, D, verifier, penilai tetap Contributor. VRAM bergantian tetap (H-047). Jalur Baseten: Responses API + `strict: true` lebih dulu; hanya bila tidak didukung, pengecualian H-016: Chat Completions `response_format` json_schema + validasi skema sisi klien (seperti Glimmer); hasil smoke dicatat G-33. Key `BASETEN_API_KEY` diizinkan. Klaim bonus open-weight hanya setelah run tersimpan ada (sumber verifikasi partner: Discord Baseten 27 Okt). Merevisi H-047 ("Spark Open tidak dikerjakan"), H-053 (daftar model W6), H-032 (host); menutup H-P24. *Dikonfirmasi operator sesi 27 Okt (lewat orkestrator); dicatat agen; operator menyalin ke log keputusan operator. AGENTS.md belum diperbarui (I-32)* | 2026-10-27 |
 
 ## Pending
 
 | ID | Pertanyaan | Owner | Batas |
 |---|---|---|---|
-| H-P24 | Pembanding C stretch: tetap Glimmer lokal (H-047), tukar ke Spark Open di Baseten (pengecualian Chat Completions H-016, key Baseten di `.env`), atau keduanya? Discord Baseten 27 Okt: inference Baseten memenuhi "verified by partner". Rekomendasi agen: tukar (jam sama, partner memverifikasi, tanpa rebutan VRAM). Sampai diputus H-047 berlaku | Operator | Sebelum stretch pembanding C |
+| — | (tidak ada) | | |
 
 ## Pilihan spec yang menunggu operator
 
@@ -119,4 +120,5 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
 | 2026-10-27 | H-058 ditambahkan (nilai grid H-012), `config/grid.toml` dibuat |
 | 2026-10-27 | Pending H-P24 dibuka (kredit Baseten Spark Open diterima; Discord mengonfirmasi verifikasi partner) |
+| 2026-10-27 | H-060 ditambahkan (pembanding C: Glimmer lokal dan Spark Open di Baseten), H-P24 ditutup; baris H-032, H-047, H-053 direvisi H-060 |
 | 2026-10-27 | H-059 ditambahkan (kontrak §10 nullable: split akta, penyebut nol; skenario M1.2, M1.4, M1.5 disetujui; I-27 ditutup). I-25 (OpenRouter ditinggalkan, dev lewat Meta) dan I-26 (metode selisih dua titik) ditutup operator tanpa keputusan H baru; belum ada di log keputusan operator, disalin operator |
