@@ -13,7 +13,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 |---|---|---|---|---|---|
 | M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
 | M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | berjalan |
-| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | belum mulai |
+| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (skenario Tier 1 menunggu operator) |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | belum mulai |
 | M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | belum mulai |
 | M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | belum mulai |
@@ -233,7 +233,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau, catatan run, screenshot dua kolom.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — backend + W6 + prompt C v1 `a61f7c9`, test review `2e59f6f`; review Tier 2 boleh dipromosikan (`_kerja/orkestrasi/l3/M22-periksa.md`). Bukti live K-02: `runs/spark/records/18b443f5….json` (577) dan `6b318801….json` (506), ulangan cached 0. Sisa: panel bukti U3 (frontend), I-40 (label alamat di luar anggaran).
 
 ### M2.3 — Verifier uji ada dan setia
 **Slice**: Setiap kutipan di panel bukti diberi tanda lulus/gagal untuk uji 1 dan 2. Ringkasan 2×2 penolakan tampil per profil.
