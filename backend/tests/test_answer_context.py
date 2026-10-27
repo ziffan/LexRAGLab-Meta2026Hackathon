@@ -102,3 +102,39 @@ def test_prompt_injection_stays_inside_data_block():
 def test_budget_mismatch_detected(world):
     other = next(s for s in world["svc"].grid_settings("uupt") if s.budget_tokens != world["best"].budget_tokens)
     assert "budget differs" in check_same_budget(world["best"], other)
+
+
+def test_nonce_collision_extends_nonce(monkeypatch):
+    """M16: bila nonce kebetulan muncul di teks, nonce diperpanjang."""
+    import backend.answer.context as ctx
+
+    class FakeH:
+        def hexdigest(self):
+            return "0123456789abcdef" * 4
+
+    monkeypatch.setattr(ctx.hashlib, "sha256", lambda b: FakeH())
+    n = ctx.make_nonce("q", ["tidak ada"])
+    assert n == ("0123456789abcdef" * 4)[:12]
+    blob_text = "sisipan " + n
+    n2 = ctx.make_nonce("q", [blob_text])
+    assert len(n2) > len(n) and n2 not in blob_text
+
+
+def test_validate_schema_is_enforced_and_not_skipped(monkeypatch):
+    """M17: skema tak strict ditolak dan make_call memanggil validate_schema."""
+    import copy
+
+    import backend.answer.caller as caller
+    import backend.answer.prompt as pr
+
+    bad = copy.deepcopy(ANSWER_C_SCHEMA)
+    del bad["additionalProperties"]
+    monkeypatch.setattr(pr, "ANSWER_C_SCHEMA", bad)
+    with pytest.raises(ValueError):
+        pr.validate_schema()
+    monkeypatch.undo()
+    calls = []
+    monkeypatch.setattr(caller, "validate_schema", lambda: calls.append(1))
+    b = type("B", (), {"input_text": "x", "est_input": 1})()
+    caller.make_call(load_prompt(), b, {})
+    assert calls == [1]

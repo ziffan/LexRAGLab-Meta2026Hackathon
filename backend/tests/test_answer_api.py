@@ -157,3 +157,32 @@ def test_provider_error_maps_without_leaking(svc, tmp_path):
     assert r.status_code == 502 and r.json()["error"]["code"] == "model_error"
     assert K not in r.text and BASE not in r.text and scan_runs_dir(s.runs_dir) == []
     assert not (s.runs_dir / "answers").exists()  # galat bukan AnswerRecord
+
+
+def test_baseline_must_equal_baseline_for_best_in_every_axis(svc, tmp_path):
+    """S1: ukuran, overlap, atau mode retrieval berbeda dari baseline_for(best) -> 422 (bukan hanya chunker)."""
+    import dataclasses
+    c, tr, s = make(svc, tmp_path)
+    _best, base = ids(svc)
+    variants = [dataclasses.replace(base, setting_id="v-size", chunk_size_tokens=base.chunk_size_tokens + 64),
+                dataclasses.replace(base, setting_id="v-overlap", overlap_tokens=base.overlap_tokens + 8)]
+    extra = next(x for x in svc.grid_settings("uupt") if x.chunker == "fixed_size" and x.budget_tokens == 2000
+                 and not x.header_b and x.retrieval_mode != base.retrieval_mode)
+    variants.append(extra)
+    real = s.grid_settings
+    s.grid_settings = lambda fam: [*real(fam), *variants[:2]]
+    for v in variants:
+        r = c.post(URL, json=body(svc, baseline_setting_id=v.setting_id))
+        assert r.status_code == 422 and r.json()["error"]["code"] == "validation_failed", (v.setting_id, r.text)
+    assert tr.calls == 0
+
+
+def test_first_paid_answer_record_not_overwritten_by_cache_call(svc, tmp_path):
+    """S2: berkas AnswerRecord mempertahankan run_id run berbayar pertama."""
+    c, tr, s = make(svc, tmp_path)
+    d1 = c.post(URL, json=body(svc)).json()
+    d2 = c.post(URL, json=body(svc)).json()
+    assert d2["best"]["run_id"] != d1["best"]["run_id"] and tr.calls == 2
+    for slot in ("best", "baseline"):
+        stored = load_answer(s.runs_dir / "answers", d1[slot]["answer_id"])
+        assert stored["run_id"] == d1[slot]["run_id"] != d2[slot]["run_id"]

@@ -28,3 +28,11 @@ export const sectionLabel: Record<string, string> = {
   penjelasan_pasal: "Elucidation of articles (Penjelasan)",
   penjelasan_umum: "General elucidation (Penjelasan Umum)",
 };
+
+/** Label cakupan butir (I-39): dari `items_scope` API atau filter split aktif; tidak di-hardcode ke satu split. */
+export function scopeLabel(scope: string | null | undefined): string {
+  if (scope === "all") return "all items (tune + held-out)";
+  if (scope === "tune") return "tune items only";
+  if (scope === "held_out") return "held-out items only";
+  return "item scope not reported";
+}

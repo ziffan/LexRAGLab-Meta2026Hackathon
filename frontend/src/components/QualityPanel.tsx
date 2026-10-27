@@ -1,4 +1,4 @@
-import { settingShort } from "../lib/labels";
+import { scopeLabel, settingShort } from "../lib/labels";
 import { xOfY, NA } from "../lib/format";
 import { availableSettings, metricsFor, qualityOf, recallAtKCounts } from "../lib/settings";
 import type { QualityWithCounts, Setting, Snapshot } from "../types";
@@ -15,7 +15,8 @@ interface Col {
 }
 
 function recallText(snap: Snapshot, s: Setting, q: QualityWithCounts | undefined): string {
-  const c = recallAtKCounts(metricsFor(snap, s.setting_id));
+  const scope = q?.items_scope;
+  const c = recallAtKCounts(metricsFor(snap, s.setting_id).filter((m) => scope === undefined || scope === "all" || m.split === scope));
   if (c.withGold === 0) return NA;
   const base = xOfY(c.full, c.withGold, `items with all gold parts in top ${q?.k ?? "K"}`);
   return c.partial > 0 ? `${base} (+${c.partial} partial)` : base;
@@ -53,7 +54,10 @@ export function QualityPanel({ snap, setting }: { snap: Snapshot; setting: Setti
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Recall@K (K = {cols[0].q.k})</th>
+                <th scope="row">
+                  Recall@K (K = {cols[0].q.k})
+                  <div className="muted sub">{scopeLabel(cols[0].q.items_scope)}</div>
+                </th>
                 {cols.map((c) => (
                   <td key={c.setting.setting_id}>{c.recall}</td>
                 ))}

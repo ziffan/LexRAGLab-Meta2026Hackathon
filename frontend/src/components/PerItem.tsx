@@ -1,6 +1,7 @@
 import { useStore } from "../state";
 import { truncate } from "../lib/format";
 import { modeLabel, originLabel, settingShort, splitLabel } from "../lib/labels";
+import { filterScopeLabel } from "../lib/rows";
 import { itemPasses, originSummary, toRow } from "../lib/rows";
 import { availableSettings, metricsFor } from "../lib/settings";
 import type { Item, ItemMetrics, Snapshot } from "../types";
@@ -64,6 +65,7 @@ function Body({ snap }: { snap: Snapshot }) {
         </label>
       </div>
 
+      <p className="note">Summary scope: {filterScopeLabel(f.split)}.</p>
       <ul className="summary-row" aria-label="Results by origin">
         {summary.length === 0 && <li className="muted">No items match the filters.</li>}
         {summary.map((s) => (

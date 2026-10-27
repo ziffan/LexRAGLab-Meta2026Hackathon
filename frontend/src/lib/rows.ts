@@ -48,3 +48,8 @@ export function originSummary(items: Item[], metrics: Map<string, ItemMetrics>):
   }
   return out;
 }
+
+/** Cakupan ringkasan per asal mengikuti filter split aktif. */
+export function filterScopeLabel(split: Filters["split"]): string {
+  return split === "all" ? "all items (tune + held-out)" : split === "tune" ? "tune items only" : "held-out items only";
+}

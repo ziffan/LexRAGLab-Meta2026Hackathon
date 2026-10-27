@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { NA, orNa, xOfY } from "../lib/format";
-import { modeLabel, originLabel, splitLabel, settingShort } from "../lib/labels";
-import { itemPasses, originSummary, toRow } from "../lib/rows";
+import { NA, orNa, truncate, xOfY } from "../lib/format";
+import { modeLabel, originLabel, scopeLabel, splitLabel, settingShort } from "../lib/labels";
+import { filterScopeLabel, itemPasses, originSummary, toRow } from "../lib/rows";
 import { availableSettings, frontierIds, matchSetting, recallAtKCounts, resolveSettingParam, settingParam, siblingModes } from "../lib/settings";
 import { blankState, reducer, type State } from "../state";
 import { frontierLine, plottable } from "../components/SettingSpace";
@@ -190,5 +190,35 @@ describe("store reducer", () => {
     const s = reducer(reducer(blankState(), { type: "set_filters", value: { mode: "parafrase" } }), { type: "set_split", value: "tune" });
     expect(s.filters).toEqual({ origin: "all", mode: "parafrase", split: "all" });
     expect(s.split).toBe("tune");
+  });
+});
+
+describe("round 2 additions", () => {
+  const mk = (id: string, origin: Item["origin"]): Item => ({ id, split: "tune", family: "uupt", query: "q", doc_id: "d", gold_spans: [{ start: 0, end: 1 }], clean_sha256: "x", mode: "literal", origin });
+  it("originSummary counts covered strictly below total and per origin", () => {
+    const items = [mk("a", "operator"), mk("b", "operator"), mk("c", "operator"), mk("d", "spark_disetujui")];
+    const m = new Map([
+      ["a", metric({ item_id: "a", fully_covered: true })],
+      ["b", metric({ item_id: "b", fully_covered: false })],
+      ["c", metric({ item_id: "c", fully_covered: null })],
+      ["d", metric({ item_id: "d", fully_covered: false })],
+    ]);
+    expect(originSummary(items, m)).toEqual([
+      { origin: "operator", covered: 1, total: 2, noGold: 1 },
+      { origin: "spark_disetujui", covered: 0, total: 1, noGold: 0 },
+    ]);
+  });
+  it("truncate keeps text at the limit and cuts one past it", () => {
+    expect(truncate("abcde", 5)).toBe("abcde");
+    expect(truncate("abcdef", 5)).toBe("abcde" + String.fromCharCode(8230));
+    expect(truncate("", 0)).toBe("");
+  });
+  it("labels the item scope from the API value, not a hardcoded split", () => {
+    expect(scopeLabel("all")).toBe("all items (tune + held-out)");
+    expect(scopeLabel("tune")).toBe("tune items only");
+    expect(scopeLabel("held_out")).toBe("held-out items only");
+    expect(scopeLabel(undefined)).toBe("item scope not reported");
+    expect(filterScopeLabel("held_out")).toBe("held-out items only");
+    expect(filterScopeLabel("all")).toBe("all items (tune + held-out)");
   });
 });

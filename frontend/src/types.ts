@@ -113,6 +113,8 @@ export interface QualityCounts {
 
 export interface QualityWithCounts extends QualityMetrics {
   counts?: QualityCounts;
+  items_scope?: "all" | SplitName;
+  recall_n_items?: number;
 }
 
 export interface QualityComparison {
