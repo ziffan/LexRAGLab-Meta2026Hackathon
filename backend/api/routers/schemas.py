@@ -98,7 +98,7 @@ def post_correct(request: Request, family: str, version: int, body: dict[str, An
                       samples=parent_samples(parent, svc.doc))
     except SchemaInvalid as exc:
         raise ApiError(422, "schema_invalid", "; ".join(exc.errors[:5])[:600]) from None
-    except SampleHashMismatch as exc:
+    except SampleHashMismatch as exc:  # disengaja (H-046): offset/contoh hanya sah terhadap teks bersih yang sama
         raise ApiError(409, "hash_mismatch", f"Sample document {str(exc)[:60]!r} has a different clean text than the one the schema was induced from.") from None
     except ParentNotFound:
         raise ApiError(404, "not_found", f"No schema version {version} for family {family!r}.") from None

@@ -81,6 +81,7 @@ def test_example_found_check_is_skipped_only_when_samples_none():
 
 
 @pytest.mark.parametrize("pat,frag", [
+    ("^(a|a)+b", "nested quantifier"), ("^(a|aa)*$", "nested quantifier"), ("^((a)|b){2,}c", "nested quantifier"),
     ("(", "does not compile"), ("", "empty"), (r"^\d*$", "empty string"), (r"^(a+)+$", "nested quantifier"),
     ("x" * 501, "longer than")])
 def test_bad_patterns_rejected(pat, frag):
@@ -91,6 +92,18 @@ def test_bad_patterns_rejected(pat, frag):
     errs, val = validate_body(b, family="uupt", samples=[SAMPLE])
     assert any(frag in e for e in errs)
     assert [v["matched"] for v in val if v["order"] == 1] == [False, False]
+
+
+def test_redos_pattern_rejected_fast_and_safe_patterns_kept():
+    import time
+    t = time.perf_counter()
+    b = good_body()
+    b["levels"][0]["marker_pattern"] = "^(a|a)+b"
+    b["levels"][0]["examples"] = ["a" * 40]
+    errs, _ = validate_body(b, family="uupt", samples=["a" * 40])
+    assert time.perf_counter() - t < 1 and any("unsafe" in e for e in errs)
+    for ok in (r"^BAGIAN [IVX]+$", r"^(?:Klausul|Butir) \d+$", r"^\([a-z]\)", r"^[(+*|]x", r"^(\d+)\.(\d+)$"):
+        assert compile_marker(ok)[0] is not None, ok
 
 
 def test_pattern_must_match_its_own_example():
@@ -342,3 +355,8 @@ def test_induce_replay_never_writes(tmp_path):
     run_induce(rig, st)
     out2 = run_induce(r, st, replay=True)
     assert out2.error is None and out2.record["schema_version"] == 1 and r.tr.calls == 0
+    # cache ada tetapi record skema tidak ada di penyimpan ini: replay tidak boleh menulis versi
+    empty = SchemaStore(tmp_path / "lain")
+    out3 = run_induce(r, empty, replay=True)
+    assert out3.record is None and out3.error["code"] == "replay_no_stored_run" and empty.versions("uupt") == []
+    assert not (tmp_path / "lain").exists()

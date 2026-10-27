@@ -64,14 +64,46 @@ def validate_schema() -> None:
         raise ValueError(f"SchemaA schema is not strict-compliant: {bad}")
 
 
+def _quantified_group_unsafe(p: str) -> bool:
+    """True bila ada grup berkuantor (`+`, `*`, `{`) yang memuat alternasi `|` atau kuantor lain: sumber backtracking
+    eksponensial (mis. `^(a|a)+b`). Pemindai kasar: lewati escape dan kelas karakter."""
+    stack: list[list[bool]] = []  # per grup terbuka: [ada '|' atau kuantor]
+    i, n = 0, len(p)
+    while i < n:
+        c = p[i]
+        if c == "\\":
+            i += 2
+            continue
+        if c == "[":
+            i += 1
+            if i < n and p[i] == "^":
+                i += 1
+            if i < n and p[i] == "]":
+                i += 1
+            while i < n and p[i] != "]":
+                i += 2 if p[i] == "\\" else 1
+        elif c == "(":
+            stack.append([False])
+        elif c in "|+*{" and stack:
+            stack[-1][0] = True
+        elif c == ")" and stack:
+            risky = stack.pop()[0]
+            if risky and i + 1 < n and p[i + 1] in "+*{":
+                return True
+            if risky and stack:
+                stack[-1][0] = True
+        i += 1
+    return False
+
+
 def compile_marker(pattern: str) -> tuple[re.Pattern[str] | None, str | None]:
     """(pola terkompilasi, None) atau (None, alasan). Pola dijalankan dengan `re.search` + `re.MULTILINE`."""
     if not isinstance(pattern, str) or not pattern.strip():
         return None, "marker_pattern is empty"
     if len(pattern) > MAX_PATTERN_CHARS:
         return None, f"marker_pattern is longer than {MAX_PATTERN_CHARS} characters"
-    if _NESTED_QUANTIFIER.search(pattern):
-        return None, "marker_pattern has a nested quantifier (unsafe)"
+    if _NESTED_QUANTIFIER.search(pattern) or _quantified_group_unsafe(pattern):
+        return None, "marker_pattern has a nested quantifier or a quantified alternation (unsafe)"
     try:
         rx = re.compile(pattern, re.MULTILINE)
     except (re.error, RecursionError, OverflowError) as exc:
