@@ -50,5 +50,5 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 1. Operator: putuskan I-25..I-29; setujui (atau minta revisi) skenario M0.1, M1.2, M1.4, M1.5.
 2. Setelah skenario M0.1 disetujui: kode M0.1 (klien Spark) oleh agen, review Tier 1.
-3. Operator, akhir M0: kunci nilai grid H-012 (lihat panjang bagian di `runs/corpus/` dan `runs/measure/`), tulis butir kontrol memakai lembar kerja.
+3. ~~Operator, akhir M0: kunci grid, tulis butir kontrol~~ Selesai 27 Okt: grid H-058 di `config/grid.toml`; sembilan butir kontrol (K-01 sampai K-09, tulisan operator, disetujui) dikonversi ke `Item`, menunggu jalur masuk `data/butir/` dengan validator sebelum di-commit.
 4. M1 tidak dimulai sebelum butir kontrol dan grid ada.

@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-057.
+Sumber keputusan: H-001 sampai H-058.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -20,7 +20,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-009 | Status berlaku tiga nilai; tabel milik operator. Basis data direvisi H-031: anotasi konsolidasi UU PT | 2026-10-25 |
 | H-010 | Glimmer tidak dipakai; bagian model direvisi H-028; direvisi H-047: Glimmer lokal hanya sebagai pembanding on-prem peran C (stretch) | 2026-10-25 |
 | H-011 | UU PT (sejak revisi H-031) 15–20 butir disetujui, akta minimal 5 (H-017), minimal enam kontrol operator; butir adegan dicek manual | 2026-10-25 |
-| H-012 | Sumbu grid: chunker × ukuran/overlap × mode retrieval × header B; anggaran default 2.000 token + dua pembanding; nilai di konfigurasi | 2026-10-25 |
+| H-012 | Sumbu grid: chunker × ukuran/overlap × mode retrieval × header B; anggaran default 2.000 token + dua pembanding (*satu sejak H-017*); nilai di konfigurasi (*dikunci H-058*) | 2026-10-25 |
 | H-013 | Python 3.12 + FastAPI, React + TypeScript + Vite; tanpa database, auth, vector DB, LangChain | 2026-10-25 |
 | H-014 | Tokenizer lokal deterministik (Muse Spark Open, cadangan `o200k`), dikalibrasi sekali terhadap endpoint hitung token | 2026-10-25 |
 | H-015 | Split berstrata per asal dan mode, minimal tiga kontrol di held-out, seed tercatat, split lama tidak diacak ulang; porsi held-out 40% (H-049); akta tanpa split (H-054) | 2026-10-25 |
@@ -66,6 +66,7 @@ Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan opera
 | H-055 | Bila pemicu 31 Okt H-017 aktif, editor skema A turun ke berkas berversi dan U5 hanya menampilkan diff; pemecah seri akhir = `setting_id` terkecil leksikografis | 2026-10-26 |
 | H-056 | Blanko PPAT tidak dipakai; keluarga akta hanya lima akta sintetis (menutup H-P23, merevisi H-040) | 2026-10-26 |
 | H-057 | OpenRouter hanya untuk dev dan uji: profil `openrouter_dev` (model ID `meta/muse-spark-1.3-contributor`) dan `meta` (`muse-spark-1.3-contributor`) di `config/model`; `RunRecord` mencatat `provider`; run OpenRouter tidak dipakai untuk angka yang dilaporkan, run final lewat Meta Model API (H-027, H-028); tetap Responses API + `strict: true` (H-016), bila OpenRouter tidak mendukung jalur itu berhenti, tidak turun ke Chat Completions; pengecualian "tanpa key kedua" AGENTS.md hanya untuk dev. *Dikonfirmasi operator di sesi 26 Okt malam; dicatat agen di sini; operator menyalin ke log keputusan operator 27 Okt* | 2026-10-27 |
+| H-058 | Nilai grid H-012 di `config/grid` v1: `fixed_size` 512/64 (satu ukuran, sekaligus baseline C H-036), anggaran 2.000 + pembanding 1.000, `packing = stop`, `held_out_ratio = 0.4`, seed 20261026, urutan sederhana H-034; 36 titik UU PT. Ditetapkan setelah butir kontrol ditulis, sebelum run apa pun | 2026-10-27 |
 
 ## Pending
 
@@ -115,3 +116,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-26 | H-056 ditambahkan (blanko PPAT tidak dipakai), H-P23 ditutup |
 | 2026-10-26 | Ringkasan H-001 sampai H-056 diimpor ke repo app sebagai bagian spec pra-acara, disaring (H-044) |
 | 2026-10-27 | H-057 ditambahkan (OpenRouter hanya dev/uji, dari mandat operator sesi 26 Okt malam); belum ada di log keputusan operator, disalin operator 27 Okt |
+| 2026-10-27 | H-058 ditambahkan (nilai grid H-012), `config/grid.toml` dibuat |

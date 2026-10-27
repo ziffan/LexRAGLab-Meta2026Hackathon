@@ -1,0 +1,37 @@
+# config/grid — ruang grid H-012, nilai dikunci H-058 (27 Okt 2026).
+# Grid sempit sejak hari pertama: satu ukuran pembanding, satu anggaran pembanding (H-017).
+version = 1
+
+chunkers = ["structure_handwritten", "structure_schema", "fixed_size"]
+retrieval_modes = ["dense", "bm25", "hybrid"]
+header_b = [false, true]
+
+[fixed_size]
+# Satu ukuran (H-017). Panjang Pasal batang tubuh p95 454 token lokal, maks 704 (H-058).
+chunk_size_tokens = 512
+overlap_tokens = 64
+
+[budget]
+default_tokens = 2000   # H-012
+comparison_tokens = [1000]   # H-017, H-058
+
+[packing]
+rule = "stop"   # H-033 a; alternatif "skip", "truncate" (EVAL-SPEC §3)
+
+[split]
+seed = 20261026   # H-015, ditetapkan sekali
+held_out_ratio = 0.4   # H-049
+min_control_in_held_out = 3   # H-015
+strata = ["origin", "mode"]
+
+[baseline]
+# Pembanding peran C (H-036): fixed_size di atas; mode retrieval dan anggaran mengikuti profil terbaik.
+chunker = "fixed_size"
+chunk_size_tokens = 512
+overlap_tokens = 64
+
+[simplicity]
+# Pemecah seri H-034, berurutan; lalu EVAL-SPEC §9 (precision token, token lebih sedikit), lalu setting_id terkecil (H-055).
+tie_margin_items = 1
+order = ["header_b_off", "smaller_overlap", "single_retrieval_mode"]
+single_retrieval_modes = ["bm25", "dense"]
