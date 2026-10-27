@@ -9,13 +9,13 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-67 | Grid akta header-on `structure_handwritten` degenerate: parser UU PT memberi satu unit `Batang Tubuh` per akta, jadi chunker handwritten akta = 1 potongan per akta (3.321–3.540 token, di atas anggaran grid), retrieval kosong dan header B merangkum seluruh akta (W57) | Pertahankan sesuai H-091 (36 titik) dan beri label "degenerate for deeds (one chunk per deed)" di U2/laporan transfer; alternatif: keluarkan handwritten dari grid akta (merevisi H-091). Biaya header B handwritten akta 5 panggilan, sudah di proyeksi 48.537 | operator | sebelum grid akta final (tidak memblokir run) |
 | I-66 | Cakupan keluarga `Item.mode = "tolak"` (H-092): enum lintas keluarga, padahal usulan `unanswerable` hanya akta (P13). Bila butir UU PT ber-`tolak` ditulis, strata `SplitRecord` (`origin`, `mode`) dan komposisi held-out UU PT berubah | Sementara (skenario revisi 3): `tolak` hanya sah untuk `akta`, validator menolak `uupt` + `tolak`; tidak mengubah angka apa pun karena belum ada butir semacam itu. Alternatif: semua keluarga, dampak strata dicatat dan penugasan lama tetap per DATA-CONTRACTS §4. Mengubah angka laporan: tidak sekarang | operator | sebelum butir tolak UU PT ditulis (tidak memblokir) |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-67 | Titik grid akta `structure_handwritten` degenerate | Operator: dipertahankan (H-091), label "no structure recognized" di U2, laporan transfer, snapshot (H-093) | 2026-10-28 |
 | I-65 | Recall@K akta selalu null (`recall_items = held_out`) | Operator: (a) keluarga tanpa split, semua butir ber-gold, label "transfer"; UU PT tetap held-out (H-090) | 2026-10-28 |
 | I-64 | Cakupan grid akta | Operator: (a) seluruh `config/grid` 36 titik, setting transfer disorot (H-091) | 2026-10-28 |
 | I-63 | Unit akta untuk Recall@K dan boundary | Operator: (a) unit = potongan skema A akta aktif; skenario M4.1-akta-unitmap disetujui (H-090) | 2026-10-28 |
