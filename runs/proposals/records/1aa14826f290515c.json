@@ -1,0 +1,61 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.524782,
+  "max_cov": {
+   "den": 12,
+   "num": 4
+  },
+  "reasons": [],
+  "status": "ok",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT SINAR WIYATA BENTARRA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\"."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT SINAR WIYATA BENTARRA\n\nNomor : 112\n\nPada hari ini, Rabu, tanggal 3 (tiga) Desember 2025 (dua ribu dua puluh lima), pukul 14.00 (empat belas) Waktu Indonesia Barat.\n\nMenghadap kepada saya, ANINDYASWARI KUSUMAYUDA PASARIBU, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Semarang, Provinsi Jawa Tengah, dengan dihadiri oleh saksi-saksi yang nama-namanya disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 11\n\n(1) Dewan Komisaris terdiri dari sekurang-kurangnya 2 (dua) orang, dengan susunan seorang komisaris utama dan seorang atau lebih komisaris.\n(2) Dewan Komisaris bertugas mengawasi kebijakan Direksi dalam menjalankan pengurusan Perseroan serta memberi nasihat kepada Direksi, termasuk pengawasan terhadap pelaksanaan rencana kerja dan anggaran tahunan Perseroan.\n(3) Dalam keadaan tertentu Dewan Komisaris wajib menyelenggarakan Rapat Umum Pemegang Saham tahunan dan rapat umum lainnya sesuai dengan kewenangannya menurut peraturan perundang-undangan dan anggaran dasar ini.\n(4) Dalam hal seluruh anggota Direksi berhalangan atau diberhentikan sementara, Dewan Komisaris berwenang mengurus Perseroan untuk sementara waktu dan harus menyelenggarakan Rapat Umum Pemegang Saham dalam waktu 30 (tiga puluh) hari untuk menetapkan pengurus yang definitif."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Bagaskara Tirtaprawata Tambunan, sebanyak 750 (tujuh ratus lima puluh) saham dengan nilai nominal seluruhnya Rp 750.000.000,00 (tujuh ratus lima puluh juta Rupiah);\n2. Nyonya Kirana Saraswati Hutauruk, sebanyak 500 (lima ratus) saham dengan nilai nominal seluruhnya Rp 500.000.000,00 (lima ratus juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Tuan Bagaskara Tirtaprawata Tambunan tersebut di atas;\n- Direktur : Nyonya Kirana Saraswati Hutauruk tersebut di atas;\n- Komisaris Utama : Tuan Hardiansyah Lintang Gultom, bertempat tinggal di Kota Semarang;\n- Komisaris : Nona Puspitaningsih Wicaksanadewi Sihombing, bertempat tinggal di Kota Semarang."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT SINAR WIYATA BENTARRA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\"."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT SINAR WIYATA BENTARRA\n\nNomor : 112\n\nPada hari ini, Rabu, tanggal 3 (tiga) Desember 2025 (dua ribu dua puluh lima), pukul 14.00 (empat belas) Waktu Indonesia Barat.\n\nMenghadap kepada saya, ANINDYASWARI KUSUMAYUDA PASARIBU, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Semarang, Provinsi Jawa Tengah, dengan dihadiri oleh saksi-saksi yang nama-namanya disebutkan pada bagian akhir akta ini:"
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "rincian_tidak_diatur",
+  "alasan_teks": "Akta mengatur susunan, pengangkatan dan masa jabatan Direksi dan Dewan Komisaris tetapi tidak mengatur rincian besaran remunerasi mereka.",
+  "doc_id": "akta-02",
+  "mode": "unanswerable",
+  "query": "Berapa besaran gaji atau honorarium anggota Direksi dan Dewan Komisaris PT Sinar Wiyata Bentarra?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "1aa14826f290515c",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2e36cf492cea49d0b023239b5f458090",
+ "validation": null
+}

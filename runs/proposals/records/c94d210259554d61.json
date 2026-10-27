@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.649846,
+  "max_cov": {
+   "den": 8,
+   "num": 4
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "Pasal 6\n\nDari modal dasar telah ditempatkan dan disetor penuh sebesar Rp 2.000.000.000,00 (dua miliar Rupiah), yaitu sejumlah 2.000 (dua ribu) saham, dalam bentuk uang tunai, oleh para pendiri sebagaimana diuraikan pada akhir akta ini. Bukti penyetoran dalam bentuk keterangan bank telah diperlihatkan kepada saya, Notaris."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "Pasal 22\n\nPenggunaan laba bersih ditetapkan oleh Rapat Umum Pemegang Saham. Sebagian laba bersih disisihkan setiap tahun untuk cadangan sampai mencapai sekurang-kurangnya 20% (dua puluh persen) dari modal yang ditempatkan dan disetor. Dividen dibagikan menurut perbandingan jumlah saham yang dimiliki pemegang saham, dan dividen yang tidak diambil dalam waktu 5 (lima) tahun dimasukkan ke dalam cadangan khusus."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 10\n\nPenambahan modal dasar harus berdasarkan keputusan Rapat Umum Pemegang Saham dan dituangkan dalam akta notaris. Penambahan modal ditempatkan dan disetor dilakukan dengan persetujuan Rapat Umum Pemegang Saham, dan setiap pemegang saham memiliki hak didahulukan untuk mengambil bagian saham baru sesuai dengan perbandingan sahamnya."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "Pasal 6\n\nDari modal dasar telah ditempatkan dan disetor penuh sebesar Rp 2.000.000.000,00 (dua miliar Rupiah), yaitu sejumlah 2.000 (dua ribu) saham, dalam bentuk uang tunai, oleh para pendiri sebagaimana diuraikan pada akhir akta ini. Bukti penyetoran dalam bentuk keterangan bank telah diperlihatkan kepada saya, Notaris."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "Pasal 5\n\nModal dasar Perseroan berjumlah Rp 8.000.000.000,00 (delapan miliar Rupiah), terbagi atas 8.000 (delapan ribu) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Harjunadipura Maheswara Situmorang, sebanyak 800 (delapan ratus) saham dengan nilai nominal seluruhnya Rp 800.000.000,00 (delapan ratus juta Rupiah);\n2. Nyonya Wulandari Ratnasari Tobing, sebanyak 600 (enam ratus) saham dengan nilai nominal seluruhnya Rp 600.000.000,00 (enam ratus juta Rupiah);\n3. Tuan Dirgantara Satriawinata Butarbutar, sebanyak 400 (empat ratus) saham dengan nilai nominal seluruhnya Rp 400.000.000,00 (empat ratus juta Rupiah);\n4. Nona Nirmalasari Kusumawardhani Sagala, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nJumlah seluruhnya 2.000 (dua ribu) saham dengan nilai nominal Rp 2.000.000.000,00 (dua miliar Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Tuan Harjunadipura Maheswara Situmorang tersebut di atas;\n- Direktur : Tuan Dirgantara Satriawinata Butarbutar tersebut di atas;\n- Komisaris Utama : Nyonya Wulandari Ratnasari Tobing tersebut di atas;\n- Komisaris : Nona Nirmalasari Kusumawardhani Sagala tersebut di atas."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Akta hanya menyebut bukti penyetoran berupa keterangan bank telah diperlihatkan tanpa merinci nomor rekening penyetoran modal.",
+  "doc_id": "akta-05",
+  "mode": "unanswerable",
+  "query": "Berapa nomor rekening bank yang digunakan untuk penyetoran modal ditempatkan dan disetor Perseroan?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c94d210259554d61",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d0b0690efc324cfb9b874e1183c624b2",
+ "validation": null
+}

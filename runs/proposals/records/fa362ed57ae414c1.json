@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.627547,
+  "max_cov": {
+   "den": 7,
+   "num": 5
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Harjunadipura Maheswara Situmorang, sebanyak 800 (delapan ratus) saham dengan nilai nominal seluruhnya Rp 800.000.000,00 (delapan ratus juta Rupiah);\n2. Nyonya Wulandari Ratnasari Tobing, sebanyak 600 (enam ratus) saham dengan nilai nominal seluruhnya Rp 600.000.000,00 (enam ratus juta Rupiah);\n3. Tuan Dirgantara Satriawinata Butarbutar, sebanyak 400 (empat ratus) saham dengan nilai nominal seluruhnya Rp 400.000.000,00 (empat ratus juta Rupiah);\n4. Nona Nirmalasari Kusumawardhani Sagala, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nJumlah seluruhnya 2.000 (dua ribu) saham dengan nilai nominal Rp 2.000.000.000,00 (dua miliar Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Tuan Harjunadipura Maheswara Situmorang tersebut di atas;\n- Direktur : Tuan Dirgantara Satriawinata Butarbutar tersebut di atas;\n- Komisaris Utama : Nyonya Wulandari Ratnasari Tobing tersebut di atas;\n- Komisaris : Nona Nirmalasari Kusumawardhani Sagala tersebut di atas."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "1. Tuan HARJUNADIPURA MAHESWARA SITUMORANG, lahir di Samarinda pada tanggal 5 (lima) Februari 1974 (seribu sembilan ratus tujuh puluh empat), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Balikpapan, Jalan Pelita Jingga Nomor 9, Rukun Tetangga 012, Rukun Warga 003, Kelurahan Gunung Samarinda Baru, Kecamatan Balikpapan Kota Selatan;\n\n2. Nyonya WULANDARI RATNASARI TOBING, lahir di Banjarmasin pada tanggal 28 (dua puluh delapan) September 1978 (seribu sembilan ratus tujuh puluh delapan), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Balikpapan, Jalan Kamboja Sepuh Nomor 33, Rukun Tetangga 005, Rukun Warga 010, Kelurahan Margasari Lama, Kecamatan Balikpapan Kota Selatan;\n\n3. Tuan DIRGANTARA SATRIAWINATA BUTARBUTAR, lahir di Tarakan pada tanggal 11 (sebelas) April 1982 (seribu sembilan ratus delapan puluh dua), warga negara Indonesia, ahli logistik, bertempat tinggal di Kota Balikpapan, Jalan Merpati Kelabu Nomor 71, Rukun Tetangga 008, Rukun Warga 002, Kelurahan Klandasan Hilir, Kecamatan Balikpapan Kota Selatan;\n\n4. Nona NIRMALASARI KUSUMAWARDHANI SAGALA, lahir di Bontang pada tanggal 19 (sembilan belas) Desember 1988 (seribu sembilan ratus delapan puluh delapan), warga negara Indonesia, akuntan, bertempat tinggal di Kota Balikpapan, Jalan Seruni Lembayung Nomor 14, Rukun Tetangga 001, Rukun Warga 007, Kelurahan Prapatan Tengah, Kecamatan Balikpapan Kota Selatan.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh dua orang saksi pengenal yang namanya disebutkan pada bagian akhir akta ini. Menurut keterangannya para penghadap bertindak untuk diri sendiri dan dengan ini mendirikan sebuah Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 3\n\nPerseroan didirikan untuk jangka waktu 30 (tiga puluh) tahun terhitung sejak tanggal Perseroan memperoleh status badan hukum, dan dapat diperpanjang berdasarkan keputusan Rapat Umum Pemegang Saham."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Harjunadipura Maheswara Situmorang, sebanyak 800 (delapan ratus) saham dengan nilai nominal seluruhnya Rp 800.000.000,00 (delapan ratus juta Rupiah);\n2. Nyonya Wulandari Ratnasari Tobing, sebanyak 600 (enam ratus) saham dengan nilai nominal seluruhnya Rp 600.000.000,00 (enam ratus juta Rupiah);\n3. Tuan Dirgantara Satriawinata Butarbutar, sebanyak 400 (empat ratus) saham dengan nilai nominal seluruhnya Rp 400.000.000,00 (empat ratus juta Rupiah);\n4. Nona Nirmalasari Kusumawardhani Sagala, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nJumlah seluruhnya 2.000 (dua ribu) saham dengan nilai nominal Rp 2.000.000.000,00 (dua miliar Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Tuan Harjunadipura Maheswara Situmorang tersebut di atas;\n- Direktur : Tuan Dirgantara Satriawinata Butarbutar tersebut di atas;\n- Komisaris Utama : Nyonya Wulandari Ratnasari Tobing tersebut di atas;\n- Komisaris : Nona Nirmalasari Kusumawardhani Sagala tersebut di atas."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "1. Tuan HARJUNADIPURA MAHESWARA SITUMORANG, lahir di Samarinda pada tanggal 5 (lima) Februari 1974 (seribu sembilan ratus tujuh puluh empat), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Balikpapan, Jalan Pelita Jingga Nomor 9, Rukun Tetangga 012, Rukun Warga 003, Kelurahan Gunung Samarinda Baru, Kecamatan Balikpapan Kota Selatan;\n\n2. Nyonya WULANDARI RATNASARI TOBING, lahir di Banjarmasin pada tanggal 28 (dua puluh delapan) September 1978 (seribu sembilan ratus tujuh puluh delapan), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Balikpapan, Jalan Kamboja Sepuh Nomor 33, Rukun Tetangga 005, Rukun Warga 010, Kelurahan Margasari Lama, Kecamatan Balikpapan Kota Selatan;\n\n3. Tuan DIRGANTARA SATRIAWINATA BUTARBUTAR, lahir di Tarakan pada tanggal 11 (sebelas) April 1982 (seribu sembilan ratus delapan puluh dua), warga negara Indonesia, ahli logistik, bertempat tinggal di Kota Balikpapan, Jalan Merpati Kelabu Nomor 71, Rukun Tetangga 008, Rukun Warga 002, Kelurahan Klandasan Hilir, Kecamatan Balikpapan Kota Selatan;\n\n4. Nona NIRMALASARI KUSUMAWARDHANI SAGALA, lahir di Bontang pada tanggal 19 (sembilan belas) Desember 1988 (seribu sembilan ratus delapan puluh delapan), warga negara Indonesia, akuntan, bertempat tinggal di Kota Balikpapan, Jalan Seruni Lembayung Nomor 14, Rukun Tetangga 001, Rukun Warga 007, Kelurahan Prapatan Tengah, Kecamatan Balikpapan Kota Selatan.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh dua orang saksi pengenal yang namanya disebutkan pada bagian akhir akta ini. Menurut keterangannya para penghadap bertindak untuk diri sendiri dan dengan ini mendirikan sebuah Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT PANCASONA REKSAKARYA ANUGRAH\n\nNomor : 41\n\nPada hari ini, Rabu, tanggal 9 (sembilan) September 2026 (dua ribu dua puluh enam), pukul 10.00 (sepuluh) Waktu Indonesia Tengah.\n\nMenghadap kepada saya, GUSTIAWAN SUDIBYO TARIHORAN, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Balikpapan, Provinsi Kalimantan Timur, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Akta hanya mencantumkan nama, tempat tanggal lahir, dan alamat para pendiri tanpa memuat NIK mereka.",
+  "doc_id": "akta-05",
+  "mode": "unanswerable",
+  "query": "Berapa NIK Tuan Harjunadipura Maheswara Situmorang sebagai pendiri Perseroan?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "fa362ed57ae414c1",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d0b0690efc324cfb9b874e1183c624b2",
+ "validation": null
+}

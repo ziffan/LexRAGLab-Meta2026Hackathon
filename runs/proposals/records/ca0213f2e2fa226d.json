@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.617446,
+  "max_cov": {
+   "den": 10,
+   "num": 7
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT SINAR WIYATA BENTARRA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\"."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT SINAR WIYATA BENTARRA\n\nNomor : 112\n\nPada hari ini, Rabu, tanggal 3 (tiga) Desember 2025 (dua ribu dua puluh lima), pukul 14.00 (empat belas) Waktu Indonesia Barat.\n\nMenghadap kepada saya, ANINDYASWARI KUSUMAYUDA PASARIBU, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Semarang, Provinsi Jawa Tengah, dengan dihadiri oleh saksi-saksi yang nama-namanya disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 3\n\nPerseroan didirikan untuk jangka waktu 50 (lima puluh) tahun, terhitung sejak tanggal pengesahan Perseroan sebagai badan hukum. Jangka waktu tersebut dapat diperpanjang berdasarkan keputusan Rapat Umum Pemegang Saham."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT SINAR WIYATA BENTARRA\n\nNomor : 112\n\nPada hari ini, Rabu, tanggal 3 (tiga) Desember 2025 (dua ribu dua puluh lima), pukul 14.00 (empat belas) Waktu Indonesia Barat.\n\nMenghadap kepada saya, ANINDYASWARI KUSUMAYUDA PASARIBU, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Semarang, Provinsi Jawa Tengah, dengan dihadiri oleh saksi-saksi yang nama-namanya disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT SINAR WIYATA BENTARRA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\"."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "1. Tuan BAGASKARA TIRTAPRAWATA TAMBUNAN, lahir di Magelang pada tanggal 12 (dua belas) November 1976 (seribu sembilan ratus tujuh puluh enam), warga negara Indonesia, insinyur sipil, bertempat tinggal di Kota Semarang, Jalan Randu Alas Nomor 31, Rukun Tetangga 006, Rukun Warga 002, Kelurahan Pandanwangi Utara, Kecamatan Gajahmungkur Barat;\n\n2. Nyonya KIRANA SARASWATI HUTAURUK, lahir di Salatiga pada tanggal 9 (sembilan) Januari 1980 (seribu sembilan ratus delapan puluh), warga negara Indonesia, konsultan perencanaan, bertempat tinggal di Kota Semarang, Jalan Melati Jingga Nomor 54, Rukun Tetangga 011, Rukun Warga 005, Kelurahan Bendungan Asri, Kecamatan Gajahmungkur Barat.\n\nPara penghadap dikenal oleh saya, Notaris. Menurut keterangannya para penghadap bertindak untuk diri sendiri dan secara bersama-sama mendirikan sebuah Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "di_luar_akta",
+  "alasan_teks": "Akta hanya menyatakan jangka waktu berlaku sejak pengesahan sebagai badan hukum tanpa memuat tanggal peristiwa pengesahan oleh Menteri yang terjadi setelah akta dibuat.",
+  "doc_id": "akta-02",
+  "mode": "unanswerable",
+  "query": "Kapan tanggal pengesahan pendirian PT Sinar Wiyata Bentarra oleh Menteri Hukum?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "ca0213f2e2fa226d",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2e36cf492cea49d0b023239b5f458090",
+ "validation": null
+}

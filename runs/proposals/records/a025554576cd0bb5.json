@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.631114,
+  "max_cov": {
+   "den": 13,
+   "num": 9
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Prabawantoro Hidayatsyah Napitupulu, sebanyak 180 (seratus delapan puluh) saham dengan nilai nominal seluruhnya Rp 180.000.000,00 (seratus delapan puluh juta Rupiah);\n2. Nona Sekarwangi Anggrainiputri Marpaung, sebanyak 120 (seratus dua puluh) saham dengan nilai nominal seluruhnya Rp 120.000.000,00 (seratus dua puluh juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Nona Sekarwangi Anggrainiputri Marpaung tersebut di atas;\n- Direktur : Tuan Prabawantoro Hidayatsyah Napitupulu tersebut di atas;\n- Komisaris : Tuan Mahardika Sutrisnoadi Panjaitan, bertempat tinggal di Kota Medan."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "1. Tuan PRABAWANTORO HIDAYATSYAH NAPITUPULU, lahir di Binjai pada tanggal 17 (tujuh belas) Oktober 1985 (seribu sembilan ratus delapan puluh lima), warga negara Indonesia, pengembang perangkat lunak, bertempat tinggal di Kota Medan, Jalan Sempurna Lazuardi Nomor 45, Rukun Tetangga 009, Rukun Warga 004, Kelurahan Sei Kenanga Hulu, Kecamatan Medan Tenggara Baru;\n\n2. Nona SEKARWANGI ANGGRAINIPUTRI MARPAUNG, lahir di Pematangsiantar pada tanggal 30 (tiga puluh) Juni 1990 (seribu sembilan ratus sembilan puluh), warga negara Indonesia, pengajar dan pengusaha, bertempat tinggal di Kota Medan, Jalan Alamanda Pasundan Nomor 12, Rukun Tetangga 001, Rukun Warga 006, Kelurahan Harjosari Tengah, Kecamatan Medan Tenggara Baru.\n\nPara penghadap dikenal oleh saya, Notaris. Para penghadap bertindak untuk diri sendiri dan menerangkan bahwa dengan ini mendirikan sebuah Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 7\n\n(1) Direksi wajib mengadakan dan menyimpan daftar pemegang saham di tempat kedudukan Perseroan.\n(2) Daftar pemegang saham memuat nama dan alamat pemegang saham, jumlah, nomor, dan tanggal perolehan saham, jumlah yang disetor, serta keterangan penyetoran dalam bentuk lain selain uang.\n(3) Setiap pemegang saham wajib memberitahukan setiap perubahan alamatnya secara tertulis kepada Direksi."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Prabawantoro Hidayatsyah Napitupulu, sebanyak 180 (seratus delapan puluh) saham dengan nilai nominal seluruhnya Rp 180.000.000,00 (seratus delapan puluh juta Rupiah);\n2. Nona Sekarwangi Anggrainiputri Marpaung, sebanyak 120 (seratus dua puluh) saham dengan nilai nominal seluruhnya Rp 120.000.000,00 (seratus dua puluh juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Nona Sekarwangi Anggrainiputri Marpaung tersebut di atas;\n- Direktur : Tuan Prabawantoro Hidayatsyah Napitupulu tersebut di atas;\n- Komisaris : Tuan Mahardika Sutrisnoadi Panjaitan, bertempat tinggal di Kota Medan."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "1. Tuan PRABAWANTORO HIDAYATSYAH NAPITUPULU, lahir di Binjai pada tanggal 17 (tujuh belas) Oktober 1985 (seribu sembilan ratus delapan puluh lima), warga negara Indonesia, pengembang perangkat lunak, bertempat tinggal di Kota Medan, Jalan Sempurna Lazuardi Nomor 45, Rukun Tetangga 009, Rukun Warga 004, Kelurahan Sei Kenanga Hulu, Kecamatan Medan Tenggara Baru;\n\n2. Nona SEKARWANGI ANGGRAINIPUTRI MARPAUNG, lahir di Pematangsiantar pada tanggal 30 (tiga puluh) Juni 1990 (seribu sembilan ratus sembilan puluh), warga negara Indonesia, pengajar dan pengusaha, bertempat tinggal di Kota Medan, Jalan Alamanda Pasundan Nomor 12, Rukun Tetangga 001, Rukun Warga 006, Kelurahan Harjosari Tengah, Kecamatan Medan Tenggara Baru.\n\nPara penghadap dikenal oleh saya, Notaris. Para penghadap bertindak untuk diri sendiri dan menerangkan bahwa dengan ini mendirikan sebuah Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "PENUTUP\n\nDemikian akta ini dibuat dan diresmikan di Kota Medan pada hari dan tanggal sebagaimana disebutkan pada bagian awal akta ini, dengan dihadiri oleh:\n1. Tuan Ananggadipa Rukmantoro Silaban, lahir di Tebing Tinggi, warga negara Indonesia, karyawan Kantor Notaris, bertempat tinggal di Kota Medan; dan\n2. Nona Widyastuti Cahyaningsih Purba, lahir di Deli Serdang, warga negara Indonesia, karyawan Kantor Notaris, bertempat tinggal di Kota Medan;\nkeduanya sebagai saksi akta.\n\nSegera setelah akta ini saya, Notaris, bacakan kepada para penghadap dan para saksi, maka para penghadap, para saksi, dan saya, Notaris, menandatangani akta ini pada pukul 15.10 (lima belas lewat sepuluh menit) Waktu Indonesia Barat. Akta ini dibuat tanpa perubahan berupa coretan, tambahan, atau penggantian.\n\nMinuta akta ini telah ditandatangani dengan sempurna dan disimpan oleh Notaris.\n\nNotaris di Kota Medan,\n\nLESTARININGSIH KAMANDANU ZEBUA, S.H., M.Kn."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Akta hanya mencantumkan nama, tempat tanggal lahir, pekerjaan dan alamat para penghadap tanpa memuat nomor induk kependudukan.",
+  "doc_id": "akta-04",
+  "mode": "unanswerable",
+  "query": "Berapa nomor induk kependudukan (NIK) Tuan Prabawantoro Hidayatsyah Napitupulu dan Nona Sekarwangi Anggrainiputri Marpaung?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "a025554576cd0bb5",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "824d5d3941b14eb89fa0116339e9b506",
+ "validation": null
+}

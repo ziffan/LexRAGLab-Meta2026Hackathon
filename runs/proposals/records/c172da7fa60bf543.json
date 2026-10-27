@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.642629,
+  "max_cov": {
+   "den": 12,
+   "num": 7
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Suryokusumo Adiwiranata Simanjuntak, sebanyak 480 (empat ratus delapan puluh) saham dengan nilai nominal seluruhnya Rp 480.000.000,00 (empat ratus delapan puluh juta Rupiah);\n2. Nyonya Larasati Meganandini Siahaan, sebanyak 320 (tiga ratus dua puluh) saham dengan nilai nominal seluruhnya Rp 320.000.000,00 (tiga ratus dua puluh juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Nyonya Larasati Meganandini Siahaan tersebut di atas;\n- Direktur : Tuan Pranowo Anggaraswara Hutagalung, bertempat tinggal di Kota Malang;\n- Komisaris Utama : Tuan Suryokusumo Adiwiranata Simanjuntak tersebut di atas."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "1. Tuan SURYOKUSUMO ADIWIRANATA SIMANJUNTAK, lahir di Blitar pada tanggal 25 (dua puluh lima) Agustus 1979 (seribu sembilan ratus tujuh puluh sembilan), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Malang, Jalan Anggrek Pualam Nomor 22, Rukun Tetangga 007, Rukun Warga 001, Kelurahan Tlogowaru Selatan, Kecamatan Kedungkandang Barat;\n\n2. Nyonya LARASATI MEGANANDINI SIAHAAN, lahir di Pasuruan pada tanggal 14 (empat belas) Mei 1983 (seribu sembilan ratus delapan puluh tiga), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Malang, Jalan Teratai Kelabu Nomor 6, Rukun Tetangga 003, Rukun Warga 008, Kelurahan Bumiayu Timur, Kecamatan Kedungkandang Barat.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh dua orang saksi pengenal yang disebutkan pada bagian penutup akta ini. Para penghadap menerangkan bertindak untuk diri sendiri dan menyatakan hendak mendirikan Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT KALAWARNA TIRTASAMBADA\n\nNomor : 8\n\nPada hari ini, Kamis, tanggal 19 (sembilan belas) Februari 2026 (dua ribu dua puluh enam), pukul 09.30 (sembilan lewat tiga puluh menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, YOHANES BRAMANTYO DALIMUNTHE, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Malang, Provinsi Jawa Timur, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "1. Tuan SURYOKUSUMO ADIWIRANATA SIMANJUNTAK, lahir di Blitar pada tanggal 25 (dua puluh lima) Agustus 1979 (seribu sembilan ratus tujuh puluh sembilan), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Malang, Jalan Anggrek Pualam Nomor 22, Rukun Tetangga 007, Rukun Warga 001, Kelurahan Tlogowaru Selatan, Kecamatan Kedungkandang Barat;\n\n2. Nyonya LARASATI MEGANANDINI SIAHAAN, lahir di Pasuruan pada tanggal 14 (empat belas) Mei 1983 (seribu sembilan ratus delapan puluh tiga), warga negara Indonesia, pengusaha, bertempat tinggal di Kota Malang, Jalan Teratai Kelabu Nomor 6, Rukun Tetangga 003, Rukun Warga 008, Kelurahan Bumiayu Timur, Kecamatan Kedungkandang Barat.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh dua orang saksi pengenal yang disebutkan pada bagian penutup akta ini. Para penghadap menerangkan bertindak untuk diri sendiri dan menyatakan hendak mendirikan Perseroan Terbatas dengan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Suryokusumo Adiwiranata Simanjuntak, sebanyak 480 (empat ratus delapan puluh) saham dengan nilai nominal seluruhnya Rp 480.000.000,00 (empat ratus delapan puluh juta Rupiah);\n2. Nyonya Larasati Meganandini Siahaan, sebanyak 320 (tiga ratus dua puluh) saham dengan nilai nominal seluruhnya Rp 320.000.000,00 (tiga ratus dua puluh juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Nyonya Larasati Meganandini Siahaan tersebut di atas;\n- Direktur : Tuan Pranowo Anggaraswara Hutagalung, bertempat tinggal di Kota Malang;\n- Komisaris Utama : Tuan Suryokusumo Adiwiranata Simanjuntak tersebut di atas."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT KALAWARNA TIRTASAMBADA\n\nNomor : 8\n\nPada hari ini, Kamis, tanggal 19 (sembilan belas) Februari 2026 (dua ribu dua puluh enam), pukul 09.30 (sembilan lewat tiga puluh menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, YOHANES BRAMANTYO DALIMUNTHE, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Malang, Provinsi Jawa Timur, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Akta hanya memuat nama, tempat tanggal lahir, pekerjaan dan alamat para penghadap tanpa mencantumkan NIK.",
+  "doc_id": "akta-03",
+  "mode": "unanswerable",
+  "query": "Berapa nomor induk kependudukan (NIK) Tuan Suryokusumo Adiwiranata Simanjuntak yang tercantum dalam akta pendirian ini?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c172da7fa60bf543",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "3c8ada47f7c4400baa9f08d53e44b0a0",
+ "validation": null
+}

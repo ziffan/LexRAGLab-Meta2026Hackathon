@@ -1,0 +1,61 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.540589,
+  "max_cov": {
+   "den": 13,
+   "num": 5
+  },
+  "reasons": [],
+  "status": "ok",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT GUMITIR SELARAS PERKASA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\", berkedudukan di Kota Bandung, Provinsi Jawa Barat. Perseroan dapat membuka kantor cabang atau kantor perwakilan di tempat lain, baik di dalam maupun di luar wilayah Negara Republik Indonesia, sebagaimana ditetapkan oleh Direksi."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT GUMITIR SELARAS PERKASA\n\nNomor : 27\n\nPada hari ini, Selasa, tanggal 14 (empat belas) Oktober 2025 (dua ribu dua puluh lima), pukul 10.15 (sepuluh lewat lima belas menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, RAHADYAN TUMEWU SIREGAR, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Bandung, Provinsi Jawa Barat, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 8\n\n(1) Dewan Komisaris terdiri dari seorang komisaris utama dan seorang komisaris, yang diangkat oleh Rapat Umum Pemegang Saham untuk masa jabatan 5 (lima) tahun dan dapat diangkat kembali.\n(2) Dewan Komisaris bertugas melakukan pengawasan atas kebijakan pengurusan, jalannya pengurusan pada umumnya, baik mengenai Perseroan maupun usaha Perseroan, dan memberikan nasihat kepada Direksi. Dewan Komisaris wajib bertindak dengan itikad baik, kehati-hatian, dan penuh tanggung jawab untuk kepentingan Perseroan.\n(3) Dewan Komisaris berhak memberhentikan sementara anggota Direksi dengan menyebutkan alasannya, dan dalam waktu paling lambat 30 (tiga puluh) hari sejak pemberhentian sementara itu wajib menyelenggarakan Rapat Umum Pemegang Saham untuk mencabut atau menguatkan keputusan tersebut. Dalam hal Rapat Umum Pemegang Saham tidak diselenggarakan dalam jangka waktu tersebut, atau tidak mengambil keputusan, pemberhentian sementara itu menjadi batal demi hukum dan anggota Direksi yang bersangkutan berwenang kembali menjalankan tugasnya sebagaimana semula.\n(4) Dewan Komisaris berhak memasuki bangunan dan halaman atau tempat lain yang dipergunakan atau dikuasai Perseroan, memeriksa semua pembukuan, surat, dan alat bukti lainnya, memeriksa dan mencocokkan keadaan uang kas, serta mengetahui semua tindakan yang telah dijalankan Direksi. Direksi dan setiap anggotanya wajib memberikan penjelasan tentang segala hal yang ditanyakan Dewan Komisaris."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT GUMITIR SELARAS PERKASA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\", berkedudukan di Kota Bandung, Provinsi Jawa Barat. Perseroan dapat membuka kantor cabang atau kantor perwakilan di tempat lain, baik di dalam maupun di luar wilayah Negara Republik Indonesia, sebagaimana ditetapkan oleh Direksi."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSetelah anggaran dasar ditetapkan, para pendiri dengan ini menerangkan bahwa saham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Wirasena Kartapradja Lubis, sebanyak 300 (tiga ratus) saham dengan nilai nominal seluruhnya Rp 300.000.000,00 (tiga ratus juta Rupiah);\n2. Nyonya Damayanti Soekmawijaya Panggabean, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nSelanjutnya para pendiri, dalam kedudukan sebagai seluruh pemegang saham, untuk pertama kalinya mengangkat:\n- Direktur Utama : Tuan Wirasena Kartapradja Lubis tersebut di atas;\n- Direktur : Nyonya Damayanti Soekmawijaya Panggabean tersebut di atas;\n- Komisaris Utama : Tuan Basuki Hartopranoto Nainggolan, bertempat tinggal di Kota Bandung;\n- Komisaris : Nyonya Ratnaningrum Salimun Hasibuan, bertempat tinggal di Kota Bandung.\n\nOrang-orang yang diangkat tersebut, yang tidak hadir pada penandatanganan akta ini, kelak menyatakan penerimaan jabatannya secara tertulis."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "Pasal 8\n\n(1) Dewan Komisaris terdiri dari seorang komisaris utama dan seorang komisaris, yang diangkat oleh Rapat Umum Pemegang Saham untuk masa jabatan 5 (lima) tahun dan dapat diangkat kembali.\n(2) Dewan Komisaris bertugas melakukan pengawasan atas kebijakan pengurusan, jalannya pengurusan pada umumnya, baik mengenai Perseroan maupun usaha Perseroan, dan memberikan nasihat kepada Direksi. Dewan Komisaris wajib bertindak dengan itikad baik, kehati-hatian, dan penuh tanggung jawab untuk kepentingan Perseroan.\n(3) Dewan Komisaris berhak memberhentikan sementara anggota Direksi dengan menyebutkan alasannya, dan dalam waktu paling lambat 30 (tiga puluh) hari sejak pemberhentian sementara itu wajib menyelenggarakan Rapat Umum Pemegang Saham untuk mencabut atau menguatkan keputusan tersebut. Dalam hal Rapat Umum Pemegang Saham tidak diselenggarakan dalam jangka waktu tersebut, atau tidak mengambil keputusan, pemberhentian sementara itu menjadi batal demi hukum dan anggota Direksi yang bersangkutan berwenang kembali menjalankan tugasnya sebagaimana semula.\n(4) Dewan Komisaris berhak memasuki bangunan dan halaman atau tempat lain yang dipergunakan atau dikuasai Perseroan, memeriksa semua pembukuan, surat, dan alat bukti lainnya, memeriksa dan mencocokkan keadaan uang kas, serta mengetahui semua tindakan yang telah dijalankan Direksi. Direksi dan setiap anggotanya wajib memberikan penjelasan tentang segala hal yang ditanyakan Dewan Komisaris."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "rincian_tidak_diatur",
+  "alasan_teks": "Akta mengatur susunan, pengangkatan, dan tugas Direksi serta Dewan Komisaris tetapi tidak mengatur rincian besaran gaji atau honorarium mereka.",
+  "doc_id": "akta-01",
+  "mode": "unanswerable",
+  "query": "Berapa besaran gaji atau honorarium yang diterima anggota Direksi dan Dewan Komisaris PT Gumitir Selaras Perkasa?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c4a024286e97d78d",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "47a01013d86046ee8f17577a9cdb691a",
+ "validation": null
+}

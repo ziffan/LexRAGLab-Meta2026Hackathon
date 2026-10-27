@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.586636,
+  "max_cov": {
+   "den": 12,
+   "num": 6
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "Pasal 2\n\nPerseroan didirikan untuk jangka waktu yang tidak terbatas lamanya, dimulai sejak tanggal Perseroan memperoleh pengesahan badan hukum dari Menteri."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT KALAWARNA TIRTASAMBADA\n\nNomor : 8\n\nPada hari ini, Kamis, tanggal 19 (sembilan belas) Februari 2026 (dua ribu dua puluh enam), pukul 09.30 (sembilan lewat tiga puluh menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, YOHANES BRAMANTYO DALIMUNTHE, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Malang, Provinsi Jawa Timur, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT KALAWARNA TIRTASAMBADA, yang dalam anggaran dasar ini disebut \"Perseroan\", berkedudukan di Kota Malang, Provinsi Jawa Timur."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT KALAWARNA TIRTASAMBADA\n\nNomor : 8\n\nPada hari ini, Kamis, tanggal 19 (sembilan belas) Februari 2026 (dua ribu dua puluh enam), pukul 09.30 (sembilan lewat tiga puluh menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, YOHANES BRAMANTYO DALIMUNTHE, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Malang, Provinsi Jawa Timur, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT KALAWARNA TIRTASAMBADA, yang dalam anggaran dasar ini disebut \"Perseroan\", berkedudukan di Kota Malang, Provinsi Jawa Timur."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "Pasal 2\n\nPerseroan didirikan untuk jangka waktu yang tidak terbatas lamanya, dimulai sejak tanggal Perseroan memperoleh pengesahan badan hukum dari Menteri."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "di_luar_akta",
+  "alasan_teks": "Pengesahan badan hukum oleh Menteri merupakan peristiwa hukum yang terjadi setelah akta dibuat dan tidak dicatat di dalam akta.",
+  "doc_id": "akta-03",
+  "mode": "unanswerable",
+  "query": "Pada tanggal berapa dan dengan nomor Surat Keputusan berapa Menteri mengesahkan badan hukum PT Kalawarna Tirtasambada?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "7240866406ce8b21",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "3c8ada47f7c4400baa9f08d53e44b0a0",
+ "validation": null
+}

@@ -1,0 +1,61 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.58888,
+  "max_cov": {
+   "den": 13,
+   "num": 6
+  },
+  "reasons": [],
+  "status": "ok",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT GUMITIR SELARAS PERKASA\n\nNomor : 27\n\nPada hari ini, Selasa, tanggal 14 (empat belas) Oktober 2025 (dua ribu dua puluh lima), pukul 10.15 (sepuluh lewat lima belas menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, RAHADYAN TUMEWU SIREGAR, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Bandung, Provinsi Jawa Barat, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT GUMITIR SELARAS PERKASA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\", berkedudukan di Kota Bandung, Provinsi Jawa Barat. Perseroan dapat membuka kantor cabang atau kantor perwakilan di tempat lain, baik di dalam maupun di luar wilayah Negara Republik Indonesia, sebagaimana ditetapkan oleh Direksi."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 2\n\nPerseroan didirikan untuk jangka waktu tidak terbatas, terhitung sejak Perseroan memperoleh status badan hukum dari Menteri yang menyelenggarakan urusan pemerintahan di bidang hukum."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT GUMITIR SELARAS PERKASA\n\nNomor : 27\n\nPada hari ini, Selasa, tanggal 14 (empat belas) Oktober 2025 (dua ribu dua puluh lima), pukul 10.15 (sepuluh lewat lima belas menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, RAHADYAN TUMEWU SIREGAR, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Bandung, Provinsi Jawa Barat, dengan dihadiri oleh saksi-saksi yang saya, Notaris, kenal dan akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT GUMITIR SELARAS PERKASA, selanjutnya dalam anggaran dasar ini disingkat \"Perseroan\", berkedudukan di Kota Bandung, Provinsi Jawa Barat. Perseroan dapat membuka kantor cabang atau kantor perwakilan di tempat lain, baik di dalam maupun di luar wilayah Negara Republik Indonesia, sebagaimana ditetapkan oleh Direksi."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "PENUTUP\n\nDemikian akta ini dibuat dan diresmikan di Kota Bandung pada hari dan tanggal sebagaimana disebutkan pada bagian awal akta ini, dengan dihadiri oleh:\n1. Nona Sekar Pamungkasari Tarigan, lahir di Garut, warga negara Indonesia, karyawan Kantor Notaris, bertempat tinggal di Kota Bandung; dan\n2. Tuan Jatmiko Wardhanatamin Silalahi, lahir di Subang, warga negara Indonesia, karyawan Kantor Notaris, bertempat tinggal di Kota Bandung;\nkeduanya sebagai saksi-saksi pengenal sekaligus saksi akta.\n\nSegera setelah akta ini saya, Notaris, bacakan kepada para penghadap dan para saksi, maka para penghadap, para saksi, dan saya, Notaris, menandatangani akta ini pada pukul 11.40 (sebelas lewat empat puluh menit) Waktu Indonesia Barat. Akta ini dibuat tanpa perubahan berupa coretan, tambahan, atau penggantian.\n\nMinuta akta ini telah ditandatangani dengan sempurna dan disimpan oleh Notaris.\n\nNotaris di Kota Bandung,\n\nRAHADYAN TUMEWU SIREGAR, S.H., M.Kn."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "di_luar_akta",
+  "alasan_teks": "Akta hanya menyatakan Perseroan memperoleh status badan hukum setelah persetujuan Menteri tanpa memuat nomor surat keputusannya yang terbit sesudah akta dibuat.",
+  "doc_id": "akta-01",
+  "mode": "unanswerable",
+  "query": "Berapa nomor Surat Keputusan Menteri Hukum mengenai pengesahan badan hukum PT Gumitir Selaras Perkasa?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "757785c7fc662c86",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "47a01013d86046ee8f17577a9cdb691a",
+ "validation": null
+}

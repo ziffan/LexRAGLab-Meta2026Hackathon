@@ -1,0 +1,41 @@
+{
+ "d_key": "e1b0e14a15f4bd63f2a5d4fe5f7b4894239a2ca7de45b968d63d8628656d6ca8",
+ "doc_id": "akta-04",
+ "family": "akta",
+ "mode": "unanswerable",
+ "proposal_ids": [
+  "a025554576cd0bb5",
+  "bc1eabffbf3349a4",
+  "2733e7f60d65e5b8"
+ ],
+ "run": {
+  "cache_key": "eee522d5d6ba490b2fbb67204d5bbb0a2ff33c5a1b8687dc2de20f26ecfaf173",
+  "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+  "config_hash": "e7e9b10818ae9da8ea06c34e070beb19708b185877ca7d9e42e9f2c25baeebe1",
+  "corpus_hash": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+  "cost_usd_micros": 501,
+  "created_at": "2026-10-27T23:42:20Z",
+  "device": "remote",
+  "effort": "low",
+  "embedder": null,
+  "error": null,
+  "failed_settings": null,
+  "host": "authoritative",
+  "kind": "spark_d",
+  "latency_ms": 7752,
+  "loader_rules_version": null,
+  "model": "muse-spark-1.3-contributor",
+  "packing": null,
+  "projected_cost_usd_micros": null,
+  "prompt_hash": "ee864ce8587675b4af64546fa69389284c937e04f40165c514f873c5c210f066",
+  "prompt_version": "v2",
+  "provider": "meta",
+  "quantization": null,
+  "run_id": "824d5d3941b14eb89fa0116339e9b506",
+  "status": "ok",
+  "tokenizer": null,
+  "usage_cached_tokens": 495,
+  "usage_input_tokens": 4105,
+  "usage_output_tokens": 694
+ }
+}

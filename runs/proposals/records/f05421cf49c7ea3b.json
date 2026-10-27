@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.731705,
+  "max_cov": {
+   "den": 15,
+   "num": 10
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSetelah anggaran dasar ditetapkan, para pendiri dengan ini menerangkan bahwa saham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Wirasena Kartapradja Lubis, sebanyak 300 (tiga ratus) saham dengan nilai nominal seluruhnya Rp 300.000.000,00 (tiga ratus juta Rupiah);\n2. Nyonya Damayanti Soekmawijaya Panggabean, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nSelanjutnya para pendiri, dalam kedudukan sebagai seluruh pemegang saham, untuk pertama kalinya mengangkat:\n- Direktur Utama : Tuan Wirasena Kartapradja Lubis tersebut di atas;\n- Direktur : Nyonya Damayanti Soekmawijaya Panggabean tersebut di atas;\n- Komisaris Utama : Tuan Basuki Hartopranoto Nainggolan, bertempat tinggal di Kota Bandung;\n- Komisaris : Nyonya Ratnaningrum Salimun Hasibuan, bertempat tinggal di Kota Bandung.\n\nOrang-orang yang diangkat tersebut, yang tidak hadir pada penandatanganan akta ini, kelak menyatakan penerimaan jabatannya secara tertulis."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "1. Tuan WIRASENA KARTAPRADJA LUBIS, lahir di Sumedang pada tanggal 3 (tiga) Maret 1981 (seribu sembilan ratus delapan puluh satu), warga negara Indonesia, wiraswasta, bertempat tinggal di Kota Bandung, Jalan Kenanga Biru Nomor 17, Rukun Tetangga 004, Rukun Warga 009, Kelurahan Mekarsari Timur, Kecamatan Cibereum Selatan;\n\n2. Nyonya DAMAYANTI SOEKMAWIJAYA PANGGABEAN, lahir di Cirebon pada tanggal 21 (dua puluh satu) Juli 1984 (seribu sembilan ratus delapan puluh empat), warga negara Indonesia, pengurus rumah tangga dan pengusaha, bertempat tinggal di Kota Bandung, Jalan Cempaka Lembayung Nomor 8, Rukun Tetangga 002, Rukun Warga 003, Kelurahan Sukamaju Barat, Kecamatan Cibereum Selatan.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh kedua saksi pengenal yang namanya disebutkan pada bagian akhir akta ini, dan menurut keterangannya para penghadap bertindak untuk diri sendiri.\n\nPara penghadap menerangkan dengan ini bermaksud mendirikan suatu Perseroan Terbatas dan untuk itu menetapkan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 9\n\nRapat Umum Pemegang Saham terdiri dari rapat tahunan dan rapat luar biasa. Rapat tahunan diadakan paling lambat 6 (enam) bulan setelah tahun buku berakhir. Panggilan rapat dilakukan secara tertulis paling lambat 14 (empat belas) hari sebelum tanggal rapat, dengan mencantumkan acara, hari, tanggal, waktu, dan tempat rapat. Rapat dilangsungkan di tempat kedudukan Perseroan. Rapat sah apabila dihadiri oleh pemegang saham yang mewakili lebih dari 1/2 (satu per dua) bagian dari seluruh saham dengan hak suara yang sah, dan keputusan diambil berdasarkan musyawarah untuk mufakat. Dalam hal musyawarah tidak mencapai mufakat, keputusan sah apabila disetujui oleh lebih dari 1/2 (satu per dua) bagian dari jumlah suara yang dikeluarkan secara sah. Setiap saham memberikan hak kepada pemiliknya untuk mengeluarkan satu suara. Pemegang saham dapat diwakili oleh pemegang saham lain atau pihak ketiga berdasarkan surat kuasa tertulis, tetapi anggota Direksi, anggota Dewan Komisaris, dan karyawan Perseroan tidak boleh bertindak selaku kuasa dalam rapat untuk mengeluarkan suara. Rapat dipimpin oleh komisaris utama; apabila komisaris utama tidak hadir, rapat dipimpin oleh seorang yang dipilih oleh dan dari antara pemegang saham yang hadir. Risalah rapat dibuat oleh seorang yang ditunjuk oleh ketua rapat, ditandatangani oleh ketua rapat dan sekurang-kurangnya seorang pemegang saham yang ditunjuk dari dan oleh peserta rapat. Pemegang saham juga dapat mengambil keputusan yang mengikat di luar rapat dengan syarat semua pemegang saham dengan hak suara menyetujui secara tertulis usul yang diajukan, dan keputusan tersebut mempunyai kekuatan yang sama dengan keputusan yang diambil dalam rapat."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSetelah anggaran dasar ditetapkan, para pendiri dengan ini menerangkan bahwa saham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Wirasena Kartapradja Lubis, sebanyak 300 (tiga ratus) saham dengan nilai nominal seluruhnya Rp 300.000.000,00 (tiga ratus juta Rupiah);\n2. Nyonya Damayanti Soekmawijaya Panggabean, sebanyak 200 (dua ratus) saham dengan nilai nominal seluruhnya Rp 200.000.000,00 (dua ratus juta Rupiah).\n\nSelanjutnya para pendiri, dalam kedudukan sebagai seluruh pemegang saham, untuk pertama kalinya mengangkat:\n- Direktur Utama : Tuan Wirasena Kartapradja Lubis tersebut di atas;\n- Direktur : Nyonya Damayanti Soekmawijaya Panggabean tersebut di atas;\n- Komisaris Utama : Tuan Basuki Hartopranoto Nainggolan, bertempat tinggal di Kota Bandung;\n- Komisaris : Nyonya Ratnaningrum Salimun Hasibuan, bertempat tinggal di Kota Bandung.\n\nOrang-orang yang diangkat tersebut, yang tidak hadir pada penandatanganan akta ini, kelak menyatakan penerimaan jabatannya secara tertulis."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "1. Tuan WIRASENA KARTAPRADJA LUBIS, lahir di Sumedang pada tanggal 3 (tiga) Maret 1981 (seribu sembilan ratus delapan puluh satu), warga negara Indonesia, wiraswasta, bertempat tinggal di Kota Bandung, Jalan Kenanga Biru Nomor 17, Rukun Tetangga 004, Rukun Warga 009, Kelurahan Mekarsari Timur, Kecamatan Cibereum Selatan;\n\n2. Nyonya DAMAYANTI SOEKMAWIJAYA PANGGABEAN, lahir di Cirebon pada tanggal 21 (dua puluh satu) Juli 1984 (seribu sembilan ratus delapan puluh empat), warga negara Indonesia, pengurus rumah tangga dan pengusaha, bertempat tinggal di Kota Bandung, Jalan Cempaka Lembayung Nomor 8, Rukun Tetangga 002, Rukun Warga 003, Kelurahan Sukamaju Barat, Kecamatan Cibereum Selatan.\n\nPara penghadap diperkenalkan kepada saya, Notaris, oleh kedua saksi pengenal yang namanya disebutkan pada bagian akhir akta ini, dan menurut keterangannya para penghadap bertindak untuk diri sendiri.\n\nPara penghadap menerangkan dengan ini bermaksud mendirikan suatu Perseroan Terbatas dan untuk itu menetapkan anggaran dasar sebagai berikut."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "Pasal 4\n\nModal dasar Perseroan berjumlah Rp 2.000.000.000,00 (dua miliar Rupiah), terbagi atas 2.000 (dua ribu) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah). Dari modal dasar tersebut telah ditempatkan dan disetor penuh sebesar Rp 500.000.000,00 (lima ratus juta Rupiah), yaitu sejumlah 500 (lima ratus) saham, oleh para pendiri yang uraiannya tercantum pada akhir akta ini. Penyetoran dilakukan dalam bentuk uang tunai dan seluruhnya telah diterima oleh Perseroan, sehingga Perseroan menjadi pemilik atas uang tersebut."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Akta hanya mencantumkan identitas umum pendiri berupa nama, tempat tanggal lahir, dan alamat tanpa memuat NIK.",
+  "doc_id": "akta-01",
+  "mode": "unanswerable",
+  "query": "Berapa Nomor Induk Kependudukan (NIK) Tuan Wirasena Kartapradja Lubis dan Nyonya Damayanti Soekmawijaya Panggabean selaku pendiri Perseroan?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "f05421cf49c7ea3b",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "47a01013d86046ee8f17577a9cdb691a",
+ "validation": null
+}

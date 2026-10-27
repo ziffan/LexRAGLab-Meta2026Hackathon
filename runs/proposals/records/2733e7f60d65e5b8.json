@@ -1,0 +1,61 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.545378,
+  "max_cov": {
+   "den": 11,
+   "num": 4
+  },
+  "reasons": [],
+  "status": "ok",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT WANAWIDYA CENDRAKIRANA PRIMA, selanjutnya dalam anggaran dasar ini disebut \"Perseroan\"."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT WANAWIDYA CENDRAKIRANA PRIMA\n\nNomor : 63\n\nPada hari ini, Rabu, tanggal 22 (dua puluh dua) April 2026 (dua ribu dua puluh enam), pukul 13.45 (tiga belas lewat empat puluh lima menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, LESTARININGSIH KAMANDANU ZEBUA, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Medan, Provinsi Sumatera Utara, dengan dihadiri oleh saksi-saksi yang namanya akan disebutkan pada bagian akhir akta ini:"
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "Pasal 9\n\nPerseroan diurus dan dipimpin oleh Direksi yang terdiri dari 2 (dua) orang anggota, yaitu seorang direktur utama dan seorang direktur. Jumlah anggota Direksi dapat ditambah berdasarkan keputusan Rapat Umum Pemegang Saham."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "ANGGARAN DASAR\n\nPasal 1\n\nPerseroan ini bernama PT WANAWIDYA CENDRAKIRANA PRIMA, selanjutnya dalam anggaran dasar ini disebut \"Perseroan\"."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS\n\nSaham yang ditempatkan dan disetor penuh dalam Perseroan diambil bagian oleh:\n\n1. Tuan Prabawantoro Hidayatsyah Napitupulu, sebanyak 180 (seratus delapan puluh) saham dengan nilai nominal seluruhnya Rp 180.000.000,00 (seratus delapan puluh juta Rupiah);\n2. Nona Sekarwangi Anggrainiputri Marpaung, sebanyak 120 (seratus dua puluh) saham dengan nilai nominal seluruhnya Rp 120.000.000,00 (seratus dua puluh juta Rupiah).\n\nPara pendiri, sebagai seluruh pemegang saham, menetapkan pengurus Perseroan yang pertama sebagai berikut:\n- Direktur Utama : Nona Sekarwangi Anggrainiputri Marpaung tersebut di atas;\n- Direktur : Tuan Prabawantoro Hidayatsyah Napitupulu tersebut di atas;\n- Komisaris : Tuan Mahardika Sutrisnoadi Panjaitan, bertempat tinggal di Kota Medan."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "AKTA PENDIRIAN PERSEROAN TERBATAS\nPT WANAWIDYA CENDRAKIRANA PRIMA\n\nNomor : 63\n\nPada hari ini, Rabu, tanggal 22 (dua puluh dua) April 2026 (dua ribu dua puluh enam), pukul 13.45 (tiga belas lewat empat puluh lima menit) Waktu Indonesia Barat.\n\nMenghadap kepada saya, LESTARININGSIH KAMANDANU ZEBUA, Sarjana Hukum, Magister Kenotariatan, Notaris berkedudukan di Kota Medan, Provinsi Sumatera Utara, dengan dihadiri oleh saksi-saksi yang namanya akan disebutkan pada bagian akhir akta ini:"
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "rincian_tidak_diatur",
+  "alasan_teks": "Akta hanya mengatur bahwa gaji dan tunjangan Direksi ditetapkan oleh Rapat Umum Pemegang Saham tanpa menentukan besaran nominalnya.",
+  "doc_id": "akta-04",
+  "mode": "unanswerable",
+  "query": "Berapa besaran gaji dan tunjangan yang diterima Direktur Utama dan Direktur PT Wanawidya Cendrakirana Prima?"
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "2733e7f60d65e5b8",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "824d5d3941b14eb89fa0116339e9b506",
+ "validation": null
+}
