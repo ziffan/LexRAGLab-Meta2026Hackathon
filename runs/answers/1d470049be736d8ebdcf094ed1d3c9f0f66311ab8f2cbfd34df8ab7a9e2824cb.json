@@ -1,0 +1,29 @@
+{
+ "answer_id": "1d470049be736d8ebdcf094ed1d3c9f0f66311ab8f2cbfd34df8ab7a9e2824cb",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "4adc303c882fbb53e8296b4996f2d0392704a28c128c6e8a0ae3d3df5241cde2",
+  "be165a0f80b8fa79e23db12104fd4dc5902fcdff6747311bf9a0bd08021d8f52",
+  "3fc624f72658367aa83128c25a4bc0989efdb6419019c05b7ec8d02cdad5cb46"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-01",
+ "model_profile": "glimmer_local",
+ "output": {
+  "jawaban": null,
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 102 › ayat (3)",
+    "teks": "pengalihan atau penjaminan kekayaan Perseroan yang dilakukan oleh Direksi sebagai pelaksanaan kegiatan usaha Perseroan sesuai dengan anggaran dasarnya."
+   },
+   {
+    "alamat": "UU 40/2007 › Penjelasan › Pasal 102 › Ayat (3)",
+    "teks": "Yang dimaksud dengan “tindakan pengalihan atau penjaminan kekayaan Perseroan, misalnya penjualan rumah oleh perusahaan real estate, penjualan surat berharga antarbank, dan penjualan barang dagangan (inventory) oleh perusahaan distribusi atau perusahaan dagang."
+   }
+  ],
+  "status": "bukti_tidak_cukup"
+ },
+ "run_id": "5a57605dba384b5795bea9837705522f",
+ "setting_id": "ed489a1ecd8390a091ee91a721945211980eecee2b362e236a486a615c6e7c7d",
+ "slot": "baseline"
+}

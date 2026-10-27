@@ -1,0 +1,30 @@
+{
+ "answer_id": "8da2dc76cff6eadaab06706e5ee4b725bbef0cce8d5a2b22092c598a5ae83e51",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "cb637a900c46157cdad35505e2d95f56b62e4083cbc0fbf5c6f3f2ea3ab3b63d",
+  "88b4452f7dbe19ebafca6bd9a09a151e286f090134f5d3977202b3215dfa0f39",
+  "df187033dca6d550087aa331cf62dc503495627bdcc4893814ae41f0a2096b82",
+  "5b6a27b9356e78b92ca5c7c7117f008885e323f99b39c67a377ba97d0952fb53",
+  "ddf17dc7ad0beb2e199933e6a35f6904d3be68882f9ecb56a68ec01c139a6762",
+  "af27bc9275b32e28f5afecc48d4331824d91aa55210583d1c882778d22fe6158",
+  "15a5ea4ec08cbf6b16be5d622a220e8d307263be1071ee439ef039dbf6f82ab4",
+  "716c2b92815f46eb1a85b87aec752d08de004ac2103656f5f164d96a85b583ed"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-09",
+ "model_profile": "baseten_open",
+ "output": {
+  "jawaban": "Direksi dapat memberi kuasa tertulis kepada 1 (satu) orang karyawan Perseroan atau lebih atau kepada orang lain untuk dan atas nama Perseroan melakukan perbuatan hukum tertentu sebagaimana yang diuraikan dalam surat kuasa.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 103",
+    "teks": "Direksi dapat memberi kuasa tertulis kepada 1 (satu) orang karyawan Perseroan atau lebih atau kepada orang lain untuk dan atas nama Perseroan melakukan perbuatan hukum tertentu sebagaimana yang diuraikan dalam surat kuasa."
+   }
+  ],
+  "status": "jawab"
+ },
+ "run_id": "18c1f404dead47c1bfbb17ba684e4af5",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}

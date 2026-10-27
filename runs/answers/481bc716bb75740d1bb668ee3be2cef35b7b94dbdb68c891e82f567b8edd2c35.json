@@ -1,0 +1,20 @@
+{
+ "answer_id": "481bc716bb75740d1bb668ee3be2cef35b7b94dbdb68c891e82f567b8edd2c35",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "bc024383fabc5d40f3f8b43de3fae7651926112df1d8334513f92e5d910f9505",
+  "cee29004c8267f969affc3be086c445bfe7ae82a3357f473ef9d86585e9b9505",
+  "bdf33142089e493d1fbe1dc7cf705db02710acd9cb370a820eda8df25a7e0638"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-08",
+ "model_profile": "baseten_open",
+ "output": {
+  "jawaban": null,
+  "kutipan": [],
+  "status": "tolak"
+ },
+ "run_id": "7ce05666c628460d97cd113df452e8fa",
+ "setting_id": "ed489a1ecd8390a091ee91a721945211980eecee2b362e236a486a615c6e7c7d",
+ "slot": "baseline"
+}

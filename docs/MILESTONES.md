@@ -218,7 +218,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk transisi status, contoh usulan parafrase, screenshot layar periksa.
 **Tier review**: 1. Transisi status menentukan butir mana yang sah (H-006).
 **Estimasi**: 3 jam.
-**Status**: berjalan — kode `79b970a`, `7021427` (Tier 1 lulus, `l3/W2-M21-periksa.md`); run live D 13 usulan UU PT `dd39dcb` (5.696 micro-USD). Bukti `bukti/M2.1-review-1440.jpg`. Menunggu operator: review 13 usulan di U6 (H-006; target H-011 15–20 butir sah).
+**Status**: berjalan — kode `79b970a`, `7021427` (Tier 1 lulus, `l3/W2-M21-periksa.md`); run live D 13 usulan UU PT `dd39dcb` (5.696 micro-USD). Bukti `bukti/M2.1-review-1440.jpg`. Menunggu operator: review 13 usulan di U6 (H-006; target H-011 15–20 butir sah). Update L2#5: review usulan UU PT dan akta selesai (operator; uupt v13, akta v70). Mode D `unanswerable` (H-087): skenario Tier 1 `docs/scenarios/M2.1-unanswerable.md` + pemeriksa 3 putaran 0 BLOCKER (`30caf38`), menunggu operator (`_kerja/orkestrasi/keputusan-pagi.md` butir 7); kode belum ditulis.
 
 Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-011).
 
@@ -344,7 +344,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: skema akta v1/v2, screenshot.
 **Tier review**: 2, ditambah Tier 4 domain review oleh operator.
 **Estimasi**: 2,5 jam.
-**Status**: berjalan — pemuat akta, alamat, store skema per keluarga, R2, pemilih keluarga `2e33331` (Tier 2, `l3/W11-M41-periksa-hasil.md`); R4 `schema_version` + tampilan potongan skema akta `df4a545`, `051615e` (Tier 2, `l3/W15-R4-periksa-hasil.md`). Lima akta sintetis `2c81ef9`. Menunggu operator: I-51, I-52, I-55; lalu induksi A akta live (proyeksi 3.408 micro-USD batas atas) → skema v1/v2 + screenshot.
+**Status**: berjalan — pemuat akta, alamat, store skema per keluarga, R2, pemilih keluarga `2e33331` (Tier 2, `l3/W11-M41-periksa-hasil.md`); R4 `schema_version` + tampilan potongan skema akta `df4a545`, `051615e` (Tier 2, `l3/W15-R4-periksa-hasil.md`). Lima akta sintetis `2c81ef9`. Menunggu operator: I-51, I-52, I-55; lalu induksi A akta live (proyeksi 3.408 micro-USD batas atas) → skema v1/v2 + screenshot. Update L2#5: alamat non-Pasal akta dari grup bernama + `schema_address_map` (`fc70679`, Tier 2 L2; belum disambung ke Pipeline). Skema A akta v2: berkas koreksi varian (a)/(b) G-4 teruji lima akta (0 hilang, 0 tumpang tindih), menunggu konfirmasi operator sebelum `correct` (keputusan-pagi butir 1). Peta unit akta di Pipeline: skenario Tier 1 `docs/scenarios/M4.1-akta-unitmap.md` + pemeriksa 2 putaran 0 BLOCKER (`f613bf8`), menunggu operator (butir 2).
 
 ### M4.2 — Frontier akta
 **Slice**: Butir akta (usulan D disetujui ditambah tulisan operator) dijalankan di grid, dan frontier akta tampil.
@@ -356,7 +356,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: frontier akta, tabel per butir.
 **Tier review**: 2.
 **Estimasi**: 2 jam.
-**Status**: belum mulai.
+**Status**: berjalan — grid akta multi-dokumen S1–S3 (H-086) `7d2cfef` (Tier 1 W39: 0 BLOCKER; mutan selamat dibunuh `8cf955e`). Terblok operator: I-62 (bentuk `grid` akta, S4), I-63/I-65 (unit dan cakupan Recall@K akta), I-64 (cakupan grid), skema A akta v2 (H-088), header B akta ulang. UI akta menampilkan "Pending operator review" tanpa angka sementara (`d0b19c8`).
 
 ### M4.3 — Ekspor profil dan laporan held-out
 **Slice**: Tombol ekspor menghasilkan profil berversi per keluarga. Profil yang dimuat ulang menghasilkan potongan yang identik. Laporan held-out tampil untuk UU PT; laporan akta per butir sebagai uji transfer, tanpa label held-out (H-054).
