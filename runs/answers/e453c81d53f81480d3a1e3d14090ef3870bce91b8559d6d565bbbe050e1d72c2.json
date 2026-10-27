@@ -1,0 +1,31 @@
+{
+ "answer_id": "e453c81d53f81480d3a1e3d14090ef3870bce91b8559d6d565bbbe050e1d72c2",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "aa039525e572b1d4d9fba648fad26b6c55d8c9d4f9049634cd31495cb7f7c638",
+  "ad5877c56c9e207828e31d451e83ccd0ffb0838d0436967c93f45bd36f0c68a7",
+  "0146916df15146308e3fac1a98beba50b75a1daa9d89087239e9b41724341afd",
+  "6b6135b3002e8a3bdbffb9c27992268cc991e3ebba86f33a110829d9b4c7b070",
+  "716c2b92815f46eb1a85b87aec752d08de004ac2103656f5f164d96a85b583ed",
+  "5b6a27b9356e78b92ca5c7c7117f008885e323f99b39c67a377ba97d0952fb53",
+  "e87b0399e277466c291c4d6f75b8247a646a931597b2ae261e9922a9c35a7e01",
+  "c9bb8254da07801fcd3103cdb28ca1078f9483e1b00ef80d942c67cf80fc95a4",
+  "a4aab6c419d97b6517d04556a1000376f9f68c65f1e0e6e29911fd3804e209b2"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-01",
+ "model_profile": "meta",
+ "output": {
+  "jawaban": "Tidak. Ketentuan kewajiban meminta persetujuan RUPS tersebut tidak berlaku terhadap tindakan pengalihan atau penjaminan kekayaan Perseroan yang dilakukan oleh Direksi sebagai pelaksanaan kegiatan usaha Perseroan sesuai dengan anggaran dasarnya.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 102 › ayat (3)",
+    "teks": "(3) Ketentuan sebagaimana dimaksud pada ayat (1), tidak berlaku terhadap tindakan pengalihan atau penjaminan kekayaan Perseroan yang dilakukan oleh Direksi sebagai pelaksanaan kegiatan usaha Perseroan sesuai dengan anggaran dasarnya."
+   }
+  ],
+  "status": "jawab"
+ },
+ "run_id": "c6f32b3129864ee29ecbecf8450dde35",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}
