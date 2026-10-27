@@ -66,3 +66,6 @@ entity_patterns = [
 # Singkatan yang titiknya BUKAN akhir kalimat (boundary coherence, EVAL-SPEC §7). Dicocokkan persis
 # (peka huruf besar-kecil) terhadap deretan huruf tepat sebelum titik.
 abbreviations = ["No", "dst", "dll"]
+# Butir mana yang masuk Recall@K di QualityMetrics: "all" (tune + held-out), "tune", atau "held_out".
+# Usulan agen: "all" sampai operator memutus (I-39). Dilabel di keluaran sebagai `items_scope`; bukan klaim held-out.
+recall_items = "all"

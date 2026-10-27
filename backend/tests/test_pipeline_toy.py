@@ -177,3 +177,95 @@ def test_make_plan_without_creating_split_writes_nothing(world):
     assert plan.split is None and plan.key is None and not world["runs"].exists()
     assert len(plan.settings) == 36 and len(plan.runnable) == 12 and len(plan.skipped) == 24
     assert len(TOY_ITEMS) == len(plan.items)
+
+
+# ---- Putaran 2 (review Tier 1 INT-a) ----
+def _set_recall_scope(cfg_dir, scope):
+    p = cfg_dir / "retrieval.toml"
+    t = p.read_bytes().decode("utf-8")
+    assert 'recall_items = "all"' in t
+    p.write_bytes(t.replace('recall_items = "all"', f'recall_items = "{scope}"').encode("utf-8"))
+
+
+@pytest.mark.parametrize("scope", ["all", "tune", "held_out"])
+def test_quality_recall_items_scope_is_configurable_and_labelled(world, scope):
+    """SHOULD-1: cakupan butir Recall@K dari config, berlabel; mutan 'selalu tune' mati karena jumlah butir berbeda."""
+    _set_recall_scope(world["cfg"], scope)
+    res, _ = run(world)
+    env = res.envelope
+    for q in env["quality"]:
+        ms = [m for m in env["metrics"] if m["setting_id"] == q["setting_id"] and m["gold_chars"] > 0 and (scope == "all" or m["split"] == scope)]
+        exp = sum((Fraction(m["parts_hit"], m["parts_total"]) for m in ms), Fraction(0)) / len(ms)
+        assert q["items_scope"] == scope and q["recall_n_items"] == len(ms)
+        assert q["recall_at_k"] == pytest.approx(float(exp), abs=1e-12)
+    counts = {q["recall_n_items"] for q in env["quality"]}
+    assert len(counts) == 1 and counts.pop() == {"all": 9, "tune": sum(1 for m in env["metrics"] if m["setting_id"] == env["quality"][0]["setting_id"] and m["split"] == "tune" and m["gold_chars"] > 0), "held_out": sum(1 for m in env["metrics"] if m["setting_id"] == env["quality"][0]["setting_id"] and m["split"] == "held_out" and m["gold_chars"] > 0)}[scope]
+    for c in env["quality_comparison"]:
+        assert c["selected"]["items_scope"] == scope and c["baseline"]["items_scope"] == scope
+
+
+def test_quality_recall_items_invalid_scope_is_an_error(world):
+    _set_recall_scope(world["cfg"], "all")
+    p = world["cfg"] / "retrieval.toml"
+    p.write_bytes(p.read_bytes().replace(b'recall_items = "all"', b'recall_items = "bogus"'))
+    with pytest.raises(GridRunError, match="recall_items"):
+        run(world)
+
+
+def test_tokenizer_info_enters_run_config_hash_and_key(world):
+    """SHOULD-2 (M08): tokenizer versi lain -> config_hash dan kunci run lain."""
+    class Tok2(ToyWs):
+        info = type("I", (), {"name": "toy-ws", "version": "2"})()
+
+    def plan(tok):
+        run(world)  # membuat split
+        return make_plan("uupt", doc=world["doc"], tokenizer=tok, butir_dir=world["butir"], runs_dir=world["runs"], config_dir=world["cfg"],
+                         create_split=False)
+    a, b = plan(ToyWs()), plan(Tok2())
+    assert a.config_hash != b.config_hash and a.key != b.key and a.key is not None
+
+
+def test_overlapping_gold_spans_merge_first_through_pipeline(world):
+    """SHOULD-3: gold tumpang-tindih digabung dulu (A1): 2 bagian-ayat, bukan 3; recall@K 1."""
+    from backend import config as bc
+    gcfg = bc.load("grid", world["cfg"])
+    p = Pipeline(u_doc(), tokenizer=ToyWs(), retrieval_cfg=bc.load("retrieval", world["cfg"]), grid_cfg=gcfg)
+    st = next(s for s in expand_grid(gcfg, "uupt") if s.chunker == "structure_handwritten" and s.retrieval_mode == "bm25"
+              and s.budget_tokens == 2000 and not s.header_b)
+    it = GridItem("ov", "uupt", "operator", "literal", gold_spans=((12, 30), (20, 37)), query="Aaa bbb Ccc ddd")
+    m = p(st, [it])[0]
+    assert m.gold_chars == 25 and m.parts_total == 2 and m.parts_hit == 2 and m.recall_at_k == 1
+    cs = p.chunk_set(st)
+    ranked = [RankedChunk(cs.by_id[c].start, cs.by_id[c].end, "", c) for c, _ in p.ranking(st, it)]
+    assert recall_at_k_item([(12, 30), (20, 37)], ranked, p.k, cs.units) == 1
+
+
+def test_boundary_coherence_through_quality_for_uses_address_map_bounds():
+    """SHOULD-4 (M22): teks tanpa titik; batas potongan struktur sah hanya karena batas unit peta alamat."""
+    from backend import config as bc
+    from backend.pipeline.grid_run import quality_for
+    from ._chunk_util import make_doc
+    text = "### Pasal 1\n(1) Aaa bbb\n(2) Ccc ddd\n\n### Pasal 2\nEee fff ggg\n"
+    doc = make_doc(text, [("batang_tubuh", 0, len(text))])
+    gcfg, rcfg = bc.load("grid"), bc.load("retrieval")
+    p = Pipeline(doc, tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg)
+    sts = expand_grid({**gcfg, "fixed_size": {"chunk_size_tokens": [5], "overlap_tokens": [1]}}, "uupt")
+    struct = next(s for s in sts if s.chunker == "structure_handwritten" and s.retrieval_mode == "bm25" and s.budget_tokens == 2000 and not s.header_b)
+    fixed = next(s for s in sts if s.chunker == "fixed_size" and s.retrieval_mode == "bm25" and s.budget_tokens == 2000 and not s.header_b)
+    qs = quality_for(p, struct, [])
+    assert qs["counts"]["bnd_den"] >= 2 and qs["boundary_coherence"] == 1.0 and qs["recall_at_k"] is None
+    qf = quality_for(p, fixed, [])
+    assert qf["counts"]["bnd_den"] >= 1 and qf["boundary_coherence"] < 1.0
+
+
+def test_run_without_items_is_an_error(world, tmp_path):
+    """M20: butir kosong atau tanpa berkas -> GridRunError 'no items', tanpa tulisan di runs/."""
+    for variant in ("empty", "missing"):
+        d = tmp_path / variant
+        d.mkdir()
+        if variant == "empty":
+            (d / "uupt.v1.jsonl").write_text("", encoding="utf-8")
+        with pytest.raises(GridRunError, match="no items"):
+            run_family_grid("uupt", doc=world["doc"], tokenizer=ToyWs(), runs_dir=world["runs"], butir_dir=d, config_dir=world["cfg"],
+                            encoder=FakeEncoder(), embed_cache_dir=world["emb"])
+    assert not (world["runs"] / "grid").exists()

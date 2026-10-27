@@ -30,6 +30,7 @@ from backend.quality.types import ChunkSpan, QualityDoc
 from backend.retrieval.dense import CACHE_DIR, Encoder, embedder_info, encoder_from_config
 from backend.spark.runrecord import RunRecord
 
+RECALL_ITEM_SCOPES = ("all", "tune", "held_out")
 CONFIGS = ("grid", "retrieval", "tokenizer", "corpus")
 _ITEM_FILE = re.compile(r"^(\w+)\.v(\d+)\.jsonl$")
 
@@ -180,8 +181,15 @@ def quality_for(pipe: Pipeline, s: Setting, metrics: list[Any]) -> dict[str, Any
     units = cs.amap.in_sections(scope)
     bounds = frozenset({0, len(pipe.doc.text)} | {u.start for u in units} | {u.end for u in units})
     qdoc = QualityDoc(pipe.doc.text, tuple(ChunkSpan(c.start, c.end) for c in cs.chunks), bounds)
-    m = quality_metrics(s.setting_id, [qdoc], pipe.k, [x.recall_at_k for x in metrics], q["entity_patterns"], q["abbreviations"])
-    return asdict(m)
+    scope = q.get("recall_items", "all")
+    if scope not in RECALL_ITEM_SCOPES:
+        raise GridRunError(f"[quality].recall_items must be one of {list(RECALL_ITEM_SCOPES)}, got {scope!r}")
+    used = [x for x in metrics if scope == "all" or x.split == scope]
+    m = quality_metrics(s.setting_id, [qdoc], pipe.k, [x.recall_at_k for x in used], q["entity_patterns"], q["abbreviations"])
+    d = asdict(m)
+    d["items_scope"] = scope  # label cakupan butir Recall@K (I-39)
+    d["recall_n_items"] = sum(1 for x in used if x.recall_at_k is not None)
+    return d
 
 
 def baseline_for(settings: list[Setting], selected: Setting, base_cfg: dict[str, Any]) -> Setting | None:
