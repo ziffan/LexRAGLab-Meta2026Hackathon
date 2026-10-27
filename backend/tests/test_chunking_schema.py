@@ -13,11 +13,11 @@ from backend.chunking.model import NO_MARKER_WARNING
 from backend.chunking.schema_chunker import SchemaChunkerError, schema_key
 from backend.grid.schemas import SchemaBinding, bind_schema_versions, is_approved, pick_active
 from backend.grid.expand import expand_grid
-from backend.pipeline.grid_run import make_plan, pipeline_config_hash, run_family_grid
+from backend.pipeline.grid_run import make_plan, pipeline_config_hash, run_family_grid, schema_report
 from backend.pipeline.pipeline import Pipeline, SettingNotAvailable, unavailable_reason
 from backend.schema_a.store import SchemaStore
 
-from ._chunk_util import ToyWs, u_doc
+from ._chunk_util import ToyWs, make_doc, u_doc
 from .pipeline_fakes import FakeEncoder, toy_config_dir, write_toy_butir
 
 PASAL = r"^###\s+Pasal\s+\d+"
@@ -239,3 +239,106 @@ def test_pipeline_cache_key_follows_schema_and_unavailable_reason(world):
     assert "version" in unavailable_reason(type(pinned)(**{**pinned.__dict__, "schema_version": 7}), schemas=b1)
     with pytest.raises(SettingNotAvailable):
         Pipeline(world["doc"], tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg).chunk_set(s)
+
+
+# ---------- W8: penutup mutan selamat W7-M34 ----------
+def _key(cfg=None, record=SCHEMA_A, tok=None):
+    return schema_key(cfg or bc.load("retrieval"), record, tok or ToyWs())
+
+
+def test_chunker_key_covers_tokenizer_scope_impl_version_and_default_level():
+    base = _key()
+    other_tok = ToyWs()
+    other_tok.info = type("I", (), {"name": "toy-ws", "version": "2"})()
+    assert _key(tok=other_tok) != base  # versi tokenizer
+    renamed = ToyWs()
+    renamed.info = type("I", (), {"name": "other-tok", "version": "1"})()
+    assert _key(tok=renamed) != base  # nama tokenizer
+    cfg = copy.deepcopy(bc.load("retrieval"))
+    cfg["scope_sections"] = list(cfg["scope_sections"]) + ["penjelasan_umum"]
+    assert _key(cfg) != base  # cakupan section
+    v2 = copy.deepcopy(bc.load("retrieval"))
+    v2.setdefault("chunking", {})["schema_chunker_version"] = 2
+    v3 = copy.deepcopy(v2)
+    v3["chunking"]["schema_chunker_version"] = 3
+    assert len({base, _key(v2), _key(v3)}) == 3  # versi implementasi mengalir ke kunci (bukan hardcode)
+    # skema beda hanya di default_chunk_level (level 1 dan 3 sama-sama unit): hash isi dan kunci berubah
+    d3 = copy.deepcopy(SCHEMA_A)
+    d3["body"]["default_chunk_level"] = 3
+    assert schema_identity(d3)["schema_hash"] != schema_identity(SCHEMA_A)["schema_hash"]
+    assert _key(record=d3) != base
+
+
+@pytest.mark.parametrize("pattern", [r"^(a+)+", r"^(a|aa)+b", r"x*", r"^("])
+def test_unsafe_or_broken_marker_pattern_rejected_with_clear_error(pattern):
+    # konsisten dengan validasi H-072 (compile_marker): bersarang/alternasi berkuantor, cocok string kosong, gagal kompilasi
+    bad = rec([lv(1, "pasal", None, PASAL, True), lv(2, "ayat", 1, pattern, False)], 1)
+    with pytest.raises(SchemaChunkerError, match=r"level 2 \(ayat\)"):
+        chunk_schema(u_doc(), bad, tokenizer=ToyWs())
+    with pytest.raises(SchemaChunkerError):
+        chunk_document(u_doc(), {"chunker": "structure_schema"}, tokenizer=ToyWs(), schema_record=bad)
+
+
+def test_multi_unit_chunk_address_is_range_and_single_unit_is_not():
+    from backend.chunking.address_map import RANGE_SEP
+
+    a = {(c.start, c.end): c.address for c in chunk_schema(u_doc(), SCHEMA_A, tokenizer=ToyWs())}
+    # [0,50) memuat tiga ayat Pasal 1: rentang ayat (1) .. ayat (3); [52,76) hanya Pasal 2
+    first, last = a[(0, 50)].split(RANGE_SEP)
+    assert first.endswith("Pasal 1 – ayat (1)") or "ayat (1)" in first
+    assert "ayat (3)" in last
+    assert RANGE_SEP not in a[(52, 76)] and a[(52, 76)].endswith("Pasal 2")
+    pj = a[(78, 163)].split(RANGE_SEP)
+    assert len(pj) == 2 and "Ayat (1)" in pj[0] and "Ayat (3)" in pj[1]
+    # unit ayat: satu potongan = satu unit, tanpa rentang
+    b = {(c.start, c.end): c.address for c in chunk_schema(u_doc(), SCHEMA_B, tokenizer=ToyWs())}
+    assert RANGE_SEP not in b[(12, 24)] and b[(12, 24)].endswith("ayat (1)")
+    assert RANGE_SEP not in b[(38, 50)] and b[(38, 50)].endswith("ayat (3)")
+
+
+def test_marker_search_does_not_leak_past_section_end():
+    # Section 1 berakhir tepat sebelum "#" milik section 2. Pola "\n#" akan cocok melintasi batas bila pencarian
+    # melewati akhir section -> section 1 dianggap punya penanda dan kehilangan potongan fallback-nya.
+    text = "Isi satu.\n# Dua\nisi dua"
+    doc = make_doc(text, [("batang_tubuh", 0, 10), ("penjelasan_pasal", 10, len(text))])
+    schema = rec([lv(1, "judul", None, r"\n#", True)], 1)
+    ch = chunk_schema(doc, schema, tokenizer=ToyWs())
+    assert [(c.section, c.start, c.end) for c in ch] == [("batang_tubuh", 0, 9), ("penjelasan_pasal", 10, len(text))]
+    assert all(NO_MARKER_WARNING in c.warnings for c in ch)
+
+
+def test_boundary_diff_schema_only_examples_ordered_by_offset_and_capped():
+    doc, tok = u_doc(), ToyWs()
+    cj = rec([lv(1, "cj", None, r"^Cukup jelas\.", True)], 1)
+    d = boundary_diff(doc, chunk_structure(doc, tokenizer=tok), chunk_schema(doc, cj, tokenizer=tok))
+    pj = d["sections"]["penjelasan_pasal"]
+    assert (pj["same"], pj["hand_only"], pj["schema_only"]) == (1, 7, 5)
+    assert [(e["edge"], e["offset"]) for e in pj["examples"]["schema_only"]] == [
+        ("start", 111), ("end", 150), ("start", 151), ("end", 187), ("start", 188)]
+    capped = boundary_diff(doc, chunk_structure(doc, tokenizer=tok), chunk_schema(doc, cj, tokenizer=tok), n_examples=2)
+    assert [e["offset"] for e in capped["sections"]["penjelasan_pasal"]["examples"]["schema_only"]] == [111, 150]
+    assert capped["sections"]["batang_tubuh"]["schema_only"] == 0
+
+
+def test_chunk_document_forwards_retrieval_cfg():
+    # cakupan hanya batang_tubuh: potongan penjelasan tak boleh muncul; bila cfg tak diteruskan ke chunker, scope default
+    # (batang_tubuh + penjelasan_pasal) dipakai dan verify_chunks (scope sempit) menolak.
+    cfg = copy.deepcopy(bc.load("retrieval"))
+    cfg["scope_sections"] = ["batang_tubuh"]
+    ch = chunk_document(u_doc(), {"chunker": "structure_schema"}, tokenizer=ToyWs(), retrieval_cfg=cfg, schema_record=SCHEMA_A)
+    assert {c.section for c in ch} == {"batang_tubuh"} and spans(ch) == [(0, 50), (52, 76)]
+
+
+def test_schema_approved_requires_all_versions(world):
+    gcfg, rcfg = bc.load("grid", world["cfg"]), bc.load("retrieval", world["cfg"])
+    s = next(x for x in expand_grid(gcfg, "uupt") if x.chunker == "structure_schema" and not x.header_b)
+    spark_v1 = rec(SCHEMA_A["body"]["levels"], 1)
+    oper_v2 = rec(SCHEMA_B["body"]["levels"], 2, version=2, source="operator")
+    b = SchemaBinding("uupt", (spark_v1, oper_v2))
+    pipe = Pipeline(world["doc"], tokenizer=ToyWs(), retrieval_cfg=rcfg, grid_cfg=gcfg, schemas=b)
+    pin = lambda v: type(s)(**{**s.__dict__, "schema_version": v})  # noqa: E731
+    mixed = schema_report(pipe, [pin(1), pin(2)], b)
+    assert [d["schema_approved"] for d in mixed["schemas_used"]] == [False, True]
+    assert mixed["schema_approved"] is False  # satu versi belum disetujui -> False (bukan any)
+    assert set(mixed["boundary_diff"]) == {"1", "2"}
+    assert schema_report(pipe, [pin(2)], b)["schema_approved"] is True
