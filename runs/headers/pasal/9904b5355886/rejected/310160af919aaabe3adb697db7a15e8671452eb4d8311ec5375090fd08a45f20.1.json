@@ -1,0 +1,11 @@
+{
+ "chunk_id": "310160af919aaabe3adb697db7a15e8671452eb4d8311ec5375090fd08a45f20",
+ "chunk_id_returned": "310160af919aaabe3adb697db7a15e8671452eb4d8311ec5375090fd08a45f20",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "04d7795465904045bbdd6d9d8f5ed452",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XIII (Ketentuan Peralihan): penyesuaian setahun bagi perseroan yang melanggar larangan kepemilikan saham.",
+ "tokens_local": 41
+}
