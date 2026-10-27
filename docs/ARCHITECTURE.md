@@ -62,7 +62,7 @@ flowchart LR
 | Chunker ukuran tetap | `CorpusDoc`, ukuran + overlap dari konfigurasi | `Chunk[]` | Alamat diberikan dari peta alamat struktur, sama seperti chunker lain (keadilan); potongan yang melintasi beberapa unit memakai alamat rentang (`docs/DATA-CONTRACTS.md` §3) |
 | Chunker skema | `CorpusDoc`, `SchemaA` versi aktif | `Chunk[]` | Deterministik: skema sama → hash potongan sama |
 | Header B store | `HeaderB` (§7) | teks header per potongan | Token header masuk anggaran |
-| Retrieval dense | potongan, query | ranking | Embedder dari konfigurasi: `BAAI/bge-m3` revisi dipin, dense saja, tanpa prefix (H-042); `max_seq_length` dan jumlah potongan terpotong tercatat (G-22). Embedding dihitung sekali per potongan dan disimpan per hash; format penyimpanan `.npy` per `chunk_set_hash` (H-025) |
+| Retrieval dense | potongan, query | ranking | Embedder dari konfigurasi: `BAAI/bge-m3` revisi dipin, dense saja, tanpa prefix (H-042); `max_seq_length` dan jumlah potongan terpotong tercatat (G-22). Embedding dihitung sekali per potongan dan disimpan per hash; format penyimpanan `.npy` per `embedding_set_hash` (H-025; nama dibedakan dari `Profile.chunk_set_hash`, I-43) |
 | Retrieval BM25 | potongan, query | ranking | BM25 + stemmer Sastrawi untuk bahasa Indonesia |
 | Retrieval hybrid | dua ranking | ranking | RRF, parameter dari konfigurasi |
 | Budget packer | ranking, anggaran | potongan terambil | Aturan pengemasan di `docs/EVAL-SPEC.md` §3 |
@@ -134,8 +134,8 @@ Setiap berkas punya field `version`. Hash konfigurasi = hash isi kanonik semua b
 
 | Kunci | Isi | Lokasi |
 |---|---|---|
-| `hash(clean_sha256, loader_rules_version, chunker, chunker_params, schema_version)` | `Chunk[]` | `runs/chunks/` |
-| `hash(chunk_set_hash, embedder_name, embedder_revision, max_seq_length)` | embedding | `runs/embeddings/` (`.npy`, H-025, H-042) |
+| `hash(clean_sha256, loader_rules_version, chunker_key)`; `chunker_key` memuat chunker, parameter, nama + versi tokenizer, versi implementasi, dan untuk `structure_schema` versi + hash isi skema (I-42) | `Chunk[]` | `runs/chunks/` (belum dipakai kode; potongan dibangun ulang deterministik) |
+| `hash(embedding_set_hash, embedder_name, embedder_revision, max_seq_length)` | embedding | `runs/embeddings/` (`.npy`, H-025, H-042) |
 | `hash(clean_sha256, config_hash, item_set_hash, split_version)` | hasil grid | `runs/grid/` |
 | `hash(provider, model, quantization, effort, prompt_hash, schema_hash, input_hash)` | keluaran model + `RunRecord` | `runs/spark/<peran>/`; run Glimmer di jalur terpisah (H-047) |
 
