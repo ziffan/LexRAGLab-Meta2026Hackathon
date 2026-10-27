@@ -48,4 +48,6 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 1. Setelah putusan operator: `correct` skema akta v2 → header B akta → kode peta unit akta → H-087 → S4 + grid akta → laporan transfer + profil akta.
 2. Ekspor statis ulang + uji visual; M5.2 gate.
-3. Berkas keadaan orkestrasi: `_kerja/orkestrasi/keadaan-L2.md`.
+3. Berkas keadaan orkestrasi: `_kerja/orkestrasi/keadaan-L2.md` (L2) dan `_kerja/orkestrasi/keadaan-L1.md` (L1). `_kerja/` di-gitignore dan hanya ada di mesin otoritatif; `keputusan-pagi.md` dibaca operator di PC ini.
+4. Melanjutkan di sesi baru: L1 membaca kedua berkas keadaan, menjalankan ulang `uv run pytest -q` (1190 di `be35b4d`) dan `npm test` (250), lalu melahirkan L2 baru dengan brief + addendum 1–3 + putusan-operator-2..8 + jawaban operator atas `keputusan-pagi.md`, dan memasang ulang pengawas 30 menit (cron session-only, mati bersama sesi).
+5. Log keputusan operator (repo catatan) sudah memuat salinan H-059..H-088 (terakhir `745f7f0`). Keputusan baru dari `keputusan-pagi.md` disalin dengan cara yang sama.
