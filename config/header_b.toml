@@ -1,8 +1,8 @@
 # config/header_b — peran B (contextual chunking), M3.1. Nilai bertanda "usulan agen" boleh diubah operator.
 version = 1
 
-# Placeholder; granularitas diputus operator dari angka M3.1 (H-038). Nilai: "pasal" | "ayat".
-granularity = "ayat"
+# H-074: granularitas B = pasal (diputus operator); fixed_size tetap dijalankan. Nilai: "pasal" | "ayat".
+granularity = "pasal"
 
 # H-069 (A6): cakupan setting header-on di grid. "frontier_only" = hanya kembaran dari frontier tune deret off (H-017);
 # "all" = semua kembaran (mahal, memicu permintaan header untuk setting di luar frontier). Penyaring ada di runner grid.
@@ -27,6 +27,11 @@ assumed_latency_ms = 3000
 
 # Hentikan run bila sekian panggilan berturut-turut gagal (cegah membakar kuota saat key/model bermasalah).
 max_consecutive_errors = 5
+
+# Guard cache (H-074): setelah sekian panggilan berbayar pertama (bukan cache hit lokal, tanpa pemanas), bila rasio
+# agregat cached/input di bawah batas, run berhenti (`cache_ratio_low`). Pecahan string agar perbandingan eksak; batas inklusif.
+cache_guard_calls = 10
+cache_guard_min_ratio = "4/5"
 
 [projection]
 # RPM dokumentasi Contributor (H-028); proyeksi default memakai [limits].max_rpm config/model (140, G-19).

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+from fractions import Fraction
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
@@ -34,7 +35,7 @@ class HeaderOutcome:
 class HeaderRun:
     outcomes: list[HeaderOutcome] = field(default_factory=list)
     warm: RunRecord | None = None
-    stopped_reason: str | None = None  # None | budget_exceeded | too_many_errors | warm_failed
+    stopped_reason: str | None = None  # None | budget_exceeded | too_many_errors | warm_failed | cache_ratio_low
 
 
 def make_validator(unit: Unit, tokenizer: Any, max_header_tokens: int) -> Callable[[dict], str | None]:
@@ -88,8 +89,12 @@ def _save(path: Path, rec: dict[str, Any]) -> None:
 
 def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: list[Unit], *, granularity: str,
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
-                max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True) -> HeaderRun:
+                max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True,
+                cache_guard_calls: int | None = None, cache_guard_min_ratio: Fraction | None = None) -> HeaderRun:
+    """Guard cache (H-074): setelah `cache_guard_calls` panggilan berbayar (bukan cache hit lokal, tanpa pemanas) rasio
+    agregat cached/input < `cache_guard_min_ratio` (inklusif: sama dengan batas lanjut) -> berhenti `cache_ratio_low`."""
     run = HeaderRun()
+    paid = in_tok = cached_tok = 0
     if warm and units:
         w = client.call(**make_call(prompt, prefix, WARM_UNIT, tokenizer, max_header_tokens=max_header_tokens,
                                     max_output_tokens=max_output_tokens,
@@ -107,12 +112,23 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
         except BudgetExceeded:
             run.stopped_reason = "budget_exceeded"
             return run
+        r = res.record
+        guard_stop = False
+        if cache_guard_calls and r.status == "ok" and r.usage_input_tokens is not None and paid < cache_guard_calls:
+            paid += 1
+            in_tok += r.usage_input_tokens
+            cached_tok += r.usage_cached_tokens or 0
+            guard_stop = (paid == cache_guard_calls and cache_guard_min_ratio is not None
+                          and Fraction(cached_tok, max(in_tok, 1)) < cache_guard_min_ratio)
         if res.output is None:
             err = res.record.error or {"code": "model_error", "message": "call failed"}
             run.outcomes.append(HeaderOutcome(u, res.record, [], dict(err)))
             consecutive += 1
             if consecutive >= max_consecutive_errors:
                 run.stopped_reason = "too_many_errors"
+                return run
+            if guard_stop:
+                run.stopped_reason = "cache_ratio_low"
                 return run
             continue
         consecutive = 0
@@ -124,4 +140,7 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
         for r in recs:
             _save(d / f"{r['chunk_id']}.json", r)
         run.outcomes.append(HeaderOutcome(u, res.record, recs))
+        if guard_stop:
+            run.stopped_reason = "cache_ratio_low"
+            return run
     return run

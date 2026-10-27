@@ -237,3 +237,55 @@ def test_warm_limit_comes_from_config_and_reaches_request_and_projection(tmp_pat
     b = project_units(units(), DocPrefix("x", "n", 1000, "k"), Tok(), pr, rpm=60, expected_output_tokens=2000,
                       max_output_tokens=2000, warm_max_output_tokens=1000, assumed_latency_ms=1)
     assert b["cost_usd_micros"]["expected"] - a["cost_usd_micros"]["expected"] == 900 * 200000 // 1_000_000
+
+
+def usage_responder(cached, inp=100):
+    def act(tr, request):
+        body = json.loads(request.content.decode("utf-8"))
+        cid = re.search(r"chunk_id: (\S+)", body["input"]).group(1)
+        u = {"input_tokens": inp, "input_tokens_details": {"cached_tokens": cached}, "output_tokens": 50,
+             "output_tokens_details": {"reasoning_tokens": 40}}
+        return Resp(200, body_ok({"chunk_id": cid, "header": "ok"}, usage=u))
+    return act
+
+
+def guard_run(tmp_path, cached, n, pre=0):
+    from fractions import Fraction
+    prompt = load_prompt(MAXH)
+    prefix = build_prefix(prompt, doc_stub(), Tok())
+    rig = Rig(tmp_path, default=usage_responder(cached))
+    us = [Unit(f"g{i}", "a", "t", 1, (f"g{i}",)) for i in range(n)]
+    kw = dict(granularity="ayat", tokenizer=Tok(), headers_dir=tmp_path / "h", max_header_tokens=MAXH,
+              max_output_tokens=1000, max_consecutive_errors=3, warm_max_output_tokens=1000, meta={}, warm=False,
+              cache_guard_calls=10, cache_guard_min_ratio=Fraction("4/5"))
+    if pre:
+        run_headers(rig.client, prompt, prefix, us[:pre], **kw)
+    return run_headers(rig.client, prompt, prefix, us, **kw), rig
+
+
+def test_cache_guard_stops_right_after_tenth_call_below_ratio(tmp_path):
+    res, rig = guard_run(tmp_path, cached=79, n=15)
+    assert res.stopped_reason == "cache_ratio_low" and len(res.outcomes) == 10 and len(rig.tr.requests) == 10
+    assert load_header(tmp_path / "h", "ayat", load_prompt(MAXH), "g9") is not None  # header yang jadi tersimpan
+
+
+def test_cache_guard_ratio_exactly_at_limit_continues(tmp_path):
+    res, rig = guard_run(tmp_path, cached=80, n=15)
+    assert res.stopped_reason is None and len(res.outcomes) == 15
+
+
+def test_cache_guard_ignores_local_cache_hits(tmp_path):
+    res, rig = guard_run(tmp_path, cached=0, n=15, pre=3)  # 3 pertama cache hit lokal: tak dihitung
+    assert res.stopped_reason == "cache_ratio_low" and len(res.outcomes) == 13 and len(rig.tr.requests) == 3 + 10
+
+
+def test_cache_guard_not_triggered_below_ten_calls(tmp_path):
+    res, rig = guard_run(tmp_path, cached=0, n=9)
+    assert res.stopped_reason is None and len(res.outcomes) == 9
+
+
+def test_cache_guard_config_is_read_as_fraction():
+    from fractions import Fraction
+    from backend.header_b.run import load_header_cfg
+    hc = load_header_cfg()
+    assert hc["cache_guard_calls"] == 10 and hc["cache_guard_min_ratio"] == Fraction(4, 5) and hc["granularity"] == "pasal"

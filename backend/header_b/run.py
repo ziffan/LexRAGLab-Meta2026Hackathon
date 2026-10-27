@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +30,16 @@ def load_header_cfg(config_dir: Path | None = None) -> dict[str, Any]:
         v = c.get(k)
         if not isinstance(v, int) or isinstance(v, bool) or v < 1:
             raise HeaderConfigError(f"config/header_b: {k} must be a positive integer")
+    for k in ("cache_guard_calls",):
+        v = c.get(k)
+        if not isinstance(v, int) or isinstance(v, bool) or v < 1:
+            raise HeaderConfigError(f"config/header_b: {k} must be a positive integer")
+    try:
+        c["cache_guard_min_ratio"] = Fraction(str(c.get("cache_guard_min_ratio")))
+    except (ValueError, ZeroDivisionError):
+        raise HeaderConfigError("config/header_b: cache_guard_min_ratio must be a fraction string such as '4/5'") from None
+    if not 0 <= c["cache_guard_min_ratio"] <= 1:
+        raise HeaderConfigError("config/header_b: cache_guard_min_ratio must be between 0 and 1")
     if c.get("granularity") not in ("pasal", "ayat"):
         raise HeaderConfigError("config/header_b: granularity must be 'pasal' or 'ayat'")
     return c

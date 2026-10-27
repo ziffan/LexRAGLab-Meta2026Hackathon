@@ -88,6 +88,7 @@ def main(argv: list[str] | None = None) -> int:
                           headers_dir=config.REPO_ROOT / "runs" / "headers", max_header_tokens=hc["max_header_tokens"],
                           max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
                           warm_max_output_tokens=hc["warm_max_output_tokens"],
+                          cache_guard_calls=hc["cache_guard_calls"], cache_guard_min_ratio=hc["cache_guard_min_ratio"],
                           meta=meta)
     except BudgetExceeded as exc:
         print(f"error: budget_exceeded: {exc}", file=sys.stderr)
