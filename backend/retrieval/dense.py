@@ -69,8 +69,10 @@ def encoder_from_config(cfg: dict[str, Any], device: str | None = None) -> Sente
 
 
 def embedder_info(enc: Encoder, n_truncated: int | None = None) -> dict[str, Any]:
-    """Bentuk `RunRecord.embedder` (DATA-CONTRACTS §12); `n_truncated` ikut bila diberikan (G-22)."""
-    info: dict[str, Any] = {"name": enc.model, "revision": enc.revision, "max_seq_length": enc.max_seq_length}
+    """Bentuk `RunRecord.embedder` (DATA-CONTRACTS §12); `n_truncated` ikut bila diberikan (G-22).
+    `device` = perangkat encoder yang menjalankan run ini, bukan yang membangun cache."""
+    info: dict[str, Any] = {"name": enc.model, "revision": enc.revision, "max_seq_length": enc.max_seq_length,
+                            "device": enc.device}
     if n_truncated is not None:
         info["n_truncated"] = n_truncated
     return info
@@ -113,7 +115,12 @@ def embed_chunks(enc: Encoder, items: Sequence[tuple[str, str]], *, cache_dir: P
     if npy.exists() and js.exists():
         meta = json.loads(js.read_text(encoding="utf-8"))
         mat = np.load(npy, allow_pickle=False)
-        if meta["chunk_ids"] == [i for i, _ in ordered] and mat.shape[0] == len(ordered):
+        # cache rusak atau tak cocok (model, revisi, max_seq_length, dimensi, urutan): dibangun ulang, bukan dipakai
+        valid = (meta.get("model") == enc.model and meta.get("revision") == enc.revision
+                 and meta.get("max_seq_length") == enc.max_seq_length and mat.ndim == 2
+                 and mat.shape[0] == len(ordered) and mat.shape[1] == meta.get("dim")
+                 and meta["chunk_ids"] == [i for i, _ in ordered])
+        if valid:
             return EmbeddingSet(meta["chunk_ids"], mat, meta["n_truncated"], True, h, npy, meta)
     texts = [t for _, t in ordered]
     lens = enc.token_counts(texts) if texts else []
@@ -127,14 +134,16 @@ def embed_chunks(enc: Encoder, items: Sequence[tuple[str, str]], *, cache_dir: P
     return EmbeddingSet(meta["chunk_ids"], mat, n_trunc, False, h, npy, meta)
 
 
-def embed_query(enc: Encoder, query: str, *, cache_dir: Path | None = None) -> np.ndarray:
+def embed_query(enc: Encoder, query: str, *, cache_dir: Path | None = None, dim: int | None = None) -> np.ndarray:
     cdir = cache_dir or CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
     h = sha256_hex({"kind": "query", "model": enc.model, "revision": enc.revision,
                     "max_seq_length": enc.max_seq_length, "text": query})
     p = cdir / f"q-{h}.npy"
     if p.exists():
-        return np.load(p, allow_pickle=False)
+        v = np.load(p, allow_pickle=False)
+        if v.ndim == 1 and (dim is None or v.shape[0] == dim):
+            return v  # dimensi tak cocok: dibangun ulang
     v = enc.encode([query])[0]
     _save_npy(p, v)
     return v
@@ -145,7 +154,7 @@ def rank_dense(enc: Encoder, emb: EmbeddingSet, query: str, top_n: int | None = 
     """Ranking `(chunk_id, cosine)` menurun; seri skor -> `chunk_id` naik. Query kosong -> []."""
     if not query.strip() or not emb.chunk_ids:
         return []
-    q = embed_query(enc, query, cache_dir=cache_dir)
+    q = embed_query(enc, query, cache_dir=cache_dir, dim=int(emb.matrix.shape[1]))
     scores = emb.matrix @ q
     hits = [(cid, float(s)) for cid, s in zip(emb.chunk_ids, scores)]
     hits.sort(key=lambda x: (-x[1], x[0]))

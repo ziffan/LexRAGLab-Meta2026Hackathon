@@ -79,7 +79,7 @@ def test_truncated_count_in_metadata_and_cached(tmp_path):
     assert es.n_truncated == 1  # hanya b (7 > 6); c = 6 tidak terpotong
     again = dense.embed_chunks(enc, items, cache_dir=tmp_path)
     assert again.cache_hit and again.n_truncated == 1
-    assert dense.embedder_info(enc, es.n_truncated) == {"name": "fake/model", "revision": "rev1", "max_seq_length": 6, "n_truncated": 1}
+    assert dense.embedder_info(enc, es.n_truncated) == {"name": "fake/model", "revision": "rev1", "max_seq_length": 6, "device": "cpu", "n_truncated": 1}
     assert es.meta["device"] == "cpu"
 
 
@@ -126,8 +126,8 @@ def _gpu_ready() -> bool:
 
 @pytest.mark.gpu
 @pytest.mark.skipif(not _gpu_ready(), reason="CUDA atau cache bge-m3 (revisi dipin) tidak ada")
-def test_bge_m3_real_embeds_three_sentences(tmp_path):
-    os.environ["HF_HUB_OFFLINE"] = "1"
+def test_bge_m3_real_embeds_three_sentences(tmp_path, monkeypatch):
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
     from backend import config
 
     enc = dense.encoder_from_config(config.load("retrieval"))
@@ -140,3 +140,77 @@ def test_bge_m3_real_embeds_three_sentences(tmp_path):
     assert np.allclose(np.linalg.norm(es.matrix, axis=1), 1.0, atol=1e-3)
     r = dense.rank_dense(enc, es, "kapan RUPS tahunan harus diadakan", cache_dir=tmp_path)
     assert r[0][0] == "s2" and r[-1][0] == "s3"
+
+
+def test_query_cache_key_includes_model_revision_maxlen(tmp_path):
+    base = FakeEncoder()
+    dense.embed_query(base, "RUPS tahunan", cache_dir=tmp_path)
+    dense.embed_query(base, "RUPS tahunan", cache_dir=tmp_path)
+    assert base.encode_calls == 1
+    for other in (FakeEncoder(revision="rev2"), FakeEncoder(max_seq_length=9)):
+        dense.embed_query(other, "RUPS tahunan", cache_dir=tmp_path)
+        assert other.encode_calls == 1  # kunci beda -> encode ulang
+    m = FakeEncoder()
+    m.model = "other/model"
+    dense.embed_query(m, "RUPS tahunan", cache_dir=tmp_path)
+    assert m.encode_calls == 1
+
+
+def test_query_cache_wrong_dim_is_rebuilt(tmp_path):
+    enc = FakeEncoder()
+    es = dense.embed_chunks(enc, ITEMS, cache_dir=tmp_path)
+    for f in tmp_path.glob("q-*.npy"):
+        f.unlink()
+    dense.rank_dense(enc, es, "RUPS", cache_dir=tmp_path)
+    (qf,) = tmp_path.glob("q-*.npy")
+    np.save(qf, np.zeros(DIM + 3, dtype=np.float32))
+    calls = enc.encode_calls
+    assert dense.rank_dense(enc, es, "RUPS", cache_dir=tmp_path)
+    assert enc.encode_calls == calls + 1
+
+
+def test_corpus_cache_mismatched_meta_is_rebuilt(tmp_path):
+    import json
+
+    enc = FakeEncoder()
+    es = dense.embed_chunks(enc, ITEMS, cache_dir=tmp_path)
+    js = tmp_path / f"{es.set_hash}.json"
+    meta = json.loads(js.read_text(encoding="utf-8"))
+    meta["dim"] = DIM + 1
+    js.write_text(json.dumps(meta), encoding="utf-8")
+    again = dense.embed_chunks(enc, ITEMS, cache_dir=tmp_path)
+    assert not again.cache_hit and enc.encode_calls == 2 and again.matrix.shape[1] == DIM
+
+
+def test_sentence_transformer_constructor_and_encode_kwargs(monkeypatch, tmp_path):
+    """Tanpa GPU: SentenceTransformer palsu menangkap kwargs. Offline, revisi dipin, max_seq_length, tanpa prefix."""
+    import sentence_transformers
+
+    seen = {}
+
+    class FakeST:
+        def __init__(self, model, **kw):
+            seen["init"] = (model, kw)
+            self.max_seq_length = 512
+            self.tokenizer = None
+
+        def encode(self, texts, **kw):
+            seen["encoded"] = list(texts)
+            seen["encode_kw"] = kw
+            return np.ones((len(texts), 4), dtype=np.float32) / 2
+
+        def get_sentence_embedding_dimension(self):
+            return 4
+
+    monkeypatch.setattr(sentence_transformers, "SentenceTransformer", FakeST)
+    from backend import config
+
+    cfg = config.load("retrieval")
+    enc = dense.encoder_from_config(cfg, device="cpu")
+    model, kw = seen["init"]
+    assert model == "BAAI/bge-m3" and kw["revision"] == "5617a9f61b028005a4858fdac845db406aefb181"
+    assert kw["local_files_only"] is True and kw["device"] == "cpu"
+    assert enc._st.max_seq_length == cfg["dense"]["max_seq_length"] == 8192
+    enc.encode(["kalimat satu", "kalimat dua"])
+    assert seen["encoded"] == ["kalimat satu", "kalimat dua"]  # tanpa prefix
+    assert seen["encode_kw"]["normalize_embeddings"] is True and seen["encode_kw"]["batch_size"] == cfg["dense"]["batch_size"]
