@@ -1,0 +1,43 @@
+{
+ "answer_id": "396315be2f311e936e0fb96721529a4a190120f1358e503d13b45d245a8a9b01",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "5466ccbead3bf1f87c08dfe6523aba135eb907d641a30f213f10cb9d3559a244",
+  "921b52e0e13e1c4a67c1c6b119c74c90b1c4da86b7dca6f92eae7a2d7d906d53",
+  "fe741d5c95f4df4d48f2d8fb45ee6e8ed910c69689921f939f929a9139040ae4",
+  "e4c36d44ef40e3dd176c01edefb9f895e7a820991160a765bfcee94bec5ab87f",
+  "4dfc1635509be0756c712dedf28ea4afb9efff9dae356b4ae3658867a4c49dc2",
+  "c04d1a7dab3cf3a07cf6ae3627170e06aaa6627e4ad5c9b561abba2e60f959f1",
+  "cb7c6ef204f51bdf62ac02f657d71a16c1512b42a8f054d60024f26a59af1dab",
+  "8a00cda3c8f9bc089178a0f486833ea7ea3a63731a3a5d171700725402e49333",
+  "b69325eca93318e1ccf06c1d08ab6cc99861b40130f1f51caf5f14cf2e8e52b0"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-02",
+ "model_profile": "meta",
+ "output": {
+  "jawaban": "Penyelenggaraan RUPS yang diselenggarakan Direksi dapat dilakukan atas permintaan: 1 orang atau lebih pemegang saham yang bersama-sama mewakili 1/10 atau lebih dari jumlah seluruh saham dengan hak suara (kecuali anggaran dasar menentukan jumlah yang lebih kecil), atau Dewan Komisaris. Permintaan diajukan kepada Direksi.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (1) – UU 40/2007 › Pasal 79 › ayat (10)",
+    "teks": "(1) Direksi menyelenggarakan RUPS tahunan sebagaimana dimaksud dalam Pasal 78 ayat (2) dan RUPS lainnya sebagaimana dimaksud dalam Pasal 78 ayat (4) dengan didahului pemanggilan RUPS."
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (1) – UU 40/2007 › Pasal 79 › ayat (10)",
+    "teks": "(2) Penyelenggaraan RUPS sebagaimana dimaksud pada ayat (1) dapat dilakukan atas permintaan:"
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (1) – UU 40/2007 › Pasal 79 › ayat (10)",
+    "teks": "a. 1 (satu) orang atau lebih pemegang saham yang bersama-sama mewakili 1/10 (satu persepuluh) atau lebih dari jumlah seluruh saham dengan hak suara, kecuali anggaran dasar menentukan suatu jumlah yang lebih kecil; atau"
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (1) – UU 40/2007 › Pasal 79 › ayat (10)",
+    "teks": "b. Dewan Komisaris."
+   }
+  ],
+  "status": "jawab"
+ },
+ "run_id": "6b318801a5be4929a80279767f4724c1",
+ "setting_id": "a801296d218135dbad4734d1d0ade0ccd0bd09fec5ac4e5342ee06afb182f48c",
+ "slot": "baseline"
+}

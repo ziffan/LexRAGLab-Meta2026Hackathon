@@ -1,0 +1,71 @@
+{
+ "answer_id": "5beba596ca0835b8b36ac48a3513c2e4cd1182bb0954ec9190d571d5e4e4f789",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "e56977d1f0da4a56ee41dd8af900b9a5652840db3d9b95d7871627ce0a43e472",
+  "789735669800cb51a0b5753a41cadcfc35b7ec5b68ae875fbfadb478414a1ecd",
+  "1ff212d58f142ded0774117326c03d35c3600a4255d2672a6300dd90d2dbdfca",
+  "dfe1c0e46b14df3928419dcc8f21f1070272439a0e246b3185ef9084f2476793",
+  "04eec81a027cfa77c39272cd091b163ac73eb4649af557211b0dce5ae93de2f4",
+  "79ab59c0af99f3b22fc28065a501de5019d0d0add7ad4942f3fa7fa2587f9a6d",
+  "9c838fe8bc6ebb74a271bfb11a05bab9643523ebe0d78831341c9f456ff62c5f",
+  "31f20e26314878e78ddde6a325e8b9532bb25c30bbef2c100e0b5dcb567af151",
+  "4fb8c5b32cbc844c6457566c0e50fc3ad96a332018964717e4c8c92105d56c8d",
+  "05316191b0441e554710f0ce718b622d9244f056d8467f3b2d930cadd3ef3832",
+  "7202109de6d820d312d44c2766f7dc208529b9ec576689038902794ebd1a27d3",
+  "368bd000c7f05b74d32fa93b1f427400c9fa99c145c42fc3322a7045e1667d4d",
+  "2e69a76c02b42cd8181812a27e522cae3ee04cef2f32adde7c33165435d72364",
+  "59c6e1c44e7b8684ea08a590b535c8bc553eee6388747c4d33667eb54563c769",
+  "e8efb02242d33099529eaf4d3f489e7283841b9f19be99afd1fa2cc10f506b05",
+  "9e93b9f824277ac685a4a2714c4716db61557b8c0fbdbeb75296fc2b4f04aae6",
+  "e6bd424d31fd7863cb1979b3140d52655b4b4c2f45c65e18bec4043410117cb5",
+  "c1de9e03bcfc0c78e4d8d49e59ff74c1a88d30e849a46cb313e4acc23696b69d",
+  "b472ba73a1910f2148d9f3fbe79f9ad0efca3db850a902b2f84a14674e3ed79e",
+  "589d7d43ba7779ee7a002b05780475f82c0bdea57e6cd18d0406d35c8daa2bae",
+  "10aca1c7a2b2a9c665dde9916ae3c6d555792e03da321f436b88c33f2ac8082d",
+  "67e13f04349b3f7b6a62582eb8b951b592b1cf92ad049ce038996ef76223718b",
+  "18ef67e1cfe7b0d43366cbea1b214e127aed2e2afb3a5c6232927ec5f5f88754",
+  "30c2544a4e1736b8f06f69ca837244440b5be8abba3440cc47e7e8bf491030c5",
+  "a1ef8bfa082c95a54944379f105d09337dcfc80f6f19104c5b3e8873c0eaa98b",
+  "c93f9a232bc821dfda82c4fd53dc00c9bdf5c9a9ed903509758f7cd1fbecb1c2",
+  "61625df17cfe20e003fe3e592745e12f59097de8dc5da25606969981c3b6b30f",
+  "68f7b449ba0ca554e4eddec7790e9812e41609fc0379920470f8cc390c94155d",
+  "f40bc209df5ab36a68d36722b196dfc868cd122b0629f79a805b0fa6fb7c1c41",
+  "923714e2a570a09d583ec405a850d894b9338169c444ee61426877455b2d7fa8",
+  "bd9db767beb3ab23b108492ee7eb572e63ee2804600b8db92164954caf769f3f",
+  "97be402e930e10daaa71d4df96e8c253d7012604e09c57163affdd957a1abca1",
+  "13d61455c32dd9a626392018d946fb4a67a9705875d4ee777901dd8f1c1b73d8",
+  "3065c46f5cbdd12eeb882daeaa6ac4bd170345da66b110598e94bc9a00da05bf",
+  "a0ef2582fd5f04068417d9799a3163109fa7f96ade95bc3d03510c8205fb06e5",
+  "0558890b24e99a22eec5b59e357f43823703bb09379ff82442dc075feb5de34b",
+  "9e9b1a476c8a334f137b13c12827f24c0949c2ee0b755e5e3ee6b87e41bcd8b9",
+  "623bc9b53b149dbef21793bed437b65c4aa9d719c1a7945d2e930b862ffb58ae",
+  "731793acb9795d39cd2fc3b03a15292a25f6827a624fdf9fca63441400e66f47",
+  "cf6b184fa59eea91b6c25ca729282b02d94b3a8fc22025d796f2f2b223809d8d",
+  "e64a008489682d9c86e904fe4e7338d2305f3b0fc6eeb23ecb4442b0f0ee8d0f"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-02",
+ "model_profile": "meta",
+ "output": {
+  "jawaban": "Penyelenggaraan RUPS tahunan oleh Direksi dapat diminta oleh: 1 orang atau lebih pemegang saham yang bersama-sama mewakili 1/10 atau lebih dari jumlah seluruh saham dengan hak suara, kecuali anggaran dasar menentukan jumlah yang lebih kecil; atau Dewan Komisaris. Permintaan diajukan kepada Direksi dengan Surat Tercatat disertai alasannya.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (2)",
+    "teks": "(2) Penyelenggaraan RUPS sebagaimana dimaksud pada ayat (1) dapat dilakukan atas permintaan:\na. 1 (satu) orang atau lebih pemegang saham yang bersama-sama mewakili 1/10 (satu persepuluh) atau lebih dari jumlah seluruh saham dengan hak suara, kecuali anggaran dasar menentukan suatu jumlah yang lebih kecil; atau\nb. Dewan Komisaris."
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (1)",
+    "teks": "(1) Direksi menyelenggarakan RUPS tahunan sebagaimana dimaksud dalam Pasal 78 ayat (2) dan RUPS lainnya sebagaimana dimaksud dalam Pasal 78 ayat (4) dengan didahului pemanggilan RUPS."
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 79 › ayat (3)",
+    "teks": "(3) Permintaan sebagaimana dimaksud pada ayat (2) diajukan kepada Direksi dengan Surat Tercatat disertai alasannya."
+   }
+  ],
+  "status": "jawab"
+ },
+ "run_id": "18b443f5d34e4eeb8857e974dd60c588",
+ "setting_id": "1d0065de9aaa800df93e2f610b2c33ee8572a4106d235f679279f20f63888060",
+ "slot": "best"
+}
