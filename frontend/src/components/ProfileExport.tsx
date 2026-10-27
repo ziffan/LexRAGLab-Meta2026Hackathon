@@ -79,6 +79,39 @@ export async function runExport(client: U7Client, family: string, settingId: str
   return out;
 }
 
+/** Penjaga permintaan terbaru: hasil permintaan lama (sebelum `bump`, mis. setting berganti) diabaikan. */
+export interface RequestGuard {
+  /** Mulai permintaan baru; mengembalikan ID-nya dan membuat semua ID sebelumnya basi. */
+  begin(): number;
+  /** Batalkan semua permintaan yang berjalan (mis. pilihan berganti). */
+  invalidate(): void;
+  isCurrent(id: number): boolean;
+}
+
+export function createRequestGuard(): RequestGuard {
+  let latest = 0;
+  return {
+    begin: () => ++latest,
+    invalidate: () => {
+      latest += 1;
+    },
+    isCurrent: (id) => id === latest,
+  };
+}
+
+/** Ekspor yang hasilnya hanya diterapkan (set dan unduh) bila permintaannya masih yang terbaru. */
+export async function runGuardedExport(
+  guard: RequestGuard, client: U7Client, family: string, settingId: string | null,
+  set: (p: ExportPhase) => void, onReady: (profile: Profile) => void,
+): Promise<ExportPhase> {
+  const id = guard.begin();
+  const out = await runExport(client, family, settingId, (p) => {
+    if (guard.isCurrent(id)) set(p);
+  });
+  if (out.kind === "ready" && guard.isCurrent(id)) onReady(out.profile);
+  return out;
+}
+
 /** Muat berkas profil lalu round-trip W8. Berkas bukan objek JSON: galat lokal, W8 tidak dipanggil. */
 export async function runLoad(client: U7Client, text: string, set: (p: LoadPhase) => void): Promise<LoadPhase> {
   let parsed: unknown;
@@ -249,7 +282,10 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
 
   const settingId = snap ? state.selectedSettingId : null;
   // Hasil ekspor milik satu (keluarga, setting); ganti pilihan membuang pratinjau lama.
+  const guard = useRef<RequestGuard>(null as unknown as RequestGuard);
+  if (!guard.current) guard.current = createRequestGuard();
   useEffect(() => {
+    guard.current.invalidate(); // respons ekspor yang masih terbang milik pilihan lama
     setExportPhase({ kind: "idle" });
     setLoadPhase({ kind: "idle" });
   }, [state.family, settingId]);
@@ -268,8 +304,9 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
         loadPhase={loadPhase}
         report={snap?.report ?? null}
         onExport={() => {
-          void runExport(client, state.family, settingId, setExportPhase).then((r) => {
-            if (r.kind === "ready" && settingId) downloadJson(profileFileName(state.family, settingId), pretty(r.profile));
+          const fam = state.family;
+          void runGuardedExport(guard.current, client, fam, settingId, setExportPhase, (pr) => {
+            if (settingId) downloadJson(profileFileName(fam, settingId), pretty(pr));
           });
         }}
         onFile={(f) => {

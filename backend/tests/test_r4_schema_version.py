@@ -65,7 +65,16 @@ def test_schema_version_with_setting_id_is_400_and_junk_is_rejected(world):
     _svc, c = world
     r = c.get(URL, params={"schema_version": 1, "setting_id": "x"})
     assert r.status_code == 400 and r.json()["error"]["code"] == "invalid_request"
-    assert c.get(URL, params={"schema_version": "abc"}).status_code in (400, 422)
+    for junk in ("abc", "1.5", ""):
+        r = c.get(URL, params={"schema_version": junk})
+        assert r.status_code == 400 and r.json()["error"]["code"] == "invalid_request", (junk, r.status_code)  # bukan int: validasi parameter dipetakan ke 400
+
+
+def test_zero_and_negative_schema_version_are_not_found(world):
+    _svc, c = world
+    for v in (0, -1):
+        r = c.get(URL, params={"schema_version": v})
+        assert r.status_code == 404 and r.json()["error"]["code"] == "not_found", v
 
 
 def test_export_includes_schema_versions(tmp_path):
@@ -84,3 +93,35 @@ def test_export_includes_schema_versions(tmp_path):
     # tanpa skema: tidak ada berkas skema
     empty = build_files(create_app(Service(tokenizer=ToyWs(), runs_dir=tmp_path / "none"), replay=True), families=("akta",), retrieval=False, answers=False)
     assert not [k for k in empty if "schema-v" in k]
+
+
+def test_export_skips_versions_invalid_for_all_documents(tmp_path):
+    runs = tmp_path / "runs"
+    st = SchemaStore(runs)
+    st.append("akta", rec(body()))                       # v1 valid
+    bad = body()
+    bad["default_chunk_level"] = 9                        # v2: 422 untuk semua dokumen
+    st.append("akta", rec(bad))
+    svc = Service(tokenizer=ToyWs(), runs_dir=runs)
+    app = create_app(svc, replay=True)
+    # versi 2 tampil di snapshot, tetapi 422 per dokumen: ekspor tidak crash dan tidak menulis berkasnya
+    assert [r["schema_version"] for r in app_snapshot_schemas(app)] == [1, 2]
+    files = build_files(app, families=("akta",), retrieval=False, answers=False)
+    assert not [k for k in files if "schema-v2" in k]
+    assert all(f"docs/akta/akta-0{i}/schema-v1.json" in files for i in range(1, 6))
+    assert all(f"docs/akta/akta-0{i}/_text.json" in files for i in range(1, 6))
+
+
+def test_export_with_only_invalid_schema_has_no_schema_files(tmp_path):
+    runs = tmp_path / "runs"
+    bad = body()
+    bad["default_chunk_level"] = 9
+    SchemaStore(runs).append("akta", rec(bad))
+    app = create_app(Service(tokenizer=ToyWs(), runs_dir=runs), replay=True)
+    files = build_files(app, families=("akta",), retrieval=False, answers=False)
+    assert not [k for k in files if "schema-v" in k]
+    assert "docs/akta/akta-01/_text.json" in files
+
+
+def app_snapshot_schemas(app):
+    return TestClient(app).get("/api/families/akta/snapshot").json()["schemas"]
