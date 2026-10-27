@@ -45,3 +45,14 @@ backoff_base_s = 2     # tunggu pertama bila 429 tanpa Retry-After valid
 backoff_factor = 2     # eksponensial: 2, 4, 8 detik
 max_429_retries = 3    # jatah retry 429, terpisah dari max_retries (jatah retry timeout; O-16)
 max_wait_s = 120       # tunggu lebih dari ini (termasuk Retry-After) -> berhenti rate_limited
+
+[profiles.baseten_open]
+# Pembanding peran C saja, stretch (H-060). Run terpisah, tidak untuk angka utama (H-028).
+# Smoke 27 Okt: Responses API + text.format strict didukung (G-33), jadi pengecualian Chat Completions H-016 tidak dipakai.
+provider = "baseten"
+model = "meta-models/muse-spark-open-1026"
+base_url_env = "BASETEN_BASE_URL"   # nilai di .env lokal, tidak dicetak
+api_key_env = "BASETEN_API_KEY"
+for_reported_numbers = false
+roles = ["c"]
+# Harga per 1M token belum dipin: tanpa [pricing.baseten_open] klien fail-closed (config_invalid). Operator mengisi (I-34).

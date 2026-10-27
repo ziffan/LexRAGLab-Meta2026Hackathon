@@ -9,6 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
+| I-34 | Harga Spark Open di Baseten per 1M token (input, cached, output) belum dipin; klien M0.1 fail-closed tanpa `[pricing.baseten_open]`, jadi run peran C Baseten tidak bisa diproyeksikan. Smoke 27 Okt: 175 input, 349 output token (usage, tanpa biaya di respons) | Operator mengisi harga dari dashboard Baseten ke `config/model` `[pricing.baseten_open]` (micro-USD per 1M); belanja Baseten dicatat terpisah dari plafon Model API | Operator | Sebelum M2.5 |
 | I-33 | `GridPoint.mean_span_recall`, `mrr`, `mean_retrieved_tokens` bertipe `number` di DATA-CONTRACTS §10, tetapi tak terdefinisi bila satu kelompok (split, anggaran) tidak punya butir bergold. H-059 hanya melonggarkan `mean_token_precision` (M1.2 A7b). Temuan penulis G4a | Longgarkan ketiganya menjadi `number \| null` (konsisten H-059 N1). Kode M1.2 sudah mengembalikan `null` dengan test. Tidak mengubah angka laporan selama held-out punya ≥ 3 kontrol bergold | Operator | Sebelum M1.4 ditutup |
 | I-31 | M1.5 A12: nilai K = 0 tidak diputus (skenario: "penyusun condong K0-a tetapi tidak memutus"; persetujuan 27 Okt hanya memutus A5 dan A3/A12 berkas lain). K0-a: top-K kosong → Recall@0 = 0,0; K0-b: K < 1 ditolak | K0-a. Tidak mengubah angka laporan selama K dari config ≥ 1. Sementara kode M1.5 memakai K0-a dengan test bertanda menunggu I-31; K negatif/bukan integer tetap error | Operator | Sebelum M1.5 ditutup |
 

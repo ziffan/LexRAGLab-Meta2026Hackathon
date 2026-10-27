@@ -273,7 +273,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau, catatan run Glimmer dan Contributor untuk butir yang sama, screenshot U3 dengan label.
 **Tier review**: 2.
 **Estimasi**: sekitar 3–6 jam (2–4 jam H-047, 1–2 jam W6/U3 H-053); stretch, tidak masuk jumlah Ringkasan.
-**Status**: stretch. Dikerjakan hanya setelah lantai H-017 aman; dipotong lebih dulu daripada lantai.
+**Status**: stretch. Dikerjakan hanya setelah lantai H-017 aman; dipotong lebih dulu daripada lantai. Sejak H-060 pembanding C juga Spark Open di Baseten (profil `baseten_open`); smoke 27 Okt: Responses + strict didukung (G-33), Chat Completions tidak dipakai untuk Baseten.
 
 ## M3 — Spark B dan A, UU PT (31 Okt–1 Nov)
 

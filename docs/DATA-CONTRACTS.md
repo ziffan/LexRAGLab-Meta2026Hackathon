@@ -1,7 +1,7 @@
 # DATA-CONTRACTS — bentuk setiap data
 
 Tujuan: menetapkan nama field, tipe, dan pemilik isi setiap data, serta JSON Schema keluaran Spark A, B, C, D yang patuh `strict: true`.
-Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054, H-059.
+Sumber keputusan: H-005, H-006, H-009, H-011, H-012, H-014, H-015, H-016, H-027, H-031, H-035, H-037, H-042, H-045, H-046, H-047, H-048, H-049, H-053, H-054, H-059, H-060.
 
 Semua contoh memakai placeholder (`"<query>"`, offset `0`), bukan butir nyata.
 
@@ -491,7 +491,7 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |
-| `provider` | string \| null | `meta` untuk Model API; `openrouter` untuk run dev/uji lewat OpenRouter (H-057), tidak pernah dipakai untuk angka yang dilaporkan; `lmstudio_local` untuk run pembanding Glimmer (H-047) |
+| `provider` | string \| null | `meta` untuk Model API; `openrouter` untuk run dev/uji lewat OpenRouter (H-057), tidak pernah dipakai untuk angka yang dilaporkan; `lmstudio_local` untuk run pembanding Glimmer (H-047); `baseten` untuk run pembanding Spark Open di Baseten (H-060), hanya peran C, tidak pernah dipakai untuk angka utama |
 | `quantization` | string \| null | kuantisasi Glimmer dari `config/model` (`Q4_K_M`, H-047); `null` untuk Model API |
 | `status` | enum `ok` / `error` / `cached` / `replay` | |
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |
