@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6adc6e695189c85dc471dde30912964ebe7d9107cf477c4a2fa5d72b2edd4fa8",
+ "chunk_id_returned": "6adc6e695189c85dc471dde30912964ebe7d9107cf477c4a2fa5d72b2edd4fa8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "322785daa25241b8a1d09f609b8b396d",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham), Bagian Kelima (Saham): persetujuan organ perseroan atas pemindahan hak saham dan batas waktunya.",
+ "tokens_local": 46
+}

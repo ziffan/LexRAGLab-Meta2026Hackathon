@@ -1,0 +1,20 @@
+{
+ "created_at": "2026-10-27T14:19:11Z",
+ "structure_schema": {
+  "already_stored": 343,
+  "chunks": 343,
+  "projection": {
+   "calls": 0,
+   "cost_usd_micros": {
+    "expected": 0,
+    "upper_cached": 0,
+    "upper_no_cache": 0
+   },
+   "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+   "prompt_version": "v2",
+   "source": "structure_schema",
+   "units": 0
+  },
+  "to_call": 0
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9ce2a46589a537092b9f0ecf74aab60e6420b9d2ce3ad3b18b1fda06d5f7c8c0",
+ "chunk_id_returned": "9ce2a46589a537092b9f0ecf74aab60e6420b9d2ce3ad3b18b1fda06d5f7c8c0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "bb1963e671964cf581a19834bfa0e1d8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 158 Bab XIII (Ketentuan Peralihan): penyesuaian kepemilikan saham terlarang pada masa transisi.",
+ "tokens_local": 42
+}
