@@ -226,3 +226,43 @@ def test_s41_d_max_inklusif_konfigurasi():
     assert fz(A41, A, cfg(d_max=0)) == ("gagal", F(155, 156))
     assert fz(A41, base, cfg(d_max=0)) == ("lulus", None)
     assert fz(A11, "wajib berbadam hukun", cfg("0.95", 3)) == ("gagal", F(18, 20))
+
+
+# --- tindak lanjut review (SHOULD-1, NIT-1) ---
+def _mini(addr, text, start=0):
+    from backend.verifier import AddressUnit
+    return {addr: AddressUnit(addr, start, start + len(text), text)}
+
+
+def test_v3_urutan_deret_tertukar_gagal():
+    """Deret digit dibandingkan sebagai DAFTAR berurutan, bukan himpunan: sumber '30 ... 60', kutipan '60 ... 30'."""
+    src = "(1) Nilai 30 dan nilai 60 dicatat dalam buku besar tahunan perseroan setiap tahun."
+    q = "Nilai 60 dan nilai 30 dicatat dalam buku besar tahunan perseroan setiap tahun."
+    u = _mini("U", src)
+    r = verify("U", q, units=u)
+    assert r.exists == "lulus" and r.faithful == "gagal" and r.faithful_score == F(len(q) - 2, len(q))
+    assert fz("U", q, cfg(v3_on=False), units=u)[0] == "lulus"  # hanya pengaman angka yang menolak
+
+
+def test_v3_duplikat_digit_gagal():
+    """Daftar, bukan multiset/himpunan: sumber '3 ... 3', kutipan '3' (satu kali)."""
+    src = "(1) Kode 3 3 dicatat dalam buku besar tahunan perseroan setiap tahun."
+    q = "Kode 3 dicatat dalam buku besar tahunan perseroan setiap tahun."
+    u = _mini("U", src)
+    r = verify("U", q, units=u)
+    assert r.faithful == "gagal" and r.faithful_score == F(len(q) - 2, len(q))
+    assert fz("U", q, cfg(v3_on=False), units=u)[0] == "lulus"
+
+
+def test_s39_rentang_tertaut_fuzzy_potongan_beririsan_di_ujung_unit():
+    from backend.verifier import ChunkSpan
+    q = "dasar dibagi atas sahamm."  # fuzzy lulus; jendela Sellers [54,78), rentang tertaut = seluruh unit [44,78)
+    lead = ChunkSpan("lead", 30, 45)  # hanya karakter 44 (awal unit)
+    tail = ChunkSpan("tail", 77, 100)  # hanya karakter 77 (akhir unit)
+    off = ChunkSpan("off", 78, 100)  # menempel, tak beririsan
+    for order, want in ((["lead", "tail"], "lead"), (["tail", "lead"], "tail")):
+        by = {"lead": lead, "tail": tail}
+        r = verify(A12, q, ch=[by[n] for n in order])
+        assert (r.faithful, r.matched_chunk_id) == ("lulus", want)
+    assert verify(A12, q, ch=[off]).matched_chunk_id is None
+    assert verify(A12, q, ch=[lead]).matched_chunk_id == "lead"  # jendela Sellers saja tidak akan menyentuhnya
