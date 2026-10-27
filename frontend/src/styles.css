@@ -79,3 +79,36 @@ mark { background: var(--gold); color: var(--text); padding: 0 1px; border-radiu
 @media (max-width: 900px) {
   .columns.two { grid-template-columns: 1fr; }
 }
+
+/* U2, U4 dan panel tambahan (M1.2-M1.5). */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.layout .wide { grid-column: 1 / -1; }
+.tag.neutral { background: var(--head); color: var(--text); border: 1px solid var(--line); }
+.note { color: var(--muted); font-size: 0.9rem; margin: 6px 0; }
+.rank { font-weight: 600; color: var(--muted); }
+.rank.hit { color: var(--ok-text); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.seg { border: 0; margin: 0; padding: 0; display: flex; gap: 6px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+.seg legend { padding: 0; float: left; margin-right: 8px; }
+.seg-item { display: inline-flex; gap: 6px; align-items: center; padding: 5px 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--text); background: var(--surface); cursor: pointer; }
+.seg-item.on { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+.chart { width: 100%; }
+.tip { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 0.85rem; line-height: 1.4; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.legend-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 8px 0; font-size: 0.85rem; }
+.legend-list li { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; }
+.swatch.on { background: var(--accent); }
+.swatch.none { border: 2px dashed var(--muted); }
+.table-wrap { overflow-x: auto; margin: 8px 0 12px; }
+table.data { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+table.data th, table.data td { border: 1px solid var(--line); padding: 5px 8px; text-align: left; vertical-align: top; }
+table.data thead th { background: var(--head); }
+table.data tr.sel { background: #fff6d6; }
+.cap { text-align: left; color: var(--muted); font-size: 0.85rem; padding: 4px 0; caption-side: top; }
+.sub { font-weight: 400; font-size: 0.8rem; }
+.summary-row { list-style: none; padding: 8px 12px; margin: 8px 0; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; display: flex; flex-wrap: wrap; gap: 6px 24px; }
+table.data .addr { font-weight: 600; }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; }
+}

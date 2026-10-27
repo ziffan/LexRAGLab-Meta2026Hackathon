@@ -1,4 +1,5 @@
-import { fixedSetting, useStore } from "../state";
+import { retrievalKey, useStore } from "../state";
+import { availableSettings, fixedFor } from "../lib/settings";
 import { modeLabel, originLabel, settingLabel } from "../lib/labels";
 import { ChunkColumn } from "./ChunkColumn";
 import { ChunkDetail } from "./ChunkDetail";
@@ -28,8 +29,9 @@ export function ChunksVsGold() {
   } else {
     const snap = snapState.data;
     const item: Item | null = snap.items.find((i) => i.id === state.selectedItemId) ?? null;
-    const primary = snap.settings.find((s) => s.setting_id === state.selectedSettingId) ?? snap.settings[0];
-    const fixed = fixedSetting(snap);
+    const settings = availableSettings(snap);
+    const primary = settings.find((s) => s.setting_id === state.selectedSettingId) ?? settings[0];
+    const fixed = fixedFor(snap, primary);
     const canCompare = !!fixed && primary?.setting_id !== fixed.setting_id;
     const showCompare = state.compare && canCompare && !!fixed;
     const cleanSha = snap.corpus[0]?.clean_sha256;
@@ -54,7 +56,7 @@ export function ChunksVsGold() {
           <label className="field">
             <span>Setting</span>
             <select value={primary?.setting_id ?? ""} onChange={(e) => dispatch({ type: "select_setting", id: e.target.value })}>
-              {snap.settings.map((s) => (
+              {settings.map((s) => (
                 <option key={s.setting_id} value={s.setting_id}>
                   {settingLabel(s)}
                 </option>
@@ -96,6 +98,7 @@ export function ChunksVsGold() {
               heading={showCompare ? "Selected setting" : "Chunks"}
               setting={primary}
               doc={state.docs[primary.setting_id] ?? { status: "idle" }}
+              retrieval={state.retrievals[retrievalKey(primary.setting_id, item.id)] ?? { status: "idle" }}
               item={item}
               cleanSha256={cleanSha}
             />
@@ -104,6 +107,7 @@ export function ChunksVsGold() {
                 heading="Compare with fixed-size"
                 setting={fixed}
                 doc={state.docs[fixed.setting_id] ?? { status: "idle" }}
+                retrieval={state.retrievals[retrievalKey(fixed.setting_id, item.id)] ?? { status: "idle" }}
                 item={item}
                 cleanSha256={cleanSha}
               />

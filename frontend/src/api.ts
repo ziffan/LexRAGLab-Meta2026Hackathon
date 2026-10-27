@@ -1,4 +1,4 @@
-import type { DocResponse, Snapshot } from "./types";
+import type { DocResponse, Retrieval, Snapshot } from "./types";
 
 export class ApiFailure extends Error {
   code: string;
@@ -28,8 +28,15 @@ async function getJson<T>(url: string): Promise<T> {
   return body as T;
 }
 
-export function fetchSnapshot(family: string): Promise<Snapshot> {
-  return getJson<Snapshot>(`/api/families/${encodeURIComponent(family)}/snapshot`);
+export function fetchSnapshot(family: string, budget: number | null = null): Promise<Snapshot> {
+  const q = budget ? `?budget_tokens=${budget}` : "";
+  return getJson<Snapshot>(`/api/families/${encodeURIComponent(family)}/snapshot${q}`);
+}
+
+export function fetchRetrieval(family: string, settingId: string, itemId: string): Promise<Retrieval> {
+  return getJson<Retrieval>(
+    `/api/families/${encodeURIComponent(family)}/retrieval?setting_id=${encodeURIComponent(settingId)}&item_id=${encodeURIComponent(itemId)}`,
+  );
 }
 
 export function fetchDoc(family: string, docId: string, settingId: string): Promise<DocResponse> {
