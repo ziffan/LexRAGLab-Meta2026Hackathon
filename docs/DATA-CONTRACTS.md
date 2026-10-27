@@ -248,8 +248,17 @@ Isi tabel **hanya** berasal dari operator: pemuat mengurai anotasi di berkas kon
 | `body` | objek sesuai skema di atas | | Spark (v1), Operator (v2+) |
 | `validation` | array of `{order: int, example: string, matched: bool}` | pola tiap level diuji terhadap contohnya sendiri | Sistem |
 | `run_id` | string \| null | | Sistem |
+| `created_at` | timestamp | informatif (H-072) | Sistem |
+| `operator_note` | string \| null | catatan koreksi, maks 2000 karakter; `null` untuk `spark` | Operator |
+| `sample` | array of `{doc_id, clean_sha256}` | dokumen sampel induksi; koreksi mewarisi dari induk | Sistem |
+| `sample_checked` | bool | pemeriksaan "contoh ada di sampel" dijalankan; `false` bila dokumen sampel tak bisa dimuat | Sistem |
+| `cache_key` | string \| null | kunci cache panggilan A; `null` untuk `operator` | Sistem |
 
-Koreksi operator **HARUS** disimpan sebagai versi baru; v1 tidak ditimpa.
+Koreksi operator **HARUS** disimpan sebagai versi baru; versi lama tidak ditimpa. Versi dinomori urut; `source` (`spark` / `operator`) pembeda, jadi induksi Spark dengan masukan berbeda juga mendapat versi baru (H-072). Disimpan di `runs/schemas/<family>/v<n>.json`.
+
+**Aturan semantik** (keluaran Spark dan koreksi operator, sama): struktur sesuai skema di atas; `levels` tidak kosong; `order` naik ketat; `parent_order` null atau `order` yang lebih awal; `default_chunk_level` ada dan `is_chunk_unit = true`; `marker_pattern` dikompilasi (`re.MULTILINE`), tidak cocok string kosong, tanpa kuantor bersarang, maks 500 karakter; tiap `examples` satu baris (maks 300 karakter), cocok dengan pola levelnya, dan ditemukan persis di sampel; `family` sama dengan yang diminta.
+
+**Keluaran ditolak.** Keluaran Spark yang gagal aturan semantik bukan `SchemaRecord`: disimpan di `runs/schemas/<family>/rejected/<run_id>.json` sebagai `{run_id, cache_key, family, body, errors[], created_at, sample}`, tidak berversi dan tidak dipakai chunker. R3 membawanya di `schemas_rejected` untuk U5.
 
 ## 7. HeaderB — keluaran Spark peran B
 

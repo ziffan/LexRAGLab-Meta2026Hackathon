@@ -315,8 +315,14 @@ def test_induce_fabricated_example_is_logged_not_used_not_cached(tmp_path):
     assert out.record is None and out.error["code"] == "semantic_invalid" and "not found verbatim" in out.error["message"]
     assert out.run.status == "error" and out.run.error["code"] == "semantic_invalid"
     assert st.versions("uupt") == []
+    rej = st.list_rejected("uupt")
+    assert len(rej) == 1 and rej[0]["run_id"] == out.run.run_id and rej[0]["body"] == bad
+    assert any("not found verbatim" in e for e in rej[0]["errors"]) and rej[0]["sample"][0]["doc_id"] == "doc-sintetis"
+    assert "schema_version" not in rej[0]
     run_induce(rig, st)
     assert rig.tr.calls == 2  # tidak di-cache sebagai sah
+    assert len(st.list_rejected("uupt")) == 2 and st.versions("uupt") == []
+    assert SchemaStore(rig.runs).list("uupt") == []  # berkas rejected bukan SchemaRecord
 
 
 def test_induce_invalid_regex_from_model_is_rejected(tmp_path):

@@ -62,7 +62,7 @@ def sample_meta(samples: list[SampleDoc]) -> list[dict[str, str]]:
 
 
 def make_call(prompt: PromptA, family: str, samples: list[SampleDoc], count_tokens: Callable[[str], int],
-              meta: Mapping[str, Any]) -> dict[str, Any]:
+              meta: Mapping[str, Any], rejected: list | None = None) -> dict[str, Any]:
     """Argumen `SparkClient.call`. Validator semantik memeriksa family dan contoh terhadap sampel yang dikirim."""
     validate_schema()
     text, _nonce = render_input(prompt, family, [(s.doc_id, s.text) for s in samples])
@@ -70,6 +70,8 @@ def make_call(prompt: PromptA, family: str, samples: list[SampleDoc], count_toke
 
     def validator(body: dict) -> str | None:
         errs, _v = validate_body(body, family=family, samples=texts)
+        if errs and rejected is not None:
+            rejected[:] = [(body, errs)]  # keluaran ditolak disimpan pemanggil sebagai berkas `rejected`
         return "; ".join(errs[:5]) if errs else None
 
     return dict(role=ROLE, prompt_version=prompt.version, prompt_hash=prompt.prompt_hash, input=text,
@@ -83,12 +85,17 @@ def induce(client: SparkClient, prompt: PromptA, *, family: str, samples: list[S
            replay: bool = False) -> InduceOutcome:
     """Satu panggilan A. Raises `BudgetExceeded` (sebelum jaringan). Cache hit tidak memanggil API dan tidak
     menambah versi: record yang sudah dibuat untuk `cache_key` yang sama dikembalikan. `replay=True` tidak menulis."""
-    call = make_call(prompt, family, samples, count_tokens, meta)
+    rej: list = []
+    call = make_call(prompt, family, samples, count_tokens, meta, rej)
     batch: BatchResult = client.run_batch([call])  # proyeksi dulu di dalam; replay tidak memanggil API
     res = batch.results[0]
     if res is None:
         raise BudgetExceeded(f"role a call not run ({batch.stopped_reason or 'stopped'})")
     if res.output is None:
+        if rej and not replay and (res.record.error or {}).get("code") == "semantic_invalid":
+            body, errs = rej[0]
+            store.save_rejected(family, {"run_id": res.record.run_id, "cache_key": res.record.cache_key, "body": body,
+                                         "errors": errs, "created_at": _now_iso(), "sample": sample_meta(samples)})
         return InduceOutcome(res.record, None, dict(res.record.error or {"code": "model_error", "message": "call failed"}))
     existing = store.find_by_cache_key(family, res.record.cache_key)
     if existing is not None:
@@ -196,6 +203,7 @@ def latest(records: list[dict[str, Any]], source: str) -> dict[str, Any] | None:
 
 
 def snapshot_view(records: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, Any] | None]:
+    # Keluaran Spark yang ditolak dibaca terpisah lewat `SchemaStore.list_rejected` (bukan SchemaRecord).
     """(`schemas`, `schema_diff`) untuk R3 (API.md 4). `schema_diff` = Spark terbaru vs operator terbaru, atau None
     bila salah satunya belum ada. `boundary_diff` diisi M3.4."""
     sp, op = latest(records, "spark"), latest(records, "operator")

@@ -55,6 +55,38 @@ class SchemaStore:
     def find_by_cache_key(self, family: str, cache_key: str) -> dict[str, Any] | None:
         return next((r for r in self.list(family) if r.get("source") == "spark" and r.get("cache_key") == cache_key), None)
 
+    def save_rejected(self, family: str, rec: dict[str, Any]) -> dict[str, Any]:
+        """Keluaran Spark yang gagal validasi semantik: `runs/schemas/<family>/rejected/<run_id>.json`. Bukan SchemaRecord,
+        tidak punya versi, tidak pernah dipakai chunker. Tidak menimpa berkas yang ada."""
+        rid = str(rec.get("run_id", ""))
+        if not re.fullmatch(r"[0-9a-f]{32}", rid):
+            raise SchemaStoreError("invalid run_id for rejected output")
+        path = self._dir(family) / "rejected" / f"{rid}.json"
+        with _LOCK:
+            if path.exists():
+                return rec
+            tmp = path.with_name(path.name + ".tmp")
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
+                    fh.write(json.dumps({**rec, "family": family}, sort_keys=True, ensure_ascii=False, indent=1) + "\n")
+                os.replace(tmp, path)
+            except OSError:
+                raise SchemaStoreError("could not write the rejected output") from None
+        return rec
+
+    def list_rejected(self, family: str) -> list[dict[str, Any]]:
+        d = self._dir(family) / "rejected"
+        if not d.is_dir():
+            return []
+        out = []
+        for p in sorted(d.glob("*.json")):
+            try:
+                out.append(json.loads(p.read_text(encoding="utf-8")))
+            except (OSError, ValueError):
+                raise SchemaStoreError(f"unreadable rejected file: {p.name}") from None
+        return sorted(out, key=lambda r: (r.get("created_at", ""), r.get("run_id", "")))
+
     def append(self, family: str, record: dict[str, Any]) -> dict[str, Any]:
         """Beri `schema_version` berikutnya dan tulis. Tidak pernah menimpa."""
         d = self._dir(family)

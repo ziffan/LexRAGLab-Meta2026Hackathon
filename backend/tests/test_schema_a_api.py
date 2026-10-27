@@ -89,6 +89,9 @@ def test_w2_semantic_invalid_output_is_422_and_stores_nothing(tmp_path):
     r = c.post(W2, json={"sample_doc_ids": ["doc-sintetis"]})
     assert r.status_code == 422 and r.json()["error"]["code"] == "schema_invalid"
     assert not vpath(tmp_path, 1).exists()
+    from backend.schema_a import SchemaStore
+    rej = SchemaStore(tmp_path / "runs").list_rejected("uupt")
+    assert len(rej) == 1 and rej[0]["body"] == bad
     # RunRecord error tercatat di runs/spark/records
     recs = list((tmp_path / "runs" / "spark" / "records").glob("*.json"))
     assert len(recs) == 1 and "semantic_invalid" in recs[0].read_text(encoding="utf-8")

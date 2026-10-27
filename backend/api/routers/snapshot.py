@@ -69,7 +69,9 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     grid, metrics, quality = grid_view(env, budget) if env is not None else (None, [], [])
     by_split = dict(Counter(split_of.values())) if split is not None else None
     try:
-        schemas, schema_diff = snapshot_view(SchemaStore(svc.runs_dir).list(family))
+        _ss = SchemaStore(svc.runs_dir)
+        schemas, schema_diff = snapshot_view(_ss.list(family))
+        schemas_rejected = _ss.list_rejected(family)
     except SchemaStoreError:
         raise ApiError(500, "storage_error", "Schema storage failed.") from None
     return {
@@ -79,6 +81,6 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
                           "by_mode": dict(Counter(i.get("mode") for i in items)), "by_split": by_split,
                           "control_in_held_out": split.control_in_held_out if split is not None else None},
         "settings": svc.settings(family),
-        "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schema_diff": schema_diff,
+        "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schemas_rejected": schemas_rejected, "schema_diff": schema_diff,
         "proposals": get_proposals(request).list_proposals(family), "answers": [], "answers_summary": [], "runs_summary": None,
     }
