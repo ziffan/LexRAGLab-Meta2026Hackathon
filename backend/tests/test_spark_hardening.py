@@ -102,3 +102,9 @@ def test_S13_limiter_exact_edge_does_not_hang():
 def test_S16_http_date_without_zone_is_utc(raw):
     now = datetime(2026, 10, 27, 10, 0, 0, tzinfo=timezone.utc).timestamp()
     assert parse_retry_after(raw, now) == 7.0
+
+
+def test_S03_ceil_not_equivalent_to_float():
+    usage = {"input": 900719925474099 * 10**6 + 1, "cached": 0, "output": 0}
+    got = compute_cost_micros(usage, {"input": 1, "cached": 0, "output": 0})
+    assert got == 900719925474100  # float memberi ...099

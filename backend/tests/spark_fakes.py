@@ -66,6 +66,7 @@ class Clock:
 
     def sleep(self, s: float) -> None:
         self.sleeps.append(s)
+        assert len(self.sleeps) <= 1000, "sleep loop without progress (limiter hang)"
         self.t += s
 
 
