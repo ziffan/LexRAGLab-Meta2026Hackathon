@@ -49,11 +49,31 @@ Optional on-prem comparison (stretch): role C can be re-run for the best and bas
 
 ## Evaluation items
 
-`{n} items: {a} operator-written, {b} Spark-proposed and operator-approved` — filled in from the final run. Operator-written control items detect circularity between Spark-proposed queries and their spans.
+Current count, from `data/butir/`: **9 items** for Company Law, all operator-written control items (`origin: operator`; one is a must-refuse item with no gold span). Operator-written control items detect circularity between Spark-proposed queries and their spans.
+
+Role D has produced 13 stored proposals (`runs/proposals/records/`); all are still `usulan` (awaiting review) and are **not yet approved items**, so they are not counted and not used in any result. The final count and origin split are filled in after the operator's review, from `data/butir/`.
+
+<!-- TODO(operator): update this section with the final n and origin split once D proposals are reviewed. -->
 
 ## Run it
 
-[placeholder — filled in at M5]
+Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node.js with npm. Copy `.env.example` to `.env` and fill the values locally; `.env` is git-ignored and never committed. Replay needs no key.
+
+```bash
+uv sync                                   # backend dependencies
+uv run python -m backend.api              # backend, bound to 127.0.0.1:8000 only
+cd frontend && npm install && npm run dev # frontend dev server on 127.0.0.1:5173, proxies /api to the backend
+```
+
+Static replay export (no backend, no model calls):
+
+```bash
+uv run python -m backend.replay.export --out dist-static   # writes dist-static/data from stored runs
+cd frontend && npm run build:static                        # builds the static UI into dist-static/
+uv run python -m backend.replay.export --check dist-static # scan the snapshot for keys, local paths, hosts
+```
+
+Open `dist-static/index.html` through any static file server, or use the published page below.
 
 ```text
 backend:   Python 3.12 + FastAPI
@@ -64,11 +84,13 @@ storage:   files only (no database, no vector database)
 
 A replay mode serves every screen from stored runs (`runs/`) and the document and item data (`data/`) without calling the Model API.
 
-Live version: [placeholder — GitHub Pages link, filled in at M5]. It is a static export of the replay mode: no backend, no API key, no model calls.
+Live version: TODO(operator): GitHub Pages link, added after the repository is public. The web version is a **replay**: a static export of stored runs with no backend, no API key, and no model calls.
 
 ## Limits
 
-- Small item sets; results are per item with raw counts, without significance claims.
+- Small item sets (n is small; see the count above); results are per item with raw counts, without significance claims.
+- The pre-event consolidation covers one statute only, as of 30 December 2022; later amendments are not reflected.
+- Comparators (Muse Glimmer locally, Spark Open on a hosted endpoint) are planned/stretch for role C only. No stored run of either exists yet, so none is reported.
 - Token counts use a local tokenizer calibrated once against the API token-count endpoint; billed tokens may differ.
 - The "valid on date" citation check is a stretch goal and may be absent.
 - Indonesian legal text is shown in Indonesian, with short English glosses where needed.
@@ -78,16 +100,28 @@ Live version: [placeholder — GitHub Pages link, filled in at M5]. It is a stat
 - The Company Law text is an unofficial consolidation of UU 40/2007 prepared by the operator before the hackathon from the regulation texts and Constitutional Court decisions, consolidated as of 30 December 2022 (Perppu 2/2022, enacted as law by UU 6/2023). A source list names each amending law and Constitutional Court decision. Regulation texts and court decisions are public legal texts.
 - No real deeds, client data, or internal documents are included. The five synthetic deeds were written by an AI agent and reviewed by the operator. All names, companies, notaries, and addresses in them are fictitious; any resemblance to real persons or entities is coincidental.
 - Model API calls use `muse-spark-1.3-contributor` (Contributor mode: Meta may use the content to train future models). This is acceptable here because every document is public or synthetic. For confidential document families, set the Standard model ID in `config/model`.
-- License: Apache-2.0 for code, configuration, prompts, and documentation in this repository. Regulation texts are reproduced as public legal texts with sources cited and are not relicensed. The Muse Spark Open tokenizer is not included; download it from its official source under its own license. Muse Glimmer weights, if used, are not included; attribution follows its model card.
+- License: Apache-2.0 for code, configuration, prompts, and documentation in this repository. Regulation texts are reproduced as public legal texts with sources cited and are not relicensed. The Muse Spark Open tokenizer is not included; it is read from the user's local Hugging Face cache and is downloaded from its official source under its own license (Muse Model License). Muse Glimmer weights, if used, are not included; attribution follows its model card.
+
+**Built with Muse Spark Open.** Token counts use the Muse Spark Open tokenizer (revision pinned in `config/tokenizer.toml`; `o200k_base` is the fallback).
+
+### Corpus sources (Company Law, unofficial consolidation)
+
+The consolidation is not an official text (not a State Gazette / LN-BN copy); for official citation refer to LN 2007 No. 106 / TLN No. 4756. It is built on UU 40/2007 and incorporates:
+
+- Perppu No. 2 of 2022, enacted as law by UU No. 6 of 2023 (in force 30 December 2022): amends Article 1, 7, 32, 153 and inserts Articles 153A to 153J.
+- UU No. 24 of 2011 (in force 25 November 2011), see the footnote in the file.
+- Constitutional Court Decision No. 84/PUU-XI/2013 (read 9 October 2014), see the footnote in the file.
+
+Source: `data/uupt/UU_40_2007_PERSEROAN_TERBATAS.md` (frontmatter lists these sources). Regulation texts and court decisions are not protected by copyright (UU 28/2014, Article 42).
 
 ## Built before vs during the hackathon
 
-The hackathon started on 26 Oct 2026, 23:00 WIB. Only two things in this repository were prepared before that.
+The hackathon started on 26 Oct 2026, 23:00 WIB. The first commit in this repository is dated 26 Oct 2026 23:23 WIB, after kickoff. Only two things in this repository were prepared before that (drafted 25-26 Oct, committed afterwards, each in a separately labelled commit).
 
 | Built before kickoff (25–26 Oct 2026) | Built during the hackathon |
 |---|---|
-| The planning specs in [`docs/`](docs/), imported in one labelled commit. Planning only: no code | All code, configuration, prompts, evaluation items, synthetic deeds, stored runs, profiles, and the live replay |
-| The Company Law file: an unofficial consolidation of UU 40/2007, consolidated as of 30 December 2022, prepared by the operator from the regulation texts and Constitutional Court decisions; committed separately as pre-event material | Every change to the specs after the import commit |
+| The planning specs in [`docs/`](docs/), imported in one labelled commit (`docs: import pre-event planning`). Planning only: no code. No pre-event prototype code is copied into this repository | All code, configuration, prompts, evaluation items, synthetic deeds, stored runs, profiles, and the live replay |
+| The Company Law file: an unofficial consolidation of UU 40/2007, consolidated as of 30 December 2022, prepared by the operator from the regulation texts and Constitutional Court decisions; committed separately as pre-event material (`data: add UU 40/2007 consolidated text`) | Every change to the specs after the import commit |
 
 The five synthetic deeds are written during the hackathon by an AI agent (the development agent) and reviewed by the operator. All identities in them are fictitious.
 
