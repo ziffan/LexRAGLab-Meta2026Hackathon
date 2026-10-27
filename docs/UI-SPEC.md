@@ -82,12 +82,13 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `AnswerRecord` (§8, keluaran Spark `AnswerC`) untuk butir terpilih × {profil terbaik, profil pembanding} × `model_profile`, `VerifierResult` (§8), `RunRecord` (§12) per panggilan, daftar profil model dan ketersediaannya dari R1 |
-| Tampil | Dua kolom "Best profile" dan "Baseline". Per kolom: setting, status (label Inggris), jawaban (teks Indonesia, dengan gloss Inggris singkat bila tersedia dari operator), daftar kutipan berisi alamat + teks + tanda uji: `Exists` (uji 1), `Faithful` (uji 2), `Valid on date` (uji 3, stretch). Biaya panggilan dan token input/cached/output. Setiap jawaban diberi label model, kuantisasi, dan effort (H-053) |
+| Tampil | Dua kolom "Best profile" dan "Baseline". Per kolom: setting, status (label Inggris), jawaban (teks Indonesia, dengan gloss Inggris singkat bila tersedia dari operator), daftar kutipan berisi alamat + teks + tanda uji: `Exists` (uji 1), `Faithful` (uji 2), `Valid on date` (uji 3, stretch). Biaya panggilan dan token input/cached/output; token input aktual ditampilkan per kolom (dari `usage`), terpisah dari anggaran konteks yang sama untuk kedua kolom (anggaran = teks sumber, label alamat tidak dihitung, H-066). Setiap jawaban diberi label model, kuantisasi, dan effort (H-053) |
 | Pemilih model (H-053) | Pemilih `Model` di atas dua kolom: `muse-spark-1.3-contributor` (default) dan `Muse Glimmer (local, open-weight)` (stretch). Ganti model memuat jawaban tersimpan untuk model itu; jawaban kedua model tidak pernah dicampur dalam satu ringkasan 2×2 tanpa label. Bila server Glimmer lokal tidak hidup, pilihan itu nonaktif dengan teks "Local Glimmer server not running". Di replay statis (H-051), pilihan Glimmer hanya menampilkan hasil tersimpan |
 | Interaksi | Tombol "Run live" hanya aktif untuk butir `scene_checked`, baik di mode live maupun replay (pengecualian replay di bagian 4 dan `docs/API.md` §1). Tombol "Open evidence detail" membuka tampilan lebar (artboard Evidence) dengan ringkasan 2×2 |
 | Ringkasan 2×2 | Per profil: `Answered, supported` · `Answered, unsupported` · `Abstained, correctly` · `Abstained, should have answered`, dalam hitungan mentah |
 | Loading / empty / error | "Waiting for Muse Spark…" dengan waktu berjalan / "No end-to-end run for this item" / "Model call failed: {message}. Showing last stored run." |
 | Uji 3 dipotong | Kolom `Valid on date` tampil abu dengan "stretch — not run" |
+| Alasan `Not run` uji 3 (H-068) | `tidak_dijalankan` tampil sebagai `Not run`, bukan `Revoked`, dengan alasan bila tersedia: stretch mati, tabel belum disetujui, `reference_date` kosong, `reference_date` sebelum `effective_from` (U3-A), uji `Exists` gagal (U5), dokumen di luar tabel atau butir akta (U6). Teks alasan Inggris, bentuk akhir ditetapkan saat implementasi M2.4 |
 | Label | `End-to-end evidence`, `Model`, `Quantization`, `Effort`, `Muse Glimmer (local, open-weight)`, `Best profile`, `Baseline`, `Answer`, `Citations`, `Exists`, `Faithful`, `Valid on date`, `Pass`, `Fail`, `Conditional`, `Abstained`, `Insufficient evidence`, `Run live` |
 | Adegan video | 4 |
 
@@ -98,7 +99,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Data | `ItemMetrics[]` (§10) untuk setting terpilih dan pembanding, `Item` (§4) |
 | Kolom | Item id, query (dipotong), origin, mode, split (Deed: `Transfer`, H-054), span recall, token precision, reciprocal rank, Recall@K, catatan "no gold (must abstain)" |
 | Interaksi | Filter origin (`Operator-written` / `Spark-proposed, approved`), mode (`Literal` / `Paraphrase`), split. Klik baris → `selectedItemId`. Baris ringkas di atas tabel: hasil per asal dalam hitungan mentah |
-| Panel metrik janji form | Di bawah tabel, tiga angka untuk setting terpilih vs ukuran tetap: `Recall@K`, `Entity preservation`, `Boundary coherence` (US-04) |
+| Panel metrik janji form | Di bawah tabel, tiga angka untuk setting terpilih vs ukuran tetap: `Recall@K`, `Entity preservation`, `Boundary coherence` (US-04). Angka `Recall@K` dihitung atas butir held-out saja (H-065); panel menampilkan label cakupan butir `held-out` atau `tune` sesuai `config/retrieval` `[quality].recall_items`. Penyebut nol tampil `n/a` (H-059) |
 | Loading / empty / error | Skeleton baris / "No approved items for this family yet" / "Metrics unavailable: {message}" |
 | Label | `Per-item results`, `Origin`, `Mode`, `Split`, `Span recall`, `Token precision`, `Reciprocal rank`, `Recall@K`, `Entity preservation`, `Boundary coherence`, `No gold (must abstain)` |
 | Adegan video | 1, 2 (filter parafrase) |
@@ -135,7 +136,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Tampil | Pratinjau JSON profil terformat, versi, hash korpus, metrik held-out dalam hitungan mentah |
 | Interaksi | `Export profile` mengunduh berkas. `Load profile` memuat berkas; hasil round-trip ditampilkan ("chunk hash matches source run" atau penolakan hash korpus) |
 | Loading / empty / error | "Building profile…" / "Select a setting on the frontier to export" / "Profile corpus hash does not match loaded corpus" |
-| Label | `Export profile`, `Load profile`, `Profile version`, `Corpus hash`, `Held-out results` |
+| Label | `Export profile`, `Load profile`, `Profile version`, `Corpus hash`, `Held-out results` (UU PT); `Transfer results` (akta, tanpa kata held-out, H-054). Pesan round-trip tidak cocok: `Chunk hash does not match source run` (H-068, M4.3 A19) |
 | Adegan video | 5 |
 
 ### U8 — Run log & cost

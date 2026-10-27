@@ -47,9 +47,9 @@ Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028,
 
 | Aspek | Isi |
 |---|---|
-| Masukan | Query butir + potongan terambil dari satu profil (`P`, bagian 3 `docs/EVAL-SPEC.md`), masing-masing dengan label alamat. Anggaran dan instruksi sistem sama untuk profil terbaik dan pembanding |
+| Masukan | Query butir + potongan terambil dari satu profil (`P`, bagian 3 `docs/EVAL-SPEC.md`), masing-masing dengan label alamat. Anggaran dan instruksi sistem sama untuk profil terbaik dan pembanding. Anggaran konteks = token teks sumber; label alamat tidak dihitung dan diberikan sama ke semua chunker (H-066). Token input aktual tampil per kolom di U3 |
 | Keluaran | `AnswerC` (§8): `status` (`jawab`/`tolak`/`bukti_tidak_cukup`), `jawaban`, `kutipan[]` berisi `alamat` dan `teks` |
-| Maksud prompt | Jawab hanya dari konteks yang diberikan. Setiap klaim dikutip dengan alamat yang disalin persis dari label konteks dan teks yang disalin persis. Bila konteks tidak memuat jawabannya, tolak atau nyatakan bukti tidak cukup; itu keluaran sah |
+| Maksud prompt | Jawab hanya dari konteks yang diberikan. Setiap klaim dikutip dengan teks yang disalin persis dan alamat **unit** (mis. `… › Pasal n › ayat (m)`) yang disalin dari label konteks; bila label potongan berbentuk rentang `A – B`, kutipan menyalin alamat unit tempat teks berada, bukan label rentang (H-067, V5 (i): verifier uji 1 strict menolak rentang; prompt C M2.2 berubah). Bila konteks tidak memuat jawabannya, tolak atau nyatakan bukti tidak cukup; itu keluaran sah |
 | Batasan prompt | Tidak boleh memakai pengetahuan di luar konteks. Tidak boleh tahu profil mana yang sedang dijawab (instruksi identik, tanpa nama setting) |
 | Validasi semantik | Status `jawab` dengan kutipan kosong ditandai; penilaian kutipan oleh verifier, bukan LLM |
 | Cache | Kunci per hash konteks + prompt + provider + model + kuantisasi + effort. Hasil disimpan; replay tidak memanggil API |

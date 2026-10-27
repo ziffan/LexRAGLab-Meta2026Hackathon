@@ -145,7 +145,7 @@ Aturan: kunci ada → baca, jangan panggil. Mode replay hanya membaca (`runs/` d
 
 | Kategori | Target | Cara ukur |
 |---|---|---|
-| Reproducibility | Hash masukan sama → keluaran grid, potongan, dan profil identik byte per byte | Test round-trip M4.3, test hash M3.4 |
+| Reproducibility | Hash masukan sama → keluaran grid, potongan, dan profil identik byte per byte, kecuali `Profile.created_at` (waktu ekspor dari jam suntikan; impor mengabaikannya) (H-068, M4.3 A4 (1)) | Test round-trip M4.3, test hash M3.4 |
 | Biaya | Total panggilan Spark di dalam kredit $150 (Participant Guide / docs Model API); B dijalankan per granularitas H-038 setelah biaya dan waktu satu dokumen diukur (M3.1) | Agregat `RunRecord` di U8; cost guard |
 | Rate limit | Di bawah 150 RPM / 3M TPM (Contributor, H-028, Participant Guide / docs Model API); batas tier kredit belum didokumentasikan | Pembatas laju di klien; A dan B berurutan, bukan paralel; backoff `Retry-After` pada 429 |
 | Latensi demo | Mode replay tidak bergantung pada jaringan; satu panggilan live saja; versi statis tanpa panggilan sama sekali (H-051) | Kriteria M5.1: API diputus, semua adegan bisa diputar |

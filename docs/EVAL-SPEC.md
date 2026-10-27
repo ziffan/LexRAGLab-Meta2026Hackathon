@@ -84,6 +84,7 @@ Recall@K(q)  = |{g ∈ parts(q) : ∃ c ∈ C[1..K], chars(g) ⊆ chars(c)}| / |
 ```
 
 - Span recall (§4) dan precision token (§5) tidak berubah oleh pemecahan, karena keduanya dihitung per karakter dan per token.
+- **Cakupan angka Recall@K (H-065).** Angka hasil di panel M1.5 dihitung atas butir held-out saja. Butir tune boleh tampil dengan label `tune`. Cakupan adalah parameter `config/retrieval` `[quality].recall_items`, dan labelnya (`held-out` atau `tune`) tampil di panel.
 
 ## 7. Metrik mutu potongan (janji form)
 
@@ -147,24 +148,49 @@ Baris ringkas: hasil per asal (`operator` vs `spark_disetujui`) untuk membaca ci
 
 | Uji | Definisi | Hasil |
 |---|---|---|
-| 1. Exists | `kutipan.alamat` sama persis dengan salah satu alamat unit di peta alamat keluarga itu (UU PT: parser struktur tulisan tangan, alamat kanonik dengan bagian; akta: `SchemaA` versi aktif). Nomor benar dengan bagian salah = gagal | `lulus` / `gagal` |
-| 2. Faithful | `kutipan.teks` adalah substring persis teks sumber di alamat itu; bila tidak, skor fuzzy ≥ ambang `config/verifier` | `lulus` / `gagal`, `faithful_score` |
+| 1. Exists | `kutipan.alamat` sama persis dengan salah satu alamat unit di peta alamat keluarga itu (UU PT: parser struktur tulisan tangan, alamat kanonik dengan bagian; akta: `SchemaA` versi aktif). Nomor benar dengan bagian salah = gagal. Alamat rentang `A – B` bukan alamat unit, jadi gagal (V5-strict, H-067) | `lulus` / `gagal` |
+| 2. Faithful | `kutipan.teks` adalah substring persis teks sumber di alamat itu; bila tidak, skor fuzzy ≥ ambang `config/verifier` dan aturan tambahan di bawah (H-067) | `lulus` / `gagal`, `faithful_score` |
 | 3. Valid on date (stretch, H-017) | status pasal pada `Item.reference_date` menurut `StatusTable` versi yang disetujui operator | `berlaku` / `dicabut` / `berlaku_bersyarat` / `tidak_dijalankan` |
 
-- Uji 2 hanya dijalankan bila uji 1 lulus.
+- Uji 2 hanya dijalankan bila uji 1 lulus. Bila uji 1 gagal: `faithful = gagal`, `faithful_score = null`, fungsi skor tidak dipanggil (`docs/scenarios/M2.3.md` V6).
+
+**Fungsi skor fuzzy uji 2 (H-067, V1-B).** Jarak edit Levenshtein tingkat code point antara teks kutipan dan substring teks unit yang paling mirip (pencocokan substring aproksimatif):
+
+```text
+faithful_score = 1 − d_min / panjang(kutipan)
+d_min = jarak edit minimum kutipan ke sembarang substring teks unit di alamat itu
+```
+
+- Kutipan yang substring persis: `d_min = 0` (lulus, `faithful_score = null`). Mengutip sebagian ayat tidak dihukum.
+- Lulus bila `faithful_score ≥ θ` (inklusif). `θ` dari `config/verifier`, nilai 0,95 (H-067). Skor disimpan sebagai pecahan; test membandingkan pecahan persis atau toleransi 1e-5.
+- **Q1 (H-067).** Aturan tambahan: kutipan fuzzy lulus hanya bila `d_min ≤ D_max`. `D_max = 3`, dari `config/verifier`. Skor relatif tidak menahan perubahan makna pada kutipan panjang; Q1 menahannya (S35).
+- **V3-on, pengaman digit (H-067).** Kutipan yang lolos fuzzy tetap `gagal` bila deret digitnya tidak persis ada di jendela cocok sumber (mis. "30 hari" menjadi "80 hari"). `faithful_score` tetap dicatat.
+- Panjang dihitung dalam code point, bukan unit UTF-16.
+
+**Alamat kutipan (H-067, V5-strict, V14).** Prompt C diminta menyalin alamat unit, bukan label rentang potongan (`docs/SPARK-ROLES.md` §4). Alamat tingkat huruf berformat `› huruf a` (`docs/DATA-CONTRACTS.md` §2).
 - `berlaku_bersyarat` ditampilkan apa adanya, tidak dipaksa lulus atau gagal (H-009).
-- Uji 3 `tidak_dijalankan` bila stretch tidak dikerjakan, tabel belum disetujui, atau `reference_date = null`.
+- Uji 3 `tidak_dijalankan` bila stretch tidak dikerjakan, tabel belum disetujui, atau `reference_date = null`. Tambahan (H-068, `docs/scenarios/M2.4.md` U3-A, U5, U6):
+  - `reference_date` < `effective_from` entri (U3-A; berlaku untuk semua status, perbandingan inklusif, `effective_from = null` tanpa batas bawah).
+  - Uji 1 gagal (U5): uji 3 hanya dijalankan bila uji 1 lulus. Uji 2 tidak memengaruhi uji 3.
+  - Dokumen di luar tabel, atau butir akta (U6): tidak ada tabel, `default_rule` tidak berlaku lintas dokumen.
+  - Pada semua kasus `tidak_dijalankan`, `status_table_version = null`.
 
 **Ringkasan 2×2 penolakan**, per profil, hitungan mentah:
 
 | Sel | Definisi |
 |---|---|
-| Answered, supported | `status = jawab`, minimal satu kutipan, semua kutipan lulus uji 1 dan 2, dan minimal satu kutipan berada di potongan yang beririsan dengan `G` |
+| Answered, supported | `status = jawab`, minimal satu kutipan, semua kutipan lulus uji 1 dan 2, dan minimal satu kutipan berada di potongan yang beririsan dengan `G` (tafsir V10-any di bawah, H-067) |
 | Answered, unsupported | `status = jawab` dan syarat di atas tidak terpenuhi, termasuk menjawab butir tanpa gold |
 | Abstained, correctly | `status ∈ {tolak, bukti_tidak_cukup}` dan (`G = ∅` atau tidak ada karakter gold di konteks) |
 | Abstained, should have answered | `status ∈ {tolak, bukti_tidak_cukup}` dan ada karakter gold di konteks |
 
 Kegagalan "menjawab yakin dari potongan yang salah" tampil apa adanya di sel kedua.
+
+**Tafsir sel "Answered, supported" (H-067, V10-any).** "Berada di potongan yang beririsan dengan `G`" berarti ada potongan konteks yang beririsan dengan rentang tertaut kutipan **dan** beririsan dengan `G`. Tidak bergantung urutan konteks. Kutipan yang unitnya tidak ada di konteks tidak mendukung.
+
+**Kelemahan V10-any (untuk laporan, C10).** Kutipan yang rentang teksnya di luar `G` tetapi sepotong dengan `G` dihitung supported. Sel ini karena itu dapat melebihi dukungan yang sebenarnya pada teks kutipan; laporan menyatakannya, tanpa klaim bahwa kutipan itu sendiri mencakup gold.
+
+**Kunci ringkasan (H-067, V11).** Satu ringkasan per kombinasi (`setting_id`, `slot`, `model_profile`). Jawaban Contributor, Glimmer lokal, dan Spark Open tidak pernah dijumlahkan (H-028, H-060).
 
 ## 11. Skenario test Tier 1
 

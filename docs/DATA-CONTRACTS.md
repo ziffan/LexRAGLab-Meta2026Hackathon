@@ -75,7 +75,7 @@ Detektor penanda dijalankan atas teks bersih, bukan berkas mentah: kunci `catata
 
 Kelima bagian tetap di teks bersih. Cakupan retrieval default (`batang_tubuh`, `penjelasan_pasal`, `penjelasan_umum`) adalah filter di `config/retrieval`, bukan pembuangan teks, sehingga mengubah cakupan tidak menggeser offset.
 
-**Alamat kanonik.** Setiap potongan, span, dan baris status membawa `section` dan nomor Pasal. Alamat menyertakan bagian: `UU 40/2007 › Pasal 86 › ayat (9)` untuk batang tubuh dan `UU 40/2007 › Penjelasan › Pasal 86 › Ayat (9)` untuk Penjelasan. Kunci unik = (`section`, Pasal, ayat, huruf). BAB, Bagian, dan Paragraf diturunkan dari heading fisik terdekat (153A–153J: BAB XI); nomor Bagian dan Paragraf berulang antar BAB, jadi bukan kunci. Urutan Pasal mengikuti urutan kemunculan, bukan urutan numerik. Verifier uji 1 menolak kutipan yang nomornya benar tetapi bagiannya salah.
+**Alamat kanonik.** Setiap potongan, span, dan baris status membawa `section` dan nomor Pasal. Alamat menyertakan bagian: `UU 40/2007 › Pasal 86 › ayat (9)` untuk batang tubuh dan `UU 40/2007 › Penjelasan › Pasal 86 › Ayat (9)` untuk Penjelasan. Kunci unik = (`section`, Pasal, ayat, huruf). Alamat tingkat huruf berformat `<alamat ayat> › huruf a` (huruf kecil, tanpa kurung), mis. `UU 40/2007 › Pasal 142 › ayat (2) › huruf a` (H-067, V14). BAB, Bagian, dan Paragraf diturunkan dari heading fisik terdekat (153A–153J: BAB XI); nomor Bagian dan Paragraf berulang antar BAB, jadi bukan kunci. Urutan Pasal mengikuti urutan kemunculan, bukan urutan numerik. Verifier uji 1 menolak kutipan yang nomornya benar tetapi bagiannya salah.
 
 **Usulan baris status.** Pemuat hanya **mengusulkan** baris `StatusTable` (§5) dari anotasi. Isi tabel milik operator dan berlaku setelah operator menyetujui versinya (H-009).
 
@@ -124,6 +124,8 @@ Kunci frontmatter berkas beku: `jenis`, `nomor`, `tahun`, `tentang`, `konsolidas
 | `warnings` | array of string | mis. "no structural marker, fallback per section" | Sistem |
 
 `fixed_size` (H-062): jendela tetap atas teks bersih dalam cakupan retrieval secara berurutan, melintasi batas Pasal dan `section`; `section` = section posisi awal potongan, `address` = rentang unit pertama dan terakhir; filter cakupan retrieval tetap per `section`.
+
+Chunker struktur (H-064): batas potongan ayat pertama tiap Pasal mencakup heading Pasal. Ini hanya batas potongan; unit alamat untuk Recall@K tetap konvensi `docs/scenarios/M1.2.md` A4 (batas potongan bukan unit alamat). Alamat tingkat huruf berformat `› huruf a` (§2, H-067).
 
 Alamat diberikan dari peta alamat yang sama untuk semua chunker (prinsip keadilan, `docs/MILESTONES.md`). Peta alamat UU PT berasal dari parser struktur tulisan tangan (alamat kanonik §2); peta alamat akta berasal dari `SchemaA` versi aktif, karena akta tidak punya parser tangan.
 
@@ -304,7 +306,7 @@ Koreksi operator **HARUS** disimpan sebagai versi baru; v1 tidak ditimpa.
 }
 ```
 
-`alamat` adalah label alamat yang disalin dari konteks (§3 `address`). `jawaban` boleh `null` bila status bukan `jawab`.
+`alamat` adalah alamat unit yang disalin dari konteks (§3 `address`), bukan label rentang `A – B` potongan (H-067, V5-strict; verifier uji 1 menolak rentang). `jawaban` boleh `null` bila status bukan `jawab`.
 
 **Penyimpanan `AnswerRecord`**
 
@@ -318,6 +320,7 @@ Koreksi operator **HARUS** disimpan sebagai versi baru; v1 tidak ditimpa.
 | `context_chunk_ids` | array of string | potongan dalam anggaran, berurutan | Sistem |
 | `budget_tokens` | int | sama untuk kedua slot | Sistem |
 | `output` | objek sesuai skema di atas | | Spark |
+| `flags` | array of string | informatif (H-066): penanda semantik, jawaban ditandai bukan ditolak. Nilai yang dipakai kode: `jawab_tanpa_kutipan` (`status = jawab`, `kutipan` kosong), `jawab_tanpa_jawaban` (`status = jawab`, `jawaban` kosong atau hanya spasi). Daftar kosong bila tidak ada. Penilaian kutipan tetap milik verifier | Sistem |
 | `run_id` | string | | Sistem |
 
 **VerifierResult** (per kutipan)
@@ -327,17 +330,19 @@ Koreksi operator **HARUS** disimpan sebagai versi baru; v1 tidak ditimpa.
 | `answer_id` | string | |
 | `citation_index` | int | |
 | `exists` | enum `lulus` / `gagal` | uji 1: alamat ada di peta alamat |
-| `faithful` | enum `lulus` / `gagal` | uji 2: persis, lalu fuzzy dengan ambang dari `config/verifier` |
+| `faithful` | enum `lulus` / `gagal` | uji 2: persis, lalu fuzzy dengan ambang dan `D_max` dari `config/verifier`, dan pengaman digit (`docs/EVAL-SPEC.md` §10, H-067) |
 | `faithful_score` | number \| null | skor fuzzy bila tidak persis |
 | `valid_on_date` | enum `berlaku` / `dicabut` / `berlaku_bersyarat` / `tidak_dijalankan` | uji 3, stretch (H-017) |
 | `status_table_version` | int \| null | |
 | `matched_chunk_id` | string \| null | |
 
-**RejectionSummary** (per profil, hitungan mentah)
+**RejectionSummary** (per kombinasi, hitungan mentah). Kunci: (`setting_id`, `slot`, `model_profile`) (H-067, V11). Jawaban beda `model_profile` tidak pernah dijumlahkan (H-028, H-060).
 
 | Field | Tipe |
 |---|---|
 | `setting_id` | string |
+| `slot` | enum `best` / `baseline` |
+| `model_profile` | string |
 | `answered_supported` | int |
 | `answered_unsupported` | int |
 | `abstained_correct` | int |
@@ -457,14 +462,14 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 | `family` | enum | |
 | `setting` | `Setting` | |
 | `schema` | `SchemaRecord.body` \| null | disertakan utuh bila chunker skema |
-| `corpus_hash` | string | hash gabungan semua `CorpusDoc.sha256` |
+| `corpus_hash` | string | hash kanonik atas pasangan `(doc_id, sha256)` semua dokumen keluarga profil itu, urut menurut `doc_id`; dokumen keluarga lain tidak ikut (H-068, M4.3 A1) |
 | `config_hash` | string | |
-| `chunk_set_hash` | string | untuk uji round-trip |
+| `chunk_set_hash` | string | untuk uji round-trip. Hash kanonik atas daftar pasangan `(chunk_id, teks)` terurut menurut (`doc_id`, `start`), tanpa data encoder (H-068, M4.3 A2-X) |
 | `tokenizer` | `{name: string, version: string}` | |
 | `clean_sha256`, `loader_rules_version` | string | teks bersih yang dipakai (H-046) |
 | `packing` | enum `stop` / `skip` / `truncate` | aturan pengemasan (`docs/EVAL-SPEC.md` §3) |
 | `embedder` | `{name: string, revision: string, max_seq_length: int}` \| null | H-042, tanpa prefix |
-| `held_out` | `{n_items: int, by_origin: object, mean_span_recall: number, mean_token_precision: number, fully_covered: {covered: int, total: int}}` \| null | `null` untuk akta: butir akta dilaporkan per butir sebagai uji transfer, tanpa split (H-054) |
+| `held_out` | `{n_items: int, by_origin: object, mean_span_recall: number \| null, mean_token_precision: number \| null, fully_covered: {covered: int, total: int}}` \| null | `mean_span_recall` dan `mean_token_precision` masing-masing `null` bila kelompok tak punya nilai non-null untuk metrik itu (konsisten H-061; H-068, M4.3 A10). `held_out` `null` untuk akta: butir akta dilaporkan per butir sebagai uji transfer, tanpa split (H-054) |
 | `created_at` | timestamp | |
 
 Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
