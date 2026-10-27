@@ -179,3 +179,64 @@ def test_header_binding_coexists_with_schema_binding(base, tmp_path):
     assert pipe.headers is not None and pipe.schemas is not None
     best, _ = schema_pair(svc)
     assert c2.get(RET, params={"setting_id": best.setting_id, "item_id": ITEM}).status_code == 200
+
+
+# ---------- W22: penguatan (konteks identik dengan grid, kunci cache potongan, kunci plan tanpa skema) ----------
+def test_w6_context_and_request_equal_grid_style_pipeline_with_schemas(base, tmp_path):
+    from backend.answer.context import build_context
+    from backend.answer.prompt import load_prompt, prompt_versions
+    from backend.pipeline.grid_run import to_grid_items
+    from backend.pipeline.pipeline import Pipeline
+
+    c, tr, svc = make(base, tmp_path)
+    best, bl = schema_pair(svc)
+    r = c.post(ANS, json=body(best, bl))
+    assert r.status_code == 200, r.text
+    # pipeline ala grid_run --with-schema: dibangun mandiri dari store skema, bukan lewat Service.pipeline()
+    pipe = Pipeline(svc.doc("uupt-40-2007"), tokenizer=svc.tok(), retrieval_cfg=svc.cfg("retrieval"), grid_cfg=svc.cfg("grid"),
+                    encoder_factory=lambda: svc._encoder, cache_dir=svc.embed_cache_dir, headers=None,
+                    schemas=SchemaBinding.from_store(svc.runs_dir, "uupt"))
+    raw = next(i for i in svc.items("uupt") if i.get("id") == ITEM)
+    item = to_grid_items([raw])[0]
+    prompt = load_prompt(prompt_versions()[0])
+    gb, gl = build_context(pipe, best, item, prompt), build_context(pipe, bl, item, prompt)
+    d = r.json()
+    assert d["best"]["context_chunk_ids"] == gb.chunk_ids and d["baseline"]["context_chunk_ids"] == gl.chunk_ids
+    assert gb.chunk_ids  # bukan kebetulan kosong == kosong
+    sent = [q["input"] for q in tr.requests]
+    assert sent == [gb.input_text, gl.input_text]  # teks yang dikirim = bundel grid, jadi cache_key jawaban sama
+
+
+def test_chunks_cache_key_includes_schema_content_identity(base, tmp_path):
+    """Versi sama, isi skema beda (berkas ditulis ulang di tempat): potongan tidak boleh basi dari cache proses."""
+    _c, _tr, svc = make(base, tmp_path)
+    doc = svc.doc("uupt-40-2007")
+    best, _ = schema_pair(svc)
+    first = svc.chunks(doc, best)
+    assert svc.chunks(doc, best) is first  # cache aktif untuk identitas yang sama
+    path = svc.runs_dir / "schemas" / "uupt" / "v1.json"
+    rec = json.loads(path.read_text(encoding="utf-8"))
+    rec["body"] = schema_rec(unit_level=2)["body"]
+    path.write_text(json.dumps(rec), encoding="utf-8", newline="\n")
+    same = next(s for s in svc.grid_settings("uupt") if s.setting_id == best.setting_id)  # versi sama -> setting_id sama
+    second = svc.chunks(doc, same)
+    assert second is not first and {x["chunk_id"] for x in second} != {x["chunk_id"] for x in first}
+
+
+def test_plan_key_without_schema_is_stable_and_matches_stored_envelope(base):
+    """Baca-saja terhadap runs/ repo: run grid lama (tanpa skema) tetap ditemukan R3 setelah binding skema ada."""
+    from backend import config
+    runs = config.REPO_ROOT / "runs"
+    if not (runs / "grid").is_dir():
+        pytest.skip("runs/grid tidak ada")
+    svc = Service(tokenizer=base.tokenizer, runs_dir=runs, encoder=base._encoder, embed_cache_dir=base.embed_cache_dir)
+    svc._docs = base._docs
+    plan = svc.plan("uupt")  # create_split=False: tanpa tulis
+    if plan.key is None:
+        pytest.skip("split record tidak ada di runs/")
+    assert plan.schemas is None and svc.plan("uupt", schemas=None).key == plan.key
+    stored = runs / "grid" / f"{plan.key}.json"
+    assert stored.is_file() and json.loads(stored.read_text(encoding="utf-8"))["key"] == plan.key
+    sb = SchemaBinding.from_store(runs, "uupt")
+    if sb.records:  # bila ada skema: kunci dengan skema beda dari kunci tanpa skema
+        assert svc.plan("uupt", schemas=sb).key != plan.key

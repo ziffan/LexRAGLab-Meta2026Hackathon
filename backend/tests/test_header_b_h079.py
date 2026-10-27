@@ -33,7 +33,7 @@ def run(rig, prompt, prefix, us, tmp_path, gran="ayat", warm=True, **kw):
 
 def test_config_selects_v2_and_hash_differs_from_v1():
     hc = load_header_cfg()
-    assert hc["prompt_version"] == "v2" and hc["schema_max_length_chars"] is None
+    assert hc["prompt_version"] == "v2" and hc["schema_max_length_chars"] == 190  # e0f3c6b: diaktifkan setelah smoke diterima (G-35)
     v2 = load_prompt(hc["max_header_tokens"], hc["prompt_version"])
     v1 = load_prompt(hc["max_header_tokens"], "v1")
     assert v2.version == "v2" and v1.version == "v1"
@@ -105,17 +105,17 @@ def test_make_call_and_request_carry_maxlength_only_with_flag(tmp_path):
 
 def test_config_validation_of_new_keys(tmp_path):
     src = (config.REPO_ROOT / "config" / "header_b.toml").read_text(encoding="utf-8")
-    cases = (('schema_max_length_chars = 190', True), ('schema_max_length_chars = 0', False),
+    cases = (('schema_max_length_chars = 191', True), ('schema_max_length_chars = 0', False),
              ('schema_max_length_chars = "x"', False), ('prompt_version = ""', False))
     for i, (line, ok) in enumerate(cases):
         d = tmp_path / f"c{i}"
         d.mkdir()
-        new = (src.replace("# schema_max_length_chars = 190", line) if line.startswith("schema")
+        new = (src.replace("schema_max_length_chars = 190", line) if line.startswith("schema")
                else src.replace('prompt_version = "v2"', line))
         assert new != src
         (d / "header_b.toml").write_text(new, encoding="utf-8", newline="\n")
         if ok:
-            assert load_header_cfg(d)["schema_max_length_chars"] == 190
+            assert load_header_cfg(d)["schema_max_length_chars"] == 191
         else:
             with pytest.raises(HeaderConfigError):
                 load_header_cfg(d)
@@ -243,11 +243,12 @@ def test_client_exposes_rejected_output_only_on_semantic_failure(tmp_path):
     kw = make_call(prompt, prefix, units()[0], Tok(), max_header_tokens=MAXH, max_output_tokens=1000, warm_max_output_tokens=777, meta={})
     bad = rig.client.call(**kw)
     assert bad.output is None and json.loads(bad.rejected_output) == {"chunk_id": "id1", "header": LONG}
-    assert not list((rig.runs / "spark" / "cache").rglob("*")) or all(
-        LONG not in p.read_text(encoding="utf-8") for p in (rig.runs / "spark").rglob("*.json"))
+    # W22: cache nyata di runs/spark/b/<key>.json; keluaran gagal tidak boleh masuk (asersi lama vakum: jalur spark/cache tak ada)
+    assert not list((rig.runs / "spark" / "b").glob("*.json"))
     rig2, _p, _f = setup(tmp_path / "ok")
     good = rig2.client.call(**kw)
     assert good.output is not None and good.rejected_output is None
+    assert len(list((rig2.runs / "spark" / "b").glob("*.json"))) == 1  # kontrol positif: jalur cache benar
     rig3 = Rig(tmp_path / "err", default=Resp(200, body_ok({"chunk_id": "id1"})))
     assert rig3.client.call(**kw).rejected_output is None
 
