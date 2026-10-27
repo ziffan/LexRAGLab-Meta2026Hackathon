@@ -335,10 +335,10 @@ class SparkClient:
                         continue
                     return self._fail(ctx, "timeout",
                                       f"timeout after {_fmt_num(lim.timeout_s)} s ({attempts} attempts)",
-                                      projected=projected)
+                                      projected=projected * (timeouts + 1))  # H-071: per upaya timeout
                 return self._fail(ctx, "model_unavailable", "connection to the Model API failed",
                                   projected=projected)
-            return self._interpret(ctx, projected, http, schema, validator)
+            return self._interpret(ctx, projected, http, schema, validator, projected * timeouts)
 
     def _map_status(self, status: int, response: Any) -> tuple[str, str]:
         msg, reasons = self._server_message(response)
@@ -375,18 +375,21 @@ class SparkClient:
     # ------------------------------------------------------------- interpret
 
     def _interpret(self, ctx: _Ctx, projected: int, http: Any, schema: dict,
-                   validator: Validator | None) -> CallResult:
+                   validator: Validator | None, timeout_proj: int = 0) -> CallResult:
+        # H-071: upaya timeout sebelum balasan ini ditagih sebagai proyeksi; balasan ini lewat usage.
+        tp = timeout_proj or None
         try:
             data = http.json()
         except Exception:  # noqa: BLE001
             data = None
         usage = self._parse_usage(data)
         if usage is None:
-            return self._fail(ctx, "usage_invalid", "usage missing or invalid in the response", projected=projected)
+            return self._fail(ctx, "usage_invalid", "usage missing or invalid in the response",
+                              projected=projected + timeout_proj)
         cost = compute_cost_micros(usage, self._s.pricing)
 
         def err(code: str, message: str) -> CallResult:
-            return self._fail(ctx, code, message, usage=usage, cost=cost)
+            return self._fail(ctx, code, message, usage=usage, cost=cost, projected=tp)
 
         status = data.get("status")
         if status == "incomplete":
@@ -411,7 +414,7 @@ class SparkClient:
         reason = self._semantic(canonical, validator)
         if reason:
             return err("semantic_invalid", reason)
-        rec = self._record(ctx, status="ok", usage=usage, cost=cost, t_end=self._now())
+        rec = self._record(ctx, status="ok", usage=usage, cost=cost, projected=tp, t_end=self._now())
         store.cache_write(self._runs, ctx.role, ctx.cache_key, canonical, rec)
         store.save_record(self._runs, rec)
         self._log.info("spark call role=%s status=ok cost_usd_micros=%d", ctx.role, cost)

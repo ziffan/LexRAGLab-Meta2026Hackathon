@@ -503,7 +503,7 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `usage_cached_tokens` | int \| null | `usage.input_tokens_details.cached_tokens` |
 | `usage_output_tokens` | int \| null | termasuk reasoning |
 | `cost_usd_micros` | int \| null | dari `usage` × harga `config/model`; `0` untuk Glimmer lokal |
-| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); diisi bila `cost_usd_micros` `null` pada panggilan berbayar (usage rusak/hilang) dan pada panggilan gagal tanpa `usage` (timeout, 5xx, galat koneksi; H-063). Buku belanja memakai `cost_usd_micros ?? projected_cost_usd_micros` (M0.1 O-3) |
+| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); diisi pada panggilan berbayar tanpa `usage` sah (usage rusak/hilang) dan pada panggilan gagal tanpa `usage` (timeout, 5xx, galat koneksi; H-063), per upaya timeout (timeout dua upaya = 2 × proyeksi; H-071). Pada record `ok` (atau galat dengan `usage`) yang didahului timeout, `cost_usd_micros` tetap murni usage × harga dan field ini = proyeksi × jumlah upaya timeout. Buku belanja memakai `(cost_usd_micros ?? 0) + (projected_cost_usd_micros ?? 0)` (M0.1 O-3, H-071) |
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |

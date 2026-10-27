@@ -68,12 +68,9 @@ class RunRecord:
         return cls(**{n: d[n] for n in names})
 
     def spend_micros(self) -> int:
-        """Belanja untuk buku: `cost ?? projected ?? 0` (O-3 cabang A)."""
-        if self.cost_usd_micros is not None:
-            return self.cost_usd_micros
-        if self.projected_cost_usd_micros is not None:
-            return self.projected_cost_usd_micros
-        return 0
+        """Belanja untuk buku: `(cost ?? 0) + (projected ?? 0)` (O-3 cabang A; H-071: cost murni usage,
+        projected pada record ok = proyeksi upaya timeout yang mendahului)."""
+        return (self.cost_usd_micros or 0) + (self.projected_cost_usd_micros or 0)
 
     def role(self) -> str | None:
         return role_for_kind(self.kind)
