@@ -1,0 +1,185 @@
+import { useEffect, useState } from "react";
+import { fetchDoc, fetchRuns } from "../api";
+import { useStore } from "../state";
+import { formatUsd, tokenStr } from "../lib/evidence";
+import { truncate } from "../lib/format";
+import {
+  ROLES, aggregateByRole, filterRuns, granularityLabel, latencyStr, projectionRows, roleLabel, sampleRows, utcStamp, type RoleFilter,
+} from "../lib/runlog";
+import type { HeaderBView, Load, RunRecord } from "../types";
+import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
+
+// U8 Run log & cost (docs/UI-SPEC.md U8). `RunLogView` dan `HeaderBPanel` murni; `RunLogPanel` menyambung R6 + snapshot.
+
+export function RunLogView({ runs, role, onRole, selected, onSelect }: {
+  runs: RunRecord[];
+  role: RoleFilter;
+  onRole: (r: RoleFilter) => void;
+  selected: string | null;
+  onSelect: (id: string | null) => void;
+}) {
+  if (runs.length === 0) return <EmptyBlock>No runs recorded</EmptyBlock>;
+  const rows = filterRuns(runs, role);
+  const agg = aggregateByRole(rows);
+  const detail = rows.find((r) => r.run_id === selected) ?? null;
+  return (
+    <>
+      <div className="controls">
+        <label className="field">
+          <span>Role</span>
+          <select value={role} onChange={(e) => onRole(e.target.value as RoleFilter)}>
+            <option value="all">All roles</option>
+            {ROLES.map((k) => <option key={k} value={k}>{roleLabel(k)}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="table-wrap">
+        <table className="data runlog-agg">
+          <caption className="cap">Per role (stored runs; cost from model usage)</caption>
+          <thead>
+            <tr><th scope="col">Role</th><th scope="col">Runs</th><th scope="col">Input tokens</th><th scope="col">Cached tokens</th><th scope="col">Output tokens</th><th scope="col">Cost (USD)</th></tr>
+          </thead>
+          <tbody>
+            {agg.map((a) => (
+              <tr key={a.kind}>
+                <td>{roleLabel(a.kind)}</td><td>{a.runs}</td><td>{a.inputTokens}</td><td>{a.cachedTokens}</td><td>{a.outputTokens}</td><td>{formatUsd(a.costMicros)}{a.unknownRuns > 0 && <span className="muted"> (incl. {a.unknownRuns} {a.unknownRuns === 1 ? "run" : "runs"} with unknown values counted as 0)</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="table-wrap">
+        <table className="data runlog">
+          <caption className="cap">Runs (UTC)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Time (UTC)</th><th scope="col">Role</th><th scope="col">Model</th><th scope="col">Effort</th><th scope="col">Prompt version</th>
+              <th scope="col">Input tokens</th><th scope="col">Cached tokens</th><th scope="col">Output tokens</th><th scope="col">Cost (USD)</th><th scope="col">Latency</th><th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.run_id} className={r.run_id === selected ? "sel" : undefined}>
+                <td><button type="button" className="addr" onClick={() => onSelect(r.run_id === selected ? null : r.run_id)} aria-expanded={r.run_id === selected}>{utcStamp(r.created_at)}</button></td>
+                <td>{roleLabel(r.kind)}</td>
+                <td>{r.model ?? "n/a"}</td>
+                <td>{r.effort ?? "n/a"}</td>
+                <td>{r.prompt_version ?? "n/a"}</td>
+                <td>{tokenStr(r.usage_input_tokens)}</td>
+                <td>{tokenStr(r.usage_cached_tokens)}</td>
+                <td>{tokenStr(r.usage_output_tokens)}</td>
+                <td>{formatUsd(r.cost_usd_micros)}</td>
+                <td>{latencyStr(r.latency_ms)}</td>
+                <td>{r.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {detail && <pre className="ctx mono" aria-label="Run record JSON">{JSON.stringify(detail, null, 2)}</pre>}
+    </>
+  );
+}
+
+export function HeaderBPanel({ header, addresses }: { header: HeaderBView | undefined; addresses: Record<string, string> }) {
+  const proj = projectionRows(header);
+  const samples = sampleRows(header, addresses);
+  if (!header || (proj.length === 0 && samples.length === 0)) return <EmptyBlock>No header B projection or samples recorded</EmptyBlock>;
+  return (
+    <section aria-label="Header B">
+      <h3 className="detail-title">Header B: projection and samples</h3>
+      {proj.length > 0 && (
+        <div className="table-wrap">
+          <table className="data header-proj">
+            <caption className="cap">Projected cost per granularity (full corpus, from the stored projection)</caption>
+            <thead>
+              <tr><th scope="col">Granularity</th><th scope="col">Units</th><th scope="col">Calls</th><th scope="col">Expected (USD)</th><th scope="col">Upper, cached (USD)</th><th scope="col">Upper, no cache (USD)</th><th scope="col">Est. time (s)</th></tr>
+            </thead>
+            <tbody>
+              {proj.map((p) => (
+                <tr key={p.source}><td>{granularityLabel(p.source)}</td><td>{p.units}</td><td>{p.calls}</td><td>{p.expected}</td><td>{p.upperCached}</td><td>{p.upperNoCache}</td><td>{p.seconds}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {samples.length > 0 && (
+        <div className="table-wrap">
+          <table className="data header-samples">
+            <caption className="cap">Stored header samples ({Object.entries(header.stored_counts).map(([g, n]) => `${granularityLabel(g)}: ${n} stored`).join(", ")})</caption>
+            <thead><tr><th scope="col">Granularity</th><th scope="col">Address</th><th scope="col">Header</th><th scope="col">Tokens (local tokenizer)</th></tr></thead>
+            <tbody>
+              {samples.map((s) => (
+                <tr key={`${s.granularity}-${s.chunk_id}`}>
+                  <td>{granularityLabel(s.granularity)}</td>
+                  <td className="mono" lang="id">{s.address ?? "n/a"}</td>
+                  <td lang="id">{truncate(s.header, 240)}</td>
+                  <td>{s.tokens_local}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function RunLogPanel() {
+  const { state } = useStore();
+  const snap = state.snapshot.status === "ready" ? state.snapshot.data : null;
+  const [runs, setRuns] = useState<Load<RunRecord[]>>({ status: "loading" });
+  const [attempt, setAttempt] = useState(0);
+  const [role, setRole] = useState<RoleFilter>("all");
+  const [selected, setSelected] = useState<string | null>(null);
+  const [addresses, setAddresses] = useState<Record<string, string>>({});
+
+  const hash = snap?.config_hash ?? null;
+  useEffect(() => {
+    let live = true;
+    fetchRuns()
+      .then((data) => live && setRuns({ status: "ready", data }))
+      .catch((e: unknown) => live && setRuns({ status: "error", code: "runs", message: e instanceof Error ? e.message : "Unexpected error." }));
+    return () => {
+      live = false;
+    };
+  }, [hash, attempt]);
+
+  // Alamat sampel header: potongan dari R4 untuk setting struktur tulisan tangan dan ukuran tetap (tanpa header).
+  const nSamples = snap?.header_b?.samples.length ?? 0;
+  const docId = snap?.corpus[0]?.doc_id;
+  const family = snap?.family;
+  const structId = snap?.settings.find((s) => s.chunker === "structure_handwritten" && !s.header_b)?.setting_id;
+  const fixedId = snap?.settings.find((s) => s.chunker === "fixed_size" && !s.header_b)?.setting_id;
+  useEffect(() => {
+    if (!family || !docId || nSamples === 0) return;
+    let live = true;
+    const ids = [structId, fixedId].filter((x): x is string => !!x);
+    Promise.all(ids.map((id) => fetchDoc(family, docId, id).catch(() => null))).then((docs) => {
+      if (!live) return;
+      const m: Record<string, string> = {};
+      for (const d of docs) for (const c of d?.chunks ?? []) m[c.chunk_id] = c.address;
+      setAddresses(m);
+    });
+    return () => {
+      live = false;
+    };
+  }, [family, docId, nSamples, structId, fixedId]);
+
+  let body;
+  if (runs.status === "loading" || runs.status === "idle") body = <LoadingBlock text="Loading run log…" />;
+  else if (runs.status === "error") body = (
+      <>
+        <ErrorBlock title={`Run log unreadable: ${runs.message}`} />
+        <button type="button" onClick={() => { setRuns({ status: "loading" }); setAttempt((n) => n + 1); }}>Retry</button>
+      </>
+    );
+  else body = <RunLogView runs={runs.data} role={role} onRole={setRole} selected={selected} onSelect={setSelected} />;
+  return (
+    <section className="panel" aria-labelledby="runlog-title" id="runlog">
+      <h2 id="runlog-title">Run log &amp; cost</h2>
+      {body}
+      {snap ? <HeaderBPanel header={snap.header_b} addresses={addresses} /> : null}
+    </section>
+  );
+}

@@ -6,7 +6,9 @@ Dibangun dari berkas dan cache; tidak pernah menjalankan grid, chunker, atau Spa
 
 from __future__ import annotations
 
+import json
 from collections import Counter
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Request
@@ -43,6 +45,52 @@ def grid_view(env: dict[str, Any], budget: int) -> tuple[dict[str, Any] | None, 
     metrics = [metrics_from_cache(m).to_dict() for m in env["metrics"] if m["setting_id"] in ids]
     quality = [q for q in env["quality"] if q["setting_id"] in ids]
     return grid, metrics, quality
+
+
+HEADER_SAMPLE_PER_GRANULARITY = 10
+HEADER_GRANULARITIES = ("pasal", "ayat", "fixed_size")
+
+
+def _read_json(path: Path) -> Any:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def header_b_view(runs_dir: Path) -> dict[str, Any]:
+    """Kunci baca-saja `header_b` (U8, M3.1): proyeksi biaya terbaru dari `runs/headers/projection/` dan sampel header
+    tersimpan per granularitas (`runs/headers/<granularitas>/<prompt_hash12>/<chunk_id>.json`). Hanya membaca berkas;
+    berkas rusak dilewati. Alamat tidak disertakan (butuh chunker); frontend mencocokkan `chunk_id` dengan R4."""
+    root = Path(runs_dir) / "headers"
+    projection = None
+    best = ""
+    for p in sorted((root / "projection").glob("*.json")) if (root / "projection").is_dir() else []:
+        d = _read_json(p)
+        if isinstance(d, dict) and isinstance(d.get("projections"), dict) and str(d.get("created_at", "")) >= best:
+            best, projection = str(d.get("created_at", "")), d
+    if projection is not None:
+        keep = ("source", "units", "calls", "cost_usd_micros", "time", "prompt_hash")
+        projection = {"created_at": projection.get("created_at"),
+                      "projections": {k: {f: v[f] for f in keep if f in v} for k, v in projection["projections"].items() if isinstance(v, dict)}}
+    prompt12 = None
+    if projection is not None:
+        for v in projection["projections"].values():
+            if isinstance(v, dict) and isinstance(v.get("prompt_hash"), str):
+                prompt12 = v["prompt_hash"][:12]
+                break
+    samples: list[dict[str, Any]] = []
+    stored: dict[str, int] = {}
+    for g in HEADER_GRANULARITIES:
+        gdir = root / g
+        dirs = [gdir / prompt12] if prompt12 else (sorted(x for x in gdir.iterdir() if x.is_dir()) if gdir.is_dir() else [])
+        files = sorted(f for d in dirs if d.is_dir() for f in d.glob("*.json"))
+        stored[g] = len(files)
+        for f in files[:HEADER_SAMPLE_PER_GRANULARITY]:
+            d = _read_json(f)
+            if isinstance(d, dict) and isinstance(d.get("chunk_id"), str):
+                samples.append({k: d.get(k) for k in ("chunk_id", "granularity", "header", "tokens_local", "prompt_version", "run_id")})
+    return {"projection": projection, "samples": samples, "stored_counts": stored}
 
 
 @router.get("/api/families/{family}/snapshot")
@@ -90,4 +138,5 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
         "settings": svc.settings(family),
         "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schemas_rejected": schemas_rejected, "schema_diff": schema_diff,
         "proposals": get_proposals(request).list_proposals(family), "answers": [], "answers_summary": [], "runs_summary": None,
+        "header_b": header_b_view(svc.runs_dir) if family == "uupt" else {"projection": None, "samples": [], "stored_counts": {}},
     }

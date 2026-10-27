@@ -49,6 +49,7 @@ export interface Item {
   clean_sha256: string;
   mode: "literal" | "parafrase";
   origin: "operator" | "spark_disetujui";
+  scene_checked?: boolean;
 }
 
 export interface CorpusDocInfo {
@@ -173,6 +174,11 @@ export interface Snapshot {
   grid: Grid | null;
   metrics: ItemMetrics[];
   quality: QualityWithCounts[];
+  // Bagian M2/M3 (docs/API.md 4). Opsional: snapshot lama tidak memuatnya.
+  schemas?: SchemaRecord[];
+  schema_diff?: SchemaDiff | null;
+  schemas_rejected?: SchemaRejected[];
+  header_b?: HeaderBView;
 }
 
 export interface Retrieval {
@@ -194,3 +200,169 @@ export type Load<T> =
   | { status: "loading" }
   | { status: "error"; code: string; message: string }
   | { status: "ready"; data: T };
+
+// ---- U3 (DATA-CONTRACTS §8, §12; API.md R1, W6) ----
+export type AnswerStatus = "jawab" | "tolak" | "bukti_tidak_cukup";
+export type Pass = "lulus" | "gagal";
+export type ValidOnDate = "berlaku" | "dicabut" | "berlaku_bersyarat" | "tidak_dijalankan";
+
+export interface Citation {
+  alamat: string;
+  teks: string;
+}
+
+export interface AnswerRecord {
+  answer_id: string;
+  item_id: string;
+  setting_id: string;
+  slot: "best" | "baseline";
+  model_profile: string;
+  context_chunk_ids: string[];
+  budget_tokens: number;
+  output: { status: AnswerStatus; jawaban: string | null; kutipan: Citation[] };
+  flags: string[];
+  run_id: string;
+}
+
+export interface VerifierResult {
+  answer_id: string;
+  citation_index: number;
+  exists: Pass;
+  faithful: Pass;
+  faithful_score: number | null;
+  valid_on_date: ValidOnDate;
+  status_table_version: number | null;
+  matched_chunk_id: string | null;
+}
+
+export interface RejectionSummary {
+  setting_id: string;
+  slot: "best" | "baseline";
+  model_profile: string;
+  answered_supported: number;
+  answered_unsupported: number;
+  abstained_correct: number;
+  abstained_should_answer: number;
+  n_items: number;
+}
+
+export type RunKind = "spark_a" | "spark_b" | "spark_c" | "spark_d" | "grid" | "measure";
+
+export interface RunRecord {
+  run_id: string;
+  kind: RunKind;
+  created_at: string;
+  cache_key: string;
+  config_hash: string;
+  prompt_version: string | null;
+  model: string | null;
+  effort: string | null;
+  usage_input_tokens: number | null;
+  usage_cached_tokens: number | null;
+  usage_output_tokens: number | null;
+  cost_usd_micros: number | null;
+  projected_cost_usd_micros: number | null;
+  latency_ms: number;
+  provider: string | null;
+  quantization: string | null;
+  status: "ok" | "error" | "cached" | "replay";
+  error: { code: string; message: string } | null;
+}
+
+export interface AnswersResponse {
+  best: AnswerRecord;
+  baseline: AnswerRecord;
+  verifier: VerifierResult[];
+  summary: RejectionSummary[];
+  runs: RunRecord[];
+}
+
+export interface ModelProfileInfo {
+  model_profile: string;
+  model: string | null;
+  available: boolean;
+}
+
+export interface Health {
+  status: string;
+  replay: boolean;
+  model: string | null;
+  config_hash: string;
+  model_profiles: ModelProfileInfo[];
+}
+
+// ---- U5 (DATA-CONTRACTS §6; API.md W9) ----
+export interface SchemaLevel {
+  order: number;
+  name: string;
+  marker_pattern: string;
+  examples: string[];
+  parent_order: number | null;
+  is_chunk_unit: boolean;
+}
+
+export interface SchemaBody {
+  family: string;
+  levels: SchemaLevel[];
+  default_chunk_level: number;
+  notes: string | null;
+}
+
+export interface SchemaRecord {
+  family: string;
+  schema_version: number;
+  source: "spark" | "operator";
+  parent_version: number | null;
+  body: SchemaBody;
+  validation: { order: number; example: string; matched: boolean }[];
+  run_id: string | null;
+  created_at: string;
+  operator_note: string | null;
+  sample_checked?: boolean;
+}
+
+export interface SchemaDiffEntry {
+  order: number | null;
+  field: string;
+  before: unknown;
+  after: unknown;
+}
+
+export interface SchemaDiff {
+  spark_version: number;
+  operator_version: number;
+  changed: SchemaDiffEntry[];
+  boundary_diff: { doc_id: string; only_schema: unknown; only_handwritten: unknown }[];
+}
+
+export interface SchemaRejected {
+  run_id: string;
+  family: string;
+  body: unknown;
+  errors: string[];
+  created_at: string;
+}
+
+// ---- U8 (DATA-CONTRACTS §7; runs/headers/projection) ----
+export interface HeaderSample {
+  chunk_id: string;
+  granularity: "pasal" | "ayat" | "fixed_size";
+  header: string;
+  tokens_local: number;
+  prompt_version: string | null;
+  run_id: string | null;
+}
+
+export interface HeaderProjectionEntry {
+  source: string;
+  units: number;
+  calls: number;
+  cost_usd_micros: { expected: number; upper_cached: number; upper_no_cache: number };
+  time: { estimated_seconds: number };
+}
+
+export interface HeaderBView {
+  projection: { created_at: string; projections: Record<string, HeaderProjectionEntry> } | null;
+  samples: HeaderSample[];
+  stored_counts: Record<string, number>;
+}

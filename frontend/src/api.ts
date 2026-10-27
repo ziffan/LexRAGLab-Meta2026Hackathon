@@ -1,4 +1,4 @@
-import type { DocResponse, Retrieval, Snapshot } from "./types";
+import type { AnswersResponse, DocResponse, Health, Retrieval, RunRecord, SchemaRecord, Snapshot } from "./types";
 
 export class ApiFailure extends Error {
   code: string;
@@ -8,10 +8,13 @@ export class ApiFailure extends Error {
   }
 }
 
-async function getJson<T>(url: string): Promise<T> {
+/** `fetch` yang dapat disuntikkan (test memakai fetch palsu; tanpa jaringan). */
+export type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
+
+async function requestJson<T>(url: string, init?: RequestInit, fetchFn: FetchLike = (u, i) => fetch(u, i)): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(url);
+    res = await fetchFn(url, init);
   } catch {
     throw new ApiFailure("unreachable", "Backend unreachable.");
   }
@@ -28,6 +31,10 @@ async function getJson<T>(url: string): Promise<T> {
   return body as T;
 }
 
+const getJson = <T>(url: string): Promise<T> => requestJson<T>(url);
+const postJson = <T>(url: string, body: unknown, fetchFn?: FetchLike): Promise<T> =>
+  requestJson<T>(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }, fetchFn);
+
 export function fetchSnapshot(family: string, budget: number | null = null): Promise<Snapshot> {
   const q = budget ? `?budget_tokens=${budget}` : "";
   return getJson<Snapshot>(`/api/families/${encodeURIComponent(family)}/snapshot${q}`);
@@ -43,4 +50,30 @@ export function fetchDoc(family: string, docId: string, settingId: string): Prom
   return getJson<DocResponse>(
     `/api/families/${encodeURIComponent(family)}/docs/${encodeURIComponent(docId)}?setting_id=${encodeURIComponent(settingId)}`,
   );
+}
+
+export function fetchHealth(): Promise<Health> {
+  return getJson<Health>("/api/health");
+}
+
+export function fetchRuns(limit = 500): Promise<RunRecord[]> {
+  return getJson<RunRecord[]>(`/api/runs?limit=${limit}`);
+}
+
+export interface AnswersRequest {
+  item_id: string;
+  best_setting_id: string;
+  baseline_setting_id: string;
+  model_profile: string | null;
+  live: boolean;
+}
+
+/** W6. `live: false` hanya membaca run tersimpan. */
+export function postAnswers(family: string, req: AnswersRequest, fetchFn?: FetchLike): Promise<AnswersResponse> {
+  return postJson<AnswersResponse>(`/api/families/${encodeURIComponent(family)}/answers`, req, fetchFn);
+}
+
+/** W9: versi koreksi baru dari versi induk. Isi `schema` berasal dari form operator. */
+export function postCorrection(family: string, parentVersion: number, schema: unknown, operatorNote: string | null, fetchFn?: FetchLike): Promise<SchemaRecord> {
+  return postJson<SchemaRecord>(`/api/families/${encodeURIComponent(family)}/schemas/${parentVersion}/correct`, { schema, operator_note: operatorNote }, fetchFn);
 }

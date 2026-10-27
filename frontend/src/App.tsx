@@ -1,7 +1,10 @@
 import { ChunksVsGold } from "./components/ChunksVsGold";
+import { EvidencePanel } from "./components/Evidence";
 import { Header } from "./components/Header";
 import { PerItem } from "./components/PerItem";
 import { ReviewScreen } from "./components/Review";
+import { RunLogPanel } from "./components/RunLog";
+import { SchemaPanel } from "./components/SchemaPanel";
 import { SettingSpace } from "./components/SettingSpace";
 
 export function App() {
@@ -15,7 +18,16 @@ export function App() {
         <ChunksVsGold />
         <SettingSpace />
         <div className="wide">
+          <EvidencePanel />
+        </div>
+        <div className="wide">
           <PerItem />
+        </div>
+        <div className="wide">
+          <SchemaPanel />
+        </div>
+        <div className="wide">
+          <RunLogPanel />
         </div>
       </main>
       <footer className="app-footer">Research demo. Not legal advice.</footer>
