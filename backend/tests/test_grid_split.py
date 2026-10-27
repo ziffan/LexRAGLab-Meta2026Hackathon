@@ -199,3 +199,12 @@ def test_S10_akta_no_split(tmp_path):
     with pytest.raises(SplitNotApplicable):
         ensure_split(items, directory=tmp_path, family="akta", seed=1, held_out_ratio=0.4, min_control=3)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_extend_new_control_in_held_out_updates_count():
+    v1 = split(s1_items())
+    new = mk_items({(OP, LIT): ["y1", "y2", "y3"]})
+    v2 = split(s1_items() + new, previous=v1)
+    held_ops = [a for a in v2.assignments if a.split == "held_out" and a.item_id.startswith(("u", "y"))
+                and (a.item_id in {f"u{n}" for n in range(1, 11)} or a.item_id.startswith("y"))]
+    assert v2.control_in_held_out == 5 == len(held_ops)

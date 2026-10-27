@@ -16,7 +16,7 @@ from fractions import Fraction
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
-from backend.grid.types import Assignment, SplitRecord
+from backend.grid.types import NO_SPLIT_FAMILY, Assignment, SplitRecord
 
 CONTROL_ORIGIN = "operator"  # enum Item.origin (DATA-CONTRACTS §4)
 TUNE = "tune"
@@ -50,7 +50,7 @@ def _key(item: Any, strata: Sequence[str]) -> tuple:
 
 
 def _check(items: Sequence[Any], family: str) -> list[Any]:
-    if family != "uupt":
+    if family == NO_SPLIT_FAMILY:
         raise SplitNotApplicable(f"family {family!r} has no split (H-054)")
     ordered = sorted(items, key=lambda i: i.id)
     ids = [i.id for i in ordered]
@@ -84,7 +84,7 @@ def base_partition(
     return out
 
 
-def _create(ordered, seed, ratio, min_control, strata) -> SplitRecord:
+def _create(ordered, family, seed, ratio, min_control, strata) -> SplitRecord:
     found = sum(1 for i in ordered if i.origin == CONTROL_ORIGIN)
     if found < min_control:
         raise SplitError(
@@ -109,7 +109,7 @@ def _create(ordered, seed, ratio, min_control, strata) -> SplitRecord:
     if control_held < min_control:  # pengaman; tak terjangkau setelah pemeriksaan total di atas
         raise SplitError("control requirement not met", found=control_held, needed=min_control)
     return SplitRecord(
-        family="uupt",
+        family=family,
         split_version=1,
         seed=seed,
         held_out_ratio=ratio,
@@ -175,7 +175,7 @@ def make_split(
     ordered = _check(list(items), family)
     if previous is not None:
         return _extend(ordered, previous)
-    return _create(ordered, seed, held_out_ratio, min_control, tuple(strata))
+    return _create(ordered, family, seed, held_out_ratio, min_control, tuple(strata))
 
 
 # --- penyimpanan (menerima direktori) ---
@@ -220,7 +220,7 @@ def ensure_split(
     strata: Sequence[str] = ("origin", "mode"),
 ) -> SplitRecord:
     """Muat record terakhir, hitung, simpan hanya bila versi baru. Gagal = tidak ada yang tersimpan."""
-    prev = load_latest_split_record(directory, family) if family == "uupt" else None
+    prev = load_latest_split_record(directory, family) if family != NO_SPLIT_FAMILY else None
     rec = make_split(
         items, family=family, seed=seed, held_out_ratio=held_out_ratio,
         min_control=min_control, strata=strata, previous=prev,

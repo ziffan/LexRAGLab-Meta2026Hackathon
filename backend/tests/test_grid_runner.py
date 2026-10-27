@@ -9,7 +9,8 @@ from backend.config import config_hash, load
 from backend.grid.expand import expand_grid
 from backend.grid.runner import DirGridCache, GridError, MemoryGridCache, run_grid
 from backend.grid.split import make_split
-from backend.grid.types import GridItem, ItemMetrics
+from backend.grid.types import GridItem
+from backend.metrics.types import ItemMetrics
 from backend.tests.grid_helpers import SIMPLICITY, ids, mk_items, mk_setting
 
 GRID_CFG = {
@@ -50,7 +51,7 @@ class FakePipeline:
 
     def __call__(self, setting, items):
         self.calls += len(items)
-        return [ItemMetrics(i.id, setting.setting_id, None, 10, 5, 500, 50) for i in items]
+        return [ItemMetrics(10, 5, 500, 50, item_id=i.id, setting_id=setting.setting_id) for i in items]
 
 
 def base_world():
@@ -101,7 +102,7 @@ def test_memory_cache_roundtrip_is_exact():
 
 def test_pipeline_item_mismatch_is_error():
     items, rec, settings = base_world()
-    bad = lambda s, its: [ItemMetrics("zz", s.setting_id, None, 10, 5, 500, 50)]
+    bad = lambda s, its: [ItemMetrics(10, 5, 500, 50, item_id="zz", setting_id=s.setting_id)]
     with pytest.raises(GridError):
         run_grid(settings=settings, items=items, pipeline=bad, cache=MemoryGridCache(), clean_sha256="X",
                  config_hash="C", split_record=rec, simplicity=SIMPLICITY, family="uupt")
@@ -120,3 +121,16 @@ def test_S10_akta_run_has_one_group_no_split_label_no_selection():
     assert all(m.split is None for m in r.metrics)
     assert all(p.split is None for p in r.points) and all(f.split is None for f in r.frontiers)
     assert len(r.frontiers) == 1 and {m.item_id for m in r.metrics} == {i.id for i in items}
+
+
+def test_uupt_run_labels_tune_and_held_out_correctly():
+    items, rec, settings = base_world()
+    r = run_grid(settings=settings, items=items, pipeline=FakePipeline(), cache=MemoryGridCache(), clean_sha256="X",
+                 config_hash="C", split_record=rec, simplicity=SIMPLICITY, family="uupt")
+    want = rec.split_of()
+    assert {"tune", "held_out"} == set(want.values())
+    assert all(m.split == want[m.item_id] for m in r.metrics)
+    assert {p.split for p in r.points} == {"tune", "held_out"}
+    assert {f.split for f in r.frontiers} == {"tune", "held_out"}
+    sel = r.selections[2000]
+    assert sel.tune_point.split == "tune" and sel.held_out_point.split == "held_out"

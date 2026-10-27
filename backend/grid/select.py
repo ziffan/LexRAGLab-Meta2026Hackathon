@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any, Iterable, Mapping
 
-from backend.grid.types import GridPoint, Setting
+from backend.grid.types import NO_SPLIT_FAMILY, GridPoint, Setting
 
 
 class SelectionNotApplicable(Exception):
@@ -59,7 +59,7 @@ def select_profiles(
     n_tune_gold: int | None = None,
 ) -> dict[int, Selection]:
     """Pilih per anggaran, hanya dari titik `tune`."""
-    if family != "uupt":
+    if family == NO_SPLIT_FAMILY:
         raise SelectionNotApplicable(f"family {family!r} has no profile selection (H-054)")
     points = list(points)
     margin = simplicity["tie_margin_items"]
@@ -70,6 +70,8 @@ def select_profiles(
         if p.family != family:
             continue
         if p.split == "tune":
+            if p.mean_span_recall is None:
+                continue  # tanpa butir bergold: tidak bisa dipilih (H-059)
             tune[p.budget_tokens].append(p)
         elif p.split == "held_out":
             held[(p.budget_tokens, p.setting_id)] = p

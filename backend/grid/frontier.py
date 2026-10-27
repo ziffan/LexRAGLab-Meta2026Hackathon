@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import replace
+from dataclasses import fields, replace
 from fractions import Fraction
 from typing import Iterable, Mapping
 
-from backend.grid.types import Frontier, GridPoint, ItemMetrics, Setting
+from backend.grid.types import Frontier, GridPoint, Setting
+from backend.metrics.aggregate import aggregate
+from backend.metrics.types import GridPoint as _Contract
+from backend.metrics.types import ItemMetrics
 
 
 def _mean(values: list[Fraction]) -> Fraction | None:
@@ -15,37 +18,31 @@ def _mean(values: list[Fraction]) -> Fraction | None:
 
 
 def aggregate_points(metrics: Iterable[ItemMetrics], settings: Mapping[str, Setting]) -> list[GridPoint]:
-    """Satu GridPoint per (setting_id, split). Rata-rata per butir (bukan pooled), butir tanpa gold dikeluarkan
-    dari recall dan precision; `mean_retrieved_tokens` atas semua butir split itu (A11)."""
+    """Satu GridPoint per (setting_id, split) lewat `backend.metrics.aggregate` (M1.2: rata-rata per butir
+    bergold, None bila tanpa gold, `mean_retrieved_tokens` atas butir bergold saja, A8)."""
     groups: dict[tuple[str, str | None], list[ItemMetrics]] = defaultdict(list)
     for m in metrics:
         groups[(m.setting_id, m.split)].append(m)
     points = []
     for (sid, split), ms in groups.items():
         st = settings[sid]
-        gold = [m for m in ms if m.gold_chars > 0]
-        recalls = [Fraction(m.covered_gold_chars, m.gold_chars) for m in gold]
-        precs = [Fraction(m.gold_tokens_retrieved, m.retrieved_tokens) for m in gold if m.retrieved_tokens > 0]
-        rrs = [Fraction(m.reciprocal_rank) for m in gold if m.reciprocal_rank is not None]
-        points.append(
-            GridPoint(
-                family=st.family,
-                setting_id=sid,
-                split=split,
-                budget_tokens=st.budget_tokens,
-                mean_span_recall=_mean(recalls) if recalls else Fraction(0),
-                mean_token_precision=_mean(precs),
-                mrr=_mean(rrs),
-                mean_retrieved_tokens=Fraction(sum(m.retrieved_tokens for m in ms), len(ms)),
-                fully_covered_count=(sum(1 for m in gold if m.covered_gold_chars == m.gold_chars), len(gold)),
-                n_gold=len(gold),
-            )
-        )
+        c = aggregate(ms, setting_id=sid, split=split, budget_tokens=st.budget_tokens)
+        points.append(GridPoint(**{f: getattr(c, f) for f in _CONTRACT_FIELDS}, family=st.family,
+                                n_gold=sum(1 for m in ms if m.has_gold)))
     return sorted(points, key=_point_order)
 
 
+_CONTRACT_FIELDS = tuple(f.name for f in fields(_Contract))
+
+
+def comparable(p: GridPoint) -> bool:
+    """Titik tanpa butir bergold (nilai None) tidak ikut frontier (H-059, I-33)."""
+    return p.mean_span_recall is not None and p.mean_retrieved_tokens is not None
+
+
 def _point_order(p: GridPoint):
-    return (p.family, p.split or "", p.budget_tokens, p.mean_retrieved_tokens, p.setting_id)
+    x = p.mean_retrieved_tokens
+    return (p.family, p.split or "", p.budget_tokens, x is None, x if x is not None else Fraction(0), p.setting_id)
 
 
 def dominates(p: GridPoint, r: GridPoint) -> bool:
@@ -64,7 +61,10 @@ def compute_frontiers(points: Iterable[GridPoint], grid_run_id: str) -> tuple[li
     frontiers: list[Frontier] = []
     for key in sorted(groups, key=lambda k: (k[0], k[1] or "", k[2])):
         grp = groups[key]
-        flagged = [replace(p, dominated=any(dominates(q, p) for q in grp if q is not p)) for p in grp]
+        valid = [p for p in grp if comparable(p)]
+        flagged = [
+            replace(p, dominated=comparable(p) and any(dominates(q, p) for q in valid if q is not p)) for p in grp
+        ]
         flagged.sort(key=_point_order)
         out_points.extend(flagged)
         frontiers.append(
@@ -72,7 +72,7 @@ def compute_frontiers(points: Iterable[GridPoint], grid_run_id: str) -> tuple[li
                 family=key[0],
                 split=key[1],
                 budget_tokens=key[2],
-                point_ids=tuple(p.setting_id for p in flagged if not p.dominated),
+                point_ids=tuple(p.setting_id for p in flagged if comparable(p) and not p.dominated),
                 grid_run_id=grid_run_id,
             )
         )

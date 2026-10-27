@@ -5,8 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict, dataclass
-from fractions import Fraction
 from typing import Any, Iterable
+
+from backend.metrics.types import GridPoint as _ContractGridPoint
+from backend.metrics.types import ItemMetrics
 
 
 def canonical_json(obj: Any) -> str:
@@ -57,53 +59,32 @@ def compute_setting_id(content: dict[str, Any]) -> str:
     return sha256_hex(canonical_json(content))
 
 
-@dataclass(frozen=True)
-class ItemMetrics:
-    """Pembilang dan penyebut integer; rasio dihitung eksak di agregasi."""
+NO_SPLIT_FAMILY = "akta"  # H-054: tanpa split dan tanpa pemilihan profil
 
-    item_id: str
-    setting_id: str
-    split: str | None
-    gold_chars: int
-    covered_gold_chars: int
-    retrieved_tokens: int
-    gold_tokens_retrieved: int
-    reciprocal_rank: Fraction | None = None
-    recall_at_k: Fraction | None = None
-    retrieved_chunk_ids: tuple[str, ...] = ()
 
-    def to_dict(self) -> dict[str, Any]:
-        d = asdict(self)
-        for k in ("reciprocal_rank", "recall_at_k"):
-            if d[k] is not None:
-                d[k] = str(d[k])
-        d["retrieved_chunk_ids"] = list(self.retrieved_chunk_ids)
-        return d
+def metrics_to_cache(m: ItemMetrics) -> dict[str, Any]:
+    """Serialisasi lossless (integer saja) untuk cache; `to_dict` milik backend/metrics berbentuk float."""
+    return {
+        "gold_chars": m.gold_chars, "covered_gold_chars": m.covered_gold_chars,
+        "retrieved_tokens": m.retrieved_tokens, "gold_tokens_retrieved": m.gold_tokens_retrieved,
+        "rank": m.rank, "parts_total": m.parts_total, "parts_hit": m.parts_hit,
+        "item_id": m.item_id, "setting_id": m.setting_id, "split": m.split,
+        "retrieved_chunk_ids": list(m.retrieved_chunk_ids),
+    }
 
-    @staticmethod
-    def from_dict(d: dict[str, Any]) -> "ItemMetrics":
-        d = dict(d)
-        for k in ("reciprocal_rank", "recall_at_k"):
-            if d.get(k) is not None:
-                d[k] = Fraction(d[k])
-        d["retrieved_chunk_ids"] = tuple(d.get("retrieved_chunk_ids", ()))
-        return ItemMetrics(**d)
+
+def metrics_from_cache(d: dict[str, Any]) -> ItemMetrics:
+    d = dict(d)
+    d["retrieved_chunk_ids"] = tuple(d.get("retrieved_chunk_ids", ()))
+    return ItemMetrics(**d)
 
 
 @dataclass(frozen=True)
-class GridPoint:
-    """`family` dan `n_gold` adalah tambahan di atas kontrak §10 (kunci kelompok dan penyebut pita)."""
+class GridPoint(_ContractGridPoint):
+    """GridPoint kontrak §10 (backend/metrics) + field internal grid. `to_dict` (kontrak) tidak memuat
+    `family` dan `n_gold`."""
 
-    family: str
-    setting_id: str
-    split: str | None
-    budget_tokens: int
-    mean_span_recall: Fraction
-    mean_token_precision: Fraction | None
-    mrr: Fraction | None
-    mean_retrieved_tokens: Fraction
-    fully_covered_count: tuple[int, int]
-    dominated: bool = False
+    family: str = ""
     n_gold: int = 0
 
 

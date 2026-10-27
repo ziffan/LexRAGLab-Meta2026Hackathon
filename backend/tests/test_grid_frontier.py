@@ -65,7 +65,7 @@ def test_S23_per_item_mean_not_pooled_and_no_gold_excluded():
     assert pts[("m-1", "tune")].mean_span_recall == Fraction(1, 2)
     assert pts[("m-2", "tune")].mean_span_recall == Fraction(1, 4)
     assert pts[("m-1", "held_out")].mean_span_recall == Fraction(3, 4)
-    assert pts[("m-1", "held_out")].fully_covered_count == (1, 2)
+    assert pts[("m-1", "held_out")].fully_covered_count == {"covered": 1, "total": 2}
     out, fr = compute_frontiers([p for p in pts.values() if p.split == "tune"], "r")
     assert list(fr[0].point_ids) == ["m-1"]
     assert {p.setting_id: p.dominated for p in out} == {"m-1": False, "m-2": True}

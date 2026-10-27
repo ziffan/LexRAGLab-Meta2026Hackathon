@@ -154,3 +154,51 @@ def test_real_config_simplicity_order_is_readable():
     ranks = mode_rank_table(cfg, ["dense", "bm25", "hybrid"])
     assert ranks["bm25"] < ranks["dense"] < ranks["hybrid"]
     assert cfg["tie_margin_items"] == 1
+
+
+def test_S19_final_tiebreak_setting_id_direct_on_select_unsorted():
+    from backend.tests.grid_helpers import make_point
+    sts = {s: mk_setting(s) for s in ("s-9", "s-10", "s-2")}
+    for perm in itertools.permutations(sts):
+        pts = [make_point(s, 900, "0.6", prec=Fraction(3, 10)) for s in perm]
+        assert list(select_profiles(pts, sts, SIMPLICITY, family="uupt")[2000].setting_id for _ in [0]) == ["s-10"]
+
+
+def test_real_config_mode_order_comes_from_single_retrieval_modes():
+    cfg = dict(load("grid")["simplicity"])
+    assert mode_rank_table(cfg, ["dense", "bm25", "hybrid"]) == {"bm25": 0, "dense": 1, "hybrid": 2}
+    rev = {**cfg, "single_retrieval_modes": ["dense", "bm25"]}
+    assert mode_rank_table(rev, ["dense", "bm25", "hybrid"]) == {"dense": 0, "bm25": 1, "hybrid": 2}
+    from backend.tests.grid_helpers import make_point
+    sts = {"d": mk_setting("d", mode="dense"), "b": mk_setting("b", mode="bm25")}
+    pts = [make_point("d", 900, "0.6", prec=Fraction(3, 10)), make_point("b", 900, "0.6", prec=Fraction(3, 10))]
+    assert select_profiles(pts, sts, cfg, family="uupt")[2000].setting_id == "b"
+    assert select_profiles(pts, sts, rev, family="uupt")[2000].setting_id == "d"
+
+
+def test_no_gold_group_is_none_not_frontier_not_selectable():
+    from backend.grid.frontier import compute_frontiers
+    a, b = mk_setting("a"), mk_setting("b")
+    m = const_rows(TUNE10, "tune", "a", cov(5, 10)) + rows(["n1", "n2"], "tune", "b", [(0, 0, 500, 0)] * 2)
+    pts = aggregate_points(m, {"a": a, "b": b})
+    pb = next(p for p in pts if p.setting_id == "b")
+    assert pb.mean_span_recall is None and pb.mrr is None and pb.mean_token_precision is None
+    assert pb.mean_retrieved_tokens is None and pb.fully_covered_count == {"covered": 0, "total": 0}
+    out, fr = compute_frontiers(pts, "r")
+    assert list(fr[0].point_ids) == ["a"] and not any(p.dominated for p in out)
+    assert select_profiles(pts, {"a": a, "b": b}, SIMPLICITY, family="uupt")[2000].setting_id == "a"
+    only_b = [p for p in pts if p.setting_id == "b"]
+    assert select_profiles(only_b, {"b": b}, SIMPLICITY, family="uupt") == {}
+
+
+def test_mean_retrieved_tokens_over_gold_items_only():
+    a = mk_setting("a")
+    m = rows(["g1", "g2", "n1"], "tune", "a", [(10, 5, 100, 10), (10, 5, 300, 10), (0, 0, 9999, 0)])
+    assert aggregate_points(m, {"a": a})[0].mean_retrieved_tokens == 200
+
+
+def test_contract_output_excludes_internal_fields():
+    a = mk_setting("a")
+    p = aggregate_points(const_rows(TUNE10, "tune", "a", cov(5, 10)), {"a": a})[0]
+    d = p.to_dict()
+    assert "family" not in d and "n_gold" not in d and d["fully_covered_count"] == {"covered": 5, "total": 10}

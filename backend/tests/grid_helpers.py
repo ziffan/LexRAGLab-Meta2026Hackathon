@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from fractions import Fraction
 
-from backend.grid.types import GridItem, GridPoint, ItemMetrics, Setting
+from backend.grid.types import GridItem, GridPoint, Setting
+from backend.metrics.types import ItemMetrics
 
 SIMPLICITY = {
     "tie_margin_items": 1,
@@ -33,7 +34,7 @@ def mk_setting(sid, *, mode="bm25", header=False, overlap=0, budget=2000, chunke
 
 def rows(item_ids, split, setting_id, spec):
     """spec: list of (gold_chars, covered, retrieved_tokens, gold_tokens)."""
-    return [ItemMetrics(i, setting_id, split, g, c, r, t) for i, (g, c, r, t) in zip(item_ids, spec)]
+    return [ItemMetrics(g, c, r, t, item_id=i, setting_id=setting_id, split=split) for i, (g, c, r, t) in zip(item_ids, spec)]
 
 
 def const_rows(item_ids, split, setting_id, covered, *, gold=10, retrieved=1000, gold_tokens=200):
@@ -45,5 +46,6 @@ def cov(n_full: int, n_total: int):
 
 
 def make_point(sid, x, y, *, split="tune", budget=2000, family="uupt", prec=None, n_gold=10):
-    return GridPoint(family, sid, split, budget, Fraction(str(y)), prec, None, Fraction(str(x)), (0, n_gold),
-                     False, n_gold)
+    return GridPoint(sid, split, budget, None if y is None else Fraction(str(y)), prec, None,
+                     None if x is None else Fraction(str(x)), {"covered": 0, "total": n_gold}, 0, False,
+                     family, n_gold)
