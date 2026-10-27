@@ -1,11 +1,18 @@
 {
-  "current": "v1",
+  "current": "v2",
   "versions": {
     "v1": {
       "file": "v1.md",
       "role": "c",
       "max_output_tokens": 2000,
       "note": "Instruksi peran C (docs/SPARK-ROLES.md 4). Satu instruksi untuk kedua kolom; tanpa nama setting."
+    },
+    "v2": {
+      "file": "v2.md",
+      "role": "c",
+      "max_output_tokens": 2000,
+      "unit_labels": true,
+      "note": "H-067 V5 (i) dan H-070: kutipan menyalin alamat SATU unit, bukan label rentang potongan; perakit konteks menyisipkan label alamat unit di potongan multi-unit. v1 tidak diubah (hasil tersimpan v1 tetap dapat diputar ulang)."
     }
   }
 }

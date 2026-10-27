@@ -35,8 +35,8 @@ def test_schema_is_strict_and_named_ok():
 
 def test_prompt_versioned_and_hash_stable():
     p = load_prompt()
-    assert p.version == "v1" and len(p.prompt_hash) == 64 and p.max_output_tokens >= 1
-    assert p.prompt_cache_key == f"lexraglab-c-v1-{p.prompt_hash[:12]}"
+    assert p.version == "v2" and len(p.prompt_hash) == 64 and p.max_output_tokens >= 1
+    assert p.prompt_cache_key == f"lexraglab-c-v2-{p.prompt_hash[:12]}"
     assert load_prompt().prompt_hash == p.prompt_hash
     # instruksi tidak memuat nama setting / chunker (tidak boleh tahu profil)
     for w in ("fixed_size", "structure_handwritten", "baseline", "terbaik", "bm25", "hybrid"):
@@ -71,7 +71,7 @@ def test_context_is_exactly_what_grid_packs(world):
         cs = pipe.chunk_set(s)
         for e, p in zip(b.entries, r.packed):
             assert e.text == pipe.doc.text[p.start:p.end] and e.address == cs.by_id[e.chunk_id].address
-            assert e.text in b.input_text and f"ALAMAT: {e.address}" in b.input_text
+            assert e.shown() in b.input_text and f"ALAMAT: {e.address}" in b.input_text
 
 
 def test_item_not_in_best_has_no_leak_between_calls(world):
@@ -138,3 +138,27 @@ def test_validate_schema_is_enforced_and_not_skipped(monkeypatch):
     b = type("B", (), {"input_text": "x", "est_input": 1})()
     caller.make_call(load_prompt(), b, {})
     assert calls == [1]
+
+
+def test_s42_real_pipeline_labels_h070_budget_and_v1_unchanged(world):
+    """H-070 pada potongan nyata: label hanya di v2, anggaran sama, teks sumber utuh, v1 tanpa label."""
+    pipe = world["svc"].pipeline()
+    p1, p2 = load_prompt("v1"), load_prompt("v2")
+    saw_label = False
+    for s in (world["best"], world["base"]):
+        b1 = build_context(pipe, s, world["item"], p1)
+        b2 = build_context(pipe, s, world["item"], p2)
+        assert b1.packed_tokens == b2.packed_tokens and b1.chunk_ids == b2.chunk_ids  # H-066
+        for e1, e2 in zip(b1.entries, b2.entries):
+            assert e1.text == e2.text and e1.labels == ()
+            stripped = e2.shown()
+            for _off, lab in e2.labels:
+                assert stripped.count(lab) == 1
+                stripped = stripped.replace(lab, "")
+            assert stripped == e2.text
+            if not e2.labels:
+                assert e2.shown() == e1.shown()  # satu unit: byte-identik
+            else:
+                saw_label = True
+                assert len(e2.labels) >= 2
+    assert saw_label

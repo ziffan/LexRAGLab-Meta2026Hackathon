@@ -61,7 +61,8 @@ def test_live_two_columns_then_cache_then_replay(svc, tmp_path):
     r = c.post(URL, json=body(svc))
     assert r.status_code == 200, r.text
     d = r.json()
-    assert set(d) == {"best", "baseline", "verifier", "runs"} and d["verifier"] == []
+    assert set(d) == {"best", "baseline", "verifier", "summary", "runs"}
+    assert isinstance(d["verifier"], list) and len(d["summary"]) == 2 and all(x["n_items"] == 1 for x in d["summary"])
     assert tr.calls == 2
     for slot in ("best", "baseline"):
         a = d[slot]
@@ -70,7 +71,7 @@ def test_live_two_columns_then_cache_then_replay(svc, tmp_path):
         assert load_answer(s.runs_dir / "answers", a["answer_id"])["output"] == a["output"]
     assert d["best"]["setting_id"] != d["baseline"]["setting_id"] and d["best"]["answer_id"] != d["baseline"]["answer_id"]
     assert [x["status"] for x in d["runs"]] == ["ok", "ok"] and all(x["kind"] == "spark_c" for x in d["runs"])
-    assert all(x["prompt_version"] == "v1" and x["prompt_hash"] for x in d["runs"])
+    assert all(x["prompt_version"] == "v2" and x["prompt_hash"] for x in d["runs"])
     # kedua kolom: instruksi identik (awalan masukan sama), strict, tanpa tool calling
     i0, i1 = (tr.requests[k]["input"] for k in (0, 1))
     assert i0.split("<pertanyaan-")[0] == i1.split("<pertanyaan-")[0]
@@ -186,3 +187,30 @@ def test_first_paid_answer_record_not_overwritten_by_cache_call(svc, tmp_path):
     for slot in ("best", "baseline"):
         stored = load_answer(s.runs_dir / "answers", d1[slot]["answer_id"])
         assert stored["run_id"] == d1[slot]["run_id"] != d2[slot]["run_id"]
+
+
+def test_m23_verifier_filled_and_record_untouched(svc, tmp_path):
+    c, tr, s = make(svc, tmp_path)
+    d = c.post(URL, json=body(svc)).json()
+    assert [v["answer_id"] for v in d["verifier"]] == [d["best"]["answer_id"], d["baseline"]["answer_id"]]
+    for v in d["verifier"]:
+        assert v["citation_index"] == 0 and v["exists"] in ("lulus", "gagal") and v["valid_on_date"] == "tidak_dijalankan"
+        assert v["status_table_version"] is None
+    assert {(x["slot"], x["model_profile"]) for x in d["summary"]} == {("best", "meta"), ("baseline", "meta")}
+    for slot in ("best", "baseline"):  # verifier tidak menulis ulang AnswerRecord
+        stored = load_answer(s.runs_dir / "answers", d[slot]["answer_id"])
+        assert stored == d[slot] and "verifier" not in stored
+
+
+def test_m23_v1_answer_records_still_replayable(svc, tmp_path, monkeypatch):
+    import backend.api.routers.answers as ans_mod
+    real = ans_mod.prompt_versions
+    c, tr, s = make(svc, tmp_path)
+    monkeypatch.setattr(ans_mod, "prompt_versions", lambda: ["v1"])
+    d1 = c.post(URL, json=body(svc)).json()
+    assert all(x["prompt_version"] == "v1" for x in d1["runs"])
+    monkeypatch.setattr(ans_mod, "prompt_versions", real)
+    calls = tr.calls
+    d2 = c.post(URL, json=body(svc, live=False)).json()  # replay: v2 tak ada -> jatuh ke v1
+    assert tr.calls == calls and all(x["prompt_version"] == "v1" for x in d2["runs"])
+    assert d2["best"]["output"] == d1["best"]["output"] and d2["verifier"] == d1["verifier"]

@@ -54,6 +54,7 @@ class PromptC:
     template: str
     prompt_hash: str  # sha256 byte berkas
     max_output_tokens: int
+    unit_labels: bool = False  # H-070: perakit konteks menyisipkan label alamat unit di potongan multi-unit (v2+)
 
     @property
     def prompt_cache_key(self) -> str:
@@ -67,4 +68,13 @@ def load_prompt(version: str | None = None, directory: Path | None = None) -> Pr
     entry = meta["versions"][ver]
     raw = (d / entry["file"]).read_bytes()
     return PromptC(version=ver, template=raw.decode("utf-8"), prompt_hash=hashlib.sha256(raw).hexdigest(),
-                   max_output_tokens=int(entry["max_output_tokens"]))
+                   max_output_tokens=int(entry["max_output_tokens"]), unit_labels=bool(entry.get("unit_labels", False)))
+
+
+def prompt_versions(directory: Path | None = None) -> list[str]:
+    """Versi prompt C yang terdaftar, dari terbaru (current) ke yang lebih lama (untuk membaca hasil tersimpan)."""
+    d = Path(directory) if directory is not None else PROMPT_DIR
+    meta = json.loads((d / "versions.json").read_text(encoding="utf-8"))
+    names = list(meta["versions"])
+    cur = meta["current"]
+    return [cur] + [v for v in reversed(names) if v != cur]

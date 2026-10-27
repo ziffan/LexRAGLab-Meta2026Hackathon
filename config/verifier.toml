@@ -1,0 +1,13 @@
+# config/verifier — ambang verifier peran C (M2.3, docs/EVAL-SPEC.md 10). Berversi (ARCHITECTURE 7).
+# Keputusan operator H-067: theta = 0,95 (inklusif), D_max = 3 (Q1, inklusif), pengaman angka V3-on.
+version = 1
+
+# Ambang skor fuzzy uji 2: faithful_score >= theta lulus. Ditulis sebagai TEKS desimal supaya terbaca
+# sebagai pecahan eksak (0.95 = 19/20), bukan float biner. Harus 0 < theta <= 1. theta = 1 berarti hanya persis.
+theta = "0.95"
+
+# Batas absolut jarak edit (code point) kutipan fuzzy: lulus hanya bila d_min <= d_max (Q1, H-067). Bilangan bulat >= 0.
+d_max = 3
+
+# Pengaman angka (V3-on, H-067): kutipan fuzzy gagal bila deret digitnya tidak persis ada di jendela cocok sumber.
+v3_on = true
