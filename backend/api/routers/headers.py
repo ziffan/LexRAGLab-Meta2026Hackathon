@@ -72,6 +72,7 @@ def post_headers_run(request: Request, family: str, body: HeadersBody) -> dict[s
         res = run_headers(client, p.prompt, p.prefix, units, granularity=source, tokenizer=tok,
                           headers_dir=svc.runs_dir / "headers", max_header_tokens=hc["max_header_tokens"],
                           max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
+                          warm_max_output_tokens=hc["warm_max_output_tokens"],
                           meta=meta, warm=not st.replay)
     except BudgetExceeded as exc:
         raise ApiError(402, "budget_exceeded", str(exc)[:300]) from None
