@@ -1,0 +1,223 @@
+{
+  "version": "0.2.0",
+  "status": "draft",
+  "locale": "en",
+  "entries": [
+    {
+      "id": "app.purpose",
+      "title": "What LexRAGLab is for",
+      "body": "LexRAGLab finds, for one family of Indonesian legal documents, the chunking and retrieval settings that give a language model relevant, low-noise context. It does not answer legal questions and is not a RAG product. Its output is a versioned setting profile that can be exported to another RAG system."
+    },
+    {
+      "id": "app.audience",
+      "title": "Who it is for",
+      "body": "The target user is a legal engineer or RAG team building retrieval over statutes, deeds, or similar document families who wants measured settings instead of guesses. The operator reviews evaluation items and corrects the structure schema. This is a research demo and not legal advice."
+    },
+    {
+      "id": "app.read_frontier",
+      "title": "How to read the frontier",
+      "body": "Each point is one setting. Further left uses fewer context tokens; higher covers more of the gold text. Points on the frontier line are not beaten on both axes by any other setting, so the best choice depends on how many tokens you can spend. Click a point to update the other panels. Counts are shown as raw numbers (for example x of y), without significance claims."
+    },
+    {
+      "id": "app.replay",
+      "title": "Replay mode",
+      "body": "Replay mode reads stored runs and data and computes nothing new. The static public version has no backend, key, or model call, so live buttons are disabled there."
+    },
+    {
+      "id": "term.pasal",
+      "title": "Pasal (article)",
+      "body": "Pasal is the basic numbered article of an Indonesian statute. Chunk addresses in this app have the form regulation > Pasal n > ayat (m), so a chunk can be traced back to its exact place in the source."
+    },
+    {
+      "id": "term.ayat",
+      "title": "ayat (paragraph)",
+      "body": "Ayat is a numbered paragraph inside a Pasal, written (1), (2), and so on. A gold span can need several ayat; the metrics split it at ayat boundaries into parts before Recall@K is computed."
+    },
+    {
+      "id": "term.penjelasan",
+      "title": "Penjelasan (official elucidation)",
+      "body": "Penjelasan is the official elucidation attached to a statute, explaining its articles. It is part of the corpus and has its own addresses (regulation > Penjelasan > Pasal n), kept separate from the statute body."
+    },
+    {
+      "id": "term.gold_span",
+      "title": "Gold span",
+      "body": "The gold span is the exact passage of the source text that answers an evaluation question, marked by the operator or proposed by Muse Spark and approved by the operator. Every metric that mentions gold is measured against this span. An item with no gold span is one where the system should abstain."
+    },
+    {
+      "id": "ui.gold_split",
+      "title": "Gold split across chunks",
+      "body": "Marks an item whose gold span is cut by a chunk boundary, so no single chunk holds all of it. Fixed-size chunking can split an ayat this way; the model then sees half a rule."
+    },
+    {
+      "id": "metric.span_recall",
+      "title": "Span recall",
+      "body": "Share of the gold characters that fall inside the chunks retrieved within the token budget. Overlapping chunks are counted once. Items with no gold are excluded and reported separately as no gold (must abstain). Fully covered means every gold character was retrieved."
+    },
+    {
+      "id": "metric.token_precision",
+      "title": "Token precision",
+      "body": "Of all tokens sent as context, the share that are gold tokens (all characters inside the gold span). Header tokens and repeated overlap count in the denominator but never in the numerator, so noisy or repeated context lowers it."
+    },
+    {
+      "id": "metric.recall_at_k",
+      "title": "Recall@K",
+      "body": "The gold span is first split at ayat boundaries into parts. Recall@K is the share of parts that each lie entirely inside one of the top K ranked chunks, with no token budget applied. It differs from span recall, which counts characters within the budget. Scope (held-out or tune) is shown next to the figure."
+    },
+    {
+      "id": "metric.mrr",
+      "title": "MRR (mean reciprocal rank)",
+      "body": "For each item, 1 divided by the rank of the first chunk within the token budget that overlaps the gold span (0 if none). MRR is the mean over items that have gold. Higher means the useful chunk appears earlier."
+    },
+    {
+      "id": "metric.entity_preservation",
+      "title": "Entity preservation",
+      "body": "Share of legal entity occurrences in the corpus that sit wholly inside one chunk. Entities are detected by configured patterns, such as Pasal and ayat references, regulation names, dates, and valued amounts. It is computed over all chunks of the setting, not per question."
+    },
+    {
+      "id": "metric.boundary_coherence",
+      "title": "Boundary coherence",
+      "body": "Share of chunk boundaries (excluding the end of a document) that fall on a structural boundary or at the end of a sentence. A boundary inside a Pasal number or in the middle of a sentence counts against it."
+    },
+    {
+      "id": "metric.token_budget",
+      "title": "Token budget",
+      "body": "The maximum number of context tokens a setting may retrieve for one question, so settings are compared at equal cost. Chunk header tokens count toward it. Under the default rule the first chunk that would exceed the budget, and all after it, are left out. Tokens are counted with a local tokenizer; model cost comes from the Spark usage report."
+    },
+    {
+      "id": "metric.local_tokenizer",
+      "title": "Local tokenizer",
+      "body": "Token counts in this app come from one fixed local tokenizer so every setting is measured the same way. They are not the token counts billed by the model, and cost is never computed from them. Cost comes from the usage reported by the Model API."
+    },
+    {
+      "id": "metric.pareto_frontier",
+      "title": "Pareto frontier",
+      "body": "A setting is dominated if another setting has at least the same mean span recall with no more mean tokens, and is strictly better on one. The frontier is the set of settings that are not dominated: no other setting is better on both axes at once."
+    },
+    {
+      "id": "metric.tune_heldout",
+      "title": "Tune vs held-out",
+      "body": "Items are split once per version, stratified by origin and mode, with a recorded seed. Settings are chosen on the tune items; reported results come from the held-out items, which are never used to choose a setting. The Deed family has no split and is shown item by item as a transfer test."
+    },
+    {
+      "id": "metric.transfer_test",
+      "title": "Transfer test",
+      "body": "The synthetic deeds are not split into tune and held-out. They are reported item by item to show whether the approach carries over to a family without a handwritten parser, and no profile is selected from them."
+    },
+    {
+      "id": "role.a",
+      "title": "Role A: structure induction",
+      "body": "Muse Spark reads a sample of one document family and proposes a structure schema: the levels (for example BAB, Pasal, ayat), their marker patterns, and examples quoted from the sample. The operator corrects it into a new version; the original proposal is kept. The schema drives the schema-based chunker."
+    },
+    {
+      "id": "role.b",
+      "title": "Role B: contextual header",
+      "body": "Muse Spark writes a short header that places a chunk in its document (regulation, chapter, subject), intended to help the chunk be found by a query that shares few words with it. The header tokens count toward the budget. Whether it helps is measured on the frontier, not judged by a model."
+    },
+    {
+      "id": "role.c",
+      "title": "Role C: end-to-end answer",
+      "body": "By default Muse Spark Contributor answers an item using only the retrieved context of one profile, quoting the passages it relies on. The best profile and the baseline get the same budget and instructions. Declining to answer, or saying the evidence is insufficient, is a valid output. A program, not a model, checks the quotes."
+    },
+    {
+      "id": "role.d",
+      "title": "Role D: proposed items",
+      "body": "Muse Spark proposes candidate questions with gold spans, in literal and paraphrase wording. Literal wording shares keywords with the gold span; paraphrase deliberately does not, to test retrieval beyond keyword match. Nothing enters evaluation until the operator approves it, and results are reported by origin (operator-written vs Spark-proposed, approved) to expose circularity."
+    },
+    {
+      "id": "verifier.exists",
+      "title": "Check 1: Exists",
+      "body": "The cited address must exactly match a real unit address of that document family. A correct article number with a wrong part fails, and so does a range such as A - B, which is not a unit address."
+    },
+    {
+      "id": "verifier.faithful",
+      "title": "Check 2: Faithful",
+      "body": "The quoted text must be an exact substring of the source text at the cited address. Otherwise a close fuzzy match may pass, subject to a configured threshold and a maximum edit distance. A near match that changes a number sequence (for example one digit changed) still fails. This check runs only if Exists passed."
+    },
+    {
+      "id": "verifier.valid_on_date",
+      "title": "Check 3: Valid on date (stretch)",
+      "body": "Whether the cited article was in force on the reference date of the item, according to a status table approved by the operator. It is not run when the stretch is off, the table is not approved, the reference date is empty or earlier than the effective date of the entry, the document is outside the table, the Exists check failed, or the item belongs to the Deed family.",
+      "stretch": true
+    },
+    {
+      "id": "verifier.matrix_2x2",
+      "title": "Answer 2x2 summary",
+      "body": "Raw counts per profile and model of four outcomes: Answered, supported; Answered, unsupported; Abstained, correctly; Abstained, should have answered. Supported means every citation passed Exists and Faithful and at least one cited chunk overlaps the gold span. Limitation (the V10-any reading): a citation whose own text lies outside the gold but shares a chunk with it still counts as supported, so this cell can overstate how well the quoted text itself covers the gold. Answers from different models are never added together."
+    },
+    {
+      "id": "status.valid",
+      "title": "Status: Valid (berlaku)",
+      "body": "Berlaku means the article was in force on the reference date. Status comes from a table maintained and approved by the operator, not inferred by the model. Part of the stretch scope.",
+      "stretch": true
+    },
+    {
+      "id": "status.revoked",
+      "title": "Status: Revoked (dicabut)",
+      "body": "Dicabut means the article had been revoked on the reference date. A citation to it is shown as Revoked even when the quote is accurate. Part of the stretch scope.",
+      "stretch": true
+    },
+    {
+      "id": "status.conditional",
+      "title": "Status: Conditional (berlaku bersyarat)",
+      "body": "Berlaku bersyarat means the article applies only under conditions. It is shown as is and is not forced into pass or fail. Part of the stretch scope.",
+      "stretch": true
+    },
+    {
+      "id": "chunker.structure_handwritten",
+      "title": "Chunker: structure (handwritten)",
+      "body": "Splits the statute at its structural units (Pasal, ayat) using a hand-written parser for this document family, so a rule is not cut mid-unit. Available for the company law family only."
+    },
+    {
+      "id": "chunker.structure_schema",
+      "title": "Chunker: structure (schema)",
+      "body": "Splits at the levels of the structure schema induced by Muse Spark (role A) and corrected by the operator, so it needs no hand-written parser. Whether this carries over to a new family such as deeds is what the transfer test checks."
+    },
+    {
+      "id": "chunker.fixed_size",
+      "title": "Chunker: fixed size",
+      "body": "Cuts the text into pieces of a fixed token length, with optional overlap, ignoring structure, so windows can run across Pasal boundaries. It is the common default and the baseline here; it can split an ayat in the middle."
+    },
+    {
+      "id": "retrieval.bm25",
+      "title": "Retrieval: BM25",
+      "body": "Keyword ranking: chunks that share words with the query rank higher. Indonesian stemming is applied. It can rank poorly when the query is a paraphrase that shares few words with the source."
+    },
+    {
+      "id": "retrieval.dense",
+      "title": "Retrieval: dense",
+      "body": "Embedding ranking with a local embedding model: chunks whose meaning is close to the query rank higher, even without shared words."
+    },
+    {
+      "id": "retrieval.hybrid_rrf",
+      "title": "Retrieval: hybrid (RRF)",
+      "body": "Combines the BM25 and dense rankings with reciprocal rank fusion, so a chunk ranked well by either mode rises. The fusion parameter is set in configuration."
+    },
+    {
+      "id": "header_b.what",
+      "title": "Header B",
+      "body": "An optional context header written by Muse Spark (role B) and placed above a chunk. The Header B on series is plotted against Header B off. Header tokens are counted in the budget, and the cached-token figures in the run log show how much input was served from cache. Header B may be computed only for settings on the header-off frontier."
+    },
+    {
+      "id": "model.contributor",
+      "title": "Model: Muse Spark Contributor",
+      "body": "The Contributor model of Muse Spark, called through the Meta Model API, is the model for all main results and for roles A, B, and D, and by default for role C. The exact model ID is recorded with every run and shown from the run record."
+    },
+    {
+      "id": "model.glimmer_local",
+      "title": "Model: Muse Glimmer (local)",
+      "body": "A comparison for role C only (stretch; shown only if a stored run exists): an open-weight Muse Glimmer model running on the machine of the operator, with its quantization and reasoning effort fixed before the run. It is not the same weights as Spark. Its answers are stored and shown separately and never mixed with Contributor results.",
+      "stretch": true
+    },
+    {
+      "id": "model.spark_open_baseten",
+      "title": "Model: Spark Open (Baseten)",
+      "body": "A second comparison for role C only (stretch; shown only if a stored run exists): Muse Spark Open hosted on Baseten. Like the local Glimmer run it is a separate run, labeled with its model, and not combined with Contributor results.",
+      "stretch": true
+    },
+    {
+      "id": "model.comparison_rule",
+      "title": "Reading the model picker",
+      "body": "The main results are from Contributor. The other models are comparisons on role C only, shown with their own labels and counts. Roles A, B, and D always use Contributor. Quote checking (the verifier) is a program, not a model."
+    }
+  ]
+}

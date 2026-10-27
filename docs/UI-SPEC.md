@@ -1,7 +1,7 @@
 # UI-SPEC — satu halaman tiga panel dan layar Review
 
 Tujuan: menetapkan setiap komponen layar, datanya, interaksinya, keadaannya, label Inggrisnya, dan adegan video yang memakainya, sebagai sumber tunggal mockup dan frontend.
-Sumber keputusan: H-004, H-005, H-006, H-009, H-012, H-014, H-015, H-017, H-018, H-020, H-023, H-028, H-031, H-037, H-046, H-047, H-050, H-051, H-053, H-054, H-055.
+Sumber keputusan: H-004, H-005, H-006, H-009, H-012, H-014, H-015, H-017, H-018, H-020, H-023, H-028, H-031, H-037, H-046, H-047, H-050, H-051, H-053, H-054, H-055, H-073.
 
 ## 1. Aturan umum
 
@@ -14,6 +14,7 @@ Sumber keputusan: H-004, H-005, H-006, H-009, H-012, H-014, H-015, H-017, H-018,
 - Frontend tidak memanggil Model API langsung. Semua lewat backend (`docs/API.md`).
 - Resolusi rekam 1920×1080 dengan zoom browser 125–150% (`docs/VIDEO.md`). Tata letak **HARUS** tetap terbaca di lebar efektif 1280–1536 px (turunan: 1920 dibagi zoom 1,5 dan 1,25; pilihan desain).
 - Tanpa emoji. Kontras teks minimal 4,5:1 (pilihan desain: ambang WCAG AA untuk teks normal). Semua kontrol adalah tombol/elemen form asli dengan label yang bisa dibaca screen reader.
+- Penjelasan istilah lewat hint dan panel About / Glossary (bagian 9, H-073); teksnya bukan literal di komponen.
 
 ## 2. Tata letak
 
@@ -217,3 +218,80 @@ Aturan isi mockup:
 - Angka hasil ditulis placeholder (`[x/y]`, `[$0.00]`, `[n items]`). Bentuk grafik boleh ilustratif dengan label kecil "illustrative".
 - Teks pasal tidak dikarang. Pakai penanda struktur (BAB, Pasal, ayat (1)) dengan baris `[corpus text]`.
 - Akta hanya sintetis dengan identitas jelas fiktif, tanpa NIK.
+
+## 9. Hints and glossary (H-073)
+
+Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menutup kontrol lain. Status teks: draf sampai operator menyetujui (`_kerja/orkestrasi/hint-draf-review.md`); komponen boleh jalan paralel dengan teks bertanda draf.
+
+### 9.1 Pola
+
+- **Pemicu.** Ikon info kecil (`button type="button"`) tepat di samping label. Nama aksesibel: `About: {title}`. Atribut: `aria-expanded`, `aria-controls` ke popover.
+- **Popover.** Judul dan isi dari entri konten. Tertutup default. Terbuka lewat klik atau Enter/Spasi pada pemicu; hover boleh sebagai tambahan, tidak sebagai satu-satunya jalan. Esc menutup dan mengembalikan fokus ke pemicu. Klik di luar atau pindah fokus menutup. Hanya satu popover terbuka pada satu waktu.
+- **`aria-describedby`.** Kontrol atau label yang dijelaskan merujuk elemen isi hint (selalu ada di DOM, disembunyikan secara visual saat tertutup, jadi pembaca layar tetap mendapat deskripsi tanpa membuka popover).
+- **Posisi.** Tidak keluar viewport; pada lebar 375 px popover melebar penuh kolom dengan gutter. Teks bisa digulir bila panjang. Kontras minimal 4,5:1; target sentuh pemicu minimal 24 px (WCAG 2.2 AA).
+- **Fokus.** Pemicu masuk urutan tab di samping label-nya; popover tidak menjebak fokus. Tidak ada animasi yang bergantung pada gerak (hormati `prefers-reduced-motion`).
+- **Tanpa emoji**, label UI Inggris (H-018).
+
+### 9.2 Panel About / Glossary
+
+- Tombol `About / Glossary` di U0 (menambah satu label ke U0; tanpa mengubah label lain). Membuka panel sisi (pola tetap: dialog non-modal; fokus dipindah ke judulnya, Esc menutup dan mengembalikan fokus ke tombol).
+- Isi, berurutan: (1) tujuan app (`app.purpose`), (2) target pengguna (`app.audience`), (3) cara membaca frontier (`app.read_frontier`), (4) mode putar ulang (`app.replay`), (5) glosarium: seluruh entri bertag `stretch` hanya dirender bila fiturnya dikirim (H-017; lihat §9.3), ditambah seluruh entri `term.*`, `metric.*`, `role.*`, `verifier.*`, `status.*`, `chunker.*`, `retrieval.*`, `header_b.*`, `model.*`, `ui.*`, dikelompokkan menurut awalan id dan bisa dicari (kotak cari memfilter judul dan isi).
+- Panel menampilkan `version` dan `status` berkas konten bila `status` bukan `final` (label "Hint text: draft").
+
+### 9.3 Konten
+
+- Satu berkas berversi: `frontend/src/content/hints.json`, bentuk `{version, status, locale, entries[{id, title, body, stretch?}]}`. `stretch: true` menandai entri fitur stretch (H-017): hint tertaut dan entri glosarium hanya dirender bila kontrolnya ada di build (mis. `Valid on date`, `Valid`/`Revoked`/`Conditional`, pemilih model Glimmer/Spark Open dengan run tersimpan); bila fitur dipotong, entri tidak muncul dan test id-hilang tidak memandangnya yatim. `status` bernilai `draft` atau `final`; hanya operator mengubahnya ke `final`. `id` stabil, huruf kecil, `kelompok.nama`.
+- Komponen hanya merujuk `id`. Id yang tidak ada di berkas = galat build/test (test: setiap id di tabel 9.4 ada di berkas, tidak ada entri yatim, tidak ada `id` ganda).
+- Berkas ikut dibundel di build, sehingga ikut ekspor statis replay (H-051); tidak diambil dari backend dan tidak butuh jaringan.
+- Bahasa Inggris. Istilah hukum Indonesia tetap dengan gloss dalam kurung: `Pasal (article)`, `ayat (paragraph)`, `Penjelasan (official elucidation)`.
+- **Larangan angka.** Entri tidak memuat angka hasil (recall, token, biaya, hitungan butir) dan tidak memuat nilai konfigurasi yang bisa berubah (anggaran, ambang). Contoh angka hanya dari snapshot run tersimpan, dirender komponen, bukan dari berkas konten. Klaim produk hanya yang ada di `docs/PRD.md`.
+- Definisi mengikuti `docs/EVAL-SPEC.md`; perubahan definisi di sana berarti entri terkait ditinjau ulang.
+
+### 9.4 Titik penempatan
+
+| Layar | Label atau elemen | Id hint |
+|---|---|---|
+| U0 | tombol `About / Glossary` | panel (§9.2) |
+| U0 | `Family` | `metric.transfer_test` (untuk nilai Deed), `app.purpose` |
+| U0 | `Model`, `Run cost` | `model.comparison_rule`, `metric.local_tokenizer` |
+| U0 | lencana `REPLAY` | `app.replay` |
+| U0 | `Review proposals` | `role.d` |
+| U1 | `Chunks vs gold` | `term.gold_span`, `term.pasal`, `term.ayat`, `term.penjelasan` |
+| U1 | `Gold split across chunks` | `ui.gold_split` |
+| U1 | `Context header (B)` | `header_b.what` |
+| U1 | `Compare with fixed-size`, nama chunker | `chunker.fixed_size`, `chunker.structure_handwritten`, `chunker.structure_schema` |
+| U1 | `tokens (local tokenizer)` | `metric.local_tokenizer` |
+| U2 | `Setting space` | `app.read_frontier` |
+| U2 | `Span recall` | `metric.span_recall` |
+| U2 | `Tokens (local tokenizer)` | `metric.local_tokenizer` |
+| U2 | `Token budget` | `metric.token_budget` |
+| U2 | `Tune` / `Held-out` | `metric.tune_heldout` |
+| U2 | `Header B off` / `Header B on` | `header_b.what`, `role.b` |
+| U2 | `Frontier` / `Dominated` | `metric.pareto_frontier` |
+| U2 | mode retrieval di tooltip titik (hint dibuka lewat panel/pemicu yang bisa dijangkau papan ketik, bukan hover saja; WCAG 1.4.13) | `retrieval.bm25`, `retrieval.dense`, `retrieval.hybrid_rrf` |
+| U3 | `End-to-end evidence` | `role.c` |
+| U3 | `Model` (pemilih) | `model.contributor`, `model.glimmer_local`, `model.spark_open_baseten`, `model.comparison_rule` |
+| U3 | `Exists`, `Faithful`, `Valid on date` | `verifier.exists`, `verifier.faithful`, `verifier.valid_on_date` |
+| U3 | ringkasan 2x2 | `verifier.matrix_2x2` |
+| U3 | `Valid` / `Revoked` / `Conditional` | `status.valid`, `status.revoked`, `status.conditional` |
+| U4 | `Span recall`, `Token precision`, `Reciprocal rank`, `Recall@K` | `metric.span_recall`, `metric.token_precision`, `metric.mrr`, `metric.recall_at_k` |
+| U4 | `Entity preservation`, `Boundary coherence` | `metric.entity_preservation`, `metric.boundary_coherence` |
+| U4 | `Origin`, `Mode`, `No gold (must abstain)` | `role.d`, `term.gold_span` |
+| U4 | `Split` | `metric.tune_heldout` |
+| U5 | `Structure schema (A)` | `role.a`, `chunker.structure_schema` |
+| U5 | `Boundary differences vs handwritten parser` | `chunker.structure_handwritten` |
+| U6 | `Review proposals` | `role.d` |
+| U7 | `Held-out results` / `Transfer results` | `metric.tune_heldout` / `metric.transfer_test` |
+| U8 | `Role`, `Cached tokens` | `role.a`, `role.b`, `role.c`, `role.d` (satu hint per peran di filter), `header_b.what` |
+| U8 | `Cost (USD)` | `metric.local_tokenizer` |
+| U9 | disclaimer | `app.audience` |
+
+Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`. Bila operator ingin hint terpisah untuk mode, tambah entri `ui.item_mode` (belum ada; pending operator).
+
+### 9.5 Aksesibilitas dan uji
+
+- Seluruh pemicu bisa dijangkau dan dibuka dengan papan ketik saja; Esc menutup; fokus kembali ke pemicu.
+- Pembaca layar membaca deskripsi lewat `aria-describedby` tanpa membuka popover.
+- Uji komponen (Tier 3): buka/tutup dengan klik, Enter, Spasi, Esc; satu popover pada satu waktu; id hilang = test gagal; tidak ada angka bergaya hasil di berkas konten (pemeriksaan pola digit pada `body` kecuali daftar izin notasi yang ditinjau manual: "2x2", "Check 1/2/3", "muse-spark-1.3", "BM25", "V10-any", "(1), (2)", "1 divided", "(0 if none)").
+- Uji visual (Claude in Chrome, H-073): tangkapan layar hint tertutup dan terbuka pada 375, 768, dan 1440 px; konsol tanpa galat; bukti di `_kerja/orkestrasi/bukti/`.
+- Ekspor statis replay memuat hint dan panel Glossary berfungsi tanpa backend (kriteria gate H-051).
