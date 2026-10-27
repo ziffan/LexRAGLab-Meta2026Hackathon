@@ -1,6 +1,7 @@
 import { ChunksVsGold } from "./components/ChunksVsGold";
 import { EvidencePanel } from "./components/Evidence";
 import { Header } from "./components/Header";
+import { Hint } from "./components/Hint";
 import { PerItem } from "./components/PerItem";
 import { ReviewScreen } from "./components/Review";
 import { RunLogPanel } from "./components/RunLog";
@@ -17,7 +18,7 @@ export function App() {
   return (
     <div className="app">
       <Header />
-      <nav className="app-nav"><a href={isStatic() ? "?view=review" : "/review"}>Review proposals</a></nav>
+      <nav className="app-nav"><a href={isStatic() ? "?view=review" : "/review"}>Review proposals</a><Hint id="role.d" /></nav>
       <main className="layout">
         <ChunksVsGold />
         <SettingSpace />
@@ -34,7 +35,7 @@ export function App() {
           <RunLogPanel />
         </div>
       </main>
-      <footer className="app-footer">Research demo. Not legal advice.</footer>
+      <footer className="app-footer">Research demo. Not legal advice.<Hint id="app.audience" /></footer>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Hint } from "./Hint";
 import { scopeLabel, settingShort } from "../lib/labels";
 import { xOfY, NA } from "../lib/format";
 import { availableSettings, metricsFor, qualityOf, recallAtKCounts } from "../lib/settings";
@@ -63,13 +64,13 @@ export function QualityPanel({ snap, setting }: { snap: Snapshot; setting: Setti
                 ))}
               </tr>
               <tr>
-                <th scope="row">Entity preservation</th>
+                <th scope="row">Entity preservation<Hint id="metric.entity_preservation" /></th>
                 {cols.map((c) => (
                   <td key={c.setting.setting_id}>{c.q?.counts ? xOfY(c.q.counts.entity_num, c.q.counts.entity_den, "entities inside one chunk") : NA}</td>
                 ))}
               </tr>
               <tr>
-                <th scope="row">Boundary coherence</th>
+                <th scope="row">Boundary coherence<Hint id="metric.boundary_coherence" /></th>
                 {cols.map((c) => (
                   <td key={c.setting.setting_id}>{c.q?.counts ? xOfY(c.q.counts.bnd_num, c.q.counts.bnd_den, "boundaries at structure or sentence end") : NA}</td>
                 ))}

@@ -7,6 +7,7 @@ import {
   type EditorAction, type EditorState, type FieldErrors,
 } from "../lib/schemaEdit";
 import type { SchemaDiff, SchemaDiffEntry, SchemaRecord, SchemaRejected } from "../types";
+import { Hint } from "./Hint";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U5 Structure schema (A) (docs/UI-SPEC.md U5). `SchemaView` dan `SchemaEditor` murni (props); `SchemaPanel` menyambung store.
@@ -275,7 +276,7 @@ export function SchemaPanel() {
   }
   return (
     <section className="panel" aria-labelledby="schema-title" id="schema">
-      <h2 id="schema-title">Structure schema (A)</h2>
+      <div className="panel-head"><h2 id="schema-title">Structure schema (A)</h2><Hint id="role.a" /><Hint id="chunker.structure_schema" /></div>
       {body}
     </section>
   );

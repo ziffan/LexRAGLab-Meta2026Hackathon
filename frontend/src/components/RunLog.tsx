@@ -7,6 +7,7 @@ import {
   ROLES, aggregateByRole, filterRuns, granularityLabel, latencyStr, projectionRows, roleLabel, sampleRows, utcStamp, type RoleFilter,
 } from "../lib/runlog";
 import type { HeaderBView, Load, RunRecord } from "../types";
+import { Hint } from "./Hint";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U8 Run log & cost (docs/UI-SPEC.md U8). `RunLogView` dan `HeaderBPanel` murni; `RunLogPanel` menyambung R6 + snapshot.
@@ -177,7 +178,7 @@ export function RunLogPanel() {
   else body = <RunLogView runs={runs.data} role={role} onRole={setRole} selected={selected} onSelect={setSelected} />;
   return (
     <section className="panel" aria-labelledby="runlog-title" id="runlog">
-      <h2 id="runlog-title">Run log &amp; cost</h2>
+      <div className="panel-head"><h2 id="runlog-title">Run log &amp; cost</h2><Hint id="role.a" /><Hint id="role.b" /><Hint id="role.c" /><Hint id="role.d" /><Hint id="header_b.what" /><Hint id="metric.local_tokenizer" /></div>
       {body}
       {snap ? <HeaderBPanel header={snap.header_b} addresses={addresses} /> : null}
     </section>

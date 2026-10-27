@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useStore } from "../state";
+import { Hint } from "./Hint";
 import type { Snapshot } from "../types";
 
 // Tiga keadaan wajib per panel (docs/UI-SPEC.md §5): loading, empty, error.
@@ -29,7 +30,8 @@ export function EmptyBlock({ children }: { children: ReactNode }) {
 }
 
 /** Cangkang panel yang menunggu snapshot. `children` menerima snapshot siap. */
-export function SnapshotPanel({ id, title, loadingText, errorTitle, children }: {
+export function SnapshotPanel({ id, title, loadingText, errorTitle, hints = [], children }: {
+  hints?: string[];
   id: string;
   title: string;
   loadingText: string;
@@ -45,7 +47,7 @@ export function SnapshotPanel({ id, title, loadingText, errorTitle, children }: 
   } else body = children(s.data);
   return (
     <section className="panel" aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`}>{title}</h2>
+      <div className="panel-head"><h2 id={`${id}-title`}>{title}</h2>{hints.map((h) => <Hint key={h} id={h} />)}</div>
       {body}
     </section>
   );

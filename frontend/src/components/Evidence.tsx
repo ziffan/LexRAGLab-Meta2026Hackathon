@@ -9,6 +9,8 @@ import { fixed3, orNa } from "../lib/format";
 import { settingShort } from "../lib/labels";
 import { availableSettings } from "../lib/settings";
 import type { AnswersResponse, Health, Setting } from "../types";
+import { Hint } from "./Hint";
+import { markFeatures } from "../lib/hints";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U3 End-to-end evidence (docs/UI-SPEC.md U3). Presentasi murni di `EvidenceView`; `EvidencePanel` menyambung store + W6.
@@ -42,7 +44,7 @@ export function EvidenceColumn({ col, settings }: { col: ColumnView; settings: S
           Flags (informational): {col.flags.map((f) => <span key={f} className="tag neutral" title={f}>{flagLabel(f)}</span>)}
         </p>
       )}
-      <h4 className="detail-title">Citations</h4>
+      <h4 className="detail-title">Citations<Hint id="verifier.exists" /><Hint id="verifier.faithful" /><Hint id="verifier.valid_on_date" /><Hint id="status.valid" /><Hint id="status.revoked" /><Hint id="status.conditional" /></h4>
       {col.citations.length === 0 ? (
         <p className="muted">No citations.</p>
       ) : (
@@ -142,7 +144,7 @@ export function EvidenceView({ state, settings, elapsedSeconds = 0, noItem = fal
             <EvidenceColumn col={columnView(data.best, data.verifier, data.runs, "Best profile")} settings={settings} />
             <EvidenceColumn col={columnView(data.baseline, data.verifier, data.runs, "Baseline")} settings={settings} />
           </div>
-          <h3 className="detail-title">2x2 summary</h3>
+          <h3 className="detail-title">2x2 summary<Hint id="verifier.matrix_2x2" /></h3>
           <SummaryTable data={data} settings={settings} />
         </>
       )}
@@ -165,7 +167,7 @@ export function EvidenceControls({ health, profile, onProfile, runLive, onRunLiv
   return (
     <div className="controls">
       <label className="field">
-        <span>Model</span>
+        <span>Model<Hint id="model.contributor" /><Hint id="model.glimmer_local" /><Hint id="model.spark_open_baseten" /><Hint id="model.comparison_rule" /></span>
         <select value={current} onChange={(e) => onProfile(e.target.value || null)} disabled={profiles.length === 0}>
           {profiles.length === 0 && <option value="">Server default</option>}
           {profiles.map((p) => (
@@ -202,6 +204,21 @@ export function EvidencePanel() {
       live = false;
     };
   }, []);
+
+  // Fitur stretch hadir hanya bila datanya ada (UI-SPEC §9.3): validitas-tanggal dari hasil verifier, model dari profil tersedia.
+  useEffect(() => {
+    const ids: string[] = [];
+    if (ev.status === "ready" && ev.data.verifier.some((v) => v.valid_on_date !== "tidak_dijalankan")) {
+      ids.push("verifier.valid_on_date");
+      for (const v of ev.data.verifier) ids.push(v.valid_on_date === "berlaku" ? "status.valid" : v.valid_on_date === "dicabut" ? "status.revoked" : v.valid_on_date === "berlaku_bersyarat" ? "status.conditional" : "verifier.valid_on_date");
+    }
+    for (const p of health?.model_profiles ?? []) {
+      if (!p.available) continue;
+      if (/glimmer/i.test(`${p.model_profile} ${p.model ?? ""}`)) ids.push("model.glimmer_local");
+      else if (/spark[-_ ]?open|baseten/i.test(`${p.model_profile} ${p.model ?? ""}`)) ids.push("model.spark_open_baseten");
+    }
+    if (ids.length) markFeatures(ids);
+  }, [ev, health]);
 
   const settings = snap ? availableSettings(snap) : [];
   const best = settings.find((s) => s.setting_id === state.selectedSettingId);
@@ -258,7 +275,7 @@ export function EvidencePanel() {
   }
   return (
     <section className="panel" aria-labelledby="evidence-title" id="evidence">
-      <h2 id="evidence-title">End-to-end evidence</h2>
+      <div className="panel-head"><h2 id="evidence-title">End-to-end evidence</h2><Hint id="role.c" /></div>
       {body}
     </section>
   );

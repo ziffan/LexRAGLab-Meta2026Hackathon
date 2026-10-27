@@ -24,17 +24,17 @@ body { margin: 0; background: var(--bg); color: var(--text); }
 .muted { color: var(--muted); font-weight: 400; }
 
 .app { max-width: 1536px; margin: 0 auto; padding: 0 16px 24px; }
-.app-header { display: flex; align-items: baseline; gap: 24px; padding: 12px 0; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }
+.app-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 24px; padding: 12px 0; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }
 .brand { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
 .family { color: var(--muted); }
 .app-footer { margin-top: 16px; color: var(--muted); font-size: 0.85rem; }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+.panel { min-width: 0; max-width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
 .panel h2 { margin: 0 0 12px; font-size: 1.15rem; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-bottom: 12px; }
 .field { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--muted); }
-.field select { min-width: 240px; padding: 6px 8px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.field select { min-width: min(240px, 100%); max-width: 100%; padding: 6px 8px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
 .check { display: flex; align-items: center; gap: 8px; padding-bottom: 6px; }
 .check input { width: 16px; height: 16px; }
 button, select, input, [tabindex] { outline-offset: 2px; }
@@ -92,7 +92,10 @@ mark { background: var(--gold); color: var(--text); padding: 0 1px; border-radiu
 .seg legend { padding: 0; float: left; margin-right: 8px; }
 .seg-item { display: inline-flex; gap: 6px; align-items: center; padding: 5px 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--text); background: var(--surface); cursor: pointer; }
 .seg-item.on { background: var(--accent); color: #ffffff; border-color: var(--accent); }
-.chart { width: 100%; }
+.chart { width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
+.layout > * { min-width: 0; }
+.field { min-width: 0; max-width: 100%; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 .tip { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 0.85rem; line-height: 1.4; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
 .legend-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 8px 0; font-size: 0.85rem; }
 .legend-list li { display: inline-flex; align-items: center; gap: 6px; }
@@ -149,3 +152,31 @@ table.data .addr { font-weight: 600; }
 .level-form label.check { flex-direction: row; }
 .schema-editor textarea, .schema-editor input[type="text"] { font: inherit; padding: 4px 6px; }
 .rejected { padding-left: 18px; }
+
+/* Hints dan panel About / Glossary (H-073, UI-SPEC §9). */
+.hint { position: relative; display: inline-block; margin-left: 4px; vertical-align: middle; font-weight: 400; }
+.hint-btn { width: 24px; height: 24px; padding: 0; border: 1px solid var(--accent); border-radius: 50%; background: var(--surface); color: var(--accent); font: italic 700 0.8rem/1 Georgia, serif; cursor: pointer; }
+.hint-btn[aria-expanded="true"] { background: var(--accent); color: #ffffff; }
+.hint-pop { position: absolute; z-index: 20; left: 0; top: calc(100% + 4px); width: min(22rem, calc(100vw - 32px)); max-height: 16rem; overflow: auto; padding: 8px 10px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); font-size: 0.85rem; line-height: 1.4; text-align: left; }
+.hint-pop.sr-only { position: absolute; width: 1px; height: 1px; max-height: 1px; padding: 0; border: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; box-shadow: none; }
+.hint-body { margin: 4px 0 0; }
+@media (max-width: 600px) {
+  .hint { position: static; }
+  .hint-pop { position: fixed; left: 16px; right: 16px; top: auto; width: auto; transform: none !important; }
+  .hint-pop.sr-only { position: absolute; left: auto; right: auto; width: 1px; height: 1px; max-height: 1px; padding: 0; border: 0; margin: -1px; overflow: hidden; }
+}
+.about-btn { margin-left: auto; }
+.about-panel { position: fixed; z-index: 30; top: 0; right: 0; bottom: 0; width: min(28rem, 100vw); overflow: auto; padding: 16px; background: var(--surface); color: var(--text); border-left: 2px solid var(--accent); box-shadow: -2px 0 10px rgba(0,0,0,0.2); }
+.about-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.about-head h2 { margin: 0; font-size: 1.15rem; }
+.about-sec h3, .about-gloss { font-size: 0.95rem; margin: 12px 0 4px; }
+.about-group { margin: 12px 0 4px; font-size: 0.9rem; color: var(--accent); }
+.about-dl dt { font-weight: 600; margin-top: 8px; }
+.about-dl dd { margin: 2px 0 0; }
+@media (prefers-reduced-motion: reduce) { .hint-pop, .about-panel { transition: none; animation: none; } }
+.panel-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-bottom: 12px; }
+.panel-head h2 { margin: 0; }
+.panel-head { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.panel-head h2 { margin: 0; }
+/* Tertutup: abaikan posisi inline dari logika flip agar tidak memperlebar halaman (uji visual 375 px). */
+.hint-pop.sr-only { left: 0 !important; right: auto !important; top: 0 !important; transform: none !important; }

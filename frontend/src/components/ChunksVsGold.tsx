@@ -1,5 +1,6 @@
 import { retrievalKey, useStore } from "../state";
 import { availableSettings, fixedFor } from "../lib/settings";
+import { Hint } from "./Hint";
 import { modeLabel, originLabel, settingLabel } from "../lib/labels";
 import { ChunkColumn } from "./ChunkColumn";
 import { ChunkDetail } from "./ChunkDetail";
@@ -65,7 +66,7 @@ export function ChunksVsGold() {
           </label>
           <label className="check" title={canCompare ? "" : "Select the structure setting to compare it with fixed-size"}>
             <input type="checkbox" checked={showCompare} disabled={!canCompare} onChange={(e) => dispatch({ type: "set_compare", value: e.target.checked })} />
-            <span>Compare with fixed-size</span>
+            <span>Compare with fixed-size</span><Hint id="chunker.fixed_size" />
           </label>
         </div>
 
@@ -123,7 +124,7 @@ export function ChunksVsGold() {
 
   return (
     <section className="panel" aria-labelledby="u1-title">
-      <h2 id="u1-title">Chunks vs gold</h2>
+      <div className="panel-head"><h2 id="u1-title">Chunks vs gold</h2><Hint id="term.gold_span" /><Hint id="term.pasal" /><Hint id="term.ayat" /><Hint id="term.penjelasan" /></div>
       {body}
     </section>
   );

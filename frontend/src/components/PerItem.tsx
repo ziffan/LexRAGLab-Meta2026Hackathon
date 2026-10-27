@@ -1,5 +1,6 @@
 import { useStore } from "../state";
 import { truncate } from "../lib/format";
+import { Hint } from "./Hint";
 import { modeLabel, originLabel, settingShort, splitLabel } from "../lib/labels";
 import { filterScopeLabel } from "../lib/rows";
 import { itemPasses, originSummary, toRow } from "../lib/rows";
@@ -40,7 +41,7 @@ function Body({ snap }: { snap: Snapshot }) {
       </p>
       <div className="controls">
         <label className="field">
-          <span>Origin</span>
+          <span>Origin<Hint id="role.d" /></span>
           <select value={f.origin} onChange={(e) => dispatch({ type: "set_filters", value: { origin: e.target.value as typeof f.origin } })}>
             <option value="all">All</option>
             <option value="operator">Operator-written</option>
@@ -56,7 +57,7 @@ function Body({ snap }: { snap: Snapshot }) {
           </select>
         </label>
         <label className="field">
-          <span>Split</span>
+          <span>Split<Hint id="metric.tune_heldout" /></span>
           <select value={f.split} onChange={(e) => dispatch({ type: "set_filters", value: { split: e.target.value as typeof f.split } })}>
             <option value="all">All</option>
             <option value="tune">Tune</option>
@@ -89,10 +90,10 @@ function Body({ snap }: { snap: Snapshot }) {
                 <th scope="col">Origin</th>
                 <th scope="col">Mode</th>
                 <th scope="col">Split</th>
-                <th scope="col">Span recall</th>
-                <th scope="col">Token precision</th>
-                <th scope="col">Reciprocal rank</th>
-                <th scope="col">Recall@K</th>
+                <th scope="col">Span recall<Hint id="metric.span_recall" /></th>
+                <th scope="col">Token precision<Hint id="metric.token_precision" /></th>
+                <th scope="col">Reciprocal rank<Hint id="metric.mrr" /></th>
+                <th scope="col">Recall@K<Hint id="metric.recall_at_k" /></th>
                 <th scope="col">Fully covered</th>
                 <th scope="col">Retrieved tokens (local tokenizer)</th>
               </tr>
@@ -108,7 +109,7 @@ function Body({ snap }: { snap: Snapshot }) {
 
       {noGold.length > 0 && (
         <>
-          <h3 className="detail-title">No gold (must abstain)</h3>
+          <h3 className="detail-title">No gold (must abstain)<Hint id="term.gold_span" /></h3>
           <p className="note">Reported separately and excluded from the gold-based metrics above.</p>
           <div className="table-wrap">
             <table className="data">

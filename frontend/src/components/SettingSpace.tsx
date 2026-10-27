@@ -98,7 +98,7 @@ function Tip({ active, payload }: TipProps) {
 
 export function SettingSpace() {
   return (
-    <SnapshotPanel id="u2" title="Setting space" loadingText="Loading grid…" errorTitle="Grid run failed">
+    <SnapshotPanel id="u2" title="Setting space" loadingText="Loading grid…" errorTitle="Grid run failed" hints={["app.read_frontier", "metric.span_recall", "metric.pareto_frontier", "metric.tune_heldout", "header_b.what", "metric.token_budget", "metric.local_tokenizer"]}>
       {(snap) => <Body snap={snap} />}
     </SnapshotPanel>
   );
@@ -160,7 +160,7 @@ function Body({ snap }: { snap: Snapshot }) {
         <EmptyBlock>No plottable points in this split: every item here lacks gold.</EmptyBlock>
       ) : (
         <div className="chart" role="img" aria-label={`Span recall against tokens (local tokenizer), ${dots.length} settings, ${line.length} on the frontier, ${onDots} with header B on`}>
-          <ResponsiveContainer width="100%" height={340}>
+          <ResponsiveContainer width="100%" minWidth={0} height={340}>
             <ScatterChart margin={{ top: 12, right: 20, bottom: 36, left: 16 }}>
               <CartesianGrid stroke="#c5ccd4" />
               <XAxis

@@ -2,6 +2,8 @@ import { useStore } from "../state";
 import { availableSettings } from "../lib/settings";
 import { settingShort } from "../lib/labels";
 import { isStatic } from "../lib/staticData";
+import { AboutPanel } from "./AboutPanel";
+import { Hint } from "./Hint";
 
 // Nilai `family` (data) -> label UI (docs/UI-SPEC.md U0).
 export const FAMILY_LABELS: Record<string, string> = { uupt: "Company Law (UU 40/2007)", akta: "Deed (synthetic)" };
@@ -31,7 +33,10 @@ export function Header() {
       <span className="family">
         Selected setting: <strong>{sel ? settingShort(sel) : state.snapshot.status === "error" ? "n/a" : "…"}</strong>
       </span>
-      {snap?.replay && <span className="tag neutral">REPLAY</span>}
+      <Hint id="app.purpose" />
+      {state.family === "akta" && <Hint id="metric.transfer_test" />}
+      {snap?.replay && <><span className="tag neutral">REPLAY</span><Hint id="app.replay" /></>}
+      <AboutPanel />
     </header>
   );
 }
