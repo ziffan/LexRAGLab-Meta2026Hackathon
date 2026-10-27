@@ -7,14 +7,17 @@ Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013,
 
 Tim RAG hukum memilih ukuran potongan (chunk) dengan menebak. Pada peraturan Indonesia, tebakan itu bisa membelah satu ayat di tengah. LLM lalu menerima setengah aturan dan mengutipnya seolah utuh.
 
-Ukuran masalah, dari catatan riset proyek (bukan diukur di aplikasi ini):
+Pemicu: kerja agentic di bidang hukum (legal opinion, legal due diligence, penyusunan kontrak) tidak muat dalam satu context window agen. Bahan untuk satu pekerjaan melampaui jendela 1 juta token, sementara bagian yang benar-benar dipakai hanya sebagian kecil dari bahan utuh. Motivasi ini berasal dari pengalaman kerja operator, bukan dari tren "RAG"; tujuan aplikasi tidak berubah (H-002, H-004, H-005).
+
+Ukuran masalah. Semua angka di bawah adalah pengukuran operator atas pekerjaan sebelumnya (operator's measurements of prior engagements, tidak disertakan dalam repo ini). Bukan keluaran aplikasi dan tidak diukur di aplikasi ini:
 
 | Fakta | Angka | Rujukan |
 |---|---|---|
-| Bahan satu perkara hukum dibanding jendela konteks 1 juta token | 1,2–5,8× | catatan riset pra-acara (tidak disertakan) |
-| Porsi bahan yang benar-benar dipakai | sekitar 3–10% | idem |
-| Satu undang-undang | bisa > 300 ribu token | idem |
-| Halusinasi alat riset hukum komersial | sekitar 17–33% | idem (Magesh dkk.) |
+| Bahan satu perkara hukum dibanding jendela konteks 1 juta token | 1,2× (legal opinion satu transaksi, 1,16 juta token) sampai 5,8× (due diligence berkas utuh, 5,77 juta token) | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
+| Satu undang-undang | 319.073 token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | idem |
+| Lapisan teks Markdown 579 dokumen klien pada satu due diligence | 14.391.798 token; fakta yang tertambat sebagai atom 414.719 token, sekitar 3% | idem |
+| Porsi bahan yang benar-benar dipakai | sekitar 3% sampai 10% dari bahan utuh (3% untuk dokumen klien; sekitar 10% untuk naskah peraturan) | idem |
+| Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan) (Magesh dkk.) |
 | Benchmark RAG hukum Indonesia publik dan standar | tidak ada | idem |
 
 Akibatnya: memuat semuanya ke konteks tidak cukup, retrieval wajib ada, dan setting retrieval harus cocok dengan pola dokumen. Saat ini tidak ada cara terukur untuk memilih setting itu pada teks hukum Indonesia.

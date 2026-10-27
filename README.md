@@ -19,6 +19,8 @@ The output is a **versioned setting profile** you can export and reuse in your o
 
 Legal RAG teams usually pick a chunk size by guess. In Indonesian regulation, a guess can cut an *ayat* (paragraph of an article) in half, and the model then cites half a rule. There is no public, standard benchmark for Indonesian legal RAG. LexRAGLab makes chunking a measurable design decision.
 
+The motivation comes from practice, not from RAG as a trend. Agentic legal work (legal opinions, legal due diligence, contract drafting) does not fit in one agent context window. In the operator's measurements of prior engagements (not included in this repository), one transaction's legal opinion material came to 1.16 million tokens and a full due diligence file to 5.77 million, against a 1-million-token window. A single statute was 319,073 tokens. For one due diligence, the Markdown text of 579 client documents was 14,391,798 tokens, of which 414,719 tokens (about 3%) ended up as anchored facts. These figures are the operator's, not outputs of this app, and nothing in LexRAGLab's results is derived from them.
+
 ## How "best" is defined
 
 - Gold evidence is stored as **character spans** in the source document, so one item set can score any chunker. A gold span marks every *ayat* needed for the answer; it is split at *ayat* boundaries before Recall@K is computed.
