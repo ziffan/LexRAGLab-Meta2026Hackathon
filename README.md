@@ -13,7 +13,7 @@ Built for the Meta Global AI Developer Hackathon (Indie track) with `muse-spark-
 
 LexRAGLab is an evaluation sandbox for chunking and retrieval on Indonesian legal text. For one family of documents with a homogeneous pattern, it searches a grid of settings (chunker, chunk size and overlap, dense / BM25 / hybrid retrieval, context header on or off) and reports which settings give the most gold evidence for a fixed token budget.
 
-The output is a **versioned setting profile** you can export and reuse in your own RAG pipeline. The project stops at finding the setting; it is not a RAG product.
+The output is a **versioned setting profile** you can export and reuse in your own RAG pipeline. An exported Company Law profile is in [`profiles/uupt/`](profiles/uupt/); loading it back rebuilds the same chunk set (checked by a hash) and is rejected if the corpus hash differs. The project stops at finding the setting; it is not a RAG product.
 
 ## Why
 
@@ -49,23 +49,26 @@ Supporting, secondary: agent usage. These are the operator's measurements of pri
 
 The grid search itself uses no LLM. All Model API calls use the Responses API with strict structured output.
 
-Optional on-prem comparison (stretch): role C can be re-run for the best and baseline profiles with **Muse Glimmer** (open-weight) running locally on the operator's machine, selectable in the evidence panel. Glimmer runs are stored and labelled separately and are never mixed with `muse-spark-1.3-contributor` runs. Glimmer is not the same weights as Muse Spark, and no general claim is made about its Indonesian-language quality.
+Role C comparators (secondary, role C only): the same answer step can be re-run for the best and baseline profiles with two open-weight models, selectable in the evidence panel. **Muse Spark Open** runs on a hosted Baseten endpoint (`meta-models/muse-spark-open-1026`, Responses API, strict structured output). **Muse Glimmer** (`meta/muse-glimmer`, Q4_K_M, `reasoning_effort` high) runs locally on the operator's machine through an OpenAI-compatible loopback endpoint, with client-side schema validation; this is an open-weight model running on the operator's hardware, not Muse Spark weights. Each comparator's runs are stored and labelled separately and are never mixed with `muse-spark-1.3-contributor` runs. Stored runs exist for the three demo items only (see Limits); no general claim is made about either model's Indonesian-language quality.
 
 ## Document families
 
 | Family | Scope |
 |---|---|
 | Indonesian Company Law (UU 40/2007), an unofficial consolidation prepared by the operator from the regulation texts and Constitutional Court decisions, consolidated as of 30 December 2022, with notes on which later law or decision changed each provision | Full: grid and roles A, B, C, D; settings chosen on tune, reported on held-out |
-| Notarial deeds | Transfer: **five synthetic deeds of establishment**, written by an AI agent and reviewed by the operator, with fictitious identities. Shows role A on a family with no existing parser. The deed items are not split into tune and held-out; the best Company Law profile is tested on them and reported per item as a transfer test |
+| Notarial deeds | Transfer: **five synthetic deeds of establishment**, written by an AI agent and reviewed by the operator, with fictitious identities. Shows role A on a family with no existing parser. The deed items are not split into tune and held-out; the best Company Law profile is tested on them and reported per item as a transfer test. **Status: pending operator review.** The deed structure schema (version 2), the must-refuse items for deeds, and the deed grid are not final, so deed results are not reported here |
 | Internal policies | Mentioned as the next family; no documents included |
 
 ## Evaluation items
 
-Current count, from `data/butir/`: **9 items** for Company Law, all operator-written control items (`origin: operator`; one is a must-refuse item with no gold span). Operator-written control items detect circularity between Spark-proposed queries and their spans.
+Current count, from `data/butir/` (`uupt.v13.jsonl`, `akta.v70.jsonl`):
 
-Role D has produced 13 stored proposals (`runs/proposals/records/`); all are still `usulan` (awaiting review) and are **not yet approved items**, so they are not counted and not used in any result. The final count and origin split are filled in after the operator's review, from `data/butir/`.
+| Family | Items | Origin | Notes |
+|---|---|---|---|
+| Company Law | **20** | 9 operator-written control items (`origin: operator`); 11 Spark-proposed items approved by the operator (`origin: spark_disetujui`; 5 approved as proposed, 6 edited by the operator) | 1 must-refuse item with no gold span. Tune / held-out split: 11 / 9 |
+| Notarial deeds (synthetic) | **69** | all Spark-proposed, approved by the operator (67 as proposed, 2 edited); none operator-written | Spread over the five deeds (12 to 16 items each). No must-refuse item yet. Pending operator review of the deed schema and grid; transfer test only |
 
-<!-- TODO(operator): update this section with the final n and origin split once D proposals are reviewed. -->
+Operator-written control items detect circularity between Spark-proposed queries and their spans. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`). The Company Law count may still change after the operator's final review.
 
 ## Run it
 
@@ -102,7 +105,8 @@ Live version: TODO(operator): GitHub Pages link, added after the repository is p
 
 - Small item sets (n is small; see the count above); results are per item with raw counts, without significance claims.
 - The pre-event consolidation covers one statute only, as of 30 December 2022; later amendments are not reflected.
-- Comparators (Muse Glimmer locally, Spark Open on a hosted endpoint) are planned/stretch for role C only. No stored run of either exists yet, so none is reported.
+- Comparators (Muse Spark Open on Baseten, Muse Glimmer locally) cover role C only, and only three demo items (`kontrol-K-09`, `kontrol-K-01`, `kontrol-K-08`), each with the best and the baseline profile: 6 stored runs per comparator (`runs/spark/records/`). That is a smoke-level check, not a quality comparison, and no comparator quality figure is claimed. The Spark Open runs cost 30,591 micro-USD in total; the local Glimmer runs cost 0. Any open-weight bonus claim waits for the organizers' confirmation of how own-hardware use is verified.
+- Notarial deed results are pending operator review (schema version 2, must-refuse items, deed grid) and are not reported.
 - Token counts use a local tokenizer calibrated once against the API token-count endpoint; billed tokens may differ.
 - The "valid on date" citation check is a stretch goal and may be absent.
 - Indonesian legal text is shown in Indonesian, with short English glosses where needed.
