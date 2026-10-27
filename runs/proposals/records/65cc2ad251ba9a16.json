@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jangka waktu pendirian Perseroan terhitung sejak pengesahan sebagai badan hukum?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu tidak terbatas, terhitung sejak tanggal pengesahan Perseroan sebagai badan hukum oleh Menteri."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "65cc2ad251ba9a16",
+ "resolved_span": {
+  "end": 2087,
+  "start": 1954
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "19cbc55545864da38711dbf2b9c53a2f",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

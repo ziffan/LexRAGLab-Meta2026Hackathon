@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa cadangan yang wajib disisihkan dari laba bersih sampai mencapai berapa persen dari modal ditempatkan dan disetor?",
+  "start": null,
+  "teks_gold": "Dari laba bersih disisihkan sekurang-kurangnya 10% (sepuluh persen) setiap tahun sebagai cadangan sampai cadangan tersebut mencapai 20% (dua puluh persen) dari modal ditempatkan dan disetor."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "474d0b4f7a4f9da4",
+ "resolved_span": {
+  "end": 11058,
+  "start": 10868
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4ad77418137f459cbe6a23d5f3f46a9b",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

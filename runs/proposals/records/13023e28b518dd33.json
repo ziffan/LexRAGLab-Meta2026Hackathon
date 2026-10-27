@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Momentum administratif apa menandai keabsahan pengalihan kepemilikan unit penyertaan bagi entitas itu?",
+  "start": null,
+  "teks_gold": "Pemindahan hak baru berlaku terhadap Perseroan setelah dicatat dalam daftar pemegang saham."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "13023e28b518dd33",
+ "resolved_span": {
+  "end": 3956,
+  "start": 3865
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ff976f9fc57416eac08bdf418046404",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

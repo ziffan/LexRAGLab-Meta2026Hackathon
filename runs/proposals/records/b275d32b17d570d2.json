@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jumlah modal dasar Perseroan dan nilai nominal tiap saham?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 8.000.000.000,00 (delapan miliar Rupiah), terbagi atas 8.000 (delapan ribu) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "b275d32b17d570d2",
+ "resolved_span": {
+  "end": 3692,
+  "start": 3502
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

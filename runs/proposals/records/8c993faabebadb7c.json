@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa kewajiban pencantuman frasa dalam surat keluar Perseroan selama likuidasi berlangsung?",
+  "start": null,
+  "teks_gold": "Selama likuidasi berlangsung, setiap surat keluar Perseroan wajib mencantumkan frasa \"dalam likuidasi\" di belakang nama Perseroan."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "8c993faabebadb7c",
+ "resolved_span": {
+  "end": 12954,
+  "start": 12824
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2b1e5b05ba564cea86f507c57ba2e9f6",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa modal yang telah ditempatkan dan disetor penuh oleh para pendiri?",
+  "start": null,
+  "teks_gold": "Dari modal dasar telah ditempatkan dan disetor penuh sebesar Rp 2.000.000.000,00 (dua miliar Rupiah), yaitu sejumlah 2.000 (dua ribu) saham, dalam bentuk uang tunai, oleh para pendiri sebagaimana diuraikan pada akhir akta ini. Bukti penyetoran dalam bentuk keterangan bank telah diperlihatkan kepada saya, Notaris."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "a3ffc73c5b5306d7",
+ "resolved_span": {
+  "end": 4017,
+  "start": 3703
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

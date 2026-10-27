@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa kewajiban pemegang saham yang hendak menjual sahamnya kepada pihak ketiga?",
+  "start": null,
+  "teks_gold": "Pemegang saham yang hendak menjual sahamnya kepada pihak ketiga wajib terlebih dahulu menawarkan saham itu kepada seluruh pemegang saham lain secara tertulis, menurut perbandingan jumlah saham mereka, dan pemegang saham yang menerima penawaran harus menjawab dalam waktu 30 (tiga puluh) hari."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "cc58fe84bcec1d75",
+ "resolved_span": {
+  "end": 5053,
+  "start": 4761
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

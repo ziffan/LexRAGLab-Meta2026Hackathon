@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Tindakan Direksi apa saja yang memerlukan persetujuan tertulis dari Dewan Komisaris?",
+  "start": null,
+  "teks_gold": "Tindakan Direksi berikut memerlukan persetujuan tertulis dari Dewan Komisaris: mengalihkan atau menjadikan jaminan utang seluruh atau sebagian besar kekayaan Perseroan; mengadakan kontrak pekerjaan dengan nilai di atas Rp 3.000.000.000,00 (tiga miliar Rupiah); dan mendirikan atau mengambil bagian dalam perusahaan lain."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "9289f904da83e99f",
+ "resolved_span": {
+  "end": 6613,
+  "start": 6293
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

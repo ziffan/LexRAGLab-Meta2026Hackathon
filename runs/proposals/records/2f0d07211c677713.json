@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Kapan keuntungan dapat didistribusikan kepada pemilik serta apa nasib bagian tak kunjung diklaim?",
+  "start": null,
+  "teks_gold": "Dividen hanya boleh dibagikan apabila Perseroan mempunyai saldo laba yang positif. Dividen yang tidak diambil dalam jangka waktu 5 (lima) tahun sejak ditetapkan dimasukkan ke dalam dana cadangan khusus yang diperuntukkan bagi pengambilan dividen tersebut oleh pemegang saham yang berhak."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "2f0d07211c677713",
+ "resolved_span": {
+  "end": 11459,
+  "start": 11172
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "462f7e143e544545a675983ef8e6517d",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

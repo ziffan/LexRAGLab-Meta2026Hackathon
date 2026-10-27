@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa wewenang Dewan Komisaris dalam memberhentikan sementara anggota Direksi?",
+  "start": null,
+  "teks_gold": "(3) Dewan Komisaris berhak memberhentikan sementara anggota Direksi dengan menyebutkan alasannya, dan dalam waktu paling lambat 30 (tiga puluh) hari sejak pemberhentian sementara itu wajib menyelenggarakan Rapat Umum Pemegang Saham untuk mencabut atau menguatkan keputusan tersebut. Dalam hal Rapat Umum Pemegang Saham tidak diselenggarakan dalam jangka waktu tersebut, atau tidak mengambil keputusan, pemberhentian sementara itu menjadi batal demi hukum dan anggota Direksi yang bersangkutan berwenang kembali menjalankan tugasnya sebagaimana semula."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "89094680d5dcc234",
+ "resolved_span": {
+  "end": 7895,
+  "start": 7344
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2b1e5b05ba564cea86f507c57ba2e9f6",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

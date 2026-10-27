@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa batas penyisihan laba bersih untuk cadangan?",
+  "start": null,
+  "teks_gold": "Sebagian laba bersih disisihkan setiap tahun untuk cadangan sampai mencapai sekurang-kurangnya 20% (dua puluh persen) dari modal yang ditempatkan dan disetor."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "bf04107eae377125",
+ "resolved_span": {
+  "end": 11060,
+  "start": 10902
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

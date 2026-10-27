@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa saja kegiatan usaha utama Perseroan untuk mencapai maksud dan tujuan?",
+  "start": null,
+  "teks_gold": "(2) Untuk mencapai maksud dan tujuan tersebut, Perseroan dapat melaksanakan kegiatan usaha utama sebagai berikut:\na. perdagangan besar hasil bumi, antara lain kopi, teh, kakao, rempah-rempah, dan umbi-umbian kering;\nb. industri pengolahan dan pengemasan hasil pertanian menjadi produk setengah jadi maupun produk jadi;\nc. pergudangan dan jasa penyimpanan barang milik pihak ketiga."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "a89801370805398d",
+ "resolved_span": {
+  "end": 2597,
+  "start": 2216
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2b1e5b05ba564cea86f507c57ba2e9f6",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

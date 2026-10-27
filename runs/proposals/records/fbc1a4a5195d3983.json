@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Bagaimana ketentuan jumlah anggota Direksi Perseroan?",
+  "start": null,
+  "teks_gold": "(1) Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari sekurang-kurangnya 2 (dua) orang dan sebanyak-banyaknya 4 (empat) orang."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "fbc1a4a5195d3983",
+ "resolved_span": {
+  "end": 5725,
+  "start": 5588
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

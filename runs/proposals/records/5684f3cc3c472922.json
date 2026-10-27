@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jangka waktu pendirian Perseroan terhitung sejak pengesahan sebagai badan hukum?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu 50 (lima puluh) tahun, terhitung sejak tanggal pengesahan Perseroan sebagai badan hukum. Jangka waktu tersebut dapat diperpanjang berdasarkan keputusan Rapat Umum Pemegang Saham."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "5684f3cc3c472922",
+ "resolved_span": {
+  "end": 1890,
+  "start": 1673
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

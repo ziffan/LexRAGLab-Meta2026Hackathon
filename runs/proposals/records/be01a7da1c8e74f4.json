@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa masa jabatan anggota Direksi dan siapa yang mengangkat dan memberhentikannya?",
+  "start": null,
+  "teks_gold": "Anggota Direksi diangkat dan diberhentikan oleh Rapat Umum Pemegang Saham, untuk masa jabatan 4 (empat) tahun, dan dapat diangkat kembali."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "be01a7da1c8e74f4",
+ "resolved_span": {
+  "end": 5528,
+  "start": 5390
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

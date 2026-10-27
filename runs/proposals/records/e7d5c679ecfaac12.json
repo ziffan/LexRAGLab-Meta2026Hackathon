@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Pribadi macam apa boleh menduduki posisi pimpinan eksekutif dilihat dari kecakapan bertindak serta riwayat kebangkrutan?",
+  "start": null,
+  "teks_gold": "Yang dapat diangkat menjadi anggota Direksi ialah orang perseorangan yang mampu melaksanakan perbuatan hukum dan tidak pernah dinyatakan pailit atau menjadi anggota Direksi atau anggota Dewan Komisaris yang dinyatakan bersalah menyebabkan suatu perseroan dinyatakan pailit, dalam waktu 5 (lima) tahun sebelum pengangkatannya."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "e7d5c679ecfaac12",
+ "resolved_span": {
+  "end": 5197,
+  "start": 4872
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "literal",
+  "query": "Kapan rapat tahunan wajib diadakan setelah tahun buku berakhir?",
+  "start": null,
+  "teks_gold": "Rapat tahunan wajib diadakan paling lambat 6 (enam) bulan setelah tahun buku berakhir untuk mengesahkan laporan tahunan dan menetapkan penggunaan laba."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "2d34852b21083985",
+ "resolved_span": {
+  "end": 8610,
+  "start": 8459
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "19cbc55545864da38711dbf2b9c53a2f",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

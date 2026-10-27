@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa jumlah pimpinan eksekutif yang wajib bertindak kolektif untuk transaksi bernominal besar, dan berapa ambang nominalnya?",
+  "start": null,
+  "teks_gold": "Dua orang anggota Direksi bersama-sama berhak mewakili Perseroan dalam perbuatan hukum yang nilainya melebihi Rp 1.000.000.000,00 (satu miliar Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "5f849c8e6c7df7f3",
+ "resolved_span": {
+  "end": 7403,
+  "start": 7252
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "596fbb925509428bb8e6d8e3d416d783",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

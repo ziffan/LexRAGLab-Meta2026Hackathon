@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Seberapa besar besaran dana awal yang diotorisasi beserta rincian total lembar serta harga per lembarnya?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 5.000.000.000,00 (lima miliar Rupiah), terbagi atas 5.000 (lima ribu) saham, masing-masing bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "3132ec806353996e",
+ "resolved_span": {
+  "end": 2780,
+  "start": 2602
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "462f7e143e544545a675983ef8e6517d",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

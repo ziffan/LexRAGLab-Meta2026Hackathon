@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Keterangan tambahan apa mesti dibubuhkan pada kop korespondensi eksternal ketika badan usaha sedang dibereskan?",
+  "start": null,
+  "teks_gold": "Selama likuidasi berlangsung, setiap surat keluar Perseroan wajib mencantumkan frasa \"dalam likuidasi\" di belakang nama Perseroan."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "63bf2ce72fd33ec3",
+ "resolved_span": {
+  "end": 12954,
+  "start": 12824
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

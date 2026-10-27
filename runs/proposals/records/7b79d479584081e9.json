@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa lama durasi operasional awal yang ditetapkan serta bagaimana cara melanjutkan periode itu?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu 50 (lima puluh) tahun, terhitung sejak tanggal pengesahan Perseroan sebagai badan hukum. Jangka waktu tersebut dapat diperpanjang berdasarkan keputusan Rapat Umum Pemegang Saham."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "7b79d479584081e9",
+ "resolved_span": {
+  "end": 1890,
+  "start": 1673
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "462f7e143e544545a675983ef8e6517d",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

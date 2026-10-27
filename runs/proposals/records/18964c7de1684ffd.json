@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "literal",
+  "query": "Bagaimana susunan Direksi yang mengurus dan memimpin Perseroan?",
+  "start": null,
+  "teks_gold": "Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari 2 (dua) orang anggota, yaitu seorang direktur utama dan seorang direktur."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "18964c7de1684ffd",
+ "resolved_span": {
+  "end": 4942,
+  "start": 4808
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "19cbc55545864da38711dbf2b9c53a2f",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

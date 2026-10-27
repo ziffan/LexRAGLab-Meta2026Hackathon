@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa total kapitalisasi awal yang diotorisasi serta pecahan unit penyertaan beserta harga satuan per lembarnya?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 3.200.000.000,00 (tiga miliar dua ratus juta Rupiah), terbagi atas 3.200 (tiga ribu dua ratus) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "b6091cd86797ddec",
+ "resolved_span": {
+  "end": 2471,
+  "start": 2262
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ff976f9fc57416eac08bdf418046404",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

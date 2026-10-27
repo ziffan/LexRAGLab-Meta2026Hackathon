@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Bagaimana ketentuan sah dan pengambilan keputusan Rapat Direksi?",
+  "start": null,
+  "teks_gold": "Rapat Direksi diselenggarakan secara berkala paling sedikit sekali dalam sebulan. Rapat Direksi sah apabila dihadiri oleh lebih dari 1/2 (satu per dua) bagian dari jumlah anggota Direksi, dan keputusan diambil berdasarkan musyawarah untuk mufakat atau suara terbanyak."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "29558ee87597fb0b",
+ "resolved_span": {
+  "end": 8321,
+  "start": 8053
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

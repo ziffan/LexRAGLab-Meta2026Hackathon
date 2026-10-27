@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "literal",
+  "query": "Siapa nama Perseroan yang didirikan dalam akta ini?",
+  "start": null,
+  "teks_gold": "Perseroan ini bernama PT WANAWIDYA CENDRAKIRANA PRIMA, selanjutnya dalam anggaran dasar ini disebut \"Perseroan\"."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c1ef4723367e19cc",
+ "resolved_span": {
+  "end": 1546,
+  "start": 1434
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "19cbc55545864da38711dbf2b9c53a2f",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

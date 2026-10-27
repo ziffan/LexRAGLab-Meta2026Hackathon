@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa saja kegiatan usaha Perseroan untuk mencapai maksud dan tujuan tersebut?",
+  "start": null,
+  "teks_gold": "a. budidaya ikan air tawar dan pembenihan;\nb. pengolahan, pembekuan, dan pengawetan hasil perikanan;\nc. perdagangan besar dan eceran hasil perikanan, pakan ikan, serta peralatan budidaya;\nd. jasa angkutan dan penyimpanan berpendingin."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "000c7e436423dc85",
+ "resolved_span": {
+  "end": 2251,
+  "start": 2017
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4ad77418137f459cbe6a23d5f3f46a9b",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

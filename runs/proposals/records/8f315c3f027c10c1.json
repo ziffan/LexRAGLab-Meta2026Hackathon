@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa proporsi minimal keuntungan tiap periode akuntansi yang wajib ditabung sebagai dana jaga hingga ambang tertentu terhadap dana awal yang sudah dibayar?",
+  "start": null,
+  "teks_gold": "Sebagian laba bersih disisihkan setiap tahun untuk cadangan sampai mencapai sekurang-kurangnya 20% (dua puluh persen) dari modal yang ditempatkan dan disetor."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "8f315c3f027c10c1",
+ "resolved_span": {
+  "end": 11060,
+  "start": 10902
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "596fbb925509428bb8e6d8e3d416d783",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa lama Perseroan wajib menyimpan dokumen keuangan terhitung sejak akhir tahun buku?",
+  "start": null,
+  "teks_gold": "Perseroan wajib menyelenggarakan pembukuan dan mencatat seluruh transaksi keuangan, serta menyimpan dokumen keuangan Perseroan sedikitnya 10 (sepuluh) tahun terhitung sejak akhir tahun buku yang bersangkutan, sehingga keadaan harta, kewajiban, modal, dan hasil usaha dapat diketahui setiap saat."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "6503f35fa48f6e62",
+ "resolved_span": {
+  "end": 11034,
+  "start": 10739
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

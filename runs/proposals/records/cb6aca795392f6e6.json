@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa ambang kehadiran minimal agar forum pengambilan keputusan pengelola eksekutif jamak dianggap valid serta bagaimana hak partisipasi tiap personelnya?",
+  "start": null,
+  "teks_gold": "Dalam hal Direksi terdiri dari lebih dari seorang, rapat Direksi sah apabila dihadiri oleh lebih dari 1/2 (satu per dua) bagian dari jumlah anggota Direksi, dan setiap anggota Direksi berhak mengeluarkan satu suara."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "cb6aca795392f6e6",
+ "resolved_span": {
+  "end": 7574,
+  "start": 7359
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ff976f9fc57416eac08bdf418046404",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

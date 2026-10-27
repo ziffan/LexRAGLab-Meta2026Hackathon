@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Kapan batas akhir pertemuan rutin pemilik modal harus diselenggarakan dan apa saja agenda pokoknya?",
+  "start": null,
+  "teks_gold": "Rapat tahunan wajib diadakan paling lambat 6 (enam) bulan setelah tahun buku berakhir untuk mengesahkan laporan tahunan dan menetapkan penggunaan laba."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "dfcbad9fa10d5b92",
+ "resolved_span": {
+  "end": 8610,
+  "start": 8459
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d554947bcbed4ba485cbd6b080c81f10",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

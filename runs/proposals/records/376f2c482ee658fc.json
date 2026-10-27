@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jumlah modal dasar Perseroan dan berapa yang telah ditempatkan dan disetor?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 5.000.000.000,00 (lima miliar Rupiah), terbagi atas 5.000 (lima ribu) saham, masing-masing bernilai nominal Rp 1.000.000,00 (satu juta Rupiah). Dari modal dasar tersebut telah ditempatkan dan disetor sebesar 25% (dua puluh lima persen) atau sejumlah Rp 1.250.000.000,00 (satu miliar dua ratus lima puluh juta Rupiah), yaitu sebanyak 1.250 (seribu dua ratus lima puluh) saham, yang telah disetor penuh dalam bentuk uang tunai oleh para pendiri."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "376f2c482ee658fc",
+ "resolved_span": {
+  "end": 3080,
+  "start": 2602
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

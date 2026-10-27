@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Ruang lingkup kerja operasional apa saja yang boleh dijalankan oleh entitas akuakultur itu guna mewujudkan visi misinya?",
+  "start": null,
+  "teks_gold": "(2) Untuk mencapai maksud dan tujuan tersebut Perseroan dapat melaksanakan kegiatan usaha berikut:\na. budidaya ikan air tawar dan pembenihan;\nb. pengolahan, pembekuan, dan pengawetan hasil perikanan;\nc. perdagangan besar dan eceran hasil perikanan, pakan ikan, serta peralatan budidaya;\nd. jasa angkutan dan penyimpanan berpendingin."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "f14bbb5109b171d2",
+ "resolved_span": {
+  "end": 2251,
+  "start": 1918
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ff976f9fc57416eac08bdf418046404",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

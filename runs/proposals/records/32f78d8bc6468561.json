@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "literal",
+  "query": "Kapan rapat tahunan Rapat Umum Pemegang Saham harus diadakan?",
+  "start": null,
+  "teks_gold": "Rapat Umum Pemegang Saham terdiri dari rapat tahunan dan rapat luar biasa. Rapat tahunan diadakan paling lambat 6 (enam) bulan setelah tahun buku berakhir."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "32f78d8bc6468561",
+ "resolved_span": {
+  "end": 8453,
+  "start": 8298
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2b1e5b05ba564cea86f507c57ba2e9f6",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

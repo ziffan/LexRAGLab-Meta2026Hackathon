@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Siapa pemberi lampu hijau ketika pengelola harian berencana memperluas jaringan operasional ke daerah berbeda, termasuk mancanegara?",
+  "start": null,
+  "teks_gold": "Perseroan dapat membuka kantor cabang atau kantor perwakilan di tempat lain atas keputusan Direksi, setelah mendapat persetujuan Dewan Komisaris, baik di dalam maupun di luar wilayah Negara Republik Indonesia."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "d5ea6ce39d2e3d43",
+ "resolved_span": {
+  "end": 2598,
+  "start": 2389
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "596fbb925509428bb8e6d8e3d416d783",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

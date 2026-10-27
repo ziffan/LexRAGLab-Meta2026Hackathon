@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa keseluruhan dana pangkal badan usaha ini beserta rincian potongannya menjadi unit penyertaan?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 2.000.000.000,00 (dua miliar Rupiah), terbagi atas 2.000 (dua ribu) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "44fba58d33600c5e",
+ "resolved_span": {
+  "end": 3011,
+  "start": 2829
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

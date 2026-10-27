@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa maksud dan tujuan Perseroan menurut Pasal 4 ayat 1?",
+  "start": null,
+  "teks_gold": "(1) Maksud dan tujuan Perseroan ialah berusaha dalam bidang pengangkutan dan pergudangan, energi, dan perdagangan."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "e5c0eb00ed7ceadd",
+ "resolved_span": {
+  "end": 2931,
+  "start": 2817
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

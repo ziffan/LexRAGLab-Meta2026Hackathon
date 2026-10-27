@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Berapa banyak lembar kepemilikan tersedia dalam pagu awal serta berapa harga satuan tiap lembarnya?",
+  "start": null,
+  "teks_gold": "Modal dasar Perseroan berjumlah Rp 1.200.000.000,00 (satu miliar dua ratus juta Rupiah), terbagi atas 1.200 (seribu dua ratus) saham, masing-masing saham bernilai nominal Rp 1.000.000,00 (satu juta Rupiah)."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "3d0a80cad1d2fe89",
+ "resolved_span": {
+  "end": 2986,
+  "start": 2780
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d554947bcbed4ba485cbd6b080c81f10",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

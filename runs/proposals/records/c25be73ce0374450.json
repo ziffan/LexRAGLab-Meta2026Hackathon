@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jangka waktu pendirian Perseroan terhitung sejak memperoleh status badan hukum?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu 30 (tiga puluh) tahun terhitung sejak tanggal Perseroan memperoleh status badan hukum, dan dapat diperpanjang berdasarkan keputusan Rapat Umum Pemegang Saham."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c25be73ce0374450",
+ "resolved_span": {
+  "end": 2806,
+  "start": 2609
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

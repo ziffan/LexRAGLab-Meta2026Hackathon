@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Siapa saja jabatan pimpinan pengelola badan usaha ini dan berapa jumlah pengelolanya?",
+  "start": null,
+  "teks_gold": "Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari 2 (dua) orang anggota, yaitu seorang direktur utama dan seorang direktur."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "12c81e60a2a714e3",
+ "resolved_span": {
+  "end": 4942,
+  "start": 4808
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d554947bcbed4ba485cbd6b080c81f10",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

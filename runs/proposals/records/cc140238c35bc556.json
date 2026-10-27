@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Dalam kondisi surplus, berapa porsi keuntungan yang harus ditabung sebagai simpanan jaga hingga ambang tertentu?",
+  "start": null,
+  "teks_gold": "Apabila Perseroan mempunyai saldo laba yang positif, sebagian laba bersih wajib disisihkan untuk dana cadangan sampai mencapai sekurang-kurangnya 20% (dua puluh persen) dari jumlah modal yang ditempatkan dan disetor."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "cc140238c35bc556",
+ "resolved_span": {
+  "end": 11336,
+  "start": 11120
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

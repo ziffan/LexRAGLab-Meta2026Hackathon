@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "literal",
+  "query": "Di mana kedudukan Perseroan menurut Pasal 2?",
+  "start": null,
+  "teks_gold": "Perseroan berkedudukan di Kota Medan, Provinsi Sumatera Utara."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "c148e610db7df32c",
+ "resolved_span": {
+  "end": 1619,
+  "start": 1557
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "19cbc55545864da38711dbf2b9c53a2f",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-04",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Kapan awal masa eksistensi tanpa batas bagi entitas tersebut dimulai?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu tidak terbatas, terhitung sejak tanggal pengesahan Perseroan sebagai badan hukum oleh Menteri."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "f59c8db611e02746",
+ "resolved_span": {
+  "end": 2087,
+  "start": 1954
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "d554947bcbed4ba485cbd6b080c81f10",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

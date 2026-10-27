@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa jumlah anggota Direksi dan bagaimana susunannya?",
+  "start": null,
+  "teks_gold": "Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari sekurang-kurangnya 2 (dua) orang dan sebanyak-banyaknya 3 (tiga) orang anggota, dengan susunan seorang direktur utama dan seorang atau dua orang direktur."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "da9e3b0927fa5acb",
+ "resolved_span": {
+  "end": 5389,
+  "start": 5174
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

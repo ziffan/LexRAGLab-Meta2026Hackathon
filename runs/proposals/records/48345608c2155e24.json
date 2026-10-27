@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Kapan pertemuan rutin pemilik modal harus digelar usai periode pembukuan ditutup?",
+  "start": null,
+  "teks_gold": "Rapat tahunan diadakan paling lambat 6 (enam) bulan setelah tahun buku berakhir."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "48345608c2155e24",
+ "resolved_span": {
+  "end": 8453,
+  "start": 8373
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa nama Perseroan dan di mana kedudukannya menurut Pasal 1?",
+  "start": null,
+  "teks_gold": "Perseroan ini bernama PT KALAWARNA TIRTASAMBADA, yang dalam anggaran dasar ini disebut \"Perseroan\", berkedudukan di Kota Malang, Provinsi Jawa Timur."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "e31f1ca0a707cf9d",
+ "resolved_span": {
+  "end": 1624,
+  "start": 1475
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "4ad77418137f459cbe6a23d5f3f46a9b",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

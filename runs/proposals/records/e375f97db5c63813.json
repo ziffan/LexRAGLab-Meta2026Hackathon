@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-03",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Entitas bisnis ini dirancang beroperasi selama rentang apa serta berpatokan pada momentum administratif apa?",
+  "start": null,
+  "teks_gold": "Perseroan didirikan untuk jangka waktu yang tidak terbatas lamanya, dimulai sejak tanggal Perseroan memperoleh pengesahan badan hukum dari Menteri."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "e375f97db5c63813",
+ "resolved_span": {
+  "end": 1782,
+  "start": 1635
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ff976f9fc57416eac08bdf418046404",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

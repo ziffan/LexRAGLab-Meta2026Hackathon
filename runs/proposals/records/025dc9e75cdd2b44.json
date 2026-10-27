@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Di wilayah mana kantor pusat entitas bisnis tersebut berada?",
+  "start": null,
+  "teks_gold": "Perseroan berkedudukan di Kota Semarang, Provinsi Jawa Tengah, dan dapat membuka cabang atau perwakilan di tempat lain atas keputusan Direksi dengan persetujuan Dewan Komisaris."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "025dc9e75cdd2b44",
+ "resolved_span": {
+  "end": 1662,
+  "start": 1485
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "462f7e143e544545a675983ef8e6517d",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

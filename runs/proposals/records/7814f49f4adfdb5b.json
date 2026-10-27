@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-05",
+  "end": null,
+  "mode": "literal",
+  "query": "Kapan Rapat tahunan Rapat Umum Pemegang Saham diselenggarakan dan bagaimana pemanggilannya?",
+  "start": null,
+  "teks_gold": "Rapat tahunan diselenggarakan paling lambat 6 (enam) bulan setelah tahun buku berakhir. Pemanggilan rapat dilakukan paling lambat 14 (empat belas) hari sebelum tanggal rapat dengan surat tercatat atau surat yang disampaikan langsung dengan tanda terima."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "7814f49f4adfdb5b",
+ "resolved_span": {
+  "end": 9802,
+  "start": 9549
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "839d5e8f77a84573883c60411bdb7918",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

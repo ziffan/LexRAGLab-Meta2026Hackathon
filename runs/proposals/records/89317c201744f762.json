@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-02",
+  "end": null,
+  "mode": "literal",
+  "query": "Apa maksud dan tujuan Perseroan menurut Pasal 4?",
+  "start": null,
+  "teks_gold": "Maksud dan tujuan Perseroan ialah berusaha dalam bidang jasa konstruksi, perencanaan teknik, dan pengelolaan properti."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "89317c201744f762",
+ "resolved_span": {
+  "end": 2023,
+  "start": 1905
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "6ea2eebb3196477f8a0e88e4cb561908",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

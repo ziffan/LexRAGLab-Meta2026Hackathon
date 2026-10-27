@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "parafrase",
+  "query": "Pihak pengawas mana berwenang menonaktifkan jajaran pengelola untuk jeda waktu tertentu, apa kewajiban lanjutan beserta tenggatnya?",
+  "start": null,
+  "teks_gold": "Dewan Komisaris berhak memberhentikan sementara anggota Direksi dengan menyebutkan alasannya, dan dalam waktu paling lambat 30 (tiga puluh) hari sejak pemberhentian sementara itu wajib menyelenggarakan Rapat Umum Pemegang Saham untuk mencabut atau menguatkan keputusan tersebut."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "baac09438a695570",
+ "resolved_span": {
+  "end": 7626,
+  "start": 7348
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "44a62b8fc6a446bcbb1ef971a4ceafc4",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}

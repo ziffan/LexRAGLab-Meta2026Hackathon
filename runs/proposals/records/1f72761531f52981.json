@@ -1,0 +1,26 @@
+{
+ "body": {
+  "doc_id": "akta-01",
+  "end": null,
+  "mode": "literal",
+  "query": "Berapa besaran dana cadangan yang wajib disisihkan dari laba bersih Perseroan?",
+  "start": null,
+  "teks_gold": "(2) Apabila Perseroan mempunyai saldo laba yang positif, sebagian laba bersih wajib disisihkan untuk dana cadangan sampai mencapai sekurang-kurangnya 20% (dua puluh persen) dari jumlah modal yang ditempatkan dan disetor."
+ },
+ "edited": null,
+ "family": "akta",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "1f72761531f52981",
+ "resolved_span": {
+  "end": 11336,
+  "start": 11116
+ },
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "2b1e5b05ba564cea86f507c57ba2e9f6",
+ "validation": {
+  "offset_found": true,
+  "text_matches": true
+ }
+}
