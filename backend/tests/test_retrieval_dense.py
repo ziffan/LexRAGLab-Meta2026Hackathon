@@ -55,13 +55,13 @@ def test_cache_hit_no_recompute(tmp_path):
 
 def test_hash_changes_with_text_model_revision_maxlen(tmp_path):
     enc = FakeEncoder()
-    h = dense.chunk_set_hash(enc, ITEMS)
-    assert dense.chunk_set_hash(enc, ITEMS[:2] + [("c2", "teks lain")]) != h
-    assert dense.chunk_set_hash(FakeEncoder(revision="rev2"), ITEMS) != h
-    assert dense.chunk_set_hash(FakeEncoder(max_seq_length=9), ITEMS) != h
+    h = dense.embedding_set_hash(enc, ITEMS)
+    assert dense.embedding_set_hash(enc, ITEMS[:2] + [("c2", "teks lain")]) != h
+    assert dense.embedding_set_hash(FakeEncoder(revision="rev2"), ITEMS) != h
+    assert dense.embedding_set_hash(FakeEncoder(max_seq_length=9), ITEMS) != h
     enc2 = FakeEncoder()
     enc2.model = "other/model"
-    assert dense.chunk_set_hash(enc2, ITEMS) != h
+    assert dense.embedding_set_hash(enc2, ITEMS) != h
     dense.embed_chunks(enc, ITEMS, cache_dir=tmp_path)
     dense.embed_chunks(enc, ITEMS[:2], cache_dir=tmp_path)  # himpunan beda -> hitung baru
     assert enc.encode_calls == 2

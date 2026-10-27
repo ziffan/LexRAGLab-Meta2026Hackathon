@@ -1,6 +1,6 @@
 """Retriever dense: BAAI/bge-m3 lokal (H-042), tanpa prefix, embedding dinormalisasi (cosine = dot product).
 
-Cache embedding per hash (H-025): `cache/embeddings/<chunk_set_hash>.npy` + `<hash>.json` (urutan `chunk_id`
+Cache embedding per hash (H-025): `cache/embeddings/<embedding_set_hash>.npy` + `<hash>.json` (urutan `chunk_id`
 dan metadata). Embedding query di-cache per hash (model, revisi, max_seq_length, teks query).
 Embedding hanya lokal (G-14); CLI `python -m backend.retrieval.dense --build` membangun cache korpus UU PT.
 """
@@ -78,7 +78,7 @@ def embedder_info(enc: Encoder, n_truncated: int | None = None) -> dict[str, Any
     return info
 
 
-def chunk_set_hash(enc: Encoder, items: Sequence[tuple[str, str]]) -> str:
+def embedding_set_hash(enc: Encoder, items: Sequence[tuple[str, str]]) -> str:
     """Hash kanonik (model, revisi, max_seq_length, daftar `(chunk_id, teks)` terurut menurut chunk_id)."""
     ordered = sorted(items, key=lambda x: x[0])
     return sha256_hex({"model": enc.model, "revision": enc.revision, "max_seq_length": enc.max_seq_length,
@@ -103,13 +103,13 @@ def _save_npy(path: Path, arr: np.ndarray) -> None:
 
 
 def embed_chunks(enc: Encoder, items: Sequence[tuple[str, str]], *, cache_dir: Path | None = None) -> EmbeddingSet:
-    """Embedding semua potongan; dihitung sekali per `chunk_set_hash`. `items` = `(chunk_id, teks)`."""
+    """Embedding semua potongan; dihitung sekali per `embedding_set_hash`. `items` = `(chunk_id, teks)`."""
     ids = [i for i, _ in items]
     if len(set(ids)) != len(ids):
         raise ValueError("duplicate chunk_id")
     cdir = cache_dir or CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
-    h = chunk_set_hash(enc, items)
+    h = embedding_set_hash(enc, items)
     npy, js = cdir / f"{h}.npy", cdir / f"{h}.json"
     ordered = sorted(items, key=lambda x: x[0])
     if npy.exists() and js.exists():
