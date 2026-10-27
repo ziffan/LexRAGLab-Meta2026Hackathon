@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from backend.metrics.types import PACKING_RULES, PackedChunk, RankedChunk, TokenizerLike
+from backend.metrics.types import PACKING_RULES, PackedChunk, RankedChunk, TokenizerLike, token_offsets
 
 
 def pack(
@@ -36,11 +36,15 @@ def pack(
         r = budget - acc - hdr
         if r <= 0:
             break
-        offs = list(tokenizer.offsets(text))[:r]
-        if not offs:
-            break
-        new_end = c.start + offs[-1][1]
-        packed.append(PackedChunk(c.start, new_end, hdr + len(offs), hdr, idx, True, c.chunk_id))
-        acc += hdr + len(offs)
+        offs = token_offsets(tokenizer, text)[:r]
+        # biaya = count(teks terpotong) harus <= r; satu karakter bisa terbelah ke beberapa token,
+        # jadi mundur satu token sampai muat. Tak ada yang muat -> tidak masuk dan berhenti (A3).
+        while offs:
+            new_end = c.start + offs[-1][1]
+            text_cost = tokenizer.count(doc[c.start : new_end])
+            if text_cost <= r:
+                packed.append(PackedChunk(c.start, new_end, hdr + text_cost, hdr, idx, True, c.chunk_id))
+                break
+            offs.pop()
         break
     return packed

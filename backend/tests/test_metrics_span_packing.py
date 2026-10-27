@@ -205,3 +205,82 @@ def test_S21_code_point_offsets_non_ascii_non_bmp():
     assert m.gold_tokens_retrieved == 2 and m.retrieved_tokens == 3
     assert m.token_precision == F(2, 3)
     assert m.reciprocal_rank == 1
+
+
+# --- Putaran 2: invarian cost == count(teks terpotong) <= B (review SHOULD-1/2) ---
+
+import re
+
+from backend.metrics.types import OffsetsUnavailableError
+
+
+class TwoTokenChar:
+    """Tokenizer palsu: kata biasa = 1 token; karakter 'X' = 2 token (seperti emoji dipecah byte).
+    Offset token selalu mencakup seluruh karakter (kedua token 'X' punya offset sama)."""
+
+    def count(self, text):
+        return sum(2 if ch == "X" else 1 for ch in re.findall(r"X|[^\sX]+", text))
+
+    def offsets(self, text):
+        out = []
+        for m in re.finditer(r"X|[^\sX]+", text):
+            out += [(m.start(), m.end())] * (2 if m.group() == "X" else 1)
+        return out
+
+
+def test_truncate_backs_off_when_char_splits_into_two_tokens():
+    tok = TwoTokenChar()
+    doc = "aa bb X cc"
+    # biaya penuh 1+1+2+1 = 5 > B=3; r=3 -> offs[:3] berakhir di tengah X (cost 4 > 3) -> mundur ke "aa bb" (2)
+    p = pack(doc, [RankedChunk(0, len(doc))], 3, tok, "truncate")
+    assert len(p) == 1
+    assert doc[p[0].start : p[0].end] == "aa bb"
+    assert p[0].cost == tok.count(doc[p[0].start : p[0].end]) == 2 <= 3
+
+
+def test_truncate_nothing_fits_stops_per_A3():
+    tok = TwoTokenChar()
+    doc = "X aa"
+    p = pack(doc, [RankedChunk(0, len(doc)), RankedChunk(0, 2)], 1, tok, "truncate")
+    assert p == []
+
+
+def test_truncate_real_hf_tokenizer_cost_equals_count_with_emoji():
+    from backend import tokenizer as tkmod
+
+    tok = tkmod.get_tokenizer()
+    try:
+        tok.offsets("x")
+    except NotImplementedError:
+        pytest.skip("HF tokenizer not in local cache (G-32); fallback has no offsets")
+    doc = "Pasal §1 \U0001F600\U0001F680 perseroan \U0001F600a\U0001F4A5 terbatas — modal dasar \U0001F9D1‍\U0001F4BB selesai"
+    total = tok.count(doc)
+    checked = 0
+    for budget in range(1, total):
+        p = pack(doc, [RankedChunk(0, len(doc), "Hdr")], budget, tok, "truncate")
+        hdr = tok.count("Hdr")
+        for x in p:
+            assert x.cost == hdr + tok.count(doc[x.start : x.end])
+            assert x.cost <= budget
+            checked += 1
+        assert sum(x.cost for x in p) <= budget
+    assert checked > 0
+
+
+def test_offsets_unavailable_error_mentions_G32_for_truncate_and_precision():
+    class NoOffsets:
+        def count(self, text):
+            return len(text.split())
+
+        def offsets(self, text):
+            raise NotImplementedError("offsets are only available for the HF tokenizer")
+
+    doc = "aa bb cc"
+    with pytest.raises(OffsetsUnavailableError, match="G-32"):
+        pack(doc, [RankedChunk(0, 8)], 2, NoOffsets(), "truncate")
+    with pytest.raises(OffsetsUnavailableError, match="G-32"):
+        from backend.metrics.item import compute_item_metrics
+
+        compute_item_metrics(doc, [(0, 2)], [RankedChunk(0, 8)], 10, NoOffsets(), k=1, units=[(0, 8)])
+    # stop/skip tanpa gold token tidak butuh offsets
+    assert pack(doc, [RankedChunk(0, 8)], 5, NoOffsets(), "stop")[0].cost == 3

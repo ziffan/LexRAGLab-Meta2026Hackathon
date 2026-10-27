@@ -6,7 +6,7 @@ from typing import Sequence
 
 from backend.metrics import intervals as iv
 from backend.metrics.packing import pack
-from backend.metrics.types import ItemMetrics, PackedChunk, RankedChunk, TokenizerLike
+from backend.metrics.types import ItemMetrics, PackedChunk, RankedChunk, TokenizerLike, token_offsets
 
 Interval = tuple[int, int]
 
@@ -26,7 +26,7 @@ def gold_token_set(doc: str, packed: Sequence[PackedChunk], gold: Sequence[Inter
     token gold bila seluruh karakternya di G."""
     out: set[Interval] = set()
     for p in packed:
-        for ts, te in tokenizer.offsets(doc[p.start : p.end]):
+        for ts, te in token_offsets(tokenizer, doc[p.start : p.end]):
             s, e = p.start + ts, p.start + te
             if e > s and iv.contains_all(gold, s, e):
                 out.add((s, e))

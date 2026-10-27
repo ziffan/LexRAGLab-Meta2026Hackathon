@@ -67,3 +67,19 @@ def test_duplicate_chunk_id_rejected():
 
     with pytest.raises(ValueError):
         Bm25Retriever([("a", "x"), ("a", "y")], **PARAMS)
+
+
+def test_query_and_document_case_insensitive():
+    r = Bm25Retriever(DOCS, **PARAMS)
+    assert r.rank("PEMBUBARAN Perseroan") == r.rank("pembubaran perseroan")
+    assert r.rank("DIREKSI")[0][0] in {"d1", "d2"}
+    up = Bm25Retriever([(i, t.upper()) for i, t in DOCS], **PARAMS)
+    assert [c for c, _ in up.rank("pembubaran perseroan")] == [c for c, _ in r.rank("pembubaran perseroan")]
+
+
+def test_corpus_with_empty_and_stopword_only_documents():
+    docs = DOCS + [("e1", ""), ("e2", "yang dan untuk")]
+    r = Bm25Retriever(docs, **PARAMS)
+    ids = [c for c, _ in r.rank("pembubaran perseroan")]
+    assert ids[0] == "d3" and "e1" not in ids and "e2" not in ids
+    assert r.rank("direksi") == Bm25Retriever(docs, **PARAMS).rank("direksi")

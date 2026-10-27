@@ -17,6 +17,20 @@ class TokenizerLike(Protocol):
     def offsets(self, text: str) -> Sequence[tuple[int, int]]: ...
 
 
+class OffsetsUnavailableError(RuntimeError):
+    """Tokenizer tanpa `offsets` (fallback o200k): metrik presisi dan truncate tidak bisa dihitung."""
+
+
+def token_offsets(tokenizer: TokenizerLike, text: str) -> list[tuple[int, int]]:
+    try:
+        return list(tokenizer.offsets(text))
+    except NotImplementedError as exc:
+        raise OffsetsUnavailableError(
+            "tokenizer has no token offsets (HF H-014 tokenizer missing from the local cache, fallback "
+            "o200k in use); precision and truncate need the HF tokenizer, see docs/GOTCHAS.md G-32"
+        ) from exc
+
+
 @dataclass(frozen=True)
 class RankedChunk:
     """Satu potongan dalam ranking `C`: offset `[start, end)` di teks bersih, header B opsional."""
