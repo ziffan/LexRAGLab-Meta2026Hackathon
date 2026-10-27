@@ -1,0 +1,753 @@
+{
+ "created_at": "2026-10-27T23:24:29Z",
+ "factor_bp": 15700,
+ "factor_source": "config/budget [batch_gate]",
+ "gate": {
+  "cumulative_limit": 16000000,
+  "reasons": [],
+  "single_limit": 2000000,
+  "spent_cumulative": 548046,
+  "upper_bound": 48537,
+  "verdict": "allow"
+ },
+ "per_doc": {
+  "akta-01": {
+   "expected": 5610,
+   "gate": {
+    "cumulative_limit": 16000000,
+    "reasons": [],
+    "single_limit": 2000000,
+    "spent_cumulative": 548046,
+    "upper_bound": 8809,
+    "verdict": "allow"
+   },
+   "sources": {
+    "fixed_size": {
+     "already_stored": 0,
+     "calls": 9,
+     "doc_id": "akta-01",
+     "estimated_seconds": 27,
+     "expected": 1791,
+     "max_unit_tokens": 514,
+     "prefix_tokens": 4136,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 9,
+      "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+      "cost_usd_micros": {
+       "expected": 1791,
+       "upper_cached": 2781,
+       "upper_no_cache": 6024
+      },
+      "doc_id": "akta-01",
+      "prefix_tokens": 4136,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "fixed_size",
+      "source_tokens_total": 3969,
+      "suffix_tokens_total": 4899,
+      "time": {
+       "estimated_seconds": 27,
+       "rpm_floor_seconds": 4,
+       "sequential_seconds": 27
+      },
+      "units": 8
+     },
+     "source": "fixed_size",
+     "to_call": 8,
+     "units": 8,
+     "upper_g36": 2812,
+     "upper_no_cache": 6024
+    },
+    "pasal": {
+     "already_stored": 0,
+     "calls": 2,
+     "doc_id": "akta-01",
+     "estimated_seconds": 6,
+     "expected": 974,
+     "max_unit_tokens": 3517,
+     "prefix_tokens": 4136,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 2,
+      "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+      "cost_usd_micros": {
+       "expected": 974,
+       "upper_cached": 1194,
+       "upper_no_cache": 1600
+      },
+      "doc_id": "akta-01",
+      "prefix_tokens": 4136,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "pasal",
+      "source_tokens_total": 3517,
+      "suffix_tokens_total": 3637,
+      "time": {
+       "estimated_seconds": 6,
+       "rpm_floor_seconds": 1,
+       "sequential_seconds": 6
+      },
+      "units": 1
+     },
+     "source": "pasal",
+     "to_call": 1,
+     "units": 1,
+     "upper_g36": 1530,
+     "upper_no_cache": 1600
+    },
+    "structure_schema": {
+     "already_stored": 0,
+     "calls": 19,
+     "doc_id": "akta-01",
+     "estimated_seconds": 57,
+     "expected": 2845,
+     "max_unit_tokens": 353,
+     "prefix_tokens": 4136,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 19,
+      "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+      "cost_usd_micros": {
+       "expected": 2845,
+       "upper_cached": 4935,
+       "upper_no_cache": 12231
+      },
+      "doc_id": "akta-01",
+      "prefix_tokens": 4136,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "structure_schema",
+      "source_tokens_total": 3517,
+      "suffix_tokens_total": 5566,
+      "time": {
+       "estimated_seconds": 57,
+       "rpm_floor_seconds": 9,
+       "sequential_seconds": 57
+      },
+      "units": 18
+     },
+     "source": "structure_schema",
+     "to_call": 18,
+     "units": 18,
+     "upper_g36": 4467,
+     "upper_no_cache": 12231
+    }
+   },
+   "upper_g36": 8809
+  },
+  "akta-02": {
+   "expected": 5823,
+   "gate": {
+    "cumulative_limit": 16000000,
+    "reasons": [],
+    "single_limit": 2000000,
+    "spent_cumulative": 548046,
+    "upper_bound": 9143,
+    "verdict": "allow"
+   },
+   "sources": {
+    "fixed_size": {
+     "already_stored": 0,
+     "calls": 9,
+     "doc_id": "akta-02",
+     "estimated_seconds": 27,
+     "expected": 1752,
+     "max_unit_tokens": 513,
+     "prefix_tokens": 3942,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 9,
+      "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+      "cost_usd_micros": {
+       "expected": 1752,
+       "upper_cached": 2742,
+       "upper_no_cache": 5832
+      },
+      "doc_id": "akta-02",
+      "prefix_tokens": 3942,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "fixed_size",
+      "source_tokens_total": 3770,
+      "suffix_tokens_total": 4718,
+      "time": {
+       "estimated_seconds": 27,
+       "rpm_floor_seconds": 4,
+       "sequential_seconds": 27
+      },
+      "units": 8
+     },
+     "source": "fixed_size",
+     "to_call": 8,
+     "units": 8,
+     "upper_g36": 2751,
+     "upper_no_cache": 5832
+    },
+    "pasal": {
+     "already_stored": 0,
+     "calls": 2,
+     "doc_id": "akta-02",
+     "estimated_seconds": 6,
+     "expected": 935,
+     "max_unit_tokens": 3321,
+     "prefix_tokens": 3942,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 2,
+      "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+      "cost_usd_micros": {
+       "expected": 935,
+       "upper_cached": 1155,
+       "upper_no_cache": 1541
+      },
+      "doc_id": "akta-02",
+      "prefix_tokens": 3942,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "pasal",
+      "source_tokens_total": 3321,
+      "suffix_tokens_total": 3438,
+      "time": {
+       "estimated_seconds": 6,
+       "rpm_floor_seconds": 1,
+       "sequential_seconds": 6
+      },
+      "units": 1
+     },
+     "source": "pasal",
+     "to_call": 1,
+     "units": 1,
+     "upper_g36": 1468,
+     "upper_no_cache": 1541
+    },
+    "structure_schema": {
+     "already_stored": 0,
+     "calls": 22,
+     "doc_id": "akta-02",
+     "estimated_seconds": 66,
+     "expected": 3136,
+     "max_unit_tokens": 373,
+     "prefix_tokens": 3942,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 22,
+      "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+      "cost_usd_micros": {
+       "expected": 3136,
+       "upper_cached": 5556,
+       "upper_no_cache": 13666
+      },
+      "doc_id": "akta-02",
+      "prefix_tokens": 3942,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "structure_schema",
+      "source_tokens_total": 3321,
+      "suffix_tokens_total": 5774,
+      "time": {
+       "estimated_seconds": 66,
+       "rpm_floor_seconds": 10,
+       "sequential_seconds": 66
+      },
+      "units": 21
+     },
+     "source": "structure_schema",
+     "to_call": 21,
+     "units": 21,
+     "upper_g36": 4924,
+     "upper_no_cache": 13666
+    }
+   },
+   "upper_g36": 9143
+  },
+  "akta-03": {
+   "expected": 6198,
+   "gate": {
+    "cumulative_limit": 16000000,
+    "reasons": [],
+    "single_limit": 2000000,
+    "spent_cumulative": 548046,
+    "upper_bound": 9732,
+    "verdict": "allow"
+   },
+   "sources": {
+    "fixed_size": {
+     "already_stored": 0,
+     "calls": 9,
+     "doc_id": "akta-03",
+     "estimated_seconds": 27,
+     "expected": 1766,
+     "max_unit_tokens": 513,
+     "prefix_tokens": 4013,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 9,
+      "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+      "cost_usd_micros": {
+       "expected": 1766,
+       "upper_cached": 2756,
+       "upper_no_cache": 5904
+      },
+      "doc_id": "akta-03",
+      "prefix_tokens": 4013,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "fixed_size",
+      "source_tokens_total": 3841,
+      "suffix_tokens_total": 4789,
+      "time": {
+       "estimated_seconds": 27,
+       "rpm_floor_seconds": 4,
+       "sequential_seconds": 27
+      },
+      "units": 8
+     },
+     "source": "fixed_size",
+     "to_call": 8,
+     "units": 8,
+     "upper_g36": 2773,
+     "upper_no_cache": 5904
+    },
+    "pasal": {
+     "already_stored": 0,
+     "calls": 2,
+     "doc_id": "akta-03",
+     "estimated_seconds": 6,
+     "expected": 950,
+     "max_unit_tokens": 3392,
+     "prefix_tokens": 4013,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 2,
+      "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+      "cost_usd_micros": {
+       "expected": 950,
+       "upper_cached": 1170,
+       "upper_no_cache": 1563
+      },
+      "doc_id": "akta-03",
+      "prefix_tokens": 4013,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "pasal",
+      "source_tokens_total": 3392,
+      "suffix_tokens_total": 3515,
+      "time": {
+       "estimated_seconds": 6,
+       "rpm_floor_seconds": 1,
+       "sequential_seconds": 6
+      },
+      "units": 1
+     },
+     "source": "pasal",
+     "to_call": 1,
+     "units": 1,
+     "upper_g36": 1492,
+     "upper_no_cache": 1563
+    },
+    "structure_schema": {
+     "already_stored": 0,
+     "calls": 25,
+     "doc_id": "akta-03",
+     "estimated_seconds": 75,
+     "expected": 3482,
+     "max_unit_tokens": 426,
+     "prefix_tokens": 4013,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 25,
+      "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+      "cost_usd_micros": {
+       "expected": 3482,
+       "upper_cached": 6232,
+       "upper_no_cache": 15669
+      },
+      "doc_id": "akta-03",
+      "prefix_tokens": 4013,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "structure_schema",
+      "source_tokens_total": 3392,
+      "suffix_tokens_total": 6189,
+      "time": {
+       "estimated_seconds": 75,
+       "rpm_floor_seconds": 11,
+       "sequential_seconds": 75
+      },
+      "units": 24
+     },
+     "source": "structure_schema",
+     "to_call": 24,
+     "units": 24,
+     "upper_g36": 5467,
+     "upper_no_cache": 15669
+    }
+   },
+   "upper_g36": 9732
+  },
+  "akta-04": {
+   "expected": 6405,
+   "gate": {
+    "cumulative_limit": 16000000,
+    "reasons": [],
+    "single_limit": 2000000,
+    "spent_cumulative": 548046,
+    "upper_bound": 10057,
+    "verdict": "allow"
+   },
+   "sources": {
+    "fixed_size": {
+     "already_stored": 0,
+     "calls": 9,
+     "doc_id": "akta-04",
+     "estimated_seconds": 27,
+     "expected": 1762,
+     "max_unit_tokens": 513,
+     "prefix_tokens": 3974,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 9,
+      "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+      "cost_usd_micros": {
+       "expected": 1762,
+       "upper_cached": 2752,
+       "upper_no_cache": 5866
+      },
+      "doc_id": "akta-04",
+      "prefix_tokens": 3974,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "fixed_size",
+      "source_tokens_total": 3803,
+      "suffix_tokens_total": 4765,
+      "time": {
+       "estimated_seconds": 27,
+       "rpm_floor_seconds": 4,
+       "sequential_seconds": 27
+      },
+      "units": 8
+     },
+     "source": "fixed_size",
+     "to_call": 8,
+     "units": 8,
+     "upper_g36": 2767,
+     "upper_no_cache": 5866
+    },
+    "pasal": {
+     "already_stored": 0,
+     "calls": 2,
+     "doc_id": "akta-04",
+     "estimated_seconds": 6,
+     "expected": 942,
+     "max_unit_tokens": 3351,
+     "prefix_tokens": 3974,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 2,
+      "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+      "cost_usd_micros": {
+       "expected": 942,
+       "upper_cached": 1162,
+       "upper_no_cache": 1552
+      },
+      "doc_id": "akta-04",
+      "prefix_tokens": 3974,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "pasal",
+      "source_tokens_total": 3351,
+      "suffix_tokens_total": 3470,
+      "time": {
+       "estimated_seconds": 6,
+       "rpm_floor_seconds": 1,
+       "sequential_seconds": 6
+      },
+      "units": 1
+     },
+     "source": "pasal",
+     "to_call": 1,
+     "units": 1,
+     "upper_g36": 1479,
+     "upper_no_cache": 1552
+    },
+    "structure_schema": {
+     "already_stored": 0,
+     "calls": 27,
+     "doc_id": "akta-04",
+     "estimated_seconds": 81,
+     "expected": 3701,
+     "max_unit_tokens": 241,
+     "prefix_tokens": 3974,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 27,
+      "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+      "cost_usd_micros": {
+       "expected": 3701,
+       "upper_cached": 6671,
+       "upper_no_cache": 16796
+      },
+      "doc_id": "akta-04",
+      "prefix_tokens": 3974,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "structure_schema",
+      "source_tokens_total": 3351,
+      "suffix_tokens_total": 6446,
+      "time": {
+       "estimated_seconds": 81,
+       "rpm_floor_seconds": 12,
+       "sequential_seconds": 81
+      },
+      "units": 26
+     },
+     "source": "structure_schema",
+     "to_call": 26,
+     "units": 26,
+     "upper_g36": 5811,
+     "upper_no_cache": 16796
+    }
+   },
+   "upper_g36": 10057
+  },
+  "akta-05": {
+   "expected": 6875,
+   "gate": {
+    "cumulative_limit": 16000000,
+    "reasons": [],
+    "single_limit": 2000000,
+    "spent_cumulative": 548046,
+    "upper_bound": 10796,
+    "verdict": "allow"
+   },
+   "sources": {
+    "fixed_size": {
+     "already_stored": 0,
+     "calls": 9,
+     "doc_id": "akta-05",
+     "estimated_seconds": 27,
+     "expected": 1804,
+     "max_unit_tokens": 514,
+     "prefix_tokens": 4167,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 9,
+      "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+      "cost_usd_micros": {
+       "expected": 1804,
+       "upper_cached": 2794,
+       "upper_no_cache": 6062
+      },
+      "doc_id": "akta-05",
+      "prefix_tokens": 4167,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "fixed_size",
+      "source_tokens_total": 3993,
+      "suffix_tokens_total": 4976,
+      "time": {
+       "estimated_seconds": 27,
+       "rpm_floor_seconds": 4,
+       "sequential_seconds": 27
+      },
+      "units": 8
+     },
+     "source": "fixed_size",
+     "to_call": 8,
+     "units": 8,
+     "upper_g36": 2833,
+     "upper_no_cache": 6062
+    },
+    "pasal": {
+     "already_stored": 0,
+     "calls": 2,
+     "doc_id": "akta-05",
+     "estimated_seconds": 6,
+     "expected": 981,
+     "max_unit_tokens": 3540,
+     "prefix_tokens": 4167,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 2,
+      "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+      "cost_usd_micros": {
+       "expected": 981,
+       "upper_cached": 1201,
+       "upper_no_cache": 1609
+      },
+      "doc_id": "akta-05",
+      "prefix_tokens": 4167,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "pasal",
+      "source_tokens_total": 3540,
+      "suffix_tokens_total": 3662,
+      "time": {
+       "estimated_seconds": 6,
+       "rpm_floor_seconds": 1,
+       "sequential_seconds": 6
+      },
+      "units": 1
+     },
+     "source": "pasal",
+     "to_call": 1,
+     "units": 1,
+     "upper_g36": 1541,
+     "upper_no_cache": 1609
+    },
+    "structure_schema": {
+     "already_stored": 0,
+     "calls": 30,
+     "doc_id": "akta-05",
+     "estimated_seconds": 90,
+     "expected": 4090,
+     "max_unit_tokens": 465,
+     "prefix_tokens": 4167,
+     "projection": {
+      "assumed_latency_ms": 3000,
+      "assumptions": {
+       "expected_output_tokens": 450,
+       "max_output_tokens": 1000,
+       "prefix_fully_cached_after_warmup": true
+      },
+      "calls": 30,
+      "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+      "cost_usd_micros": {
+       "expected": 4090,
+       "upper_cached": 7390,
+       "upper_no_cache": 19230
+      },
+      "doc_id": "akta-05",
+      "prefix_tokens": 4167,
+      "profile": "meta",
+      "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+      "prompt_version": "v2",
+      "rpm": 140,
+      "source": "structure_schema",
+      "source_tokens_total": 3540,
+      "suffix_tokens_total": 7075,
+      "time": {
+       "estimated_seconds": 90,
+       "rpm_floor_seconds": 13,
+       "sequential_seconds": 90
+      },
+      "units": 29
+     },
+     "source": "structure_schema",
+     "to_call": 29,
+     "units": 29,
+     "upper_g36": 6422,
+     "upper_no_cache": 19230
+    }
+   },
+   "upper_g36": 10796
+  }
+ },
+ "total": {
+  "calls": 178,
+  "estimated_seconds": 534,
+  "expected": 30911,
+  "to_call": 163,
+  "upper_g36": 48537,
+  "upper_no_cache": 115145
+ }
+}

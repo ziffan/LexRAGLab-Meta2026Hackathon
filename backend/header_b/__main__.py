@@ -15,6 +15,7 @@ from backend.spark import BudgetExceeded, Ledger, SparkClient, effective_caps, f
 from backend.tokenizer import get_tokenizer
 
 from .caller import run_headers
+from .family import precheck, prepare_family, project_family, run_family
 from .project import write_projection
 from .schema import plan_schema, project_schema
 from .run import (DEFAULT_DOC, HeaderConfigError, find_unit, load_all_configs, prepare, project, run_smoke,
@@ -126,13 +127,99 @@ def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw) -> int:
     return 0 if run.stopped_reason is None else 1
 
 
+def _fmt_family(res: dict) -> str:
+    lines = [f"factor_bp={res['factor_bp']} ({res['factor_source']}); upper_g36 = ceil(expected * factor_bp / 10000)"]
+    for d, row in res["per_doc"].items():
+        for s, r in row["sources"].items():
+            lines.append(f"  {d} {s:<21} units={r['units']:>3} stored={r['already_stored']:>3} to_call={r['to_call']:>3} "
+                         f"max_unit_tokens={r['max_unit_tokens']:>5} calls={r['calls']:>3} expected={r['expected']:>7} "
+                         f"upper_g36={r['upper_g36']:>7} upper_no_cache={r['upper_no_cache']:>7}")
+        lines.append(f"  {d} SUBTOTAL expected={row['expected']} upper_g36={row['upper_g36']} gate={row['gate']['verdict']}")
+    t, g = res["total"], res["gate"]
+    lines.append(f"TOTAL calls={t['calls']} expected={t['expected']} ({format_usd_micros(t['expected'])}) "
+                 f"upper_g36={t['upper_g36']} ({format_usd_micros(t['upper_g36'])}) est_seconds={t['estimated_seconds']}")
+    lines.append(f"GATE {g['verdict']}: upper_bound={g['upper_bound']} spent_cumulative={g['spent_cumulative']} "
+                 f"limits single={g['single_limit']} cumulative={g['cumulative_limit']}"
+                 + ("; " + "; ".join(g["reasons"]) if g["reasons"] else ""))
+    return "\n".join(lines)
+
+
+def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
+    """W57: `--family akta` mengiterasi semua akta config/corpus_akta untuk sumber yang diminta (`--chunker all` = ketiganya)."""
+    from backend.corpus import akta_entries
+    from backend.grid.schemas import SchemaBinding
+    if a.smoke:
+        print("error: --smoke is single-document; not supported with --family akta", file=sys.stderr)
+        return 2
+    chunkers = ["structure_handwritten", "fixed_size", "structure_schema"] if a.chunker == "all" else [a.chunker]
+    sources = [gran if c == "structure_handwritten" else c for c in chunkers]
+    rec = None
+    if "structure_schema" in sources:
+        rec = SchemaBinding.from_store(config.REPO_ROOT / "runs", a.family).active()
+        if rec is None:
+            print(f"error: no schema A record for family {a.family!r} in runs/schemas", file=sys.stderr)
+            return 2
+    ids = list(akta_entries())
+    if a.doc:
+        ids = [d for d in ids if d == a.doc]
+        if not ids:
+            print(f"error: unknown akta {a.doc!r}", file=sys.stderr)
+            return 2
+    prepared = prepare_family(ids, sources, tokenizer=tok, header_cfg=hc, retrieval_cfg=rcfg, grid_cfg=gcfg, schema_record=rec)
+    hdir = config.REPO_ROOT / "runs" / "headers"
+    ledger = Ledger(config.REPO_ROOT / "runs")
+    limit = a.sample or None
+    res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent(), profile=a.profile, rpm=a.rpm,
+                         limit=limit)
+    print(_fmt_family(res))
+    if a.project_only:
+        stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        for d, row in res["per_doc"].items():
+            for s, r in row["sources"].items():
+                p = prepared[d][s]
+                write_projection(hdir / "projection" / f"{d}-{p.doc.clean_sha256[:12]}-{p.prompt.prompt_hash[:12]}-{s}.json",
+                                 {"created_at": stamp, "factor_bp": res["factor_bp"], "row": r})
+        first = next(iter(next(iter(prepared.values())).values()))
+        path = (hdir / "projection" / f"{a.family}-{a.doc or 'all'}-{first.prompt.prompt_hash[:12]}-{'+'.join(sources)}.json")
+        write_projection(path, {"created_at": stamp, **res})
+        print(f"written: {path.relative_to(config.REPO_ROOT)} (+ one file per akta per source)")
+        return 0
+    if not a.full and not a.sample:
+        print("error: live run needs --sample N (units per akta per source) or --full", file=sys.stderr)
+        return 2
+    caps = effective_caps(budget_cfg, None)
+    err = precheck(res, spent_b=ledger.spent(role="b"), spent_total=ledger.spent(),
+                   per_role_b_cap=caps.per_role_micros["b"], total_cap=caps.total_micros)
+    if err:
+        print(f"error: {err}; nothing was sent", file=sys.stderr)
+        return 3
+    client = _client(a, model_cfg, budget_cfg)
+
+    def meta_for(p):
+        return {"corpus_hash": config.config_hash({"docs": [p.doc.sha256]}), "clean_sha256": p.doc.clean_sha256,
+                "loader_rules_version": p.doc.loader_rules_version,
+                "tokenizer": {"name": tok.info.name, "version": tok.info.version}}
+    try:
+        out = run_family(client, prepared, tokenizer=tok, headers_dir=hdir, header_cfg=hc, meta_for=meta_for, limit=limit,
+                         max_attempts=a.attempts, log=print)
+    except BudgetExceeded as exc:
+        print(f"error: budget_exceeded: {exc}", file=sys.stderr)
+        return 3
+    print(f"stored={out['stored']} stopped={out['stopped']} failed={ {k: len(v) for k, v in out['failed'].items()} }")
+    return 0 if out["stopped"] is None and not out["failed"] else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m backend.header_b")
     ap.add_argument("--granularity", choices=("pasal", "ayat"))
-    ap.add_argument("--chunker", choices=("structure_handwritten", "fixed_size", "structure_schema"), default="structure_handwritten",
+    ap.add_argument("--chunker", choices=("structure_handwritten", "fixed_size", "structure_schema", "all"), default="structure_handwritten",
                     help="fixed_size (H-069): satu header per potongan fixed_size; structure_schema (H-082): potongan skema A aktif, "
-                         "B dipanggil untuk semua potongan (tanpa reuse header Pasal); granularity diabaikan")
+                         "B dipanggil untuk semua potongan (tanpa reuse header Pasal); granularity diabaikan; "
+                         "all (hanya --family akta, W57): ketiga sumber sekaligus")
     ap.add_argument("--family", default="uupt", help="keluarga skema A untuk --chunker structure_schema")
+    ap.add_argument("--doc", default=None, help="--family akta: satu akta saja (default: semua akta config/corpus_akta)")
+    ap.add_argument("--full", action="store_true", help="--family akta, run live: semua unit (tanpa --sample)")
+    ap.add_argument("--attempts", type=int, default=8, help="--family akta, run live: upaya maksimal per sumber (H-081)")
     ap.add_argument("--sample", type=int, default=0, help="N unit pertama (urutan dokumen)")
     ap.add_argument("--project-only", action="store_true")
     ap.add_argument("--smoke", action="store_true",
@@ -147,6 +234,11 @@ def main(argv: list[str] | None = None) -> int:
     tok = get_tokenizer()
     gran = a.granularity or hc["granularity"]
     source = a.chunker if a.chunker in ("fixed_size", "structure_schema") else gran
+    if a.family == "akta":
+        return _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran)
+    if a.chunker == "all":
+        print("error: --chunker all is only supported with --family akta", file=sys.stderr)
+        return 2
     kw = dict(tokenizer=tok, header_cfg=hc, retrieval_cfg=rcfg, grid_cfg=gcfg)
     if source == "structure_schema":
         rec = _schema_record(a)

@@ -1,0 +1,48 @@
+{
+ "created_at": "2026-10-27T23:24:29Z",
+ "factor_bp": 15700,
+ "row": {
+  "already_stored": 0,
+  "calls": 2,
+  "doc_id": "akta-03",
+  "estimated_seconds": 6,
+  "expected": 950,
+  "max_unit_tokens": 3392,
+  "prefix_tokens": 4013,
+  "projection": {
+   "assumed_latency_ms": 3000,
+   "assumptions": {
+    "expected_output_tokens": 450,
+    "max_output_tokens": 1000,
+    "prefix_fully_cached_after_warmup": true
+   },
+   "calls": 2,
+   "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+   "cost_usd_micros": {
+    "expected": 950,
+    "upper_cached": 1170,
+    "upper_no_cache": 1563
+   },
+   "doc_id": "akta-03",
+   "prefix_tokens": 4013,
+   "profile": "meta",
+   "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+   "prompt_version": "v2",
+   "rpm": 140,
+   "source": "pasal",
+   "source_tokens_total": 3392,
+   "suffix_tokens_total": 3515,
+   "time": {
+    "estimated_seconds": 6,
+    "rpm_floor_seconds": 1,
+    "sequential_seconds": 6
+   },
+   "units": 1
+  },
+  "source": "pasal",
+  "to_call": 1,
+  "units": 1,
+  "upper_g36": 1492,
+  "upper_no_cache": 1563
+ }
+}
