@@ -9,15 +9,15 @@
  },
  "edited": null,
  "family": "akta",
- "item_id": null,
+ "item_id": "usulan-e375f97db5c63813",
  "operator_note": null,
  "proposal_id": "e375f97db5c63813",
  "resolved_span": {
   "end": 1782,
   "start": 1635
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "disetujui",
+ "reviewed_at": "2026-10-27T15:16:49Z",
  "run_id": "6ff976f9fc57416eac08bdf418046404",
  "validation": {
   "offset_found": true,
