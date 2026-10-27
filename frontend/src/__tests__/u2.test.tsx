@@ -14,7 +14,7 @@ vi.mock("../state", async (orig) => {
 
 import { SettingSpace, failReason, frontierLine, plottable } from "../components/SettingSpace";
 import { availableSettings, frontierIds } from "../lib/settings";
-import { seriesGroups } from "../lib/series";
+import { NONE_HIDDEN, seriesGroups, toggleSeries, visibleGroups } from "../lib/series";
 
 const pt = (id: string, x: number | null, y: number | null, header_b?: boolean): GridPoint => ({
   setting_id: id, split: "held_out", budget_tokens: 2000, mean_span_recall: y, mean_token_precision: 0.1, mrr: 0.5, mean_retrieved_tokens: x,
@@ -139,5 +139,39 @@ describe("U2 click on a header-on point", () => {
     mock.state = { ...blankState(), snapshot: { status: "ready", data: snap() }, split: "held_out", selectedSettingId: "on" };
     const h = renderToStaticMarkup(<SettingSpace />);
     expect(h).toContain("structure · hybrid · header on");
+  });
+});
+
+describe("U2 header B series toggle", () => {
+  const CH = ["structure_handwritten", "structure_schema", "fixed_size"] as const;
+  const groups = () => {
+    const sn = snap();
+    return seriesGroups(plottable(sn.grid!.held_out.points, availableSettings(sn), new Set()).dots, CH);
+  };
+  it("default shows both series", () => {
+    expect(visibleGroups(groups(), NONE_HIDDEN).map((g) => g.key)).toEqual(["off-structure_handwritten", "off-fixed_size", "on-structure_handwritten"]);
+  });
+  it("toggle off hides one series and toggling again restores it", () => {
+    const h1 = toggleSeries(NONE_HIDDEN, true);
+    expect(visibleGroups(groups(), h1).every((g) => !g.on)).toBe(true);
+    const h2 = toggleSeries(NONE_HIDDEN, false);
+    expect(visibleGroups(groups(), h2).map((g) => g.key)).toEqual(["on-structure_handwritten"]);
+    expect(visibleGroups(groups(), toggleSeries(h1, true))).toHaveLength(3);
+    expect(visibleGroups(groups(), toggleSeries(h2, false))).toHaveLength(3);
+  });
+  it("hiding does not alter the frontier line (computed from the payload)", () => {
+    const sn = snap();
+    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), frontierIds(sn, "held_out"));
+    const before = frontierLine(dots).map((d) => d.setting.setting_id);
+    visibleGroups(seriesGroups(dots, CH), toggleSeries(NONE_HIDDEN, true));
+    expect(frontierLine(dots).map((d) => d.setting.setting_id)).toEqual(before);
+  });
+  it("renders labelled native checkboxes (keyboard operable), both checked by default, English labels", () => {
+    const h = render(snap());
+    expect(h).toContain("Header B series");
+    expect(h).toMatch(/<label[^>]*><input type="checkbox" data-testid="toggle-off" checked=""[^>]*\/>Header B off<\/label>/);
+    expect(h).toMatch(/<label[^>]*><input type="checkbox" data-testid="toggle-on" checked=""[^>]*\/>Header B on<\/label>/);
+    expect(h).not.toContain('tabindex="-1"');
+    expect(h).not.toContain("series-hidden-note");
   });
 });

@@ -1,8 +1,9 @@
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
+import { useState } from "react";
 import { useStore } from "../state";
 import { exactStr, fixed3, intStr, orNa, xOfY } from "../lib/format";
 import { chunkerLabel, settingShort, splitLabel } from "../lib/labels";
-import { seriesGroups } from "../lib/series";
+import { NONE_HIDDEN, SERIES, isHidden, seriesGroups, toggleSeries, visibleGroups } from "../lib/series";
 import { availableSettings, frontierIds, pointOf } from "../lib/settings";
 import type { GridPoint, Setting, Snapshot, SplitName } from "../types";
 import { EmptyBlock, SnapshotPanel } from "./Shell";
@@ -105,6 +106,7 @@ export function SettingSpace() {
 
 function Body({ snap }: { snap: Snapshot }) {
   const { state, dispatch } = useStore();
+  const [hiddenSeries, setHiddenSeries] = useState(NONE_HIDDEN); // tampilan saja; frontier tetap dari payload backend
   const grid = snap.grid;
   if (!grid) return <EmptyBlock>No grid run for this family yet</EmptyBlock>;
 
@@ -180,7 +182,7 @@ function Body({ snap }: { snap: Snapshot }) {
               />
               <Tooltip content={<Tip />} isAnimationActive={false} cursor={{ strokeDasharray: "3 3" }} />
               <Scatter name="Frontier" data={line} line={{ stroke: COLOR_LINE, strokeWidth: 2 }} shape={() => <g />} legendType="none" tooltipType="none" isAnimationActive={false} />
-              {seriesGroups(dots, chunkers).map(({ key, chunker: c, name, data }) => {
+              {visibleGroups(seriesGroups(dots, chunkers), hiddenSeries).map(({ key, chunker: c, name, data }) => {
                 return (
                   <Scatter
                     key={key}
@@ -219,6 +221,21 @@ function Body({ snap }: { snap: Snapshot }) {
         </div>
       )}
 
+      <fieldset className="seg" data-testid="series-toggle">
+        <legend>Header B series</legend>
+        {SERIES.map((ser) => (
+          <label key={ser.label} className={`seg-item${isHidden(hiddenSeries, ser.on) ? "" : " on"}`}>
+            <input type="checkbox" data-testid={`toggle-${ser.on ? "on" : "off"}`} checked={!isHidden(hiddenSeries, ser.on)} onChange={() => setHiddenSeries((h) => toggleSeries(h, ser.on))} />
+            {ser.label}
+          </label>
+        ))}
+      </fieldset>
+      {(hiddenSeries.off || hiddenSeries.on) && (
+        <p className="note" data-testid="series-hidden-note">
+          Hidden series are only hidden from the chart. The frontier line comes from the backend and still includes them.
+          {sel && isHidden(hiddenSeries, dots.find((d) => d.setting.setting_id === sel.setting_id)?.headerOn ?? sel.header_b) ? " The selected setting is in a hidden series; it stays selected." : ""}
+        </p>
+      )}
       <ul className="legend-list" aria-label="Legend">
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Structure (handwritten parser)</li>
         <li><svg width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Fixed-size</li>

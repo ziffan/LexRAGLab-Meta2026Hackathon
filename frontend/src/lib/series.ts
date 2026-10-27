@@ -30,3 +30,14 @@ export function seriesGroups<C extends string, D extends { headerOn: boolean; se
   }
   return out;
 }
+
+/** Deret yang disembunyikan (tampilan saja). Default: keduanya tampil. */
+export interface SeriesHidden {
+  off: boolean;
+  on: boolean;
+}
+export const NONE_HIDDEN: SeriesHidden = { off: false, on: false };
+export const toggleSeries = (h: SeriesHidden, on: boolean): SeriesHidden => (on ? { ...h, on: !h.on } : { ...h, off: !h.off });
+export const isHidden = (h: SeriesHidden, on: boolean): boolean => (on ? h.on : h.off);
+/** Buang kelompok deret yang disembunyikan. Frontier tidak dihitung ulang di sini. */
+export const visibleGroups = <G extends { on: boolean }>(groups: G[], h: SeriesHidden): G[] => groups.filter((g) => !isHidden(h, g.on));
