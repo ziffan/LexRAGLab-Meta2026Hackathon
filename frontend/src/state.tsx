@@ -223,6 +223,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Cermin state ke URL (tanpa riwayat baru).
   useEffect(() => {
     if (isStatic() && new URLSearchParams(window.location.search).get("view") === "review") return; // layar Review statis tetap di URL-nya
+    if (!isStatic() && /\/review\/?$/.test(window.location.pathname)) return; // `/review?family=` (U6) tidak ditimpa cermin state halaman utama
     const q = new URLSearchParams();
     if (state.selectedItemId) q.set("item", state.selectedItemId);
     if (state.compare) q.set("compare", "1");
