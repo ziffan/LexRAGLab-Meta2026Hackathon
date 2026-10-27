@@ -9,13 +9,13 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-54 | Adegan 4 (jawaban C, verifier, 2×2) belum bisa diputar di replay/statis: jawaban tersimpan K-02 dibuat sebelum chunker v2 (`8e94269`, H-062/H-064), sehingga kunci cache tidak cocok (perilaku benar, diagnosa `_kerja/orkestrasi/l3/W11-W6replay-diagnosa-hasil.md`). Belum ada butir `scene_checked = true` di `data/butir/` (H-050) | Operator: (1) tandai butir demo `scene_checked`; (2) putus I-47 dan I-50 (menentukan setting terbaik); lalu agen menjalankan C live prompt v2 untuk butir demo (proyeksi ±1.582 micro-USD per butir, best + baseline) dan mengekspor ulang | Operator | 31 Okt (kunci storyboard) |
 | I-59 | Review revisi hint `app.purpose` (putusan operator 8 §2: motivasi kerja agentic legal). `frontend/src/content/hints.json` 1.1.0 `draft` (hanya `app.purpose` berubah); tabel baca lama vs usulan + kutipan sumber per angka: `_kerja/orkestrasi/hint-draf-1.1.0.md`. Angka beratribusi "operator's measurements of prior engagements (not included in this repository)"; pengecualian sempit dari aturan angka-hanya-dari-run | Operator menilai teks dan angka (5,77M; ~3%); lalu `status` → `final` | Operator | Sebelum M5.2 |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-54 | Butir demo `scene_checked` dan jawaban C untuk adegan 4 | Operator: K-09, K-01, K-08 sebagai butir demo app (data v13); C live sesudah grid v2 (H-085) | 2026-10-27 |
 | I-60 | Skema A UU PT v2: kontrak parent_order, Buku, chunk_id/B ulang, premis Penjelasan | Operator: varian (ii) tanpa Buku, semantik terdekat di DATA-CONTRACTS §6, Penjelasan seperti v1 (section terpisah), B ulang 343 (H-084) | 2026-10-27 |
 | I-51 | Review lima akta sintetis `data/akta/akta-01..05.txt` | Operator: kelima akta disetujui (H-039, H-041); boleh dipakai di run yang dilaporkan (putusan operator 7, tanpa H) | 2026-10-27 |
 | I-49 | Review teks hint H-073 | Operator: konten hint disetujui; `hints.json` 1.0.0 `final` (putusan operator 6, tanpa H) | 2026-10-27 |
