@@ -1,6 +1,6 @@
 # config/retrieval — cakupan retrieval dan parameter chunker (M1.1). Berkas ini akan dilengkapi M1.2/M1.3
 # (BM25, embedder, RRF, K) tanpa mengubah kunci yang sudah ada.
-version = 1
+version = 1  # tetap 1: M1.3 hanya menambah tabel [bm25]/[dense]/[hybrid]/[recall]; test_chunking_chunkers mengunci version == 1
 
 # Cakupan retrieval: filter, bukan pembuangan teks, sehingga mengubah cakupan tidak menggeser offset.
 # Asal nilai: docs/DATA-CONTRACTS.md §2 "Bagian (section)" dan H-046.
@@ -25,3 +25,30 @@ pengesahan = "Pengesahan"
 # baru dipakai di M1.2; nilai ini mengikuti urutan jalur BM25 lebih dulu. Mengubahnya mengubah setting_id.
 retrieval_mode = "bm25"
 header_b = false
+
+[bm25]
+# Usulan agen, operator boleh ubah. k1/b = default rank-bm25 0.2.2 dan literatur BM25 (k1 1.2-2.0, b 0.75).
+k1 = 1.5
+b = 0.75
+stemming = true   # Sastrawi (A14)
+stopwords = true  # daftar stopword Sastrawi
+
+[dense]
+# H-042: BAAI/bge-m3, dense saja, tanpa prefix. Revisi dipin (snapshot di cache HF lokal).
+model = "BAAI/bge-m3"
+revision = "5617a9f61b028005a4858fdac845db406aefb181"
+# 8192 = batas posisi bge-m3 (G-22: cegah pemotongan diam-diam di 512). Potongan lebih panjang dari ini
+# terpotong dan dihitung ke RunRecord.embedder.n_truncated.
+max_seq_length = 8192
+# Usulan agen: memengaruhi memori GPU dan kecepatan, bukan hasil.
+batch_size = 8
+
+[hybrid]
+# Usulan agen, operator boleh ubah. k_rrf = 60: nilai lazim RRF (Cormack et al. 2009).
+k_rrf = 60
+# Kedalaman ranking per jalur sebelum fusi. 0 = seluruh ranking (BM25 hanya memuat dokumen yang cocok istilah).
+top_n = 0
+
+[recall]
+# Usulan agen, operator boleh ubah. K untuk Recall@K.
+k = 5
