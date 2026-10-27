@@ -285,6 +285,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 - Panggilan kedua dan seterusnya untuk dokumen sama menunjukkan cache hit.
 - Proyeksi biaya dan waktu (pada 150 RPM, H-028) seluruh korpus tercatat untuk dua granularitas.
 - Sampel header per granularitas tersedia untuk dinilai mutunya oleh operator (H-038).
+- Lingkup tambahan (H-069): B juga dijalankan untuk potongan `fixed_size` dari setting yang lolos `frontier_only`, satu potongan per panggilan, dengan cache dan proyeksi biaya lebih dulu (gerbang belanja addendum 2).
 **Bukti verifikasi yang wajib disetor**: catatan run, proyeksi biaya.
 **Tier review**: 2.
 **Estimasi**: 1,5 jam.
