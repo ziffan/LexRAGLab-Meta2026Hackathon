@@ -1,0 +1,7 @@
+# config/proposals — peran D, usulan butir (docs/SPARK-ROLES.md 5, scenarios/M2.1 A6, A19).
+# Kunci baru M2.1 (usulan penulis, operator boleh ubah).
+version = 1
+# Batas jumlah usulan per panggilan (per dokumen per mode), diterapkan setelah pembuangan semantik (A6).
+max_proposals_per_call = 20
+# Jumlah baris sebelum/sesudah span yang ditampilkan di kartu Review (A19).
+context_lines = 2

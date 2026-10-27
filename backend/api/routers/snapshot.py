@@ -14,7 +14,9 @@ from fastapi import APIRouter, Request
 from backend import config
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
+from backend.api.routers.proposals import get_proposals
 from backend.grid.types import metrics_from_cache
+from backend.schema_a import SchemaStore, SchemaStoreError, snapshot_view
 
 router = APIRouter()
 
@@ -66,6 +68,10 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
         items = [{**i, "split": split_of.get(i["id"])} for i in items]
     grid, metrics, quality = grid_view(env, budget) if env is not None else (None, [], [])
     by_split = dict(Counter(split_of.values())) if split is not None else None
+    try:
+        schemas, schema_diff = snapshot_view(SchemaStore(svc.runs_dir).list(family))
+    except SchemaStoreError:
+        raise ApiError(500, "storage_error", "Schema storage failed.") from None
     return {
         "family": family, "budget_tokens": budget, "replay": request.app.state.replay, "config_hash": config.config_hash(cfgs),
         "corpus": corpus, "items": items, "split": split.to_dict() if split is not None else None,
@@ -73,6 +79,6 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
                           "by_mode": dict(Counter(i.get("mode") for i in items)), "by_split": by_split,
                           "control_in_held_out": split.control_in_held_out if split is not None else None},
         "settings": svc.settings(family),
-        "grid": grid, "metrics": metrics, "quality": quality, "schemas": [], "schema_diff": None,
-        "proposals": [], "answers": [], "answers_summary": [], "runs_summary": None,
+        "grid": grid, "metrics": metrics, "quality": quality, "schemas": schemas, "schema_diff": schema_diff,
+        "proposals": get_proposals(request).list_proposals(family), "answers": [], "answers_summary": [], "runs_summary": None,
     }

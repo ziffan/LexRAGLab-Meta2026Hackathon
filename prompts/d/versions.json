@@ -1,0 +1,11 @@
+{
+  "current": "v1",
+  "versions": {
+    "v1": {
+      "file": "v1.md",
+      "role": "d",
+      "max_output_tokens": 8000,
+      "note": "Instruksi peran D (docs/SPARK-ROLES.md 5). Satu instruksi untuk semua mode; mode dan batas jumlah ada di akhir masukan."
+    }
+  }
+}
