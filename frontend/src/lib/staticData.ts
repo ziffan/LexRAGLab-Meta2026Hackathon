@@ -57,7 +57,9 @@ export function resolveStatic(url: string, init?: RequestInit): StaticTarget {
     if (seg[2] === "docs" && seg.length === 4) {
       const doc = `${DATA}/docs/${fam}/${enc(seg[3])}`;
       const s = q.get("setting_id");
-      return { kind: "doc", text: `${doc}/_text.json`, setting: s ? `${doc}/${sid(s)}.json` : null };
+      const v = q.get("schema_version");
+      if (v !== null && !/^\d+$/.test(v)) return { kind: "unknown" };
+      return { kind: "doc", text: `${doc}/_text.json`, setting: v !== null ? `${doc}/schema-v${v}.json` : s ? `${doc}/${sid(s)}.json` : null };
     }
     if (seg[2] === "retrieval" && seg.length === 3) {
       const s = q.get("setting_id");

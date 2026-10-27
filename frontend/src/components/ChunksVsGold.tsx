@@ -1,10 +1,64 @@
+import { useEffect, useMemo, useState } from "react";
+import { fetchDocBySchema } from "../api";
 import { retrievalKey, useStore } from "../state";
 import { availableSettings, fixedFor } from "../lib/settings";
 import { Hint } from "./Hint";
 import { modeLabel, originLabel, settingLabel } from "../lib/labels";
 import { ChunkColumn } from "./ChunkColumn";
 import { ChunkDetail } from "./ChunkDetail";
-import type { Chunk, Item } from "../types";
+import type { Chunk, DocResponse, Item, Load, Snapshot } from "../types";
+
+/** Keluarga akta (tanpa setting/butir): akta terpotong menurut skema A tersimpan (R4 `schema_version`, M4.1). */
+export function SchemaDocView({ snap }: { snap: Snapshot }) {
+  const versions = (snap.schemas ?? []).map((r) => r.schema_version);
+  const docIds = snap.corpus.map((d) => d.doc_id);
+  const [docId, setDocId] = useState<string>(docIds[0] ?? "");
+  const [version, setVersion] = useState<number | null>(versions.length ? versions[versions.length - 1] : null);
+  const [doc, setDoc] = useState<Load<DocResponse>>({ status: "idle" });
+  useEffect(() => {
+    if (!docId || version === null) return;
+    let live = true;
+    setDoc({ status: "loading" });
+    fetchDocBySchema(snap.family, docId, version)
+      .then((data) => live && setDoc({ status: "ready", data }))
+      .catch((e: { code?: string; message?: string }) => live && setDoc({ status: "error", code: e.code ?? "error", message: e.message ?? "Request failed." }));
+    return () => {
+      live = false;
+    };
+  }, [snap.family, docId, version]);
+  const points = useMemo(() => (doc.status === "ready" ? Array.from(doc.data.text) : []), [doc]);
+  if (versions.length === 0) return <div className="state empty">No schema for this family yet</div>;
+  return (
+    <>
+      <div className="controls">
+        <label className="field">
+          <span>Document</span>
+          <select value={docId} onChange={(e) => setDocId(e.target.value)}>
+            {docIds.map((id) => <option key={id} value={id}>{id}</option>)}
+          </select>
+        </label>
+        <label className="field">
+          <span>Schema version</span>
+          <select value={version ?? ""} onChange={(e) => setVersion(Number(e.target.value))}>
+            {versions.map((v) => <option key={v} value={v}>v{v}</option>)}
+          </select>
+        </label>
+      </div>
+      {(doc.status === "idle" || doc.status === "loading") && <div className="state" role="status" aria-live="polite"><span className="muted">Loading chunks…</span></div>}
+      {doc.status === "error" && <div className="state error" role="alert"><strong>Could not load chunks</strong><div>{doc.message}</div></div>}
+      {doc.status === "ready" && (
+        <ol className="chunks">
+          {(doc.data.chunks ?? []).map((c) => (
+            <li key={c.chunk_id} className="chunk">
+              <div className="chunk-head"><span className="addr">{c.address}</span><span className="chunk-stats"><span>{c.tokens_local} tokens (local tokenizer)</span></span></div>
+              <div className="chunk-text" lang="id" tabIndex={0} role="region" aria-label={`Text of ${c.address}`}>{points.slice(c.start, c.end).join("")}</div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </>
+  );
+}
 
 export function ChunksVsGold() {
   const { state, dispatch } = useStore();
@@ -29,6 +83,14 @@ export function ChunksVsGold() {
     );
   } else {
     const snap = snapState.data;
+    if (snap.family === "akta") {
+      return (
+        <section className="panel" aria-labelledby="u1-title">
+          <div className="panel-head"><h2 id="u1-title">Chunks vs gold</h2><Hint id="term.pasal" /><Hint id="term.ayat" /></div>
+          <SchemaDocView snap={snap} />
+        </section>
+      );
+    }
     const item: Item | null = snap.items.find((i) => i.id === state.selectedItemId) ?? null;
     const settings = availableSettings(snap);
     const primary = settings.find((s) => s.setting_id === state.selectedSettingId) ?? settings[0];

@@ -2,6 +2,7 @@ import { ChunksVsGold } from "./components/ChunksVsGold";
 import { EvidencePanel } from "./components/Evidence";
 import { Header } from "./components/Header";
 import { Hint } from "./components/Hint";
+import { ProfilePanel } from "./components/ProfileExport";
 import { PerItem } from "./components/PerItem";
 import { ReviewScreen } from "./components/Review";
 import { RunLogPanel } from "./components/RunLog";
@@ -30,6 +31,9 @@ export function App() {
         </div>
         <div className="wide">
           <SchemaPanel />
+        </div>
+        <div className="wide">
+          <ProfilePanel />
         </div>
         <div className="wide">
           <RunLogPanel />

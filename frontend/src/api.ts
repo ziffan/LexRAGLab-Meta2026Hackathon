@@ -1,5 +1,5 @@
 import { staticAwareFetch } from "./lib/staticData";
-import type { AnswersResponse, DocResponse, Health, Retrieval, RunRecord, SchemaRecord, Snapshot } from "./types";
+import type { AnswersResponse, DocResponse, Health, ImportResult, Profile, Retrieval, RunRecord, SchemaRecord, Snapshot } from "./types";
 
 export class ApiFailure extends Error {
   code: string;
@@ -56,6 +56,13 @@ export function fetchDoc(family: string, docId: string, settingId: string): Prom
   );
 }
 
+/** R4 menurut versi skema A tersimpan (keluarga akta; usulan API.md §2). */
+export function fetchDocBySchema(family: string, docId: string, schemaVersion: number): Promise<DocResponse> {
+  return getJson<DocResponse>(
+    `/api/families/${encodeURIComponent(family)}/docs/${encodeURIComponent(docId)}?schema_version=${schemaVersion}`,
+  );
+}
+
 export function fetchHealth(): Promise<Health> {
   return getJson<Health>("/api/health");
 }
@@ -80,4 +87,14 @@ export function postAnswers(family: string, req: AnswersRequest, fetchFn?: Fetch
 /** W9: versi koreksi baru dari versi induk. Isi `schema` berasal dari form operator. */
 export function postCorrection(family: string, parentVersion: number, schema: unknown, operatorNote: string | null, fetchFn?: FetchLike): Promise<SchemaRecord> {
   return postJson<SchemaRecord>(`/api/families/${encodeURIComponent(family)}/schemas/${parentVersion}/correct`, { schema, operator_note: operatorNote }, fetchFn);
+}
+
+/** W7: profil setting terpilih. Dibaca di browser dan diunduh di sana; frontend tidak menulis `profiles/`. */
+export function fetchProfileExport(family: string, settingId: string, fetchFn?: FetchLike): Promise<Profile> {
+  return requestJson<Profile>(`/api/families/${encodeURIComponent(family)}/profiles/export?setting_id=${encodeURIComponent(settingId)}`, undefined, fetchFn);
+}
+
+/** W8: round-trip profil (tidak menulis apa pun di server). */
+export function postProfileImport(profile: unknown, fetchFn?: FetchLike): Promise<ImportResult> {
+  return postJson<ImportResult>("/api/profiles/import", profile, fetchFn);
 }

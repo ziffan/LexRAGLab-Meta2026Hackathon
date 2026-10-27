@@ -30,14 +30,20 @@ def get_families(request: Request) -> list[dict[str, Any]]:
 
 
 @router.get("/api/families/{family}/docs/{doc_id}")
-def get_doc(request: Request, family: str, doc_id: str, setting_id: str | None = None) -> dict[str, Any]:
-    """Tanpa `setting_id`: `chunks = null`. Setting yang komponennya belum ada di M1: 422."""
+def get_doc(request: Request, family: str, doc_id: str, setting_id: str | None = None, schema_version: int | None = None) -> dict[str, Any]:
+    """Tanpa `setting_id`/`schema_version`: `chunks = null`. Setting yang komponennya belum ada di M1: 422.
+    `schema_version` (usulan API.md §2 R4): potongan menurut skema A tersimpan keluarga itu (read-only); versi tak ada: 404
+    `not_found`; skema tak cocok dengan dokumen: 422. Bersama `setting_id`: 400 `invalid_request`."""
     svc = request.app.state.service
     check_family(family)
     doc = svc.doc(doc_id)
     if doc.family != family:
         raise ApiError(404, "not_found", f"Unknown doc_id {doc_id!r} for family {family!r}.")
+    if setting_id is not None and schema_version is not None:
+        raise ApiError(400, "invalid_request", "Pass either setting_id or schema_version, not both.")
     chunks = None
-    if setting_id is not None:
+    if schema_version is not None:
+        chunks = svc.schema_chunks(doc, schema_version)
+    elif setting_id is not None:
         chunks = svc.chunks(doc, svc.find_setting(family, setting_id))
     return {"doc_id": doc.doc_id, "text": doc.text, "chunks": chunks, "headers": None}

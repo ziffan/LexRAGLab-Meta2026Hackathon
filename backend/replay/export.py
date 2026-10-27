@@ -12,6 +12,7 @@ Tata letak (jalur relatif terhadap `data/`; dipetakan frontend di `frontend/src/
   snapshot/<family>/default.json  snapshot/<family>/<budget>.json
   docs/<family>/<doc_id>/_text.json            DocResponse tanpa setting (teks penuh, chunks null)
   docs/<family>/<doc_id>/<setting_id[:16]>.json     {doc_id, chunks, headers} (teks diambil dari _text.json oleh klien)
+  docs/<family>/<doc_id>/schema-v<n>.json           {doc_id, chunks, headers} potongan menurut skema A versi n (bila ada)
   retrieval/<family>/<setting_id[:16]>/<item_id>.json
   answers/<family>/<item_id>/<best[:16]>/<baseline[:16]>/<model_profile>.json
   proposals/<family>.json
@@ -120,6 +121,12 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
                 if d is not None:  # 422 = setting belum tersedia: tidak diekspor
                     usable_ids.add(s["setting_id"])
                     files[f"docs/{fam}/{doc_id}/{sid(s['setting_id'])}.json"] = dump({k: d[k] for k in ("doc_id", "chunks", "headers")})
+        for sch in default.get("schemas") or []:
+            v = int(sch["schema_version"])
+            for doc in default["corpus"]:
+                d = get(f"/api/families/{fam}/docs/{_safe(doc['doc_id'])}", schema_version=v)
+                if d is not None:  # 404/422 = skema tak berlaku untuk dokumen ini: tidak diekspor
+                    files[f"docs/{fam}/{doc['doc_id']}/schema-v{v}.json"] = dump({k: d[k] for k in ("doc_id", "chunks", "headers")})
         usable = [s for s in settings if s["setting_id"] in usable_ids]
         if len({sid(s["setting_id"]) for s in usable}) != len(usable):
             raise ExportError("setting_id prefix collision")

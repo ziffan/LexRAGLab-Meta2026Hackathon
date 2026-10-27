@@ -190,6 +190,8 @@ export interface Snapshot {
   schema_diff?: SchemaDiff | null;
   schemas_rejected?: SchemaRejected[];
   header_b?: HeaderBView;
+  /** Laporan per butir (build_report). Opsional: sumber data held-out/transfer belum diputus (I-53). */
+  report?: Report | null;
 }
 
 export interface Retrieval {
@@ -376,4 +378,62 @@ export interface HeaderBView {
   projection: { created_at: string; projections: Record<string, HeaderProjectionEntry> } | null;
   samples: HeaderSample[];
   stored_counts: Record<string, number>;
+}
+
+// ---- U7 (DATA-CONTRACTS 11; API.md W7, W8) ----
+export interface HeldOutBlock {
+  n_items: number;
+  by_origin: Record<string, number>;
+  mean_span_recall: number | null;
+  mean_token_precision: number | null;
+  fully_covered: { covered: number; total: number };
+}
+
+export interface Profile {
+  profile_version: string;
+  family: string;
+  setting: Setting;
+  schema: SchemaBody | null;
+  corpus_hash: string;
+  config_hash: string;
+  chunk_set_hash: string;
+  tokenizer: { name: string; version: string };
+  clean_sha256: string;
+  loader_rules_version: string;
+  packing: string;
+  embedder: { name: string; revision: string; max_seq_length: number } | null;
+  held_out: HeldOutBlock | null;
+  created_at: string;
+}
+
+/** W8 200. */
+export interface ImportResult {
+  ok: boolean;
+  chunk_set_hash_matches: boolean;
+}
+
+export interface ReportCount {
+  numerator: number;
+  denominator: number;
+  text: string;
+}
+
+export interface ReportRow {
+  item_id: string;
+  split: string;
+  origin: string;
+  mode: string;
+  span_recall: ReportCount | null;
+  token_precision: ReportCount | null;
+  reciprocal_rank: number | null;
+  recall_at_k: number | null;
+  fully_covered: boolean | null;
+  note: string | null;
+}
+
+export interface Report {
+  family: string;
+  title: string;
+  rows: ReportRow[];
+  summary: { n_items: number; mean_span_recall: number | null; mean_token_precision: number | null; fully_covered: ReportCount };
 }
