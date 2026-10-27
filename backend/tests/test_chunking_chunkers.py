@@ -1,6 +1,6 @@
 """Uji chunker struktur dan ukuran tetap (M1.1, Tier 2): bentuk Chunk, round-trip offset, determinisme, fallback.
 
-GOLDEN SAMPLE: USULAN AGEN, MENUNGGU KONFIRMASI OPERATOR (lihat `test_chunking_address.py`).
+GOLDEN SAMPLE: disetujui operator 2026-10-27, I-36 (lihat `test_chunking_address.py`).
 Tokenizer H-014 asli dipakai untuk korpus nyata (cache HF lokal, G-32); tokenizer mainan `toy-ws` untuk hitung tangan.
 """
 

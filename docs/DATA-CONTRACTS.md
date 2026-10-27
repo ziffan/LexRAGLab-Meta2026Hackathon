@@ -123,6 +123,8 @@ Kunci frontmatter berkas beku: `jenis`, `nomor`, `tahun`, `tentang`, `konsolidas
 | `tokens_local` | int | token teks sumber potongan | Sistem |
 | `warnings` | array of string | mis. "no structural marker, fallback per section" | Sistem |
 
+`fixed_size` (H-062): jendela tetap atas teks bersih dalam cakupan retrieval secara berurutan, melintasi batas Pasal dan `section`; `section` = section posisi awal potongan, `address` = rentang unit pertama dan terakhir; filter cakupan retrieval tetap per `section`.
+
 Alamat diberikan dari peta alamat yang sama untuk semua chunker (prinsip keadilan, `docs/MILESTONES.md`). Peta alamat UU PT berasal dari parser struktur tulisan tangan (alamat kanonik §2); peta alamat akta berasal dari `SchemaA` versi aktif, karena akta tidak punya parser tangan.
 
 ## 4. Item (butir) dan SplitRecord
@@ -487,7 +489,7 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `usage_cached_tokens` | int \| null | `usage.input_tokens_details.cached_tokens` |
 | `usage_output_tokens` | int \| null | termasuk reasoning |
 | `cost_usd_micros` | int \| null | dari `usage` × harga `config/model`; `0` untuk Glimmer lokal |
-| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); hanya diisi bila `cost_usd_micros` `null` pada panggilan berbayar (usage rusak/hilang). Buku belanja memakai `cost_usd_micros ?? projected_cost_usd_micros` (M0.1 O-3) |
+| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); diisi bila `cost_usd_micros` `null` pada panggilan berbayar (usage rusak/hilang) dan pada panggilan gagal tanpa `usage` (timeout, 5xx, galat koneksi; H-063). Buku belanja memakai `cost_usd_micros ?? projected_cost_usd_micros` (M0.1 O-3) |
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |

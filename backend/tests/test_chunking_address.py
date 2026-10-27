@@ -1,6 +1,6 @@
 """Uji peta alamat UU PT (M1.1, Tier 2): golden sample, konvensi unit M1.2, G-13, G-20, G-25.
 
-GOLDEN SAMPLE: USULAN AGEN, MENUNGGU KONFIRMASI OPERATOR. Pasal 1, 7, 86 (batang tubuh dan Penjelasan),
+GOLDEN SAMPLE: disetujui operator 2026-10-27 (I-36 ditutup). Pasal 1, 7, 86 (batang tubuh dan Penjelasan),
 102 ayat (1), 142 ayat (2), 153A, dan satu Pasal tanpa ayat (Pasal 2). Jumlah unit dan offset dikunci pada
 korpus beku `a6b38ee5…` (H-045); nilai diperiksa terhadap teks, bukan disalin dari keluaran kode.
 Tanpa tokenizer, tanpa jaringan, tanpa model.
