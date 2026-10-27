@@ -444,9 +444,8 @@ def test_w44_m18_header_on_checks_every_deed_before_first_item(world):
     assert [m.item_id for m in p(on, items)] == ["a1", "a2", "b1"]
 
 
-@pytest.mark.xfail(strict=True, raises=MultiDocError,
-                   reason="NIT-1 W39: butir ber-family salah di berkas akta lolos check_items_against_docs lalu MultiDocError, bukan GridRunError")
 def test_w44_nit1_wrong_family_item_in_akta_file_is_grid_run_error(world):
     write_akta_butir(world["butir"], world["docs"], version=2, a1={"family": "uupt"})
-    with pytest.raises(GridRunError):
+    with pytest.raises(GridRunError, match=r"item 'a1' has family 'uupt', but it is in the akta items") as ei:
         run(world)
+    assert not isinstance(ei.value, MultiDocError)

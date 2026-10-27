@@ -90,6 +90,8 @@ def check_items_against_docs(family: str, raw: list[dict[str, Any]], *, doc: Any
         if iid in seen:
             raise GridRunError(f"duplicate item id {iid!r} in the {family} items")
         seen.add(iid)
+        if it.get("family") != family:
+            raise GridRunError(f"item {iid!r} has family {it.get('family')!r}, but it is in the {family} items")
         d = by_doc.get(did)
         if d is None:
             raise GridRunError(f"item {iid!r} refers to doc_id {did!r}, which is not in the {family} corpus")

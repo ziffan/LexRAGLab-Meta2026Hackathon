@@ -273,7 +273,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau, catatan run Glimmer dan Contributor untuk butir yang sama, screenshot U3 dengan label.
 **Tier review**: 2.
 **Estimasi**: sekitar 3–6 jam (2–4 jam H-047, 1–2 jam W6/U3 H-053); stretch, tidak masuk jumlah Ringkasan.
-**Status**: stretch. Dikerjakan hanya setelah lantai H-017 aman; dipotong lebih dulu daripada lantai. Sejak H-060 pembanding C juga Spark Open di Baseten (profil `baseten_open`); smoke 27 Okt: Responses + strict didukung (G-33), Chat Completions tidak dipakai untuk Baseten.
+**Status**: selesai (stretch) 2026-10-27 — kode `d0b19c8` (Tier 2 W47: 0 BLOCKER; SHOULD ditutup penulis; L2 verifikasi pytest 1184, vitest 250, tsc 0): profil `baseten_open` (Responses strict, G-33) dan `glimmer_local` (`meta/muse-glimmer`, Q4_K_M, konteks 131072, effort high; Chat Completions loopback + validasi skema klien, H-047); W6 menerima profil peran `c`; Glimmer live lewat CLI `backend.answer.compare_c` saja (W6 live -> 409 `live_unavailable`, G-26). Run `ea72711`: butir demo K-09/K-01/K-08 best + baseline, konteks persis jawaban Contributor (hash dicocokkan, tanpa embedding): Spark Open 6/6 ok (30.591 micro-USD Baseten), Glimmer 6/6 ok (0). Bukti `_kerja/orkestrasi/bukti/M2.5-U3-glimmer-static-1440.jpg`. Nilai `max_output_tokens`/`timeout_s` usulan agen menunggu operator (keputusan-pagi butir 8).
 
 ## M3 — Spark B dan A, UU PT (31 Okt–1 Nov)
 
@@ -383,7 +383,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: screenshot semua adegan dalam mode putar ulang dan dari ekspor statis yang dibuka lokal.
 **Tier review**: 2, ditambah Tier 4 UX review atas alur adegan.
 **Estimasi**: 2 jam, ditambah sekitar 2–3 jam ekspor statis (H-051) yang belum masuk jumlah Ringkasan; ekspor statis di bawah lantai H-017 (dipotong lebih dulu daripada A–D dan video).
-**Status**: berjalan — middleware replay, ekspor statis + pemindai bocor, build statis `2e33331` (Tier 2, `l3/W11-M51-periksa-hasil.md`), perbaikan `25eaf4c`; hint ikut bundel `93525a0`. Uji visual statis lokal 375/768/1440 tanpa scroll horizontal, console 0 error, 0 request `/api` (`_kerja/orkestrasi/bukti/visual-L2-3.txt`). Sisa: adegan 4 (I-54), screenshot semua adegan setelah data operator.
+**Status**: berjalan — middleware replay, ekspor statis + pemindai bocor, build statis `2e33331` (Tier 2, `l3/W11-M51-periksa-hasil.md`), perbaikan `25eaf4c`; hint ikut bundel `93525a0`. Uji visual statis lokal 375/768/1440 tanpa scroll horizontal, console 0 error, 0 request `/api` (`_kerja/orkestrasi/bukti/visual-L2-3.txt`). Sisa: adegan 4 (I-54), screenshot semua adegan setelah data operator. Update L2#5: ekspor statis ulang setelah M2.5 (789 berkas data, `--check` 0 temuan; U3 menampilkan jawaban tersimpan Contributor/Spark Open/Glimmer berlabel). Versi statis hanya keluarga UU PT (tanpa pemilih keluarga); akta di mode live menampilkan "Pending operator review" di U2/U4/U7 (bukti `bukti/akta-pending-{1440.jpg,375.png}`, 375/768 tanpa scroll horizontal, console 0 error).
 
 ### M5.2 — Gate pra-submit
 **Slice**: Daftar periksa pra-submit lulus semua dan tercatat di repo.
