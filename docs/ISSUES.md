@@ -9,7 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | (tidak ada isu baru; gerbang lama: Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/publik/Pages) | | | |
+| I-66 | Cakupan keluarga `Item.mode = "tolak"` (H-092): enum lintas keluarga, padahal usulan `unanswerable` hanya akta (P13). Bila butir UU PT ber-`tolak` ditulis, strata `SplitRecord` (`origin`, `mode`) dan komposisi held-out UU PT berubah | Sementara (skenario revisi 3): `tolak` hanya sah untuk `akta`, validator menolak `uupt` + `tolak`; tidak mengubah angka apa pun karena belum ada butir semacam itu. Alternatif: semua keluarga, dampak strata dicatat dan penugasan lama tetap per DATA-CONTRACTS §4. Mengubah angka laporan: tidak sekarang | operator | sebelum butir tolak UU PT ditulis (tidak memblokir) |
 
 ## Ditutup
 
