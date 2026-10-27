@@ -22,25 +22,30 @@ from typing import Any, Mapping
 
 from backend.schema_a.schema import compile_marker
 
-from .address_map import RANGE_SEP
+from .address_map import RANGE_SEP, AddressMap, Rincian, Unit
 from .model import SEP
 
 _SECTION_LABELS = {"batang_tubuh": "Batang Tubuh", "penjelasan_pasal": "Penjelasan", "penjelasan_umum": "Penjelasan Umum"}
 
 
-def _component(matched: str, name: str) -> str:
-    first = next((ln.strip() for ln in matched.splitlines() if ln.strip()), "")
-    t = first.rstrip(".:;,").strip()
+def _component(m: "re.Match[str]", name: str) -> str:
+    """Komponen alamat satu penanda. Pola gabungan (satu level, banyak jenis bagian) memberi nama jenis lewat grup bernama:
+    grup bernama yang ikut cocok -> nama grup (`_` jadi spasi, huruf awal besar), mis. `kepala_akta` -> `Kepala Akta`.
+    Tanpa grup bernama: baris takkosong TERAKHIR teks cocok (baris pembuka pola multibaris, mis. judul pengantar,
+    bukan label), diawali nama level bila hanya angka/huruf tunggal (`ayat (2)`)."""
+    for gname, gval in m.groupdict().items():
+        if gval is not None:
+            return gname.replace("_", " ").title()
+    last = next((ln.strip() for ln in reversed(m.group(0).splitlines()) if ln.strip()), "")
+    t = last.rstrip(".:;,").strip()
     if not t:
         return name
     return t if len(re.match(r"[^\W\d_]*", t).group(0)) >= 2 else f"{name.lower()} {t}"
 
 
-def schema_address_fn(doc: Any, record: Mapping[str, Any], prefix: str | None = None):
-    """`AddressFn` untuk `doc` menurut `record["body"]` (SchemaRecord). Pola dikompilasi lewat `compile_marker`."""
-    body = record["body"]
+def _index(doc: Any, body: Mapping[str, Any]):
+    """Penanda tiap level: (parent, name_of, reach, label); reach[o] = posisi terurut, label[o] = komponen alamatnya."""
     text = doc.text
-    pre = prefix or doc.metadata.get("address_prefix") or doc.doc_id
     parent: dict[int, int | None] = {}
     name_of: dict[int, str] = {}
     reach: dict[int, list[int]] = {}
@@ -56,9 +61,16 @@ def schema_address_fn(doc: Any, record: Mapping[str, Any], prefix: str | None = 
             p = m.start()
             while p < len(text) and text[p].isspace():
                 p += 1
-            seen.setdefault(p, _component(m.group(0), lv["name"]))
+            seen.setdefault(p, _component(m, lv["name"]))
         pos = sorted(seen)
         reach[o], label[o] = pos, [seen[p] for p in pos]
+    return parent, name_of, reach, label
+
+
+def schema_address_fn(doc: Any, record: Mapping[str, Any], prefix: str | None = None):
+    """`AddressFn` untuk `doc` menurut `record["body"]` (SchemaRecord). Pola dikompilasi lewat `compile_marker`."""
+    pre = prefix or doc.metadata.get("address_prefix") or doc.doc_id
+    parent, name_of, reach, label = _index(doc, record["body"])
 
     def path(p: int, allowed: set[int]) -> list[tuple[int, str]]:
         best: tuple[int, int] | None = None
@@ -103,3 +115,48 @@ def schema_address_fn(doc: Any, record: Mapping[str, Any], prefix: str | None = 
             common.append({"level": name_of[oa].lower(), "label": ca})
         return f"{render(head)}{RANGE_SEP}{render(tail)}", base + common, []
     return fn
+
+
+def schema_address_map(doc: Any, record: Mapping[str, Any], prefix: str | None = None) -> AddressMap:
+    """`AddressMap` akta dari skema (untuk C H-070 dan verifier V5-strict H-067; peta parser UU PT tidak memahami akta).
+
+    Unit = rentang tiap penanda `default_chunk_level` (Pasal, Kepala Akta, Komparisi, Keterangan Pendiri, Penutup Akta)
+    sampai penanda unit berikut / penanda level non-turunan / akhir section, spasi tepi dipangkas; alamat = alamat chunker
+    (`schema_address_fn`) sehingga potongan satu unit beralamat sama persis dengan unitnya. Penanda turunan (ayat, huruf)
+    menjadi `Rincian` (rentang sampai penanda level yang sama atau lebih dangkal berikutnya) sehingga alamat
+    `Pasal n › ayat (n) › huruf x` juga sah. Dipakai sebagai peta unit saja; tidak dipakai untuk memotong."""
+    body = record["body"]
+    pre = prefix or doc.metadata.get("address_prefix") or doc.doc_id
+    parent, name_of, reach, label = _index(doc, body)
+    fn = schema_address_fn(doc, record, pre)
+    root = body["default_chunk_level"]
+    own = {root}
+    for o in sorted(parent):
+        if parent[o] in own:
+            own.add(o)
+    stops = sorted({p for o, ps in reach.items() if o not in own for p in ps})
+    units: list[Unit] = []
+    text = doc.text
+    for sec in doc.sections:
+        s, e, sname = sec["start"], sec["end"], sec["section"]
+        starts = [p for p in reach[root] if s <= p < e]
+        for i, st in enumerate(starts):
+            limit = starts[i + 1] if i + 1 < len(starts) else e
+            nxt = next((p for p in stops if st < p < limit), None)
+            en = limit if nxt is None else nxt
+            while en > st and text[en - 1].isspace():
+                en -= 1
+            if en <= st:
+                continue
+            addr, lv, _w = fn(st, st + 1, sname)
+            levels = tuple((d["level"], d["label"]) for d in lv)
+            kids: list[Rincian] = []
+            deeper = sorted((p, o) for o in own if o != root for p in reach[o] if st <= p < en)
+            for k, (p, o) in enumerate(deeper):
+                end = next((q for q, o2 in deeper[k + 1:] if o2 <= o), en)
+                while end > p and text[end - 1].isspace():
+                    end -= 1
+                a2, lv2, _w2 = fn(p, p + 1, sname)
+                kids.append(Rincian(name_of[o].lower(), a2.split(SEP)[-1], p, end, a2, tuple((d["level"], d["label"]) for d in lv2)))
+            units.append(Unit("pasal", sname, st, en, addr, levels, children=tuple(kids)))
+    return AddressMap(units)
