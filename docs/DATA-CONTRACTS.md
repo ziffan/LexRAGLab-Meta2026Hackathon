@@ -487,10 +487,11 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `usage_cached_tokens` | int \| null | `usage.input_tokens_details.cached_tokens` |
 | `usage_output_tokens` | int \| null | termasuk reasoning |
 | `cost_usd_micros` | int \| null | dari `usage` × harga `config/model`; `0` untuk Glimmer lokal |
+| `projected_cost_usd_micros` | int \| null | proyeksi cost guard (pembulatan ke atas per panggilan); hanya diisi bila `cost_usd_micros` `null` pada panggilan berbayar (usage rusak/hilang). Buku belanja memakai `cost_usd_micros ?? projected_cost_usd_micros` (M0.1 O-3) |
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |
-| `provider` | string \| null | `meta` untuk Model API; `lmstudio_local` untuk run pembanding Glimmer (H-047) |
+| `provider` | string \| null | `meta` untuk Model API; `openrouter` untuk run dev/uji lewat OpenRouter (H-057), tidak pernah dipakai untuk angka yang dilaporkan; `lmstudio_local` untuk run pembanding Glimmer (H-047) |
 | `quantization` | string \| null | kuantisasi Glimmer dari `config/model` (`Q4_K_M`, H-047); `null` untuk Model API |
 | `status` | enum `ok` / `error` / `cached` / `replay` | |
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |

@@ -8,7 +8,7 @@ diperbarui: 2026-10-27 (UTC 26 Okt malam), sesi agen otonom semalam (M0 + draft 
 ## Status
 
 - Toolchain dipin: Python 3.12, `torch 2.11.0+cu128` dari index PyTorch (G-28), FastAPI 0.162.0, openai 3.37.0, sentence-transformers 6.2.0; `uv sync` lalu `uv run pytest -q`. Pin per paket di `pyproject.toml`; alasan di bawah.
-- M0.1: **belum mulai — menunggu persetujuan skenario** (`docs/scenarios/M0.1.md`). Smoke provider sudah jalan (bukan kode M0.1): Meta Model API OK (strict JSON, cached tokens, effort `low`); OpenRouter diblok guardrail akun (G-29, I-25).
+- M0.1: **belum mulai — skenario disetujui 27 Okt** (`docs/scenarios/M0.1.md`, putusan O-3 A, O-12 alt. 2, O-17 gugur); kode boleh ditulis. Smoke provider sudah jalan (bukan kode M0.1): Meta Model API OK (strict JSON, cached tokens, effort `low`); OpenRouter diblok guardrail akun (G-29, I-25).
 - M0.2: **berjalan** — pemuat korpus, token lokal, kalibrasi endpoint, dan proyeksi biaya selesai di mesin otoritatif dengan review Tier 2 independen. Sisa: hash di mesin kedua, persetujuan metode baseline kalibrasi (I-26).
   - `clean_sha256` UU PT = `c56e4f0f38a4…` (`loader_rules_version` 1); 171 Pasal; 16 usulan baris status (bukan tabel status; `approved_by_operator=false`).
   - Token lokal dokumen 46.583; rasio endpoint/lokal 1,0 di semua bagian; overhead tersembunyi endpoint 165 token. Proyeksi satu dokumen penuh sebagai input: 4.659 micro-USD uncached, 94 cached.
@@ -48,7 +48,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Operator: putuskan I-25..I-29; setujui (atau minta revisi) skenario M0.1, M1.2, M1.4, M1.5.
-2. Setelah skenario M0.1 disetujui: kode M0.1 (klien Spark) oleh agen, review Tier 1.
+1. Operator: putuskan I-25, I-26; setujui (atau minta revisi) skenario M1.2, M1.4, M1.5 (M0.1 disetujui, I-28 dan I-29 ditutup 27 Okt).
+2. Kode M0.1 (klien Spark) oleh agen, review Tier 1.
 3. ~~Operator, akhir M0: kunci grid, tulis butir kontrol~~ Selesai 27 Okt: grid H-058 di `config/grid.toml`; sembilan butir kontrol (K-01 sampai K-09, tulisan operator, disetujui) dikonversi ke `Item` di `data/butir/uupt.v1.jsonl`; validator jalur masuk menyusul di M1.
 4. M1 tidak dimulai sebelum butir kontrol dan grid ada.

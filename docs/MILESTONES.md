@@ -107,7 +107,7 @@ Sebelum slice (operator, sekitar 2 jam):
 **Bukti verifikasi yang wajib disetor**: output test hijau, contoh catatan run dua panggilan (dengan dan tanpa cache), hasil grep bahwa key tidak ada di repo.
 **Tier review**: 1. Penanganan secret dan perhitungan biaya.
 **Estimasi**: 2 jam.
-**Status**: belum mulai — menunggu persetujuan skenario (`docs/scenarios/M0.1.md`, I-27). Smoke provider 27 Okt (bukan kode slice): G-29..G-31.
+**Status**: belum mulai — skenario disetujui operator 27 Okt (`docs/scenarios/M0.1.md`). Smoke provider 27 Okt (bukan kode slice): G-29..G-31.
 
 ### M0.2 — Korpus UU PT termuat dan terukur
 Prasyarat terpenuhi: format korpus dan aturan pemuat dikunci di H-046. Aturan pemuat dan uji penolakan R1–R13 ada di `docs/DATA-CONTRACTS.md` §2.
