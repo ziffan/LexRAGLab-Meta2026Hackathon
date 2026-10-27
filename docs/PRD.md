@@ -15,24 +15,21 @@ Angka korpus (penekanan utama):
 
 | Fakta | Angka | Rujukan |
 |---|---|---|
-| Lapisan teks Markdown 579 dokumen klien pada satu due diligence | 14.391.798 token; fakta yang tertambat sebagai atom 414.719 token, sekitar 3% | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
-| Bahan satu pekerjaan legal opinion (satu transaksi) | 1,16 juta token (1,2× jendela 1 juta) | idem |
-| Bahan satu pekerjaan legal due diligence (berkas utuh) | 5,77 juta token (5,8× jendela 1 juta) | idem |
-| Bahan penyusunan kontrak | draf kontrak 2,18 juta token; 2,81 juta token bila pustaka klausul ikut dihitung (pustaka klausul sendiri 623.665) | idem |
-| Satu undang-undang | 319.073 token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | idem |
+| Lapisan teks Markdown dokumen klien pada satu due diligence | hampir 600 dokumen, sekitar 14 juta token; yang benar-benar tertambat sebagai fakta sekitar 3% | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
+| Bahan satu pekerjaan legal opinion (satu transaksi) | sekitar 1,2 juta token (1,2× jendela 1 juta) | idem |
+| Bahan satu pekerjaan legal due diligence (berkas utuh) | sekitar 5,8 juta token (5,8× jendela 1 juta) | idem |
+| Bahan penyusunan kontrak | draf kontrak sekitar 2,2 juta token; sekitar 2,8 juta bila pustaka klausul ikut dihitung | idem |
+| Satu undang-undang | sekitar 320 ribu token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | idem |
 | Bahan satu perkara dibanding jendela 1 juta token | 1,2× sampai 5,8× | idem |
 | Porsi bahan yang benar-benar dipakai | sekitar 3% sampai 10% dari bahan utuh (3% untuk dokumen klien; sekitar 10% untuk naskah peraturan) | idem |
 | Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan) (Magesh dkk.) |
 | Benchmark RAG hukum Indonesia publik dan standar | tidak ada | idem |
 
-Laju pemakaian agen (pendukung, sekunder). Dihitung dari token transkrip agen lokal operator pada Juli sampai Oktober 2026 dengan tarif list API, bukan tagihan; pengukuran operator atas pekerjaan sebelumnya, tidak disertakan dalam repo ini:
+Laju pemakaian agen (pendukung, sekunder), agregat. Dihitung dari transkrip agen lokal operator dengan tarif list API (bukan tagihan); pengukuran operator atas pekerjaan sebelumnya, tidak disertakan dalam repo ini:
 
-| Pekerjaan | Sesi | Cache read (token) | Output (token) | Biaya (tarif list) |
-|---|---|---|---|---|
-| Engagement A (repositori perkara internal) | 112 | 8.670.114.355 | 19.354.976 | sekitar US$5.630 |
-| Engagement B (legal due diligence) | 7 | 6.499.532.105 | - | sekitar US$2.505 |
-| Engagement C (bahan kerja internal) | 12 | 268.417.029 | - | sekitar US$177 |
-| Penyusunan kontrak | tidak tercatat | tidak tercatat | tidak tercatat | estimasi operator: serupa Engagement C (estimasi, bukan ukuran) |
+- Legal due diligence (dua engagement): sekitar 15 miliar token input ter-cache dibaca ulang dalam sekitar 120 sesi agen, sekitar US$8 ribu.
+- Legal opinion: sekitar 270 juta token, sekitar US$180.
+- Penyusunan kontrak: tidak tercatat; estimasi operator serupa legal opinion (estimasi, bukan ukuran).
 
 Angka laju ini menggambarkan skala pemakaian agen pada pekerjaan sebelumnya, bukan hasil aplikasi ini dan bukan bukti bahwa aplikasi menurunkannya.
 

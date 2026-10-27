@@ -23,13 +23,13 @@ The motivation comes from practice, not from RAG as a trend. Agentic legal work 
 
 The corpus figures below are the operator's measurements of prior engagements (not included in this repository). They are not outputs of this app, and nothing in LexRAGLab's results is derived from them.
 
-- For one due diligence, the Markdown text of 579 client documents was 14,391,798 tokens, of which 414,719 tokens (about 3%) ended up as anchored facts.
-- One transaction's legal opinion material came to 1.16 million tokens and a full due diligence file to 5.77 million, which is 1.2 to 5.8 times a 1-million-token window.
-- Contract drafting material was 2.18 million tokens, or 2.81 million with the clause library included (the library alone is 623,665).
-- A single statute was 319,073 tokens.
+- For one due diligence, nearly 600 client documents came to about 14 million tokens of Markdown text, of which roughly 3% was actually anchored as facts.
+- One transaction's legal opinion material came to about 1.2 million tokens and a full due diligence file to about 5.8 million, which is 1.2 to 5.8 times a 1-million-token window.
+- Contract drafting material was about 2.2 million tokens, or about 2.8 million with the clause library included.
+- A single statute was about 320 thousand tokens.
 - Across these jobs, only about 3% to 10% of the material was actually used.
 
-Supporting, secondary: agent usage rates. These are the operator's measurements of prior engagements, from local agent transcripts at list API rates (computed from tokens, not billed amounts; July to October 2026; not included in this repository). Engagement A (internal matter repository): 112 sessions, 8,670,114,355 cache-read tokens, 19,354,976 output tokens, about $5,630. Engagement B (legal due diligence): 7 sessions, 6,499,532,105 cache-read tokens, about $2,505. Engagement C (internal work materials): 12 sessions, 268,417,029 cache-read tokens, about $177. Contract drafting was not recorded; the operator estimates it to be similar to Engagement C (an estimate, not a measurement). These describe the scale of agent usage, not an effect of this app.
+Supporting, secondary: agent usage. These are the operator's measurements of prior engagements, from local agent transcripts at list API rates (computed from tokens, not billed amounts; not included in this repository). Legal due diligence (two engagements): about 15 billion cached input tokens re-read across about 120 agent sessions, roughly $8k. Legal opinion: about 270 million tokens, roughly $180. Contract drafting was not recorded; the operator estimates it to be similar to the legal opinion (an estimate, not a measurement). These describe the scale of agent usage, not an effect of this app.
 
 ## How "best" is defined
 
