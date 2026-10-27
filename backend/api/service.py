@@ -13,10 +13,11 @@ from typing import Any, Callable
 
 from backend import config
 from backend.api.errors import ApiError
-from backend.chunking import ChunkOffsetError, SchemaChunkerError, chunk_document
+from backend.chunking import ChunkOffsetError, SchemaChunkerError, chunk_document, schema_identity
 from backend.config import ConfigError
 from backend.corpus import CorpusDoc, CorpusError, akta_entries, load_corpus
 from backend.grid.expand import expand_grid
+from backend.grid.schemas import SchemaBinding, bind_schema_versions
 from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError
 from backend.grid.types import Setting, setting_content
 from backend.pipeline.grid_run import (GridResult, GridRunError, Plan, RunFileStore, load_header_binding, load_items, make_plan,
@@ -47,7 +48,7 @@ class Service:
         self._docs: dict[str, CorpusDoc] = {}
         self._chunks: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._pipeline: Pipeline | None = None
-        self._pipeline_headers = False
+        self._pipeline_key: tuple[bool, str] | None = None
 
     # --- dasar ---
     def cfg(self, name: str) -> dict[str, Any]:
@@ -115,10 +116,22 @@ class Service:
                 return None
         return hb
 
+    # --- skema A (M3.4, H-075) ---
+    def schema_binding(self, family: str = "uupt") -> SchemaBinding | None:
+        """Binding ke skema A tersimpan keluarga (versi aktif per H-075), seperti `grid_run --with-schema`. None bila store
+        tak punya rekaman keluarga itu (perilaku lama: `structure_schema` tidak tersedia). Hanya membaca berkas."""
+        try:
+            sb = SchemaBinding.from_store(self.runs_dir, family)
+        except SchemaStoreError:
+            raise ApiError(500, "storage_error", "Schema storage failed.") from None
+        return sb if sb.records else None
+
     # --- setting ---
     def grid_settings(self, family: str) -> list[Setting]:
         """Semua setting hasil ekspansi `config/grid` (termasuk yang belum tersedia di M1)."""
-        return expand_grid(self.cfg("grid"), family) if family == "uupt" else []
+        if family != "uupt":
+            return []
+        return bind_schema_versions(expand_grid(self.cfg("grid"), family), self.schema_binding(family))
 
     def settings(self, family: str) -> list[dict[str, Any]]:
         return [{"setting_id": s.setting_id, **setting_content(s)} for s in self.grid_settings(family)]
@@ -127,32 +140,37 @@ class Service:
         s = next((x for x in self.grid_settings(family) if x.setting_id == setting_id), None)
         if s is None:
             raise ApiError(404, "not_found", f"Unknown setting_id {setting_id[:16]!r}.")
-        reason = unavailable_reason(s, headers=self.header_binding() is not None)
+        reason = unavailable_reason(s, headers=self.header_binding() is not None, schemas=self.schema_binding(family))
         if reason:
             raise ApiError(422, "validation_failed", f"Setting is not available yet: {reason}.")
         return s
 
     def chunks(self, doc: CorpusDoc, setting: Setting) -> list[dict[str, Any]]:
-        key = (doc.doc_id, setting.setting_id)
+        sb = self.schema_binding(doc.family) if setting.chunker == "structure_schema" else None
+        rec = sb.resolve(setting.schema_version) if sb is not None else None
+        ident = schema_identity(rec) if rec is not None else None
+        key = (doc.doc_id, setting.setting_id, ident and (ident["schema_version"], ident["schema_hash"]))
         with self._lock:
             hit = self._chunks.get(key)
         if hit is not None:
             return hit
         try:
             res = [c.to_dict() for c in chunk_document(doc, setting_content(setting), tokenizer=self.tokenizer,
-                                                       retrieval_cfg=self.cfg("retrieval"), grid_cfg=self.cfg("grid"))]
-        except ChunkOffsetError as exc:
+                                                       retrieval_cfg=self.cfg("retrieval"), grid_cfg=self.cfg("grid"),
+                                                       schema_record=rec)]
+        except (ChunkOffsetError, SchemaChunkerError) as exc:
             raise ApiError(422, "validation_failed", f"Chunk offsets do not match source text: {exc}") from None
         with self._lock:
             self._chunks[key] = res
         return res
 
     # --- hasil grid tersimpan (R3) ---
-    def plan(self, family: str, *, create_split: bool = False, headers: HeaderBinding | None = None) -> Plan:
+    def plan(self, family: str, *, create_split: bool = False, headers: HeaderBinding | None = None,
+             schemas: SchemaBinding | None = None) -> Plan:
         doc = self.doc("uupt-40-2007")
         try:
             return make_plan(family, doc=doc, tokenizer=self.tok(), butir_dir=self.butir_dir, runs_dir=self.runs_dir,
-                             config_dir=self.config_dir, create_split=create_split, headers=headers)
+                             config_dir=self.config_dir, create_split=create_split, headers=headers, schemas=schemas)
         except GridRunError as exc:
             raise ApiError(409, "hash_mismatch", str(exc)) from None
 
@@ -162,12 +180,13 @@ class Service:
             return None, None
         store = RunFileStore(self.runs_dir / "grid")
         hb = self.header_binding()
+        skw = {"schemas": sb} if (sb := self.schema_binding(family)) is not None else {}  # tanpa skema: panggilan lama
         if hb is not None:  # run dengan kembaran header-on punya kunci sendiri (config_hash memuat identitas store)
-            hplan = self.plan(family, headers=hb)
+            hplan = self.plan(family, headers=hb, **skw)
             henv = store.read(hplan.key) if hplan.key is not None else None
             if henv and henv.get("record"):
                 return hplan, henv
-        plan = self.plan(family)
+        plan = self.plan(family, **skw)
         if plan.key is None:
             return plan, None
         env = store.read(plan.key)
@@ -182,11 +201,14 @@ class Service:
     def pipeline(self) -> Pipeline:
         with self._lock:
             hb = self.header_binding()
-            if self._pipeline is None or self._pipeline_headers != (hb is not None):
-                self._pipeline_headers = hb is not None
+            sb = self.schema_binding("uupt")
+            ident = sb.identity() if sb is not None else None
+            pkey = (hb is not None, repr(ident))
+            if self._pipeline is None or self._pipeline_key != pkey:
+                self._pipeline_key = pkey
                 self._pipeline = Pipeline(self.doc("uupt-40-2007"), tokenizer=self.tok(), retrieval_cfg=self.cfg("retrieval"),
                                           grid_cfg=self.cfg("grid"), encoder_factory=self._encoder_factory_or_default(),
-                                          cache_dir=self.embed_cache_dir, headers=hb)
+                                          cache_dir=self.embed_cache_dir, headers=hb, schemas=sb)
             return self._pipeline
 
     def retrieval(self, family: str, setting_id: str, item_id: str) -> dict[str, Any]:
@@ -219,6 +241,7 @@ class Service:
             try:
                 return run_family_grid(family, doc=self.doc("uupt-40-2007"), tokenizer=self.tok(), runs_dir=self.runs_dir,
                                        butir_dir=self.butir_dir, config_dir=self.config_dir, encoder=self._encoder,
-                                       encoder_factory=self._encoder_factory, embed_cache_dir=self.embed_cache_dir, headers=self.header_binding())
+                                       encoder_factory=self._encoder_factory, embed_cache_dir=self.embed_cache_dir, headers=self.header_binding(),
+                                       schemas=self.schema_binding(family))
             except GridRunError as exc:
                 raise ApiError(422, "validation_failed", str(exc)) from None
