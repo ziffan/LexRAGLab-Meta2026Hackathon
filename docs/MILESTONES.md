@@ -13,10 +13,10 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 |---|---|---|---|---|---|
 | M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
 | M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | kode + review selesai; screenshot ulang pada grid v2 menunggu pass visual |
-| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (M2.1–M2.3 kode ter-review; menunggu review butir D oleh operator) |
-| M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | berjalan (M3.1–M3.3 backend ter-review; batch B per Pasal, U2, M3.4 berjalan) |
-| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | berjalan (M4.1 dan M4.3 backend ter-review; menunggu review akta operator) |
-| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | berjalan (M5.1 kode ter-review) |
+| M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | berjalan (M2.1–M2.3 kode ter-review; review butir D selesai 27 Okt: v12 = 20 butir) |
+| M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | berjalan (header B v2 lengkap tiga sumber, grid header-on `82809c6`; skema A v2 menunggu I-60) |
+| M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | berjalan (M4.1 dan M4.3 backend ter-review; akta disetujui operator 27 Okt, induksi A akta belum dijalankan) |
+| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | berjalan (M5.1 kode ter-review, tema H-083; video dipisah ke operator, putusan 8) |
 | **Jumlah** | | | **21** | **55,5** | |
 
 Acara mulai 26 Okt 2026 23:00 WIB. Commit pertama repo ini dibuat setelah jam itu. Butir kontrol, akta sintetis, dan kode ditulis setelah jam mulai.
@@ -407,7 +407,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Slice**: Video direkam dari mode putar ulang mengikuti storyboard dan jadwal produksi di `docs/VIDEO.md`, dengan butir adegan yang sudah dicocokkan manual ke teks.
 **Kriteria selesai (testable)**: gate sebelum unggah di `docs/VIDEO.md` terisi semua, durasi ≤ 3 menit (Participant Guide, H-043), dan angka di video cocok dengan layar.
 **Estimasi**: 7 jam. Rinciannya: kunci storyboard 31 Okt, rekaman kasar 2 Nov, produksi 4 Nov.
-**Status**: belum mulai.
+**Status**: dipisah — video ditangani operator (putusan operator 8, 27 Okt); agen tidak menyiapkan bahan video dan tidak mengunci storyboard.
 
 M5.1 dan M5.2 dikerjakan 3 Nov, dan kode dibekukan 20:00 WIB. 4 Nov untuk video dan submit. Target submit 4 Nov malam WIB, batas resmi 5 Nov 09:00 WIB.
 

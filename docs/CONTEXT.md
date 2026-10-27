@@ -1,19 +1,19 @@
 # CONTEXT — keadaan terkini
 
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
-Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-074.
+Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-083.
 
-diperbarui: 2026-10-27 13:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otoritatif
+diperbarui: 2026-10-27 15:10 UTC, sesi orkestrasi berlapis (L2#4) di mesin otoritatif
 
 ## Status
 
-- M0 **selesai**. M1 **kode dan review selesai** (screenshot ulang grid v2 tersisa).
-- M2: M2.1 D + U6, M2.2 C + U3, M2.3 verifier ter-review. Menunggu review 13 usulan D (H-006). M2.4/M2.5 stretch.
-- M3: header B batch Pasal (342/343) dan fixed_size (100/103) selesai (`472ffc8`, `92fbb4c`); U2 deret on/off + toggle (`4d64878`, `294ec6c`); M3.4 chunker skema di grid (`a65e1c2`). Header B v2 (H-079) `cb35b01`; grid `5a9486e`: kembaran header-on masih gagal (I-56, I-57).
-- M4: lima akta sintetis (`2c81ef9`, review operator I-51); M4.1 pemuat akta + alamat (`2e33331`); M4.3 backend profil W7/W8 (`f48cbda`) + U7 (`df4a545`, `051615e`), Tier 1; R4 versi skema untuk panel akta.
-- M5: M5.1 replay + ekspor statis (`2e33331`, `25eaf4c`), hint + Glossary (`93525a0`), README draf (`585880d`).
-- Belanja Model API kumulatif 271.401 micro-USD (RunRecord; termasuk header B v2 H-079 132.115); Baseten 1.702.
-- HEAD `051615e` bersih (archive): pytest 1029, vitest 200, tsc bersih; secret scan semua ref 0.
+- M0 **selesai**. M1 **kode dan review selesai**.
+- M2: M2.1 D + U6, M2.2 C + U3, M2.3 verifier ter-review. Review 13 usulan D **selesai** (operator: 11 diterima, 2 ditolak; butir uupt v12 = 20, H-011 terpenuhi, `878cf2a`). M2.4/M2.5 stretch.
+- M3: header B v2 lengkap: Pasal 343/343, fixed_size 103/103, structure_schema 343/343 (H-082, `82809c6`; 4 upaya). Grid uupt v12 `--with-headers --with-schema` (`27ceb240…`) dan grid polos (`901712a1…`), split v2 tune 11 / held-out 9. Header-on tidak masuk frontier tune; di held-out menaikkan recall beberapa setting. Skema A yang dipakai masih v1 Spark; v2 menunggu I-60.
+- M4: lima akta sintetis disetujui operator (I-51 ditutup); M4.1 pemuat akta + alamat; M4.3 backend + U7, Tier 1.
+- M5: M5.1 replay + ekspor statis, hint 1.0.0 final (I-49 ditutup), tema UI H-083 (`5fc2468`, uji visual 375/768/1440 `_kerja/orkestrasi/bukti/tema-H083-*.png`, console bersih), README + PRD motivasi (putusan 8, `9dda378`). **Video (M5.3) dipisah dan ditangani operator (putusan 8)**: agen tidak menyiapkan bahan video.
+- Belanja Model API kumulatif 394.011 micro-USD (RunRecord; H-082 121.725). Baseten 1.702.
+- HEAD `9dda378`: pytest 1107, vitest 231, tsc bersih; secret scan histori 0.
 
 ## Pin versi (M0)
 
@@ -29,7 +29,7 @@ diperbarui: 2026-10-27 13:05 UTC, sesi orkestrasi berlapis (L2#3) di mesin otori
 
 ## Menunggu operator
 
-Lihat `docs/ISSUES.md` "Menunggu operator": I-49 (teks hint), I-51 (review akta), I-54 (butir demo `scene_checked`; kandidat `_kerja/orkestrasi/kandidat-butir-demo.md`), I-56, I-57 (header-on). Juga: review 13 usulan D di U6, skema A v1 UU PT (H-074), Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/push/Pages.
+Lihat `docs/ISSUES.md` "Menunggu operator": I-54 (butir demo `scene_checked`; tidak memblokir app, putusan 8), I-59 (hint `app.purpose` 1.1.0 draft), I-60 (skema A v2: berkas koreksi siap, `correct` belum; premis Penjelasan, chunk_id memaksa B ulang). Juga: Tier 4 M2.3/M3.3, pemicu 31 Okt H-017, LICENSE/push publik/Pages (M5.2).
 
 ## Lingkungan
 
