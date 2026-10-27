@@ -10,14 +10,14 @@
  "edited": null,
  "family": "uupt",
  "item_id": null,
- "operator_note": null,
+ "operator_note": "selain ayat (1) ada yang dirikan sendiri untuk usaha mikro dan kecil",
  "proposal_id": "d7faf5b424d22691",
  "resolved_span": {
   "end": 16266,
   "start": 16157
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "ditolak",
+ "reviewed_at": "2026-10-27T13:45:03Z",
  "run_id": "0d51924296e948a6988456d4339abfbf",
  "validation": {
   "offset_found": true,

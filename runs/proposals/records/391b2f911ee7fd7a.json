@@ -7,17 +7,26 @@
   "start": null,
   "teks_gold": "Saham yang dibeli kembali Perseroan sebagaimana dimaksud pada ayat (1) hanya boleh dikuasai Perseroan paling lama 3 (tiga) tahun."
  },
- "edited": null,
+ "edited": {
+  "gold_spans": [
+   {
+    "end": 58083,
+    "start": 57950
+   }
+  ],
+  "mode": "parafrase",
+  "query": "Berapa batas durasi menyimpan surat berharga treasuri oleh PT?"
+ },
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-391b2f911ee7fd7a",
  "operator_note": null,
  "proposal_id": "391b2f911ee7fd7a",
  "resolved_span": {
   "end": 58083,
   "start": 57954
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "diubah",
+ "reviewed_at": "2026-10-27T13:47:15Z",
  "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
  "validation": {
   "offset_found": true,

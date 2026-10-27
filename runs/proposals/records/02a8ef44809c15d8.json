@@ -7,17 +7,26 @@
   "start": null,
   "teks_gold": "Penyetoran saham dalam bentuk benda tidak bergerak harus diumumkan dalam 1 (satu) Surat Kabar atau lebih, dalam jangka waktu 14 (empat belas) hari setelah akta pendirian ditandatangani atau setelah RUPS memutuskan penyetoran saham tersebut."
  },
- "edited": null,
+ "edited": {
+  "gold_spans": [
+   {
+    "end": 50516,
+    "start": 50276
+   }
+  ],
+  "mode": "parafrase",
+  "query": "Kapan publikasi koran diwajibkan usai pemasukan properti sebagai modal awal atau usai ketetapan rapat umum pemilik modal?"
+ },
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-02a8ef44809c15d8",
  "operator_note": null,
  "proposal_id": "02a8ef44809c15d8",
  "resolved_span": {
   "end": 50516,
   "start": 50276
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "diubah",
+ "reviewed_at": "2026-10-27T13:50:32Z",
  "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
  "validation": {
   "offset_found": true,

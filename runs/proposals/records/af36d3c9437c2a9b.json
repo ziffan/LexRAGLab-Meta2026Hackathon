@@ -7,17 +7,26 @@
   "start": null,
   "teks_gold": "Pemanggilan RUPS dilakukan dalam jangka waktu paling lambat 14 (empat belas) hari sebelum tanggal RUPS diadakan, dengan tidak memperhitungkan tanggal pemanggilan dan tanggal RUPS."
  },
- "edited": null,
+ "edited": {
+  "gold_spans": [
+   {
+    "end": 111275,
+    "start": 111092
+   }
+  ],
+  "mode": "parafrase",
+  "query": "Berapa tenggat minimal pemberitahuan undangan pertemuan rapat umum pemilik modal dalam perseroan, dan bagaimana metode penghitungan selangnya?"
+ },
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-af36d3c9437c2a9b",
  "operator_note": null,
  "proposal_id": "af36d3c9437c2a9b",
  "resolved_span": {
   "end": 111275,
   "start": 111096
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "diubah",
+ "reviewed_at": "2026-10-27T13:49:53Z",
  "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
  "validation": {
   "offset_found": true,

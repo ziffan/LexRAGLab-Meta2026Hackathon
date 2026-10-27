@@ -9,15 +9,15 @@
  },
  "edited": null,
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-953f6f8b6202a3f6",
  "operator_note": null,
  "proposal_id": "953f6f8b6202a3f6",
  "resolved_span": {
   "end": 9039,
   "start": 8658
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "disetujui",
+ "reviewed_at": "2026-10-27T13:43:16Z",
  "run_id": "0d51924296e948a6988456d4339abfbf",
  "validation": {
   "offset_found": true,

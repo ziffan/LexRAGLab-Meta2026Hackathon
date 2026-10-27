@@ -10,14 +10,14 @@
  "edited": null,
  "family": "uupt",
  "item_id": null,
- "operator_note": null,
+ "operator_note": "jawaban ayat (1) dan ayat (2) utuh, bukan hanya ayat (1)",
  "proposal_id": "21c30185d01c907d",
  "resolved_span": {
   "end": 12538,
   "start": 12342
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "ditolak",
+ "reviewed_at": "2026-10-27T13:44:23Z",
  "run_id": "0d51924296e948a6988456d4339abfbf",
  "validation": {
   "offset_found": true,

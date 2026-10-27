@@ -7,17 +7,26 @@
   "start": null,
   "teks_gold": "Pemegang saham dapat juga mengambil keputusan yang mengikat di luar RUPS dengan syarat semua pemegang saham dengan hak suara menyetujui secara tertulis dengan menandatangani usul yang bersangkutan."
  },
- "edited": null,
+ "edited": {
+  "gold_spans": [
+   {
+    "end": 124925,
+    "start": 124728
+   }
+  ],
+  "mode": "parafrase",
+  "query": "Bagaimana cara menetapkan ketetapan rapat umum pemegang saham tetap sah tanpa menggelar forum tatap muka bila seluruh pemilik suara sepakat?"
+ },
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-7105659537cdd373",
  "operator_note": null,
  "proposal_id": "7105659537cdd373",
  "resolved_span": {
   "end": 124925,
   "start": 124728
  },
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "diubah",
+ "reviewed_at": "2026-10-27T13:49:16Z",
  "run_id": "4636fb6b9aac4534ab0a5f8164f8d272",
  "validation": {
   "offset_found": true,
