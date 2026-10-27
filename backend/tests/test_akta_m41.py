@@ -127,7 +127,9 @@ def test_uupt_loading_is_unchanged_by_deed_config():
 # ---------------------------------------------------------------- R2 / R3 / R4
 @pytest.fixture()
 def client(tmp_path):
-    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs")
+    # butir kosong di tmp: test ini mengunci perilaku "tanpa butir akta", lepas dari data/butir repo (akta v2+ sudah ada, db3d192)
+    (tmp_path / "butir_kosong").mkdir()
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs", butir_dir=tmp_path / "butir_kosong")
     return TestClient(create_app(svc), raise_server_exceptions=False), svc
 
 
