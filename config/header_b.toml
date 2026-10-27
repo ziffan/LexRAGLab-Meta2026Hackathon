@@ -20,7 +20,7 @@ prompt_version = "v2"
 # Isi hanya setelah smoke (`python -m backend.header_b --smoke --unit <alamat|chunk_id>`) membuktikan strict Responses menerimanya.
 # Usulan agen: 190. Sumber: 1.067 header pasal + 100 header fixed_size v1 yang lolos (runs/headers/*/5de81a0c2feb): maks 180
 # karakter (pasal p99 160, fixed_size p99 172); 190 = maks + margin sekitar 5%. 40 token lokal setara sekitar 4,5 karakter/token.
-# schema_max_length_chars = 190
+schema_max_length_chars = 190
 
 # Usulan agen: ruang keluaran per panggilan. Reasoning ditagih sebagai output dan sekitar 83% keluaran (G-31);
 # smoke M0.1 mencatat output 445-452 token pada effort low, jadi 1000 memberi ruang tanpa memotong (G-09).
