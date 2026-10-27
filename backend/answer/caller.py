@@ -78,8 +78,10 @@ def load_answer(answers_dir: Path, answer_id: str) -> dict[str, Any] | None:
 
 
 def run_answers(client: SparkClient, prompt: PromptC, slots: list[tuple[str, ContextBundle]], *, item_id: str,
-                model_profile: str, meta: Mapping[str, Any], answers_dir: Path) -> tuple[list[AnswerOutcome], BatchResult]:
-    """Jalankan kolom berurutan. Raises `BudgetExceeded` (sebelum jaringan) bila proyeksi melewati cap."""
+                model_profile: str, meta: Mapping[str, Any], answers_dir: Path,
+                persist: bool = True) -> tuple[list[AnswerOutcome], BatchResult]:
+    """Jalankan kolom berurutan. Raises `BudgetExceeded` (sebelum jaringan) bila proyeksi melewati cap.
+    `persist=False` (jalur baca/replay): tidak menulis `answers_dir` (H-051; run_id replay bukan run berbayar)."""
     calls = [make_call(prompt, b, meta) for _s, b in slots]
     batch = client.run_batch(calls)  # proyeksi dulu di dalam; replay tidak memanggil API
     outcomes: list[AnswerOutcome] = []
@@ -96,6 +98,7 @@ def run_answers(client: SparkClient, prompt: PromptC, slots: list[tuple[str, Con
                "model_profile": model_profile, "context_chunk_ids": list(bundle.chunk_ids),
                "budget_tokens": bundle.budget_tokens, "output": out, "run_id": res.record.run_id,
                "flags": flags_for(out)}
-        _save(answers_dir, rec)
+        if persist:
+            _save(answers_dir, rec)
         outcomes.append(AnswerOutcome(slot, res.record, rec))
     return outcomes, batch

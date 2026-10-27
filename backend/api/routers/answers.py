@@ -115,7 +115,7 @@ def post_answers(request: Request, family: str, body: AnswersBody) -> dict[str, 
             client = SparkClient(profile, model_config=st.model_config, budget_config=st.budget_config, env=st.env,
                                  runs_dir=svc.runs_dir, transport=st.spark_transport, replay=replay)
             outcomes, _batch = run_answers(client, prompt, slots, item_id=body.item_id, model_profile=profile, meta=meta,
-                                           answers_dir=svc.runs_dir / "answers")
+                                           answers_dir=svc.runs_dir / "answers", persist=not replay)
         except BudgetExceeded as exc:
             raise ApiError(402, "budget_exceeded", str(exc)[:300]) from None
         except ConfigInvalid as exc:

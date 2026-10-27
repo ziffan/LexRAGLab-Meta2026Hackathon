@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse, Response
 
 from backend.api.errors import ApiError
 from backend.grid.expand import expand_grid
+from backend.grid.schemas import bind_schema_versions
 from backend.grid.types import metrics_from_cache, setting_content
 from backend.pipeline.grid_run import CONFIGS, pipeline_config_hash
 from backend.profile import ProfileDeps, ProfileError, export_profile, import_profile, make_default_chunker
@@ -39,7 +40,9 @@ def build_deps(request: Request) -> ProfileDeps:
         return svc.family_docs(family)
 
     def settings(family: str) -> list[dict[str, Any]]:
-        return [{"setting_id": s.setting_id, **setting_content(s)} for s in expand_grid(grid, family)]
+        # Sama dengan `Service.grid_settings`: setting structure_schema terikat versi skema aktif (H-075), bukan grid mentah.
+        bound = bind_schema_versions(expand_grid(grid, family), svc.schema_binding(family))
+        return [{"setting_id": s.setting_id, **setting_content(s)} for s in bound]
 
     def grid_metrics(family: str):
         _plan, env = svc.stored_grid(family)  # hanya membaca runs/grid
