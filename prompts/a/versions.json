@@ -1,0 +1,11 @@
+{
+  "current": "v1",
+  "versions": {
+    "v1": {
+      "file": "v1.md",
+      "role": "a",
+      "max_output_tokens": 8000,
+      "note": "Instruksi peran A (docs/SPARK-ROLES.md 2). Generik untuk semua keluarga; tanpa skema contoh keluarga mana pun."
+    }
+  }
+}
