@@ -3,7 +3,7 @@
 Pakai: uv run python -m backend.measure [--offline]
 - Token lokal dari tokenizer H-014.
 - Token terukur dari `/v1/responses/input_tokens` (profil `meta` saja; H-027, H-057).
-  Endpoint menolak input kosong (G-30), jadi baseline = teks acuan pendek (metode selisih, I-26, `sementara`):
+  Endpoint menolak input kosong (G-30), jadi baseline = teks acuan pendek (metode selisih; disetujui operator 27 Okt, I-26 ditutup):
       tokens_endpoint(X) = count(X) - count(ref) + tokens_local(ref)
 - Endpoint ini hanya menghitung token (tanpa `usage`); bukan klien Spark M0.1.
 - Hasil di-cache per hash di runs/measure/; kunci sama -> tidak memanggil endpoint lagi.
@@ -31,7 +31,14 @@ from backend.tokenizer import get_tokenizer
 SECTIONS = ("pembukaan", "penjelasan_umum", "batang_tubuh", "penjelasan_pasal", "pengesahan")
 REF_TEXT = "."
 METHOD = "difference_vs_reference_text"
-METHOD_STATUS = "sementara"  # sampai I-26 diputus operator
+
+
+def method_status() -> str:
+    """Status metode baseline saat ini, dari `config/tokenizer` [calibration].status (I-26).
+
+    Run tersimpan tidak ditulis ulang: `method.status` di record = status pada saat run.
+    """
+    return str(config.load("tokenizer").get("calibration", {}).get("status", "sementara"))
 
 
 class MeasureError(Exception):
@@ -155,7 +162,7 @@ def run(offline: bool = False, out_dir: Path | None = None) -> dict[str, Any]:
             "status": "ok",
             "error": None,
         },
-        "method": {"name": METHOD, "status": METHOD_STATUS, "reference_text": REF_TEXT,
+        "method": {"name": METHOD, "status": method_status(), "reference_text": REF_TEXT,
                    "reference_endpoint_raw": raw["_reference"], "reference_tokens_local": local_ref,
                    "hidden_overhead_tokens": overhead, "issue": "I-26", "gotcha": "G-30"},
         "rows": rows,
@@ -179,7 +186,7 @@ def format_table(rec: dict[str, Any]) -> str:
     rr = rec["run_record"]
     lines += ["", f"tokenizer            {rr['tokenizer']['name']} ({rr['tokenizer']['version']})",
               f"endpoint             {rr['provider']} {rr['model']} /responses/input_tokens",
-              f"method               {m['name']} [{m['status']}], hidden overhead {m['hidden_overhead_tokens']} tokens",
+              f"method               {m['name']} [at run time: {m['status']}; now: {method_status()}], hidden overhead {m['hidden_overhead_tokens']} tokens",
               f"mean section ratio   {rec['mean_section_ratio']}",
               f"cost projection      full document {rec['cost_projection']['input_tokens']} input tokens: "
               f"{rec['cost_projection']['uncached_micros']} micro-USD uncached, {rec['cost_projection']['cached_micros']} cached",

@@ -22,8 +22,18 @@ def test_offline_uses_stored_run_and_never_calls_network(monkeypatch):
     rr = rec["run_record"]
     assert rr["provider"] == "meta" and rr["kind"] == "measure" and rr["cost_usd_micros"] == 0
     assert isinstance(rr["cost_usd_micros"], int)
+    # Record tersimpan tidak ditulis ulang: status metode pada saat run tetap "sementara" (H-027, run per hash).
     assert rec["method"]["status"] == "sementara"
-    assert "measure" in measure.format_table(rec)
+    table = measure.format_table(rec)
+    assert "measure" in table
+    assert "at run time: sementara; now: disetujui" in table
+
+
+def test_method_status_approved_in_config():
+    # I-26 ditutup operator 27 Okt: metode selisih dua titik disetujui.
+    cal = config.load("tokenizer")["calibration"]
+    assert cal["status"] == "disetujui" and cal["method"] == measure.METHOD
+    assert measure.method_status() == "disetujui"
 
 
 def test_offline_without_stored_run_fails_clearly(monkeypatch):
