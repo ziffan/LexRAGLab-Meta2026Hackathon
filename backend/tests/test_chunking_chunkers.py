@@ -53,6 +53,7 @@ def fixed(doc, tok):
 # ------------------------------------------------------------------ bentuk Chunk (DATA-CONTRACTS §3)
 def test_scope_comes_from_config_not_code():
     assert RCFG["scope_sections"] == ["batang_tubuh", "penjelasan_pasal", "penjelasan_umum"] and RCFG["version"] == 1
+    assert RCFG["chunking"]["structure_version"] == 2 and RCFG["chunking"]["fixed_size_version"] == 2  # H-064, H-062
 
 
 def test_structure_chunk_shape_and_counts(doc, structure):
@@ -99,7 +100,20 @@ def test_determinism_chunk_ids_identical_across_runs(doc, tok, structure, fixed)
 
 # ------------------------------------------------------------------ round-trip offset
 def _section_of(doc, c):
-    return next(s for s in doc.sections if s["section"] == c.section and s["start"] <= c.start and c.end <= s["end"])
+    # H-062: fixed_size melintasi section; `Chunk.section` = section di posisi awal, jadi hanya awal yang dicocokkan
+    return next(s for s in doc.sections if s["section"] == c.section and s["start"] <= c.start < s["end"])
+
+
+def _scope_runs(doc):
+    """Deret section dalam cakupan yang bersambung (dihitung terpisah dari chunker)."""
+    runs: list[list[int]] = []
+    for s in sorted(doc.sections, key=lambda x: x["start"]):
+        if s["section"] in SCOPE:
+            if runs and runs[-1][1] == s["start"]:
+                runs[-1][1] = s["end"]
+            else:
+                runs.append([s["start"], s["end"]])
+    return runs
 
 
 @pytest.mark.parametrize("which", ["structure", "fixed"])
@@ -143,13 +157,13 @@ def test_verify_rejects_altered_offsets(doc, structure):
 
 # ------------------------------------------------------------------ ukuran tetap
 def test_fixed_uses_grid_config_and_expected_window_count(doc, tok, fixed):
+    # H-062: jumlah jendela atas deret bersambung, bukan per section (sebelumnya 348 potongan per-section)
     size, ov = FX["chunk_size_tokens"], FX["overlap_tokens"]
     step = size - ov
     expect = 0
-    for s in doc.sections:
-        if s["section"] in SCOPE:
-            n = len(tok.offsets(doc.text[s["start"]:s["end"]]))
-            expect += 0 if n == 0 else (1 if n <= size else 1 + math.ceil((n - size) / step))
+    for s, e in _scope_runs(doc):
+        n = len(tok.offsets(doc.text[s:e]))
+        expect += 0 if n == 0 else (1 if n <= size else 1 + math.ceil((n - size) / step))
     assert len(fixed) == expect  # dihitung dari rumus terpisah, bukan dari loop chunker
     assert {c.section for c in fixed} <= SCOPE
     assert max(c.tokens_local for c in fixed) <= size + 2  # hitung ulang token teks terpangkas boleh bergeser tipis di tepi
@@ -157,12 +171,12 @@ def test_fixed_uses_grid_config_and_expected_window_count(doc, tok, fixed):
 
 def test_fixed_boundaries_are_token_boundaries_and_overlap_is_exact(doc, tok, fixed):
     size, ov = FX["chunk_size_tokens"], FX["overlap_tokens"]
-    by_sec: dict[tuple[int, int], list] = {}
+    by_run: dict[tuple[int, int], list] = {}
     for c in fixed:
-        s = _section_of(doc, c)
-        by_sec.setdefault((s["start"], s["end"]), []).append(c)
+        r = next((s, e) for s, e in _scope_runs(doc) if s <= c.start and c.end <= e)
+        by_run.setdefault(r, []).append(c)
     multi = 0
-    for (s, e), cs in by_sec.items():
+    for (s, e), cs in by_run.items():
         offs = tok.offsets(doc.text[s:e])
         starts = {s + a for a, _ in offs}
         ends = {s + b for _, b in offs}
@@ -176,21 +190,70 @@ def test_fixed_boundaries_are_token_boundaries_and_overlap_is_exact(doc, tok, fi
             ia = max(i for i, (a, _) in enumerate(offs) if s + a <= cs[k - 1].start)
             ib = max(i for i, (a, _) in enumerate(offs) if s + a <= cs[k].start)
             assert 0 < ib - ia <= size - ov + 2, "langkah jendela = size - overlap (bergeser tipis hanya karena pangkas spasi)"
-    assert multi >= 1, "korpus beku punya Pasal > 512 token; minimal satu section berjendela ganda"
+    assert multi >= 1, "korpus beku punya lebih dari satu jendela"
 
 
-def test_fixed_toy_hand_computed_windows_do_not_cross_sections():
-    # section 1: 10 token (t0..t9); section 2: 3 token; size 4 overlap 1 -> langkah 3
+def test_fixed_toy_hand_computed_windows_cross_sections_H062():
+    # H-062 (sebelumnya: tidak melintasi section). Section 1: t0..t9 [0,31); section 2: u0..u2 [31,len).
+    # 13 token berurutan; size 4 overlap 1 -> langkah 3; jendela di indeks token 0-3, 3-6, 6-9, 9-12.
     text = "t0 t1 t2 t3 t4 t5 t6 t7 t8 t9\n\nu0 u1 u2\n"
     d = make_doc(text, [("batang_tubuh", 0, 31), ("penjelasan_pasal", 31, len(text))])
     cs = chunk_fixed(d, size=4, overlap=1, tokenizer=ToyWs(), retrieval_cfg=RCFG)
     got = [(c.section, d.text[c.start:c.end]) for c in cs]
     assert got == [
         ("batang_tubuh", "t0 t1 t2 t3"), ("batang_tubuh", "t3 t4 t5 t6"), ("batang_tubuh", "t6 t7 t8 t9"),
-        ("penjelasan_pasal", "u0 u1 u2"),
+        ("batang_tubuh", "t9\n\nu0 u1 u2"),  # mulai di section 1, berakhir di section 2; section = posisi awal
     ]
-    assert [c.tokens_local for c in cs] == [4, 4, 4, 3]
-    verify_chunks(d, cs)
+    assert [(c.start, c.end) for c in cs] == [(0, 11), (9, 20), (18, 29), (27, 39)]
+    assert [c.tokens_local for c in cs] == [4, 4, 4, 4]
+    assert cs[3].address == f"{PREFIX}{SEP}Batang Tubuh – {PREFIX}{SEP}Penjelasan"  # alamat awal – alamat akhir (§3)
+    verify_chunks(d, cs, SCOPE)
+
+
+def test_fixed_h062_crosses_pasal_and_section_on_u_document():
+    d = u_doc()
+    cs = chunk_fixed(d, size=8, overlap=2, tokenizer=ToyWs(), retrieval_cfg=RCFG)  # 40 token, langkah 6: mulai token 0,6,12,18,24,30,36
+    a1, a2, a4 = (f"{PREFIX}{SEP}{x}" for x in (f"Pasal 1{SEP}ayat (1)", f"Pasal 1{SEP}ayat (2)", "Pasal 2"))
+    p11, p13 = (f"{PREFIX}{SEP}Penjelasan{SEP}Pasal 1{SEP}Ayat ({n})" for n in (1, 3))
+    p2 = f"{PREFIX}{SEP}Penjelasan{SEP}Pasal 2"
+    assert [(c.start, c.end, c.section, c.address) for c in cs] == [
+        (0, 32, "batang_tubuh", f"{a1} – {a2}"),
+        (25, 61, "batang_tubuh", f"{a2} – {a4}"),     # melintasi batas Pasal 1 -> Pasal 2 (ayat (3) di antaranya: ujung saja)
+        (52, 93, "batang_tubuh", f"{a4}"),            # mulai di Pasal 2 (batang), berakhir di 'Penjelasan' (section berikut)
+        (78, 123, "penjelasan_pasal", p11),
+        (111, 150, "penjelasan_pasal", f"{p11} – {p13}"),
+        (142, 187, "penjelasan_pasal", f"{p13} – {p2}"),
+        (180, 200, "penjelasan_pasal", p2),
+    ]
+    assert d.text[52:93].endswith("#### Penjelasan") and 52 < 78 < 93, "potongan ke-3 melintasi batas section batang_tubuh -> penjelasan_pasal"
+    verify_chunks(d, cs, SCOPE)
+
+
+def test_fixed_h062_does_not_cross_a_gap_of_out_of_scope_section():
+    text = "a1 a2 a3 a4\n\nPEMBUKAAN LUAR CAKUPAN\n\nb1 b2 b3\n"
+    i1, i2 = text.index("PEMBUKAAN"), text.index("b1")
+    d = make_doc(text, [("batang_tubuh", 0, i1), ("pembukaan", i1, i2), ("penjelasan_pasal", i2, len(text))])
+    cs = chunk_fixed(d, size=3, overlap=1, tokenizer=ToyWs(), retrieval_cfg=RCFG)
+    # deret 1: a1..a4 -> [a1 a2 a3], [a3 a4]; deret baru setelah celah: [b1 b2 b3]
+    assert [d.text[c.start:c.end] for c in cs] == ["a1 a2 a3", "a3 a4", "b1 b2 b3"]
+    assert [c.section for c in cs] == ["batang_tubuh", "batang_tubuh", "penjelasan_pasal"]
+    verify_chunks(d, cs, SCOPE)
+    end = i2 + 2
+    spanning = dataclasses.replace(cs[1], end=end, chunk_id=make_chunk_id(d.doc_id, cs[1].start, end, cs[1].chunker_key))
+    with pytest.raises(ChunkOffsetError):
+        verify_chunks(d, [spanning], SCOPE)  # melintasi section di luar cakupan
+
+
+def test_fixed_h062_real_corpus_crossing_and_counts(doc, fixed):
+    assert len(fixed) == 103  # regresi korpus beku, tokenizer H-014, 512/64 (sebelumnya 348 per section)
+    in_scope = [s for s in doc.sections if s["section"] in SCOPE]
+    assert _scope_runs(doc) == [[min(s["start"] for s in in_scope), max(s["end"] for s in in_scope)]], \
+        "korpus nyata: tidak ada celah section di luar cakupan di antara section dalam cakupan"
+    crossing = [c for c in fixed if not any(s["start"] <= c.start and c.end <= s["end"] for s in doc.sections)]
+    assert crossing, "minimal satu potongan melintasi batas section"
+    differing = [c for c in crossing if next(s["section"] for s in doc.sections if s["start"] <= c.end - 1 < s["end"]) != c.section]
+    assert differing, "minimal satu potongan: section posisi awal berbeda dari section posisi akhir"
+    assert all(" – " in c.address for c in crossing)
 
 
 def test_fixed_rejects_bad_parameters():
@@ -301,3 +364,58 @@ def test_tokenizer_name_and_version_enter_chunker_key_and_chunk_id(name):
     assert [(c.start, c.end) for c in a] == [(c.start, c.end) for c in b]
     assert {c.chunker_key for c in a}.isdisjoint({c.chunker_key for c in b})
     assert {c.chunk_id for c in a}.isdisjoint({c.chunk_id for c in b})
+
+
+# ------------------------------------------------------------------ H-064: heading Pasal di potongan unit pertama
+def test_structure_h064_synthetic_u_document_chunk_widens_but_unit_map_does_not():
+    d = u_doc()
+    cs = chunk_structure(d, tokenizer=ToyWs(), retrieval_cfg=RCFG)
+    assert [(c.start, c.end) for c in cs] == [(0, 24), (25, 37), (38, 50), (52, 76), (78, 123), (124, 141), (142, 163), (164, 200)]
+    assert d.text[cs[0].start:cs[0].end] == "### Pasal 1\n(1) Aaa bbb."   # ayat (1) Pasal 1 mencakup heading
+    assert d.text[cs[4].start:cs[4].end].startswith("#### Penjelasan Pasal 1\nAyat (1)")  # Penjelasan ber-"Ayat (n)": sama
+    m = build_address_map(d.text, d.sections, PREFIX, SCOPE)
+    units = {u.address: (u.start, u.end) for u in m.units}
+    assert units[f"{PREFIX}{SEP}Pasal 1{SEP}ayat (1)"] == (12, 24)  # unit A4 (peta alamat) tetap: tanpa heading
+    assert units[f"{PREFIX}{SEP}Penjelasan{SEP}Pasal 1{SEP}Ayat (1)"] == (102, 123)
+    assert all(c.address in units and units[c.address][1] == c.end for c in cs)  # alamat dan akhir = unit
+    verify_chunks(d, cs, SCOPE)
+
+
+def test_structure_h064_pasal_with_text_between_heading_and_ayat_1():
+    t = "### Pasal 5\nPengantar sebelum ayat.\n(1) Isi satu.\n(2) Isi dua.\n"
+    d = make_doc(t, [("batang_tubuh", 0, len(t))])
+    cs = chunk_structure(d, tokenizer=ToyWs(), retrieval_cfg=RCFG)
+    assert [d.text[c.start:c.end] for c in cs] == ["### Pasal 5\nPengantar sebelum ayat.\n(1) Isi satu.", "(2) Isi dua."]
+    assert next(u for u in build_address_map(t, d.sections, PREFIX, SCOPE).units if u.ayat == 1).start == t.index("(1)")
+
+
+def test_structure_h064_real_corpus_first_chunk_of_pasal_has_heading(doc, structure):
+    by_addr = {c.address: c for c in structure}
+    p86 = by_addr[f"{PREFIX}{SEP}Pasal 86{SEP}ayat (1)"]
+    assert doc.text[p86.start:p86.end].startswith("### Pasal 86\n")
+    p1 = by_addr[f"{PREFIX}{SEP}Pasal 1"]  # Pasal tanpa ayat: unit tunggal sudah termasuk heading
+    assert doc.text[p1.start:p1.end].startswith("### Pasal 1\n")
+    assert doc.text[by_addr[f"{PREFIX}{SEP}Pasal 86{SEP}ayat (2)"].start:].startswith("(2) ")  # ayat berikut tidak melebar
+    amap = build_address_map(doc.text, doc.sections, PREFIX, SCOPE)
+    u86 = next(u for u in amap.units if u.address == f"{PREFIX}{SEP}Pasal 86{SEP}ayat (1)")
+    assert doc.text[u86.start:].startswith("(1) ") and (u86.start, u86.end) != (p86.start, p86.end) and u86.end == p86.end
+    # tiap Pasal batang tubuh: chunk pertama mulai di heading '### Pasal n'
+    first_of: dict[str, object] = {}
+    for c in structure:
+        if c.section == "batang_tubuh":
+            first_of.setdefault(c.address_levels[2]["label"], c)
+    assert first_of and all(doc.text[c.start:].startswith(f"### {lab}\n") for lab, c in first_of.items())
+    # Penjelasan ber-"Ayat (n)" tanpa isi pembuka: chunk 'Ayat (1)' mulai di '#### Penjelasan Pasal n'
+    p86p = by_addr[f"{PREFIX}{SEP}Penjelasan{SEP}Pasal 86{SEP}Ayat (1)"]
+    assert doc.text[p86p.start:].startswith("#### Penjelasan Pasal 86\n")
+
+
+def test_structure_h064_no_overlap_round_trip_and_uncovered_chars(doc, structure):
+    ordered = sorted(structure, key=lambda c: (c.start, c.end))
+    assert all(a.end <= b.start for a, b in zip(ordered, ordered[1:])), "potongan struktur tidak saling tumpang"
+    verify_chunks(doc, structure, SCOPE)
+    covered = bytearray(len(doc.text))
+    for c in structure:
+        covered[c.start:c.end] = b"\x01" * (c.end - c.start)
+    unc = sum(1 for s in doc.sections if s["section"] in SCOPE for i in range(s["start"], s["end"]) if not doc.text[i].isspace() and not covered[i])
+    assert unc == 1074  # karakter bukan-spasi dalam cakupan di luar potongan struktur; sebelum H-064: 4725 (diukur di HEAD sebelumnya)

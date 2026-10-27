@@ -9,8 +9,9 @@ scope_sections = ["batang_tubuh", "penjelasan_pasal", "penjelasan_umum"]
 [chunking]
 # Versi implementasi chunker; masuk chunker_key (DATA-CONTRACTS §3). Naikkan bila aturan batas
 # unit atau alamat berubah, supaya chunk_id lama tidak dipakai ulang.
-structure_version = 1
-fixed_size_version = 1
+# 2: H-064 (potongan ayat pertama mencakup heading Pasal) dan H-062 (fixed_size berurutan lintas Pasal/section).
+structure_version = 2
+fixed_size_version = 2
 # Label bagian untuk alamat unit tingkat bagian (dokumen tanpa penanda struktur). Alamat kanonik
 # Pasal/ayat tidak memakai label ini (DATA-CONTRACTS §2 "Alamat kanonik").
 [chunking.section_labels]

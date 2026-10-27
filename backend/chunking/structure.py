@@ -29,7 +29,10 @@ def structure_key(cfg: dict[str, Any], tok: Any) -> str:
 
 def chunk_structure(doc: Any, *, amap: AddressMap | None = None, retrieval_cfg: dict[str, Any] | None = None, tokenizer: Any = None) -> list[Chunk]:
     """Satu potongan per unit di section dalam cakupan retrieval. Section tanpa penanda struktur:
-    satu potongan per section dengan peringatan `no structural marker, fallback per section`."""
+    satu potongan per section dengan peringatan `no structural marker, fallback per section`.
+
+    H-064: potongan unit pertama tiap Pasal (ayat (1), atau "Ayat (1)" Penjelasan tanpa isi pembuka) mulai di heading
+    Pasal (`Unit.lead`); alamat dan unit Recall@K (`Unit.start/end`, M1.2 A4) tidak berubah."""
     cfg, scope, prefix, labels = context_for(doc, retrieval_cfg)
     tok = tokenizer or get_tokenizer()
     amap = amap or build_address_map(doc.text, doc.sections, prefix, scope, labels)
@@ -37,9 +40,9 @@ def chunk_structure(doc: Any, *, amap: AddressMap | None = None, retrieval_cfg: 
     out: list[Chunk] = []
     for u in amap.in_sections(scope):
         out.append(Chunk(
-            chunk_id=make_chunk_id(doc.doc_id, u.start, u.end, key), doc_id=doc.doc_id, chunker_key=key,
-            start=u.start, end=u.end, clean_sha256=doc.clean_sha256, section=u.section, address=u.address,
-            address_levels=levels_to_dicts(u.levels), tokens_local=tok.count(doc.text[u.start:u.end]),
+            chunk_id=make_chunk_id(doc.doc_id, u.lead, u.end, key), doc_id=doc.doc_id, chunker_key=key,
+            start=u.lead, end=u.end, clean_sha256=doc.clean_sha256, section=u.section, address=u.address,
+            address_levels=levels_to_dicts(u.levels), tokens_local=tok.count(doc.text[u.lead:u.end]),
             warnings=[NO_MARKER_WARNING] if u.fallback else [],
         ))
     return out

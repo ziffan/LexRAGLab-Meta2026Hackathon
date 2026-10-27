@@ -34,5 +34,5 @@ def chunk_document(doc: Any, setting: dict[str, Any], *, tokenizer: Any = None, 
                              retrieval_cfg=retrieval_cfg, tokenizer=tokenizer)
     else:
         raise ValueError(f"chunker not available in M1.1: {chunker!r}")
-    verify_chunks(doc, chunks)
+    verify_chunks(doc, chunks, set((retrieval_cfg if retrieval_cfg is not None else config.load("retrieval"))["scope_sections"]))
     return chunks

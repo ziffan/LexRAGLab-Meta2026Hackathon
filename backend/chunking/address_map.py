@@ -4,7 +4,7 @@ Satu peta dipakai semua chunker (prinsip keadilan). Konvensi unit sama dengan sk
 ("Peta alamat U" dan putusan A4/A5, `docs/scenarios/M1.2.md`):
 
 - Rentang unit setengah terbuka dan tanpa `\\n` penutup (berakhir di karakter non-spasi terakhir).
-- Pasal ber-ayat: heading `### Pasal n` di luar semua unit; unit ayat = dari penanda `(m)` sampai sebelum
+- Pasal ber-ayat: heading `### Pasal n` di luar semua unit alamat (tetapi di dalam potongan struktur ayat pertama, H-064, lewat `Unit.chunk_start`); unit ayat = dari penanda `(m)` sampai sebelum
   penanda berikutnya (ayat terakhir: sampai akhir isi Pasal). Kalimat penutup rincian milik ayat (G-25).
 - Pasal tanpa ayat: satu unit, TERMASUK heading.
 - Penjelasan Pasal ber-penanda: unit "Ayat (m)" = baris penanda + isi sampai sebelum penanda berikutnya.
@@ -60,6 +60,13 @@ class Unit:
     ayat: int | None = None
     fallback: bool = False
     children: tuple[Rincian, ...] = ()
+    # H-064: awal POTONGAN struktur bila lebih awal dari `start` (unit pertama Pasal melebar ke heading Pasal).
+    # `start`/`end` tetap unit alamat konvensi M1.2 A4 (Recall@K); hanya batas potongan yang melebar.
+    chunk_start: int | None = None
+
+    @property
+    def lead(self) -> int:
+        return self.start if self.chunk_start is None else self.chunk_start
 
 
 def levels_to_dicts(levels: Levels) -> list[dict[str, str]]:
@@ -81,13 +88,16 @@ class AddressMap:
         """Unit yang beririsan tak-kosong dengan [start, end), berurutan."""
         return [u for u in self.units if u.start < end and start < u.end and (section is None or u.section == section)]
 
-    def address_for_range(self, start: int, end: int, section: str, prefix: str, section_label: str) -> tuple[str, list[dict[str, str]], list[str]]:
+    def address_for_range(self, start: int, end: int, section: str, prefix: str, section_label: str,
+                          *, across_sections: bool = False) -> tuple[str, list[dict[str, str]], list[str]]:
         """Alamat potongan [start,end) dalam `section`.
 
         Satu unit: alamat unit, atau rincian terdalam yang memuat seluruh potongan. Beberapa unit:
         "<alamat awal> – <alamat akhir>", levels = awalan bersama unit pertama dan terakhir.
-        Tanpa irisan dengan unit mana pun: alamat tingkat bagian + peringatan."""
-        ov = self.overlapping(start, end, section)
+        Tanpa irisan dengan unit mana pun: alamat tingkat bagian + peringatan.
+        `across_sections` (H-062): potongan boleh melintasi section; irisan dihitung atas semua section, `section`
+        (section posisi awal) hanya dipakai untuk alamat cadangan."""
+        ov = self.overlapping(start, end, None if across_sections else section)
         if not ov:
             lv = [{"level": "peraturan", "label": prefix}, {"level": "section", "label": section}]
             return SEP.join([prefix, section_label]), lv, ["no address unit overlaps this chunk"]
@@ -207,7 +217,7 @@ def _batang_units(text: str, sec: dict[str, Any], prefix: str, notes: list[str])
             lv = base_levels + (("ayat", lab),)
             addr = f"{base_addr}{SEP}{lab}"
             units.append(Unit("ayat", "batang_tubuh", body[i][0], end, addr, lv, pasal=pasal, ayat=k + 1,
-                              children=_rincian(seg[1:], lv, addr)))
+                              children=_rincian(seg[1:], lv, addr), chunk_start=head[0] if k == 0 else None))
     return units
 
 
@@ -230,7 +240,8 @@ def _penj_units(text: str, sec: dict[str, Any], prefix: str) -> list[Unit]:
             units.append(Unit("penj_pasal", "penjelasan_pasal", head[0], end, base_addr, base_levels, pasal=pasal))
             continue
         pre = body[: marks[0]]
-        if _first_content_start(pre) is not None:  # isi sebelum "Ayat (1)": unit tingkat Pasal (heading + isi itu)
+        has_pre = _first_content_start(pre) is not None
+        if has_pre:  # isi sebelum "Ayat (1)": unit tingkat Pasal (heading + isi itu)
             units.append(Unit("penj_pasal", "penjelasan_pasal", head[0], _content_end(pre) or head[1], base_addr, base_levels, pasal=pasal))
         for k, i in enumerate(marks):
             j = marks[k + 1] if k + 1 < len(marks) else len(body)
@@ -238,7 +249,8 @@ def _penj_units(text: str, sec: dict[str, Any], prefix: str) -> list[Unit]:
             assert end is not None
             lab = f"Ayat ({k + 1})"
             units.append(Unit("penj_ayat", "penjelasan_pasal", body[i][0], end, f"{base_addr}{SEP}{lab}",
-                              base_levels + (("ayat", lab),), pasal=pasal, ayat=k + 1))
+                              base_levels + (("ayat", lab),), pasal=pasal, ayat=k + 1,
+                              chunk_start=head[0] if k == 0 and not has_pre else None))
     return units
 
 

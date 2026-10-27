@@ -102,7 +102,7 @@ def test_r4_returns_text_and_chunks(app, snap, chunker):
     assert st == 200 and set(body) == {"doc_id", "text", "chunks", "headers"}
     doc = real_doc()
     assert body["text"] == doc.text and body["headers"] is None
-    assert len(body["chunks"]) > 300
+    assert len(body["chunks"]) > 50  # fixed_size berurutan lintas Pasal: 103 potongan (H-062)
     for c in body["chunks"]:
         assert c["clean_sha256"] == doc.clean_sha256
         assert 0 <= c["start"] < c["end"] <= len(body["text"])

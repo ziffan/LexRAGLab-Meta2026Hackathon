@@ -92,4 +92,4 @@ def test_config_m13_keys():
     assert d["model"] == "BAAI/bge-m3" and d["revision"] == "5617a9f61b028005a4858fdac845db406aefb181"
     assert d["max_seq_length"] == 8192 and d["batch_size"] > 0
     assert CFG["hybrid"]["k_rrf"] == 60 and CFG["recall"]["k"] == 5
-    assert CFG["scope_sections"] and CFG["chunking"]["structure_version"] == 1
+    assert CFG["scope_sections"] and CFG["chunking"]["structure_version"] == 2  # H-064
