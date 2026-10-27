@@ -35,7 +35,7 @@ Pemilik isi: **Operator** (hanya manusia menulis), **Spark** (keluaran model, te
 | `tokens_local` | int | token tokenizer lokal | Sistem (M0.2) |
 | `tokens_endpoint` | int \| null | token dari `/v1/responses/input_tokens` dikurangi baseline | Sistem (M0.2) |
 | `calibration_ratio` | number \| null | `tokens_endpoint / tokens_local` | Sistem (M0.2) |
-| `sections` | array of `{section, start, end}` | rentang tiap bagian di teks bersih (H-046); kosong untuk akta | Sistem |
+| `sections` | array of `{section, start, end}` | rentang tiap bagian di teks bersih (H-046); untuk akta satu section `batang_tubuh` (H-076) | Sistem |
 | `annotations` | array | anotasi yang dipisahkan pemuat (label, footnote, frontmatter) dengan offset tambat di teks bersih; kosong untuk akta | Sistem |
 
 `sections` mencatat rentang setiap bagian di teks bersih. Status per ketentuan tidak disimpan di `CorpusDoc`; ia ada di `StatusTable` (§5) dengan kunci alamat.

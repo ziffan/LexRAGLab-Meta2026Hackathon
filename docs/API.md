@@ -25,7 +25,7 @@ Bentuk ini mengikuti H-020: endpoint baca dilebur menjadi snapshot per keluarga,
 | R1 | `GET /api/health` | — | `{status, replay, model, config_hash, model_profiles: [{model_profile, model, available}]}` | U0, U3 | M0.1 |
 | R2 | `GET /api/families` | — | `[{family, n_docs, n_items, has_grid}]` | U0 | M0.2 |
 | R3 | `GET /api/families/{family}/snapshot` | query `budget_tokens` opsional (default dari `config/grid`) | `FamilySnapshot` (bagian 4) | U0–U9 | M0.2, diperluas tiap slice |
-| R4 | `GET /api/families/{family}/docs/{doc_id}` | query `setting_id` opsional | `{doc_id, text, chunks: Chunk[] \| null, headers: HeaderB[] \| null}` (§3, §7) | U1, U6 | M1.1, M3.2 |
+| R4 | `GET /api/families/{family}/docs/{doc_id}` | query `setting_id` opsional, atau `schema_version` opsional (int, saling eksklusif dengan `setting_id` → 400 `invalid_request`; versi tak ada → 404 `not_found`; skema tak cocok → 422 `validation_failed`; H-078) | `{doc_id, text, chunks: Chunk[] \| null, headers: HeaderB[] \| null}` (§3, §7) | U1, U6 | M1.1, M3.2 |
 | R5 | `GET /api/families/{family}/retrieval` | query `setting_id`, `item_id` | `{retrieved_chunk_ids, ranks, scores, packed_tokens}` | U1 | M1.2 |
 | R6 | `GET /api/runs` | query `kind`, `limit` | `RunRecord[]` (§12) | U8 | M0.1 |
 
@@ -67,6 +67,7 @@ Gabungan kontrak yang sudah ada di `docs/DATA-CONTRACTS.md`. Bukan skema keluara
 | `proposals` | semua usulan D | `ProposalRecord[]` (§9) | U6, U0 |
 | `answers` | per butir dan per `model_profile` yang sudah dijawab: `{item_id, model_profile, best, baseline, verifier}` | `AnswerRecord`, `VerifierResult` (§8) | U3 |
 | `answers_summary` | per setting dan per `model_profile` yang dipakai C | `RejectionSummary` (§8) | U3 |
+| `report` | laporan held-out UU PT atau laporan transfer akta per butir (tanpa label held-out untuk akta, H-054); `null` bila belum ada grid | `build_report` M4.3 (H-077) | U7 |
 | `runs_summary` | agregat per `kind`: jumlah run, token input/cached/output, biaya | — | U8, U0 |
 
 ## 5. Aturan per endpoint yang tidak terlihat dari tabel
