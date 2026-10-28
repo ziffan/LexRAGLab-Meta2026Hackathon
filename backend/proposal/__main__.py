@@ -18,11 +18,11 @@ from typing import Any, Callable
 from backend import config
 from backend.api.errors import ApiError
 from backend.api.service import Service
-from backend.spark import BudgetExceeded, ConfigInvalid, Ledger, SparkClient, format_usd_micros, load_configs
+from backend.spark import BudgetExceeded, ConfigInvalid, Ledger, SparkClient, format_usd_micros, load_configs, profile_provider, provider_caps
 
 from . import prompt as promptmod
 from .absence import load_absence_config, service_checker_provider
-from .gate import evaluate_gate, expected_cost_micros, load_gate_config
+from .gate import cumulative_threshold_for, evaluate_gate, expected_cost_micros, load_gate_config
 from .prompt import FAMILIES_U, MODE_U
 from .service import DocInfo, ProposalService
 
@@ -89,12 +89,20 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
         expected.append(expected_cost_micros(n_in, acfg.projection_expected_output_tokens, pricing))
         print(f"  {d.doc_id:<10} input_tokens={n_in} output_tokens(assumed)={acfg.projection_expected_output_tokens} "
               f"expected micro-USD={expected[-1]} ({format_usd_micros(expected[-1])})")
-    used = spent if spent is not None else Ledger(base.runs_dir).spent()
-    v = evaluate_gate(expected, used, gcfg)
+    try:
+        pcaps = provider_caps(budget_cfg, model_cfg)
+        prov = profile_provider(model_cfg, profile)
+    except ConfigInvalid as exc:
+        print(f"error: config_invalid: {exc}", file=sys.stderr)
+        return 2
+    # S9 (e): pool default = belanja rekaman provider tak berplafon; provider berplafon = pool-nya sendiri (H-101 P6/P9).
+    used = spent if spent is not None else Ledger(base.runs_dir).spent_pool(prov, pcaps)
+    thr = cumulative_threshold_for(prov, budget_cfg, pcaps)
+    v = evaluate_gate(expected, used, gcfg) if prov not in pcaps else evaluate_gate(expected, used, gcfg, threshold_micros=thr)
     print(f"prompt {prm.version} {prm.prompt_hash[:12]} schema {promptmod.SCHEMA_NAME_U} {promptmod.schema_hash(MODE_U)[:12]} "
           f"factor_bp={gcfg.factor_bp} (assumption, not measured for D) family={family} max_per_call={cap}")
     print(f"total expected={v.expected} batas_atas={v.batas_atas} ({format_usd_micros(v.batas_atas)}) cumulative_spent={v.spent} "
-          f"batch_cap={gcfg.batch_cap_micros} cumulative_threshold={gcfg.cumulative_threshold_micros}")
+          f"batch_cap={gcfg.batch_cap_micros} cumulative_threshold={thr}")
     print("gate: " + ("PASS" if v.ok else "REFUSED (" + ", ".join(v.reasons) + ")"))
     if a.project_only:
         return 0

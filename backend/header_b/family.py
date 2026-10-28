@@ -69,9 +69,12 @@ def project_prepared(p: Prepared, plan: FamilyPlan, tokenizer: Any, header_cfg: 
     return {**stats, "projection": None, "expected": 0, "upper_g36": 0, "upper_no_cache": 0, "calls": 0, "estimated_seconds": 0}
 
 
-def gate(total_upper: int, spent_cumulative: int, budget_cfg: Mapping[str, Any]) -> dict[str, Any]:
+def gate(total_upper: int, spent_cumulative: int, budget_cfg: Mapping[str, Any], threshold: int | None = None) -> dict[str, Any]:
+    """`threshold` None = ambang pool default (`cumulative_cap_micros` x pct); pemanggil memberi ambang pool provider
+    berplafon lewat `backend.proposal.gate.cumulative_threshold_for` (H-101 P9)."""
     c = batch_gate_cfg(budget_cfg)
-    threshold = c["cumulative_cap_micros"] * c["cumulative_pct"] // 100
+    if threshold is None:
+        threshold = c["cumulative_cap_micros"] * c["cumulative_pct"] // 100
     reasons = []
     if total_upper > c["batch_cap_micros"]:
         reasons.append(f"upper_bound {total_upper} > batch_cap {c['batch_cap_micros']}")
@@ -114,7 +117,7 @@ def prepare_family(doc_ids: list[str], sources: list[str], *, tokenizer: Any, he
 
 def project_family(prepared: dict[str, dict[str, Prepared]], headers_dir: Path, tokenizer: Any, header_cfg: dict,
                    model_cfg: dict, budget_cfg: dict, *, spent: int, profile: str | None = None, rpm: int | None = None,
-                   limit: int | None = None) -> dict[str, Any]:
+                   limit: int | None = None, threshold: int | None = None) -> dict[str, Any]:
     bp, bp_src = batch_gate_cfg(budget_cfg)["factor_bp"], "config/budget [batch_gate]"
     per_doc: dict[str, Any] = {}
     total = {"expected": 0, "upper_g36": 0, "upper_no_cache": 0, "calls": 0, "estimated_seconds": 0, "to_call": 0}
@@ -128,9 +131,9 @@ def project_family(prepared: dict[str, dict[str, Prepared]], headers_dir: Path, 
                 total[k] += row[k]
         per_doc[d] = {"sources": rows, "expected": sum(r["expected"] for r in rows.values()),
                       "upper_g36": sum(r["upper_g36"] for r in rows.values()),
-                      "gate": gate(sum(r["upper_g36"] for r in rows.values()), spent, budget_cfg)}
+                      "gate": gate(sum(r["upper_g36"] for r in rows.values()), spent, budget_cfg, threshold)}
     return {"factor_bp": bp, "factor_source": bp_src, "per_doc": per_doc, "total": total,
-            "gate": gate(total["upper_g36"], spent, budget_cfg)}
+            "gate": gate(total["upper_g36"], spent, budget_cfg, threshold)}
 
 
 def run_family(client: Any, prepared: dict[str, dict[str, Prepared]], *, tokenizer: Any, headers_dir: Path,

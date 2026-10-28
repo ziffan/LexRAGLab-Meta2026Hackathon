@@ -227,7 +227,7 @@ def test_s15a_report_labels_every_row_and_reads_only_the_compare_envelope(w):
         rows = [ln for ln in md.splitlines() if ln.startswith("| ") and "Series" not in ln and not ln.startswith("|---") and "Reason" not in ln]
         point_rows = [ln for ln in rows if re.match(r"\| Header B:", ln)]
         assert point_rows and all(ln.startswith(f"| {label}") for ln in point_rows)
-        assert not re.search(r"header B on|\bHeader B\b(?!:)", md.replace("Header B:", ""), re.I) or True
+        assert not re.search(r"header B on|\bHeader B\b(?!:)", md.replace(label, ""), re.I), "every Header B mention must carry the full profile label"
         assert json.loads(js_path.read_text(encoding="utf-8"))["label"] == label
         assert "Not a reported number" in md
     assert not (w["runs"] / "grid_compare" / "x").exists()

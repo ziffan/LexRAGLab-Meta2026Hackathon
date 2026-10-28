@@ -92,9 +92,11 @@ def diff_report(main: SchemaStore, cmp: SchemaStore, family: str) -> dict[str, A
             "rejected": [{"run_id": x.get("run_id"), "errors": x.get("errors", [])[:5]} for x in cmp.list_rejected(family)]}
 
 
-def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int) -> Any:
+def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int, *, threshold: int | None = None) -> Any:
     from backend.proposal.gate import evaluate_gate, load_gate_config
-    return evaluate_gate(expected, spent, load_gate_config(budget_cfg))
+    if threshold is None:
+        return evaluate_gate(expected, spent, load_gate_config(budget_cfg))
+    return evaluate_gate(expected, spent, load_gate_config(budget_cfg), threshold_micros=threshold)
 
 
 def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
@@ -161,7 +163,13 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
             out(f"{p.family}: est_input={p.call['est_input']} projected micro-USD per attempt={proj.total_micros} "
                 f"({format_usd_micros(proj.total_micros)})" + (" [local, cost 0]" if local else "")
                 + f" source=v{p.source_version} samples={[s.doc_id for s in p.samples]} client_verdict={proj.verdict}")
-        verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent())
+        from backend.proposal.gate import cumulative_threshold_for
+        from backend.spark import profile_provider, provider_caps
+        pcaps = provider_caps(budget_config, model_config)
+        prov = profile_provider(model_config, a.model_profile)
+        # S9 (e): belanja pool provider profil (tanpa tabel plafon = total ledger, perilaku lama persis).
+        verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps),
+                        threshold=cumulative_threshold_for(prov, budget_config, pcaps) if prov in pcaps else None)
     except ConfigInvalid as exc:
         print(f"error: {str(exc)[:200]}", file=sys.stderr)
         return 2

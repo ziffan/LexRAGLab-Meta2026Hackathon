@@ -180,3 +180,24 @@ def evaluate(role: str, caps: Caps, projected: list[int], spent_total: int, spen
         verdict="ok" if reason is None else "budget_exceeded", reason=reason,
         pool="default", pool_cap_micros=caps.total_micros, pool_spent_micros=spent_total,
     )
+
+
+def profile_provider(model_cfg: Mapping[str, Any], profile: str | None) -> str:
+    """Provider profil (`profile` None = `default_profile`). Tak terselesaikan -> "" (pool default)."""
+    name = profile or (model_cfg.get("default_profile") if isinstance(model_cfg, Mapping) else None)
+    profiles = model_cfg.get("profiles") if isinstance(model_cfg, Mapping) else None
+    p = profiles.get(name) if isinstance(profiles, Mapping) else None
+    # Profil tak terselesaikan -> "" (pool default, perilaku lama); SparkClient yang menolak profil tak sah.
+    return p["provider"] if isinstance(p, Mapping) and isinstance(p.get("provider"), str) else ""
+
+
+def pool_limits(ledger: Ledger, caps: Caps, provider: str, role: str) -> tuple[int, int, int, int]:
+    """(belanja peran, batas peran, belanja total, batas total) untuk pemeriksaan pra-run CLI/API (H-101 S9 (e)).
+    Pool default: belanja atas rekaman provider tak berplafon vs cap peran dan cap total (tanpa tabel = `Ledger.spent()`
+    persis). Provider berplafon: belanja provider vs plafon provider (cap peran dan total tidak berlaku)."""
+    pc = getattr(caps, "provider_micros", None) or {}
+    if provider in pc:
+        spent = ledger.spent_pool(provider, pc)
+        return spent, pc[provider], spent, pc[provider]
+    return (ledger.spent_pool(provider, pc, role), caps.per_role_micros[role],
+            ledger.spent_pool(provider, pc), caps.total_micros)

@@ -339,3 +339,48 @@ def test_repo_config_budget_loads_and_is_consistent():
     assert cumulative_threshold_for("baseten", budget, provider_caps(budget, model)) == 16_000_000
     assert cumulative_threshold_for("meta", budget, provider_caps(budget, model)) == 16_000_000
     assert copy.deepcopy(budget) == budget
+
+
+# ---------------------------------------------------------------- S9 (e) pemanggil CLI/API + S5 (c) maxLength
+
+def test_pool_limits_contributor_uses_default_pool_and_legacy_without_table(tmp_path):
+    from backend.spark import pool_limits, profile_provider
+    da0b0bf(tmp_path)
+    led = Ledger(tmp_path)
+    with_t = effective_caps(bcfg(caps={"baseten": 20_000_000}), None)
+    no_t = effective_caps(bcfg(version=1), None)
+    assert pool_limits(led, with_t, "meta", "b") == (526_265, 1_000_000, 561_741, 2_000_000)
+    assert pool_limits(led, no_t, "meta", "b") == (526_265, 1_000_000, 708_759, 2_000_000)  # tanpa tabel: total ledger
+    assert pool_limits(led, with_t, "baseten", "b") == (147_018, 20_000_000, 147_018, 20_000_000)
+    m = mcfg()
+    assert profile_provider(m, None) == "meta" and profile_provider(m, "bt_unit") == "baseten"
+    assert profile_provider({}, None) == ""
+
+
+def test_header_b_gate_threshold_param():
+    from backend.header_b.family import gate
+    b = bcfg(caps={"baseten": 20_000_000})
+    assert gate(1_000, 14_999_000, b)["cumulative_limit"] == 16_000_000
+    g = gate(1_000, 7_999_000, b, threshold=8_000_000)
+    assert g["verdict"] == "allow" and g["cumulative_limit"] == 8_000_000
+    assert gate(1_001, 7_999_000, b, threshold=8_000_000)["verdict"] == "reject"
+
+
+def test_compare_a_gate_uses_pool_spend(tmp_path):
+    from backend.schema_a.compare_a import _gate
+    b = bcfg(caps={"baseten": 20_000_000})
+    da0b0bf(tmp_path)
+    led = Ledger(tmp_path)
+    pc = provider_caps(b)
+    assert _gate(b, [100], led.spent_pool("meta", pc)).spent == 561_741
+    assert _gate(b, [100], led.spent_pool("meta", {})).spent == 708_759
+    assert _gate(b, [100], 0, threshold=1).ok is False
+
+
+def test_S5c_maxlength_enforced_but_strict_check_accepts_it():
+    from backend.spark.schema_check import check_strict, validate_instance
+    schema = {"type": "object", "additionalProperties": False, "required": ["h"],
+              "properties": {"h": {"type": "string", "maxLength": 190}}}
+    assert check_strict(schema) is None
+    assert validate_instance({"h": "x" * 190}, schema) is None
+    assert "maxLength" in validate_instance({"h": "x" * 191}, schema)

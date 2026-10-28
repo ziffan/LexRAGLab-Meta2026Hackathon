@@ -94,7 +94,7 @@ def make_prepared(n: int = 4, *, source: str = "pasal", doc_id: str = "uupt-x", 
 def words(n: int, letters: int | None = None) -> str:
     """`n` kata; bila `letters` diberikan, total huruf (tanpa spasi) tepat `letters` (kata 3-4 huruf)."""
     if letters is None:
-        return " ".join(["kata"] * n)
+        return " ".join(["kat"] * n)  # 3 huruf: 41 kata = 163 karakter (< maxLength 190, jadi semantic_invalid, S5 b)
     base, extra = divmod(letters, n)
     return " ".join("x" * (base + (1 if i < extra else 0)) for i in range(n))
 

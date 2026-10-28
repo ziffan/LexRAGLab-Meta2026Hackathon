@@ -315,8 +315,6 @@ def test_s5b_41_tokens_rejected_and_kept_in_rejected(tmp_path):
     assert not (rig.runs / "headers").exists()  # store utama tidak disentuh
 
 
-@pytest.mark.xfail(strict=True, reason="klien Spark belum memvalidasi `maxLength` skema (backend/spark/schema_check.py, di luar scope W2): "
-                                       "S5 (c) menuntut schema_invalid untuk 191 karakter; hapus penanda ini setelah W1/L2 menambahnya")
 def test_s5c_191_chars_is_schema_invalid_not_semantic_and_not_in_rejected(tmp_path):
     h = words(40, 152)
     assert len(h) == 191
