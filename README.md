@@ -17,6 +17,8 @@ The hackathon theme is "Bring Meta's models into your domain. Solve a problem yo
 - **Time and mental space.** LexRAGLab aims to replace guessing a chunk size with a measured choice, and to keep the context an agent needs small. This is the hypothesis the evaluation tests, not a measured saving.
 - **Something that wasn't possible before.** There is no public, standard benchmark for Indonesian legal RAG, so a retrieval setting for Indonesian legal text could not be chosen by measurement. Muse Spark reads a new document family, proposes its structure and evaluation items for operator review, and LexRAGLab scores every setting against the approved gold spans.
 
+LexRAGLab is an evaluation lab that finds chunking and retrieval settings for a family of Indonesian legal documents; it is not a RAG application or a chatbot.
+
 ## What it is
 
 LexRAGLab is an evaluation sandbox for chunking and retrieval on Indonesian legal text. For one family of documents with a homogeneous pattern, it searches a grid of settings (chunker, chunk size and overlap, dense / BM25 / hybrid retrieval, context header on or off) and reports which settings give the most gold evidence for a fixed token budget.
@@ -161,6 +163,8 @@ Source: `data/uupt/UU_40_2007_PERSEROAN_TERBATAS.md` (frontmatter lists these so
 ## Built before vs during the hackathon
 
 The hackathon started on 26 Oct 2026, 23:00 WIB. The first commit in this repository is dated 26 Oct 2026 23:23 WIB, after kickoff. Only two things in this repository were prepared before that (drafted 25-26 Oct, committed afterwards, each in a separately labelled commit).
+
+All code in this repository was written during the hackathon (26 Oct to 4 Nov 2026); pre-event material is limited to labelled planning documents and regulation text, with no code, and no pre-event prototype is included.
 
 | Built before kickoff (25–26 Oct 2026) | Built during the hackathon |
 |---|---|
