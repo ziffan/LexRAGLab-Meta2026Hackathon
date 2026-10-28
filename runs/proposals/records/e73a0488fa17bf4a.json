@@ -1,0 +1,61 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.395999,
+  "max_cov": {
+   "den": 10,
+   "num": 4
+  },
+  "reasons": [],
+  "status": "ok",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "### Pasal 16\n\n(1) Perseroan tidak boleh memakai nama yang:\n\na. telah dipakai secara sah oleh Perseroan lain atau sama pada pokoknya dengan nama Perseroan lain;\n\nb. bertentangan dengan ketertiban umum dan/atau kesusilaan;\n\nc. sama atau mirip dengan nama lembaga negara, lembaga pemerintah, atau lembaga internasional, kecuali mendapat izin dari yang bersangkutan;\n\nd. tidak sesuai dengan maksud dan tujuan, serta kegiatan usaha, atau menunjukkan maksud dan tujuan Perseroan saja tanpa nama diri;\n\ne. terdiri atas angka atau rangkaian angka, huruf atau rangkaian huruf yang tidak membentuk kata; atau\n\nf. mempunyai arti sebagai Perseroan, badan hukum, atau persekutuan perdata.\n\n(2) Nama Perseroan harus didahului dengan frase \"Perseroan Terbatas\" atau disingkat \"PT\".\n\n(3) Dalam hal Perseroan Terbuka selain berlaku ketentuan sebagaimana dimaksud pada ayat (2), pada akhir nama Perseroan ditambah kata singkatan \"Tbk\".\n\n(4) Ketentuan lebih lanjut mengenai tata cara pemakaian nama Perseroan diatur dengan Peraturan Pemerintah."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "#### Penjelasan Pasal 94\n\nAyat (1)\n\nKewenangan RUPS tidak dapat dilimpahkan kepada organ Perseroan lainnya atau pihak lain.\n\nAyat (2)\n\nCukup jelas.\n\nAyat (3)\n\nPersyaratan pengangkatan anggota Direksi untuk “jangka waktu tertentu”, dimaksudkan anggota Direksi yang telah berakhir masa jabatannya tidak dengan sendirinya meneruskan jabatannya semula, kecuali dengan pengangkatan kembali berdasarkan keputusan RUPS. Misalnya untuk jangka waktu 3 (tiga) tahun atau 5 (lima) tahun sejak tanggal pengangkatan, maka sejak berakhirnya jangka waktu tersebut mantan anggota Direksi yang bersangkutan tidak berhak lagi bertindak untuk dan atas nama Perseroan, kecuali setelah diangkat kembali oleh RUPS.\n\nAyat (4)\n\nCukup jelas.\n\nAyat (5)\n\nCukup jelas.\n\nAyat (6)\n\nCukup jelas.\n\nAyat (7)\n\nYang dimaksud dengan “perubahan anggota Direksi” termasuk perubahan karena pengangkatan kembali anggota Direksi.\n\nAyat (8)\n\nYang dimaksud dengan “permohonan” adalah permohonan persetujuan perubahan anggaran dasar sebagaimana dimaksud dalam Pasal 21 ayat (2).\n\nYang dimaksud dengan “pemberitahuan” adalah pemberitahuan perubahan anggaran dasar sebagaimana dimaksud dalam Pasal 21 ayat (3) dan pemberitahuan tentang data Perseroan lainnya yang wajib diberitahukan kepada Menteri sesuai dengan ketentuan Undang-Undang ini.\n\nAyat (9)\n\nCukup jelas."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "### Pasal 107\n\nDalam anggaran dasar diatur ketentuan mengenai:\n\na. tata cara pengunduran diri anggota Direksi;\n\nb. tata cara pengisian jabatan anggota Direksi yang lowong; dan\n\nc. pihak yang berwenang menjalankan pengurusan dan mewakili Perseroan dalam hal seluruh anggota Direksi berhalangan atau diberhentikan untuk sementara."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "### Pasal 93\n\n(1) Yang dapat diangkat menjadi anggota Direksi adalah orang perseorangan yang cakap melakukan perbuatan hukum, kecuali dalam waktu 5 (lima) tahun sebelum pengangkatannya pernah:\n\na. dinyatakan pailit;\n\nb. menjadi anggota Direksi atau anggota Dewan Komisaris yang dinyatakan bersalah menyebabkan suatu Perseroan dinyatakan pailit; atau\n\nc. dihukum karena melakukan tindak pidana yang merugikan keuangan negara dan/atau yang berkaitan dengan sektor keuangan.\n\n(2) Ketentuan persyaratan sebagaimana dimaksud pada ayat (1) tidak mengurangi kemungkinan instansi teknis yang berwenang menetapkan persyaratan tambahan berdasarkan peraturan perundang-undangan.\n\n(3) Pemenuhan persyaratan sebagaimana dimaksud pada ayat (1) dan ayat (2) dibuktikan dengan surat yang disimpan oleh Perseroan."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "### Pasal 107\n\nDalam anggaran dasar diatur ketentuan mengenai:\n\na. tata cara pengunduran diri anggota Direksi;\n\nb. tata cara pengisian jabatan anggota Direksi yang lowong; dan\n\nc. pihak yang berwenang menjalankan pengurusan dan mewakili Perseroan dalam hal seluruh anggota Direksi berhalangan atau diberhentikan untuk sementara."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "### Pasal 99\n\n(1) Anggota Direksi tidak berwenang mewakili Perseroan apabila:\n\na. terjadi perkara di pengadilan antara Perseroan dengan anggota Direksi yang bersangkutan; atau\n\nb. anggota Direksi yang bersangkutan mempunyai benturan kepentingan dengan Perseroan.\n\n(2) Dalam hal terdapat keadaan sebagaimana dimaksud pada ayat (1), yang berhak mewakili Perseroan adalah:\n\na. anggota Direksi lainnya yang tidak mempunyai benturan kepentingan dengan Perseroan;\n\nb. Dewan Komisaris dalam hal seluruh anggota Direksi mempunyai benturan kepentingan dengan Perseroan; atau\n\nc. pihak lain yang ditunjuk oleh RUPS dalam hal seluruh anggota Direksi atau Dewan Komisaris mempunyai benturan kepentingan dengan Perseroan."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "data_tidak_dimuat",
+  "alasan_teks": "Undang-undang ini hanya mengatur tata cara pengangkatan dan daftar Direksi secara umum di Pasal 94 dan Pasal 50, tanpa memuat nama anggota Direksi perseroan tertentu.",
+  "doc_id": "uupt-40-2007",
+  "mode": "unanswerable",
+  "query": "Siapa nama anggota Direksi PT Bank Central Asia Tbk yang menjabat saat ini?"
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "e73a0488fa17bf4a",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "5433ad0a525b466eab8c9e542caf0bf9",
+ "validation": null
+}

@@ -1,0 +1,63 @@
+{
+ "absence_check": {
+  "config_hash": "60724320b9896ec00b23a37ffd543d700335619b0e370657d49d38b9e4cf2711",
+  "max_cosine": 0.627923,
+  "max_cov": {
+   "den": 12,
+   "num": 7
+  },
+  "reasons": [
+   "lexical_overlap"
+  ],
+  "status": "doubtful",
+  "top_k": [
+   {
+    "rank": 1,
+    "source": "bm25",
+    "unit_text": "### Pasal 28\n\nKetentuan mengenai tata cara pengajuan permohonan untuk memperoleh Keputusan Menteri mengenai pengesahan badan hukum Perseroan, dan keberatannya sebagaimana dimaksud dalam Pasal 9, Pasal 10, dan Pasal 11 mutatis mutandis berlaku bagi pengajuan permohonan persetujuan perubahan anggaran dasar dan keberatannya."
+   },
+   {
+    "rank": 2,
+    "source": "bm25",
+    "unit_text": "### Pasal 29\n\n(1) Daftar Perseroan diselenggarakan oleh Menteri.\n\n(2) Daftar Perseroan sebagaimana dimaksud pada ayat (1) memuat data tentang Perseroan yang meliputi:\n\na. nama dan tempat kedudukan, maksud dan tujuan serta kegiatan usaha, jangka waktu pendirian, dan permodalan;\n\nb. alamat lengkap Perseroan sebagaimana dimaksud dalam Pasal 5;\n\nc. nomor dan tanggal akta pendirian dan Keputusan Menteri mengenai pengesahan badan hukum Perseroan sebagaimana dimaksud dalam Pasal 7 ayat (4);\n\nd. nomor dan tanggal akta perubahan anggaran dasar dan persetujuan Menteri sebagaimana dimaksud dalam Pasal 23 ayat (1);\n\ne. nomor dan tanggal akta perubahan anggaran dasar dan tanggal penerimaan pemberitahuan oleh Menteri sebagaimana dimaksud dalam Pasal 23 ayat (2);\n\nf. nama dan tempat kedudukan notaris yang membuat akta pendirian dan akta perubahan anggaran dasar;\n\ng. nama lengkap dan alamat pemegang saham, anggota Direksi, dan anggota Dewan Komisaris Perseroan;\n\nh. nomor dan tanggal akta pembubaran atau nomor dan tanggal penetapan pengadilan tentang pembubaran Perseroan yang telah diberitahukan kepada Menteri;\n\ni. berakhirnya status badan hukum Perseroan;\n\nj. neraca dan laporan laba rugi dari tahun buku yang bersangkutan bagi Perseroan yang wajib diaudit.\n\n(3) Data Perseroan sebagaimana dimaksud pada ayat (2) dimasukkan dalam daftar Perseroan pada tanggal yang bersamaan dengan tanggal:\n\na. Keputusan Menteri mengenai pengesahan badan hukum Perseroan, persetujuan atas perubahan anggaran dasar yang memerlukan persetujuan;\n\nb. penerimaan pemberitahuan perubahan anggaran dasar yang tidak memerlukan persetujuan; atau\n\nc. penerimaan pemberitahuan perubahan data Perseroan yang bukan merupakan perubahan anggaran dasar.\n\n(4) Ketentuan sebagaimana dimaksud pada ayat (2) huruf g mengenai nama lengkap dan alamat pemegang saham Perseroan Terbuka sesuai dengan ketentuan peraturan perundang-undangan di bidang pasar modal.\n\n(5) Daftar Perseroan sebagaimana dimaksud pada ayat (1) terbuka untuk umum.\n\n(6) Ketentuan lebih lanjut mengenai daftar Perseroan diatur dengan Peraturan Menteri."
+   },
+   {
+    "rank": 3,
+    "source": "bm25",
+    "unit_text": "### Pasal 157\n\n(1) Anggaran dasar dari Perseroan yang telah memperoleh status badan hukum dan perubahan anggaran dasar yang telah disetujui atau dilaporkan kepada Menteri dan didaftarkan dalam daftar perusahaan sebelum Undang-Undang ini berlaku tetap berlaku jika tidak bertentangan dengan Undang-Undang ini.\n\n(2) Anggaran dasar dari Perseroan yang belum memperoleh status badan hukum atau anggaran dasar yang perubahannya belum disetujui atau dilaporkan kepada Menteri pada saat Undang-Undang ini mulai berlaku, wajib disesuaikan dengan Undang-Undang ini.\n\n(3) Perseroan yang telah memperoleh status badan hukum berdasarkan peraturan perundang-undangan, dalam jangka waktu 1 (satu) tahun setelah berlakunya Undang-Undang ini wajib menyesuaikan anggaran dasarnya dengan ketentuan Undang-Undang ini.\n\n(4) Perseroan yang tidak menyesuaikan anggaran dasarnya dalam jangka waktu sebagaimana dimaksud pada ayat (3) dapat dibubarkan berdasarkan putusan pengadilan negeri atas permohonan kejaksaan atau pihak yang berkepentingan."
+   },
+   {
+    "rank": 1,
+    "source": "dense",
+    "unit_text": "### Pasal 157\n\n(1) Anggaran dasar dari Perseroan yang telah memperoleh status badan hukum dan perubahan anggaran dasar yang telah disetujui atau dilaporkan kepada Menteri dan didaftarkan dalam daftar perusahaan sebelum Undang-Undang ini berlaku tetap berlaku jika tidak bertentangan dengan Undang-Undang ini.\n\n(2) Anggaran dasar dari Perseroan yang belum memperoleh status badan hukum atau anggaran dasar yang perubahannya belum disetujui atau dilaporkan kepada Menteri pada saat Undang-Undang ini mulai berlaku, wajib disesuaikan dengan Undang-Undang ini.\n\n(3) Perseroan yang telah memperoleh status badan hukum berdasarkan peraturan perundang-undangan, dalam jangka waktu 1 (satu) tahun setelah berlakunya Undang-Undang ini wajib menyesuaikan anggaran dasarnya dengan ketentuan Undang-Undang ini.\n\n(4) Perseroan yang tidak menyesuaikan anggaran dasarnya dalam jangka waktu sebagaimana dimaksud pada ayat (3) dapat dibubarkan berdasarkan putusan pengadilan negeri atas permohonan kejaksaan atau pihak yang berkepentingan."
+   },
+   {
+    "rank": 2,
+    "source": "dense",
+    "unit_text": "#### Penjelasan Pasal 123\n\nAyat (1)\n\nCukup jelas.\n\nAyat (2)\n\nHuruf a\n\nCukup jelas.\n\nHuruf b\n\nCukup jelas.\n\nHuruf c\n\nDalam tata cara konversi saham ditetapkan harga wajar saham dari Perseroan yang menggabungkan diri serta harga wajar saham dari Perseroan yang menerima Penggabungan untuk menentukan perbandingan penukaran saham dalam rangka konversi saham.\n\nHuruf d\n\nRancangan perubahan anggaran dasar dalam hal ini hanya diwajibkan sebagai bagian dari usulan apabila Penggabungan tersebut menyebabkan adanya perubahan anggaran dasar.\n\nHuruf e\n\nYang dimaksud dengan “3 (tiga) tahun buku terakhir dari Perseroan” adalah yang keseluruhannya mencakup 36 (tiga puluh enam) bulan.\n\nHuruf f\n\nCukup jelas.\n\nHuruf g\n\nCukup jelas.\n\nHuruf h\n\nCukup jelas.\n\nHuruf i\n\nCukup jelas.\n\nHuruf j\n\nCukup jelas.\n\nHuruf k\n\nCukup jelas.\n\nHuruf l\n\nCukup jelas.\n\nHuruf m\n\nCukup jelas.\n\nHuruf n\n\nCukup jelas.\n\nHuruf o\n\nCukup jelas.\n\nAyat (3)\n\nCukup jelas.\n\nAyat (4)\n\nYang dimaksud dengan “Perseroan tertentu” adalah Perseroan yang mempunyai bidang usaha khusus, antara lain lembaga keuangan bank dan lembaga keuangan nonbank. Yang dimaksud dengan “instansi terkait” antara lain Bank Indonesia untuk Penggabungan Perseroan perbankan.\n\nAyat (5)\n\nCukup jelas."
+   },
+   {
+    "rank": 3,
+    "source": "dense",
+    "unit_text": "### Pasal 24\n\n(1) Perseroan yang modal dan jumlah pemegang sahamnya telah memenuhi kriteria sebagai Perseroan Publik sesuai dengan ketentuan peraturan perundang-undangan di bidang pasar modal, wajib mengubah anggaran dasarnya sebagaimana dimaksud dalam Pasal 21 ayat (2) huruf f dalam jangka waktu 30 (tiga puluh) hari terhitung sejak terpenuhi kriteria tersebut.\n\n(2) Direksi Perseroan sebagaimana dimaksud pada ayat (1) wajib mengajukan pernyataan pendaftaran sesuai dengan ketentuan peraturan perundang-undangan di bidang pasar modal."
+   }
+  ]
+ },
+ "body": {
+  "alasan_kode": "rincian_tidak_diatur",
+  "alasan_teks": "Pasal 153 menyerahkan biaya perseroan sebagai badan hukum ke ketentuan penerimaan negara bukan pajak tanpa menetapkan angka tarifnya di bagian mana pun dokumen.",
+  "doc_id": "uupt-40-2007",
+  "mode": "unanswerable",
+  "query": "Berapa besaran tarif PNBP yang harus dibayar untuk pengesahan badan hukum Perseroan dan persetujuan perubahan anggaran dasar?"
+ },
+ "edited": null,
+ "family": "uupt",
+ "item_id": null,
+ "operator_note": null,
+ "proposal_id": "d3f8a86a00f2beb1",
+ "resolved_span": null,
+ "review_status": "usulan",
+ "reviewed_at": null,
+ "run_id": "5433ad0a525b466eab8c9e542caf0bf9",
+ "validation": null
+}
