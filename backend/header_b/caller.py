@@ -14,7 +14,7 @@ import os
 from fractions import Fraction
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
 from backend.spark import BudgetExceeded, RunRecord, SparkClient
 
@@ -120,6 +120,14 @@ def _save(path: Path, rec: dict[str, Any]) -> None:
     os.replace(tmp, path)
 
 
+def is_length_rejection(err: Mapping[str, Any]) -> bool:
+    """Penolakan karena panjang header saja (putusan operator 13): `semantic_invalid` "header exceeds N tokens" atau
+    `schema_invalid` "longer than maxLength". Kode/pesan lain = galat teknis atau sistemik."""
+    msg = str(err.get("message", ""))
+    code = err.get("code")
+    return (code == "semantic_invalid" and "header exceeds" in msg) or (code == "schema_invalid" and "longer than maxLength" in msg)
+
+
 def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: list[Unit], *, granularity: str,
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
                 max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True,
@@ -162,9 +170,10 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
                 _save_rejected(headers_dir, granularity, prompt, u, res, tokenizer)
             err = res.record.error or {"code": "model_error", "message": "call failed"}
             run.outcomes.append(HeaderOutcome(u, res.record, [], dict(err)))
-            # H-101 (putusan 13): jalur pembanding boleh tidak menghitung `semantic_invalid` (keluaran sah transport yang ditolak
-            # validator 40 token/maxLength); galat teknis tetap dihitung. Bawaan True = perilaku lama.
-            if count_semantic_errors or err.get("code") != "semantic_invalid":
+            # H-101 (putusan 13): jalur pembanding tidak menghitung penolakan PANJANG (header > 40 token, `semantic_invalid`;
+            # > maxLength, `schema_invalid`); galat lain (chunk_id beda, kosong, JSON rusak, timeout, dst.) tetap dihitung.
+            # Bawaan True = perilaku lama.
+            if count_semantic_errors or not is_length_rejection(err):
                 consecutive += 1
             if consecutive >= max_consecutive_errors:
                 run.stopped_reason = "too_many_errors"
