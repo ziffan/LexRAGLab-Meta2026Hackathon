@@ -30,7 +30,7 @@ from backend.spark import BudgetExceeded, ConfigInvalid, compute_cost_micros, fo
 from backend.spark.settings import API_CHAT, profile_api
 
 from .caller import load_header, run_headers
-from .compare_store import (CompareError, assert_main_identity, build_identity, check_forbidden_profile_keys, check_identity,
+from .compare_store import (CompareError, factor_bp_for, assert_main_identity, build_identity, check_forbidden_profile_keys, check_identity,
                             comparison_profile, compare_profile_root, compare_store_dir, max_attempts_for, snapshot_main,
                             time_params_for, validate_compare_cfg, write_identity)
 from .family import upper_bound
@@ -408,7 +408,7 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         prof = comparison_profile(model_config, a.model_profile)
         from backend.proposal.gate import load_gate_config
         gcfg = load_gate_config(budget_config)
-        gate_cfg = {"factor_bp": gcfg.factor_bp, "batch_cap_micros": gcfg.batch_cap_micros}
+        gate_cfg = {"factor_bp": factor_bp_for(hc, a.model_profile, gcfg.factor_bp), "batch_cap_micros": gcfg.batch_cap_micros}
         from backend.spark.budget import effective_caps
         effective_caps(budget_config, env, model_config)  # plafon provider tidak sah = config_invalid sebelum jaringan
         store_dir = compare_store_dir(runs, a.model_profile, a.family, casefold=casefold)

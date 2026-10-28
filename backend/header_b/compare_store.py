@@ -102,6 +102,15 @@ def validate_compare_cfg(hc: Mapping[str, Any], model_cfg: Mapping[str, Any]) ->
                 raise ConfigInvalid(f"config/header_b: max_attempts.{k} is not a profile in config/model")
             if not _is_int(v) or v < 1:
                 raise ConfigInvalid(f"config/header_b: max_attempts.{k} must be an integer >= 1")
+    fb = hc.get("factor_bp")
+    if fb is not None:
+        if not isinstance(fb, Mapping):
+            raise ConfigInvalid("config/header_b: factor_bp must be a table")
+        for k, v in fb.items():
+            if k not in names:
+                raise ConfigInvalid(f"config/header_b: factor_bp.{k} is not a profile in config/model")
+            if not _is_int(v) or v < 10000:
+                raise ConfigInvalid(f"config/header_b: factor_bp.{k} must be an integer >= 10000")
     pr = hc.get("projection")
     if pr is not None:
         if not isinstance(pr, Mapping):
@@ -121,6 +130,13 @@ def max_attempts_for(hc: Mapping[str, Any], profile: str) -> int:
     t = hc.get("max_attempts")
     v = t.get(profile) if isinstance(t, Mapping) else None
     return DEFAULT_MAX_ATTEMPTS if v is None else int(v)
+
+
+def factor_bp_for(hc: Mapping[str, Any], profile: str, gate_factor_bp: int) -> int:
+    """H-101 Q-B3: faktor ulang per profil terukur dari pilot dipakai bila lebih besar dari `[batch_gate].factor_bp`."""
+    t = hc.get("factor_bp")
+    v = t.get(profile) if isinstance(t, Mapping) else None
+    return max(int(gate_factor_bp), 0 if v is None else int(v))
 
 
 def time_params_for(hc: Mapping[str, Any], profile: str) -> dict[str, int] | None:
