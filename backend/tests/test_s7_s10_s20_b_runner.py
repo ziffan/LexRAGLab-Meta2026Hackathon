@@ -216,3 +216,18 @@ def test_s5m_non_sweep_profile_never_reads_sweep_file(tmp_path, monkeypatch):
     monkeypatch.setattr(sweep_run, "load_sweep", missing)
     rig3, _ = sweep_rig(tmp_path / "z", "baseten_open")
     assert run_main(rig3, args("sweep_meta_medium"), sweep=None) == 2 and rig3.tr.calls == 0
+
+
+# ------------------------------------------------------------------------------------------------ S8 (potongan runner B)
+def test_s8_b_sweeps_leave_main_store_grid_schemas_answers_untouched(tmp_path):
+    from .h101_helpers import put_header
+    rig, sw = sweep_rig(tmp_path, "sweep_meta_medium")
+    put_header(rig.runs / "headers", "pasal", "CH-U9", "header utama")
+    main_before = {p: p.read_bytes() for p in sorted((rig.runs / "headers").rglob("*.json"))}
+    for prof in ("sweep_meta_medium", "sweep_meta_high"):
+        assert run_main(rig, args(prof, "--max-units", "2"), sweep=sw) == 0
+    assert run_main(rig, args("sweep_baseten_high", "--confirm-go", "--max-units", "2"), sweep=sw) == 0
+    assert {p: p.read_bytes() for p in sorted((rig.runs / "headers").rglob("*.json"))} == main_before
+    for d in ("grid", "answers", "schemas"):
+        assert not (rig.runs / d).exists()
+    assert sorted(p.name for p in (rig.runs / "headers_compare").iterdir()) == ["sweep_baseten_high", "sweep_meta_high", "sweep_meta_medium"]
