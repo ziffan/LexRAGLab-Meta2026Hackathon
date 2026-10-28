@@ -180,7 +180,8 @@ def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str
          model_config: Mapping[str, Any] | None = None, budget_config: Mapping[str, Any] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
          probe: Callable[[str, str], tuple[bool, str]] | None = None, pid_alive: Callable[[int], bool] | None = None,
-         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None) -> int:
+         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None,
+         header_config: Mapping[str, Any] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.answer.compare_c", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil di config/model dengan roles memuat 'c'")
     ap.add_argument("--items", nargs="*", default=None, help="item_id; bawaan: butir scene_checked bersumber tersimpan")
@@ -249,9 +250,14 @@ def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str
     local = profile_api(prof) == API_CHAT
     gate = None
     if sweep_cfg is not None and not local:  # D13/P14/S20 (a): gerbang G-36 per butir atas pool sapuan, SEBELUM jaringan.
-        # `per_call_micros` sudah batas atas sadar-floor (tanpa cache): batas atas butir = jumlahnya (`upper_floor`), tanpa faktor ganda
+        # G-36 penuh per butir: expected = jumlah `per_call_micros` (proyeksi tanpa cache, 0 bila cache); batas atas =
+        # max(ceil(expected x factor_bp efektif profil / 10000), upper sadar-floor = jumlah yang sama). Sama dengan pola compare_a/B.
         from backend.header_b.compare import make_gate
-        gate = make_gate(prof["provider"], budget_config, model_config, env, svc.runs_dir, sweep_cfg=sweep_cfg)
+        from backend.header_b.run import load_header_cfg
+        from backend.proposal.gate import load_gate_config
+        fbp = sweep_run.factor_bp(load_header_cfg() if header_config is None else dict(header_config), sweep_cfg,
+                                  a.model_profile, load_gate_config(budget_config).factor_bp)
+        gate = make_gate(prof["provider"], budget_config, model_config, env, svc.runs_dir, sweep_cfg=sweep_cfg, factor_bp=fbp)
     # Satu batch per (item): dua kolom, supaya proyeksi dan cap diperiksa sebelum jaringan.
     by_item: dict[str, list[Plan]] = {}
     for p in ok_plans:
@@ -267,7 +273,7 @@ def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str
             return 2
         total += proj.total_micros
         if gate is not None:
-            v = gate([0], sum(proj.per_call_micros))
+            v = gate([sum(proj.per_call_micros)], sum(proj.per_call_micros))
             out(f"{iid}: gate upper_bound={v.batas_atas} spent_sweep_pool={v.spent} ok={v.ok} reasons={list(v.reasons)}")
         n_cached = sum(1 for c in proj.per_call_micros if c == 0 and not local)
         out(f"{iid}: calls={len(calls)} projected micro-USD={proj.total_micros} ({format_usd_micros(proj.total_micros)})"
@@ -310,7 +316,7 @@ def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str
             if gate is not None:  # S20 (a): butir ditolak gerbang -> `not_run` (bukan gagal model), 0 request
                 calls = [make_call(p.prompt, p.bundle, meta) for p in ps]  # type: ignore[arg-type]
                 proj = client.project_batch(calls)
-                v = gate([0], sum(proj.per_call_micros))
+                v = gate([sum(proj.per_call_micros)], sum(proj.per_call_micros))
                 if not v.ok:
                     rc = 3
                     out(f"{iid}: not_run (gate rejected: {','.join(v.reasons)}; upper_bound={v.batas_atas} spent={v.spent})")

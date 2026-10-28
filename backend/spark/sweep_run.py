@@ -8,6 +8,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from backend.grid.headers import covered  # noqa: F401  (satu sumber ambang cakupan S11(a))
+
 from .errors import ConfigInvalid
 from .sweep import (SWEEP_BASETEN_FACTOR_BP_MIN, has_sweep_profile, load_sweep, merge_sweep, sweep_profile_names,
                     validate_sweep)
@@ -93,11 +95,6 @@ def coverage_policy(sweep_cfg: Mapping[str, Any] | None) -> tuple[str, int]:
     if not _is_int(pct) or not 1 <= pct <= 100:
         raise ConfigInvalid("config/sweep: compare.coverage_threshold_pct must be an integer between 1 and 100")
     return pol, pct
-
-
-def covered(headered: int, chunks: int, pct: int) -> bool:
-    """S11(a): `headered x 100 >= pct x chunks` (inklusif, tanpa float)."""
-    return headered * 100 >= pct * chunks
 
 
 def coverage_bp(headered: int, chunks: int) -> int:

@@ -221,3 +221,40 @@ def test_s14e_sweep_name_is_unknown_to_w6(svc, tmp_path):
     c, tr, s = make(svc, tmp_path)
     r = c.post(URL, json=body(svc, model_profile="sweep_baseten_high"))
     assert r.status_code == 400
+
+
+def _item_projection(s):
+    """Proyeksi butir (jumlah `per_call_micros` dua slot) dari `--project-only` (tanpa jaringan)."""
+    import re
+    rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM, "--project-only"], _tr())
+    assert rc == 0, lines
+    return int(re.search(r"total projected micro-USD=(\d+)", "\n".join(lines)).group(1))
+
+
+def test_s20a_c_gate_edge_via_main_full_g36_factor_and_sum_not_max(svc, tmp_path):
+    """S-2 (pemeriksa Tier 1 BC): tepi S20(a) lewat `compare_c.main`. Angka skenario (55.000 x 2 = 110.000 inklusif) mengandaikan
+    faktor 1; di profil `sweep_baseten_high` gerbang G-36 penuh: expected = jumlah `per_call_micros` P (dua slot, tanpa cache),
+    batas atas U = max(ceil(P x 19312 / 10000), P) (19312 = max(gerbang 15700, entri `[factor_bp]` sweep)). Tepi dihitung dari P hasil
+    proyeksi nyata fixture: belanja pool 40.000.000 - U + 1 ditolak `cumulative_over_threshold`, 0 request; tepat 40.000.000 - U
+    lolos (tes berikut). Membunuh mutan `sum` -> `max` (U bergeser ke satu slot) dan mutan tanpa faktor (U = P)."""
+    s = _seed(svc, tmp_path)
+    P = _item_projection(s)
+    assert P > 0
+    U = max(-(-P * 19312 // 10000), P)
+    assert U > P  # faktor benar-benar berlaku
+    tr = _tr()
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 40_000_000 - U + 1, rid="fill")
+    rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
+    assert rc == 3 and tr.calls == 0, lines
+    assert any("cumulative_over_threshold" in ln and f"upper_bound={U}" in ln for ln in lines), lines
+
+
+def test_s20a_c_gate_edge_via_main_exact_edge_passes(svc, tmp_path):
+    """Pasangan inklusif dari tes di atas: belanja = 40.000.000 - U tepat -> lolos, dua request jalan."""
+    s = _seed(svc, tmp_path)
+    P = _item_projection(s)
+    U = max(-(-P * 19312 // 10000), P)
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 40_000_000 - U, rid="fill")
+    tr = _tr()
+    rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
+    assert rc == 0 and tr.calls == 2, lines

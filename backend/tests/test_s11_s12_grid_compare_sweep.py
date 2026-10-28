@@ -167,9 +167,7 @@ def test_s11_mask_ref_writes_masked_contributor_reference(w):
     assert sid in {p["setting_id"] for p in ref["points"]}
     assert not (w["runs"] / "grid" / res.ref_path.name).exists()  # amplop utama tidak tertulis
     assert (w["runs"] / "grid" / f"{main.key}.json").exists()
-    # tanpa mask_ref (mask_threshold) tidak ada berkas rujukan
-    w_ = res.path.parent
-    assert len(list(w_.glob("ref-*.json"))) == 1
+    assert len(list(res.path.parent.glob("ref-*.json"))) == 1
 
 
 def test_s11_non_sweep_profile_is_strict_and_never_reads_sweep_file(w, monkeypatch):
@@ -204,3 +202,51 @@ def test_s11a_integer_arithmetic_200_chunks():
     assert sweep_run.covered(190, 200, 95) and sweep_run.coverage_bp(190, 200) == 9500
     assert not sweep_run.covered(189, 200, 95) and sweep_run.coverage_bp(189, 200) == 9450
     assert sweep_run.coverage_bp(8, 10) == 8000
+
+
+def test_s11_mask_threshold_writes_no_reference_but_mask_ref_does_with_same_masked_chunks(w):
+    """S-3 (pemeriksa Tier 1 BC): `mask_ref` vs `mask_threshold` dengan potongan hilang yang SAMA di atas ambang. Hanya `mask_ref`
+    menulis `ref-*.json` (rujukan Contributor ber-mask: potongan hilang diindeks tanpa header, `masked` = potongan itu persis);
+    `mask_threshold` tidak (`ref_path is None`, tak ada berkas). Membunuh mutan `pol != "strict"` pada penulisan rujukan."""
+    main = run_main(w)
+    sid, ids = target(w, main)
+    pct = (len(ids) - 1) * 100 // len(ids)
+    thr = run_sweep(w, drop(store_of(w, "Cmp"), ids[:1]), "sweep_meta_medium", policy_cfg("mask_threshold", pct))
+    assert thr.ref_path is None and not list(thr.path.parent.glob("ref-*.json"))
+    assert thr.envelope["coverage"]["settings"][sid]["missing"] == ids[:1]  # potongan memang hilang (kontrol)
+    ref_res = run_sweep(w, drop(store_of(w, "Cmp"), ids[:1]), "sweep_meta_medium", policy_cfg("mask_ref", pct))
+    assert ref_res.ref_path is not None
+    ref = json.loads(ref_res.ref_path.read_text(encoding="utf-8"))
+    assert ref["masked"] == ids[:1] and ref["compare"]["policy"] == "mask_ref" and ref["compare"]["threshold_pct"] == pct
+
+
+def test_s11_mask_ref_reference_excludes_chunks_of_settings_below_threshold(w):
+    """S-3: setting di bawah ambang (`below_threshold`, gagal `header_missing`) tidak ikut `masked` rujukan. Satu potongan hilang
+    (7/8 = 87,5%) dengan ambang 90 -> kedua setting header-on di bawah ambang -> `masked` kosong -> tak ada berkas rujukan.
+    Membunuh mutan yang memasukkan potongan setting di bawah ambang ke `masked`."""
+    main = run_main(w)
+    sid, ids = target(w, main)
+    res = run_sweep(w, drop(store_of(w, "Cmp"), ids[:1]), "sweep_meta_medium", policy_cfg("mask_ref", 90))
+    assert res.envelope["coverage"]["settings"][sid]["below_threshold"] is True
+    assert res.ref_path is None and not list(res.path.parent.glob("ref-*.json"))
+
+
+def test_s11a_resolve_headers_threshold_boundary_is_inclusive_on_real_path():
+    """S-1 (pemeriksa Tier 1 BC): batas inklusif lewat `resolve_headers` (bukan hanya helper `covered`). 20 potongan, ambang 95%:
+    19/20 (tepat 95%) lolos; 18/20 (90%) -> `HeaderMissingError`. Membunuh mutan `<` -> `<=` pada ambang di `grid/headers.py`;
+    `sweep_run.covered` adalah fungsi yang sama dengan yang dipanggil `resolve_headers`."""
+    from types import SimpleNamespace as NS
+    from backend.grid.headers import HeaderMissingError, MemoryHeaderStore, covered, resolve_headers
+    assert sweep_run.covered is covered
+    chunks = [NS(chunk_id=f"c{i:02d}", start=i, end=i + 1) for i in range(20)]
+
+    def store(n_headered):
+        return MemoryHeaderStore({f"c{i:02d}": {"header": "H", "granularity": "ayat", "run_id": "r"} for i in range(n_headered)},
+                                 {"r": "sha"})
+
+    kw = dict(setting_id="s", granularity="ayat", clean_sha256="sha", coverage=("mask_threshold", 95))
+    rep: dict = {}
+    out = resolve_headers(chunks, store(19), report=rep, **kw)
+    assert len(out) == 19 and rep["headered"] == 19 and rep["coverage_bp"] == 9500
+    with pytest.raises(HeaderMissingError):
+        resolve_headers(chunks, store(18), **kw)

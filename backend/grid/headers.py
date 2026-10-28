@@ -194,6 +194,11 @@ class HeaderBinding:
 
 
 # ---------- akuntansi ----------
+def covered(headered: int, chunks: int, pct: int) -> bool:
+    """S11(a): `headered x 100 >= pct x chunks` (inklusif, tanpa float). Satu-satunya sumber ambang cakupan."""
+    return headered * 100 >= pct * chunks
+
+
 def resolve_headers(chunks: Sequence[Any], store: HeaderStore, *, setting_id: str, granularity: str,
                     clean_sha256: str, coverage: tuple[str, int] | None = None, mask: Iterable[str] = (),
                     report: dict[str, Any] | None = None) -> dict[str, str]:
@@ -246,7 +251,7 @@ def resolve_headers(chunks: Sequence[Any], store: HeaderStore, *, setting_id: st
     if missing and not forced:
         assert coverage is not None
         n, pct = len(chunks), coverage[1]
-        if (n - len(missing)) * 100 < pct * n:
+        if not covered(n - len(missing), n, pct):
             raise HeaderMissingError(f"header missing for chunk_id {missing[0]} (setting_id {setting_id}); coverage "
                                      f"{n - len(missing)}/{n} is below {pct}%", setting_id=setting_id, chunk_id=missing[0])
     return out
