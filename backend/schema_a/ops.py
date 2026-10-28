@@ -82,9 +82,10 @@ def make_call(prompt: PromptA, family: str, samples: list[SampleDoc], count_toke
 
 def induce(client: SparkClient, prompt: PromptA, *, family: str, samples: list[SampleDoc],
            count_tokens: Callable[[str], int], meta: Mapping[str, Any], store: SchemaStore,
-           replay: bool = False) -> InduceOutcome:
+           replay: bool = False, extra: Mapping[str, Any] | None = None) -> InduceOutcome:
     """Satu panggilan A. Raises `BudgetExceeded` (sebelum jaringan). Cache hit tidak memanggil API dan tidak
-    menambah versi: record yang sudah dibuat untuk `cache_key` yang sama dikembalikan. `replay=True` tidak menulis."""
+    menambah versi: record yang sudah dibuat untuk `cache_key` yang sama dikembalikan. `replay=True` tidak menulis.
+    `extra`: bidang tambahan record (pembanding H-100: identitas model); bidang inti selalu menang."""
     rej: list = []
     call = make_call(prompt, family, samples, count_tokens, meta, rej)
     batch: BatchResult = client.run_batch([call])  # proyeksi dulu di dalam; replay tidak memanggil API
@@ -108,6 +109,7 @@ def induce(client: SparkClient, prompt: PromptA, *, family: str, samples: list[S
     if errs:  # tidak terjadi bila validator klien dipasang; jaga cache lama dari versi kode lain
         return InduceOutcome(res.record, None, {"code": "semantic_invalid", "message": "; ".join(errs[:5])[:300]})
     rec = store.append(family, {
+        **dict(extra or {}),
         "source": "spark", "parent_version": None, "body": body, "validation": validation,
         "run_id": res.record.run_id, "created_at": _now_iso(), "operator_note": None,
         "sample": sample_meta(samples), "sample_checked": True, "cache_key": res.record.cache_key})

@@ -1,5 +1,9 @@
 """Penyimpan `SchemaRecord` berversi (DATA-CONTRACTS 6): `runs/schemas/<family>/v<n>.json`.
 
+Store pembanding H-100 (`compare_profile`): `runs/schemas/<family>/compare/<profile>/v<n>.json`, nomor versi sendiri.
+`versions()` store utama hanya membaca `v*.json` tingkat atas direktori keluarga, jadi skema pembanding tidak pernah
+terlihat oleh `SchemaBinding`/grid/R3 dan tidak pernah aktif (H-075 hanya memilih dari store utama).
+
 Versi hanya bertambah; berkas yang ada tidak pernah ditimpa. v1 = Spark, v2+ = koreksi operator (atau induksi Spark
 lain dengan masukan berbeda, `source` membedakan). Tulis atomik, UTF-8, LF."""
 
@@ -16,6 +20,8 @@ from .schema import FAMILIES
 
 _LOCK = threading.Lock()
 _NAME = re.compile(r"^v([1-9][0-9]*)\.json$")
+_PROFILE = re.compile(r"^[a-z0-9_]{1,40}$")
+COMPARE_DIR = "compare"
 
 
 class SchemaStoreError(Exception):
@@ -23,13 +29,17 @@ class SchemaStoreError(Exception):
 
 
 class SchemaStore:
-    def __init__(self, runs_dir: Path | str) -> None:
+    def __init__(self, runs_dir: Path | str, *, compare_profile: str | None = None) -> None:
         self.root = Path(runs_dir) / "schemas"
+        if compare_profile is not None and not (isinstance(compare_profile, str) and _PROFILE.fullmatch(compare_profile)):
+            raise ValueError("compare_profile must match [a-z0-9_]{1,40}")
+        self.compare_profile = compare_profile
 
     def _dir(self, family: str) -> Path:
         if family not in FAMILIES:
             raise ValueError(f"unknown family {family!r}")
-        return self.root / family
+        d = self.root / family
+        return d if self.compare_profile is None else d / COMPARE_DIR / self.compare_profile
 
     def versions(self, family: str) -> list[int]:
         d = self._dir(family)
