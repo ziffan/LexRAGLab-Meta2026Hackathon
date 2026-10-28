@@ -71,7 +71,21 @@ Semua butir harus tercentang dan buktinya disimpan di repo sebelum repo dibuka d
 
 **Penutup**
 - [ ] Disclaimer "Research demo. Not legal advice." tampil di app, README, dan video.
-- [ ] `LICENSE` Apache-2.0 terpasang; README memisahkan lisensi kode dari teks korpus (H-029).
+- [x] `LICENSE` Apache-2.0 terpasang (teks resmi, disalin verbatim dari paket terpasang; sha256 `c71d239d…0ab4` setelah normalisasi LF) dan `NOTICE` dengan atribusi pihak ketiga; font IBM Plex OFL 1.1 di `licenses/`; README memisahkan lisensi kode dari teks korpus (H-029, H-097). Repo publik tetap izin terpisah.
 - [ ] README memuat disclosure: Contributor (H-028), konsolidasi UU PT tidak resmi yang disiapkan sebelum acara sampai 30 Desember 2022 (H-031, H-045), akta ditulis agen AI dan direview operator (H-039), bagian "Built before vs during the hackathon" (H-044), atribusi "Built with Muse Spark Open" bila tokenizer dipakai (H-014), dan bila pembanding Glimmer dipakai: open-weight yang berjalan di mesin operator, bukan bobot Spark, dengan atribusi kartu model (H-047).
 - [ ] Klaim bonus open-weight hanya tercantum bila cara verifikasi "own hardware" sudah dikonfirmasi penyelenggara (H-047).
 - [ ] README memuat tautan replay statis dan menyebut bahwa versi web adalah replay (H-051).
+
+### Lisensi dependensi runtime frontend (bundel statis; H-097)
+
+Dihitung dari `frontend/package-lock.json`: penutup dependensi produksi `frontend/package.json` (44 paket; `@types/*` hanya tipe, tidak masuk bundel). Lisensi dibaca dari `node_modules/<pkg>/package.json`. **Tidak ada paket non-permissive** (GPL/LGPL/MPL/CC-BY-SA); tidak ada bentrok dengan Apache-2.0.
+
+| Lisensi | Paket |
+|---|---|
+| MIT | react 19.3.0, react-dom 19.3.0, scheduler, recharts 3.10.1, @reduxjs/toolkit, react-redux, redux, redux-thunk, reselect, immer, clsx, decimal.js-light, es-toolkit, eventemitter3, tiny-invariant, use-sync-external-store, @standard-schema/spec, @standard-schema/utils, @types/d3-*, @types/use-sync-external-store |
+| ISC | d3-array, d3-color, d3-format, d3-interpolate, d3-path, d3-scale, d3-shape, d3-time, d3-time-format, d3-timer, internmap |
+| BSD-3-Clause | d3-ease (salin hak cipta dan disclaimer wajib ikut paket) |
+| MIT AND ISC AND BSD-3-Clause | victory-vendor 37.4.1 |
+| OFL-1.1 (font, bukan kode) | @fontsource/ibm-plex-sans, -serif, -mono 5.3.0; teks di `licenses/` |
+
+Dependensi Python (`uv.lock`) tidak dibundel ke situs statis dan tidak termasuk tabel ini.
