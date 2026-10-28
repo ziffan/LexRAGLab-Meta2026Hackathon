@@ -245,7 +245,7 @@ Operator, mulai di sini: periksa usulan sampai UU PT punya 15–20 butir sah (H-
 **Bukti verifikasi yang wajib disetor**: test hijau untuk kasus operator, screenshot.
 **Tier review**: 1, ditambah Tier 4 domain review oleh operator atas kasus test.
 **Estimasi**: 3 jam.
-**Status**: berjalan — verifier + 2×2 + prompt C v2 + label unit `ae372db`, `de4933d` (Tier 1 lulus, `l3/W3-M23-hasil.md`; H-067, H-070). Sisa: Tier 4 domain review operator atas kasus test; screenshot tanda dan ringkasan U3.
+**Status**: **selesai** — Tier 4 dikonfirmasi operator 28 Okt (lewat orkestrator; U3 tanda verifier dan ringkasan 2×2 diperiksa di tailnet). verifier + 2×2 + prompt C v2 + label unit `ae372db`, `de4933d` (Tier 1 lulus, `l3/W3-M23-hasil.md`; H-067, H-070). Sisa: Tier 4 domain review operator atas kasus test; screenshot tanda dan ringkasan U3.
 
 ### M2.4 — Uji berlaku tiga nilai (stretch, H-017)
 **Slice**: Kutipan diberi status `berlaku`, `dicabut`, atau `berlaku_bersyarat` pada tanggal acuan butir.
@@ -316,7 +316,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Bukti verifikasi yang wajib disetor**: skema v1 (Spark) dan v2 (koreksi), screenshot.
 **Tier review**: 2, ditambah Tier 4 domain review oleh operator.
 **Estimasi**: 5,5 jam (3 jam induksi + 2,5 jam editor, H-037).
-**Status**: berjalan — backend `496624b`, `1ff71e5`, `f2f18ee` (Tier 2 lulus, `l3/W2-M33-periksa.md`); panel + editor U5 `7e090d1` (Tier 3). Run induksi UU PT `1558986` (`runs/schemas/uupt/v1.json`, 5.700). Menunggu operator: persetujuan/koreksi skema v1 (H-074) + Tier 4 domain review.
+**Status**: **selesai** — Tier 4 dikonfirmasi operator 28 Okt (lewat orkestrator; koreksi skema v2 H-084 sebagai domain review). backend `496624b`, `1ff71e5`, `f2f18ee` (Tier 2 lulus, `l3/W2-M33-periksa.md`); panel + editor U5 `7e090d1` (Tier 3). Run induksi UU PT `1558986` (`runs/schemas/uupt/v1.json`, 5.700). Menunggu operator: persetujuan/koreksi skema v1 (H-074) + Tier 4 domain review.
 
 ### M3.4 — Chunker digerakkan skema
 **Slice**: Chunker yang membaca skema A masuk grid. Frontier menampilkannya di samping parser tulisan tangan, dengan selisih batas potongan.
@@ -383,7 +383,7 @@ Prasyarat: H-039 dan H-041. Lima akta pendirian PT sintetis ditulis agen AI (age
 **Bukti verifikasi yang wajib disetor**: screenshot semua adegan dalam mode putar ulang dan dari ekspor statis yang dibuka lokal.
 **Tier review**: 2, ditambah Tier 4 UX review atas alur adegan.
 **Estimasi**: 2 jam, ditambah sekitar 2–3 jam ekspor statis (H-051) yang belum masuk jumlah Ringkasan; ekspor statis di bawah lantai H-017 (dipotong lebih dulu daripada A–D dan video).
-**Status**: berjalan — middleware replay, ekspor statis + pemindai bocor, build statis `2e33331` (Tier 2, `l3/W11-M51-periksa-hasil.md`), perbaikan `25eaf4c`; hint ikut bundel `93525a0`. Uji visual statis lokal 375/768/1440 tanpa scroll horizontal, console 0 error, 0 request `/api` (`_kerja/orkestrasi/bukti/visual-L2-3.txt`). Sisa: adegan 4 (I-54), screenshot semua adegan setelah data operator. Update L2#5: ekspor statis ulang setelah M2.5 (789 berkas data, `--check` 0 temuan; U3 menampilkan jawaban tersimpan Contributor/Spark Open/Glimmer berlabel). Versi statis hanya keluarga UU PT (tanpa pemilih keluarga); akta di mode live menampilkan "Pending operator review" di U2/U4/U7 (bukti `bukti/akta-pending-{1440.jpg,375.png}`, 375/768 tanpa scroll horizontal, console 0 error). Update L2#6: ekspor statis ulang dari 014765d dengan pemilih keluarga (`data/families.json`, 975 berkas, `--check` 0). Uji visual Chrome menunggu extension tersambung.
+**Status**: berjalan — middleware replay, ekspor statis + pemindai bocor, build statis `2e33331` (Tier 2, `l3/W11-M51-periksa-hasil.md`), perbaikan `25eaf4c`; hint ikut bundel `93525a0`. Uji visual statis lokal 375/768/1440 tanpa scroll horizontal, console 0 error, 0 request `/api` (`_kerja/orkestrasi/bukti/visual-L2-3.txt`). Sisa: adegan 4 (I-54), screenshot semua adegan setelah data operator. Update L2#5: ekspor statis ulang setelah M2.5 (789 berkas data, `--check` 0 temuan; U3 menampilkan jawaban tersimpan Contributor/Spark Open/Glimmer berlabel). Versi statis hanya keluarga UU PT (tanpa pemilih keluarga); akta di mode live menampilkan "Pending operator review" di U2/U4/U7 (bukti `bukti/akta-pending-{1440.jpg,375.png}`, 375/768 tanpa scroll horizontal, console 0 error). Update L2#6: ekspor statis ulang dari 014765d dengan pemilih keluarga (`data/families.json`, 975 berkas, `--check` 0). Uji visual Chrome menunggu extension tersambung. Uji visual L2#6 (28 Okt, Chrome, iframe 375/768/1440): statis HEAD ae7a318 (uupt, akta lewat pemilih Family, review akta) tanpa scroll horizontal, 0 request /api, tanpa banner pending, console 0 error; live akta dan butir K-08 macet Loading karena proxy dev vite `Connection: close` + uvicorn/h11 Windows memotong respons besar (ECONNRESET), diperbaiki dengan agent keep-alive timeout 3 detik (review W71), lalu live akta dan K-08 di tiga lebar terisi, console 0 error. Bukti `_kerja/orkestrasi/bukti/M51-*.jpg`.
 
 ### M5.2 — Gate pra-submit
 **Slice**: Daftar periksa pra-submit lulus semua dan tercatat di repo.
