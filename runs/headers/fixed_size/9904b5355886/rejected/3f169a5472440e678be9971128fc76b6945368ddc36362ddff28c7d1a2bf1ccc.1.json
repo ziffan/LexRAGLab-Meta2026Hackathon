@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3f169a5472440e678be9971128fc76b6945368ddc36362ddff28c7d1a2bf1ccc",
+ "chunk_id_returned": "3f169a5472440e678be9971128fc76b6945368ddc36362ddff28c7d1a2bf1ccc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "8b1ccaeda80f47beb4328ec95b65c233",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah, Pasal 24-25: pembubaran perseroan, tugas likuidator, dan pembagian saham pendiri.",
+ "tokens_local": 41
+}

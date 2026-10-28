@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6c1d6ad04183411782671bd40856a051724079945cef54f93afe9e85d0a6ebe4",
+ "chunk_id_returned": "6c1d6ad04183411782671bd40856a051724079945cef54f93afe9e85d0a6ebe4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "8f536b7ac66c4ad8bb4d2930e2a82c59",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No.27, Batang Tubuh (Anggaran Dasar): pembuka akta, identitas penghadap, nama kedudukan dan jangka waktu Perseroan.",
+ "tokens_local": 45
+}

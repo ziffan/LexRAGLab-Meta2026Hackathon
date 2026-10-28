@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f38a2426c73afc4350ab5a939e3faf5606d1bd518d8cd140e01266567d04e120",
+ "chunk_id_returned": "f38a2426c73afc4350ab5a939e3faf5606d1bd518d8cd140e01266567d04e120",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "7980af29bd9942fca082768453d8208a",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah, Batang Tubuh (Pasal 11-15): susunan, pengangkatan, tanggung jawab dan kewenangan Direksi.",
+ "tokens_local": 43
+}

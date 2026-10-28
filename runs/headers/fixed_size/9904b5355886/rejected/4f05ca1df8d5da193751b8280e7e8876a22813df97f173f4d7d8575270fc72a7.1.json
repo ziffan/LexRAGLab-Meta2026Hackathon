@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4f05ca1df8d5da193751b8280e7e8876a22813df97f173f4d7d8575270fc72a7",
+ "chunk_id_returned": "4f05ca1df8d5da193751b8280e7e8876a22813df97f173f4d7d8575270fc72a7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "5100617789a04b4cbe50f6749be353d1",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra, Batang Tubuh (Pasal 13-16): tahun buku, penggunaan laba, perubahan anggaran dasar, dan pembubaran.",
+ "tokens_local": 41
+}

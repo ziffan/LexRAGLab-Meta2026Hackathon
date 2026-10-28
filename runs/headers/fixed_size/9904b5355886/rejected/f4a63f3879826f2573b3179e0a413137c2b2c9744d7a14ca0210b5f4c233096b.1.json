@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f4a63f3879826f2573b3179e0a413137c2b2c9744d7a14ca0210b5f4c233096b",
+ "chunk_id_returned": "f4a63f3879826f2573b3179e0a413137c2b2c9744d7a14ca0210b5f4c233096b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "53c621e4f45343c9b141a91f948ffee9",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada, Batang Tubuh (Pasal 7-10): pemindahan saham, susunan Direksi, tanggung jawab dan perwakilan Perseroan.",
+ "tokens_local": 44
+}

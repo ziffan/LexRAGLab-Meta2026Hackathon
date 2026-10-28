@@ -1,0 +1,11 @@
+{
+ "chunk_id": "fd8025a9e1048d20c9bb116e9558a9a46a4e03f07c4be970113e60737373b845",
+ "chunk_id_returned": "fd8025a9e1048d20c9bb116e9558a9a46a4e03f07c4be970113e60737373b845",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "6d855de21c5e4afeb3f12fbf584aa52d",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada, Batang Tubuh (Pasal 10-13): perwakilan Perseroan, persetujuan transaksi Direksi, dan rapat Direksi.",
+ "tokens_local": 44
+}

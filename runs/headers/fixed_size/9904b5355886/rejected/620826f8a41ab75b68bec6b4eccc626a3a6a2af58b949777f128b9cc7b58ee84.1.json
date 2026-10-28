@@ -1,0 +1,11 @@
+{
+ "chunk_id": "620826f8a41ab75b68bec6b4eccc626a3a6a2af58b949777f128b9cc7b58ee84",
+ "chunk_id_returned": "620826f8a41ab75b68bec6b4eccc626a3a6a2af58b949777f128b9cc7b58ee84",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "89d5582326844b82812a14e6bc8d0751",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No 27, Batang Tubuh (Pasal 5-7): pemindahan saham, susunan Direksi, dan kewenangan mewakili Perseroan.",
+ "tokens_local": 45
+}

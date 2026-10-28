@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6d14b5176b97f5c52c308730ed6f810d22efe6ae3757aad0aeee35f950063916",
+ "chunk_id_returned": "6d14b5176b97f5c52c308730ed6f810d22efe6ae3757aad0aeee35f950063916",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f59cb9a188c242e091ae93f6081e023e",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No. 27 (Anggaran Dasar), Pasal 13: pembubaran perseroan, penunjukan likuidator, dan pemberesan harta.",
+ "tokens_local": 44
+}
