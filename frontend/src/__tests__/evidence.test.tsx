@@ -63,6 +63,42 @@ describe("kolom bukti", () => {
   });
 });
 
+describe("jawaban dari cache: biaya panggilan asal (UX-03)", () => {
+  const d = mkAnswers();
+  // Kunci cache unik per kolom: origin best tidak boleh terbaca untuk baseline.
+  const paid = d.runs.map((r) => ({ ...r, cache_key: `ck-${r.run_id}` }));
+  const runs = paid.map((r) => ({ ...r, status: "replay" as const, run_id: `${r.run_id}-rp`, cost_usd_micros: null,
+    usage_input_tokens: null, usage_cached_tokens: null, usage_output_tokens: null, latency_ms: 0 }));
+  const best = { ...d.best, run_id: `${d.best.run_id}-rp` };
+  const origin = paid.find((x) => x.run_id === d.best.run_id)!;
+  it("run replay + origin cache_key sama: biaya dan token dari panggilan asal, ditandai", () => {
+    const c = columnView(best, d.verifier, runs, "Best profile", [origin]);
+    expect([c.costMicros, c.inputTokens, c.cachedTokens, c.outputTokens]).toEqual([origin.cost_usd_micros, origin.usage_input_tokens, origin.usage_cached_tokens, origin.usage_output_tokens]);
+    expect(c.runStatus).toBe("replay");
+    expect(c.origin).toEqual({ runId: origin.run_id, createdAt: origin.created_at });
+  });
+  it("tanpa origin, atau origin cache_key lain / bukan ok: tetap n/a, tanpa tanda", () => {
+    expect(columnView(best, d.verifier, runs, "x").costMicros).toBeNull();
+    expect(columnView(best, d.verifier, runs, "x", [{ ...origin, cache_key: "lain" }]).origin).toBeNull();
+    expect(columnView(best, d.verifier, runs, "x", [{ ...origin, status: "error" }]).costMicros).toBeNull();
+  });
+  it("origin dipilih per cache_key: baseline tidak mengambil origin best", () => {
+    const base = { ...d.baseline, run_id: `${d.baseline.run_id}-rp` };
+    expect(columnView(base, d.verifier, runs, "x", [origin]).costMicros).toBeNull();
+  });
+  it("run sendiri (ok) tidak memakai origin", () => {
+    const c = columnView(d.best, d.verifier, d.runs, "x", [{ ...origin, cache_key: "k", cost_usd_micros: 999999 }]);
+    expect(c.costMicros).toBe(5848);
+    expect(c.origin).toBeNull();
+  });
+  it("EvidenceView menulis label served from cache", () => {
+    const data = { ...d, best, runs, origin_runs: [origin] };
+    const h = html({ status: "ready", data });
+    expect(h).toContain("served from cache; original call");
+    expect(h).toContain(formatUsd(origin.cost_usd_micros));
+  });
+});
+
 describe("EvidenceView", () => {
   const ready: EvidenceState = { status: "ready", data: mkAnswers() };
   it("dua kolom, status Inggris, tanda uji, skor, flags, jawaban Indonesia", () => {

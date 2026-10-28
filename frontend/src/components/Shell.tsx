@@ -64,7 +64,7 @@ export function SnapshotPanel({ id, title, loadingText, errorTitle, hints = [], 
   let body: ReactNode;
   if (s.status === "idle" || s.status === "loading") body = <LoadingBlock text={loadingText} />;
   else if (s.status === "error") {
-    body = <ErrorBlock title={s.code === "unreachable" ? "Backend unreachable." : errorTitle} message={s.message} />;
+    body = <ErrorBlock title={s.code === "unreachable" ? "Backend unreachable. Showing replay data if available." : errorTitle} message={s.message} />;
   } else body = pendingGate && isPendingReview(s.data) ? <PendingReview /> : children(s.data);
   return (
     <section className="panel" aria-labelledby={`${id}-title`}>

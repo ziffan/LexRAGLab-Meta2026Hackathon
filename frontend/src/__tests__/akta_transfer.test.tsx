@@ -46,7 +46,7 @@ const REPORT: Report = {
   by_origin: {}, by_mode: {},
 };
 const set = (data: Snapshot) => {
-  mock.state = { ...blankState(), snapshot: { status: "ready", data }, family: data.family, selectedSettingId: "S-schema" };
+  mock.state = { ...blankState(data.family), snapshot: { status: "ready", data }, selectedSettingId: "S-schema", filters: { origin: "all", mode: "all", split: "all" } };
 };
 const heldOut = /held[- ]?out/i;
 const noHints = (h: string): string => h.replace(/<span class="hint">[\s\S]*?<\/div><\/span>/g, "");

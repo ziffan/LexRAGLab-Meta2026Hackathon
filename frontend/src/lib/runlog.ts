@@ -1,4 +1,4 @@
-import type { HeaderBView, HeaderSample, RunKind, RunRecord } from "../types";
+import type { HeaderBView, HeaderSample, RunKind, RunRecord, RunTotal } from "../types";
 import { formatUsd } from "./evidence";
 
 // U8 Run log & cost (docs/UI-SPEC.md U8): logika murni. Uang integer micro-USD, waktu UTC.
@@ -37,6 +37,14 @@ export function aggregateByRole(runs: RunRecord[]): RoleAggregate[] {
     m.set(r.kind, a);
   }
   return ROLES.filter((k) => m.has(k)).map((k) => m.get(k) as RoleAggregate);
+}
+
+/** Agregat server (R1 `run_totals_by_kind`, semua run) -> baris tabel per peran; biaya = buku belanja (UX-02). Filter peran ikut. */
+export function totalsToAggregates(totals: RunTotal[], role: RoleFilter = "all"): RoleAggregate[] {
+  return totals
+    .filter((t) => role === "all" || t.kind === role)
+    .map((t) => ({ kind: t.kind, runs: t.runs, inputTokens: t.usage_input_tokens, cachedTokens: t.usage_cached_tokens,
+      outputTokens: t.usage_output_tokens, costMicros: t.spend_usd_micros, unknownRuns: t.unknown_runs }));
 }
 
 /** Waktu UTC ringkas "2026-10-27 06:24:03Z" dari ISO. */

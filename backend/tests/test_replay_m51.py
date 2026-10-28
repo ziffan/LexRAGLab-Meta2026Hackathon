@@ -11,7 +11,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.api.app import Service, create_app
-from backend.replay.export import ExportError, build_files, export_static, main as export_main, sid
+from backend.replay.export import ExportError, build_files, export_static, main as export_main, sid, stored_profile
 from backend.replay.scan import SnapshotLeak, scan_dir, scan_files, scan_text
 from backend.tokenizer import get_tokenizer
 
@@ -347,3 +347,33 @@ def test_cli_export_passes_source_date_epoch_as_clock(monkeypatch, tmp_path):
     assert seen["now"].strftime("%Y-%m-%dT%H:%M:%SZ") == "2026-10-27T10:00:00Z"
     monkeypatch.delenv("SOURCE_DATE_EPOCH")
     assert export_main(["--out", str(tmp_path)]) == 0 and seen["now"] is None
+
+
+def test_stored_profile_copied_byte_identical_only_when_current(tmp_path):
+    """UX-09: profil setting terpilih/transfer ikut ekspor statis, byte-identik; basi, hilang, atau tanpa pilihan -> None."""
+    sid_full = "a" * 64
+    body = {"setting": {"setting_id": sid_full}, "chunk_set_hash": "h1", "created_at": "2026-10-27T00:00:00Z"}
+    blob = (json.dumps(body, sort_keys=True) + chr(10)).encode("utf-8")
+    (tmp_path / "uupt").mkdir()
+    (tmp_path / "uupt" / f"{sid_full}.json").write_bytes(blob)
+    snap = {"grid": {"selected": {"setting_id": sid_full}}}
+    seen = []
+
+    def get(url, **params):
+        seen.append((url, params))
+        return {**body, "created_at": "2026-10-28T09:00:00Z"}
+
+    rel, out = stored_profile(get, tmp_path, "uupt", snap)
+    assert rel == f"profiles/uupt/{sid_full[:16]}.json" and out == blob
+    assert seen == [("/api/families/uupt/profiles/export", {"setting_id": sid_full})]
+    # akta: setting transfer
+    (tmp_path / "akta").mkdir()
+    (tmp_path / "akta" / f"{sid_full}.json").write_bytes(blob)
+    assert stored_profile(get, tmp_path, "akta", {"grid": {"selected": None, "transfer": {"setting_id": sid_full}}})[1] == blob
+    # basi: isi selain created_at berbeda
+    assert stored_profile(lambda u, **p: {**body, "chunk_set_hash": "h2"}, tmp_path, "uupt", snap) is None
+    # W7 gagal, berkas hilang, tanpa grid
+    assert stored_profile(lambda u, **p: None, tmp_path, "uupt", snap) is None
+    assert stored_profile(get, tmp_path, "uupt", {"grid": {"selected": {"setting_id": "b" * 64}}}) is None
+    assert stored_profile(get, tmp_path, "uupt", {"grid": None}) is None
+

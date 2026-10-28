@@ -251,7 +251,7 @@ export function SchemaPanel() {
 
   let body;
   if (state.snapshot.status === "idle" || state.snapshot.status === "loading") body = <LoadingBlock text="Loading schema versions…" />;
-  else if (state.snapshot.status === "error") body = <ErrorBlock title="Schema failed validation: could not load the family snapshot." message={state.snapshot.message} />;
+  else if (state.snapshot.status === "error") body = <ErrorBlock title={state.snapshot.code === "unreachable" ? "Backend unreachable. Showing replay data if available." : "Could not load schema: the family snapshot did not load."} message={state.snapshot.message} />;
   else if (snap) {
     body = (
       <>

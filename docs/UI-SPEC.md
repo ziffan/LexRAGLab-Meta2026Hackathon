@@ -48,7 +48,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `Profile` aktif (§11), `RunRecord` agregat (§12), daftar keluarga dari `GET /api/families` |
-| Tampil | Nama app "LexRAGLab"; pemilih keluarga; nama setting terpilih (mis. "structure · hybrid · header on"); model ID dari `RunRecord` (`muse-spark-1.3-contributor`, H-028); total biaya run tersimpan; lencana "REPLAY" saat mode putar ulang; tautan "Review proposals ({n} pending)" |
+| Tampil | Nama app "LexRAGLab"; pemilih keluarga; nama setting terpilih (mis. "structure · hybrid · header on"); model ID dari `RunRecord` (`muse-spark-1.3-contributor`, H-028); total biaya run tersimpan (`Run cost` = buku belanja `Ledger.spent`, R1 `ledger_spent_usd_micros`, label dan angka sama dengan README; putusan operator 12); lencana "REPLAY" saat mode putar ulang; tautan "Review proposals ({n} pending)" |
 | Interaksi | Ganti keluarga → semua panel memuat ulang untuk keluarga itu. Klik lencana biaya → gulir ke U8 |
 | Loading / empty / error | Skeleton teks / "No family loaded" / "Backend unreachable. Showing replay data if available." |
 | Label | `Family`, `Company Law (UU 40/2007)` (nilai `family` = `uupt`), `Deed (synthetic)` (`akta`), `Selected setting`, `Model`, `Run cost`, `REPLAY`, `Review proposals` |
@@ -83,7 +83,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `AnswerRecord` (§8, keluaran Spark `AnswerC`) untuk butir terpilih × {profil terbaik, profil pembanding} × `model_profile`, `VerifierResult` (§8), `RunRecord` (§12) per panggilan, daftar profil model dan ketersediaannya dari R1 |
-| Tampil | Dua kolom "Best profile" dan "Baseline". Per kolom: setting, status (label Inggris), jawaban (teks Indonesia, dengan gloss Inggris singkat bila tersedia dari operator), daftar kutipan berisi alamat + teks + tanda uji: `Exists` (uji 1), `Faithful` (uji 2), `Valid on date` (uji 3, stretch). Biaya panggilan dan token input/cached/output; token input aktual ditampilkan per kolom (dari `usage`), terpisah dari anggaran konteks yang sama untuk kedua kolom (anggaran = teks sumber, label alamat tidak dihitung, H-066). Setiap jawaban diberi label model, kuantisasi, dan effort (H-053) |
+| Tampil | Dua kolom "Best profile" dan "Baseline". Per kolom: setting, status (label Inggris), jawaban (teks Indonesia, dengan gloss Inggris singkat bila tersedia dari operator), daftar kutipan berisi alamat + teks + tanda uji: `Exists` (uji 1), `Faithful` (uji 2), `Valid on date` (uji 3, stretch). Biaya panggilan dan token input/cached/output; token input aktual ditampilkan per kolom (dari `usage`), terpisah dari anggaran konteks yang sama untuk kedua kolom (anggaran = teks sumber, label alamat tidak dihitung, H-066). Setiap jawaban diberi label model, kuantisasi, dan effort (H-053). Jawaban yang dilayani dari cache (run `replay`/`cached`) menampilkan biaya dan token panggilan asal (W6 `origin_runs`, `cache_key` sama) dengan teks Run "{status}: served from cache; original call {waktu UTC}" (UX-03) |
 | Pemilih model (H-053) | Pemilih `Model` di atas dua kolom: `muse-spark-1.3-contributor` (default) dan `Muse Glimmer (local, open-weight)` (stretch). Ganti model memuat jawaban tersimpan untuk model itu; jawaban kedua model tidak pernah dicampur dalam satu ringkasan 2×2 tanpa label. Bila server Glimmer lokal tidak hidup, pilihan itu nonaktif dengan teks "Local Glimmer server not running". Di replay statis (H-051), pilihan Glimmer hanya menampilkan hasil tersimpan |
 | Interaksi | Tombol "Run live" hanya aktif untuk butir `scene_checked`, baik di mode live maupun replay (pengecualian replay di bagian 4 dan `docs/API.md` §1). Tombol "Open evidence detail" membuka tampilan lebar (artboard Evidence) dengan ringkasan 2×2 |
 | Ringkasan 2×2 | Per profil: `Answered, supported` · `Answered, unsupported` · `Abstained, correctly` · `Abstained, should have answered`, dalam hitungan mentah |
@@ -158,7 +158,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `RunRecord[]` (§12) |
-| Tampil | Tabel per panggilan atau run grid: waktu (UTC), peran (A/B/C/D/grid), model, effort, versi prompt, hash konfigurasi, token input / cached / output, biaya, latensi. Baris agregat per peran |
+| Tampil | Tabel per panggilan atau run grid: waktu (UTC), peran (A/B/C/D/grid), model, effort, versi prompt, hash konfigurasi, token input / cached / output, biaya, latensi. Baris agregat per peran atas semua run (R1 `run_totals_by_kind`, biaya = buku belanja) + baris total "All roles (run cost)" = angka U0; tabel baris berlabel "Latest {N} runs (UTC)" (putusan operator 12) |
 | Interaksi | Filter per peran. Klik baris → detail JSON catatan run |
 | Loading / empty / error | Skeleton / "No runs recorded" / "Run log unreadable: {message}" |
 | Label | `Run log & cost`, `Role`, `Effort`, `Prompt version`, `Input tokens`, `Cached tokens`, `Output tokens`, `Cost (USD)`, `Latency` |
@@ -369,3 +369,32 @@ Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi pers
 | 6 | Header memuat "Profile" dan "Review proposals ({n} pending)" (UI-SPEC U0) | tidak ditambah (di luar tema); tautan "Review proposals" tetap di bawah header |
 | 7 | Kontrol 44 px | tombol hint (24 px, H-073) dan `.addr` dikecualikan agar tidak merusak alur teks |
 | 8 | Border panel `#D3D7DC` terlalu terang untuk kontrol (kontras non-teks < 3:1) | kontrol memakai `--line-strong` `#8A929B` (nilai mockup, bukan dari H-083) |
+
+### 10.5 Perbaikan UX review M5.1 (putusan operator 12, 28 Okt)
+
+Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Keputusan tampilan tanpa nomor H (preseden putusan 8, 10).
+
+| UX | Perilaku |
+|---|---|
+| 01 | URL tanpa `item`: butir `kontrol-K-09` dipilih sekali bila ada di snapshot (UU PT). Tagline di bawah header dari `frontend/src/content/tagline.json`, tampil hanya bila `status = final` (teks disetujui operator) |
+| 02 | `Run cost` U0 = buku belanja (R1 `ledger_spent_usd_micros`), sama dengan README; U8 agregat per peran atas semua run, tabel baris "Latest {N} runs (UTC)" |
+| 03 | U3 jawaban dari cache: biaya/token panggilan asal (W6 `origin_runs`) + "served from cache; original call {UTC}" |
+| 05 | U2 Selected setting: "Chosen on tune; held-out shown for reporting." untuk setting terpilih grid |
+| 11 | Legenda U2: "Structure (schema A)" (segitiga, bila ada titiknya) dan "Selected setting (ring)" |
+| 16 | Filter Split U4 bawaan UU PT = Held-out (cakupan sama dengan U2); akta = all; `fsplit` di URL hanya bila beda dari bawaan |
+| 18 | Rata-rata (span recall mean, MRR) desimal dua angka, pecahan eksak sebagai `title`; hitungan tetap "x of y" |
+| 22 | Header: ikon hint dikelompokkan dengan label pemiliknya (`.hdr-group`) |
+| 04 (a) | U4 "Header B off vs on, per item": setting terpilih dan kembarannya (header dibalik, chunker/mode/anggaran sama), butir mengikuti filter Origin/Mode/Split; metrik per butir tersimpan. Tanpa frontier per mode |
+| 08 | U6 daftar baca-saja "Decided ({n})" (Approved/Edited/Rejected) di bawah antrean |
+| 09 | Ekspor statis memuat profil tersimpan setting terpilih (UU PT) dan setting transfer (akta), `data/profiles/<fam>/<sid16>.json`, byte-identik dengan `profiles/` bila masih sama dengan W7 selain `created_at`. U7 statis: pratinjau baca-saja + Download JSON; Export/Load tetap nonaktif (H-051) |
+| 17 | U9 baris provenance dari `items_summary` |
+| 07 | 502/503/504 tanpa badan galat API (proxy dev, backend mati) = `unreachable`: "Backend unreachable. Showing replay data if available."; U5 saat snapshot gagal: "Could not load schema: the family snapshot did not load." (bukan galat validasi) |
+| 10 | Sublabel sel "Abstained, correctly": "(no gold, or gold not in its context)" (EVAL-SPEC 2×2). Hint `verifier.matrix_2x2` 1.5.0: draf menunggu operator, belum di `hints.json` |
+| 12 | Isi popover hint tidak mewarisi `text-transform: uppercase` dari `.field`/kepala tabel |
+| 13 | Titik degenerate berlabel (H-093) tetap digambar dan tetap anggota frontier backend, tetapi tidak disambung garis frontier |
+| 14 | U8 menampilkan 20 baris + "Show more" (+100); baris terpilih tetap terlihat |
+| 15 | Kotak teks potongan U1 bergulir otomatis ke awal gold |
+| 19 | Opsi butir U1: "id · mode · query terpotong" |
+| 20 | `family` dicerminkan ke URL (`?family=akta`; uupt tanpa parameter) |
+| 21 | U7: enum asal dan split dipetakan ke label; alasan gagal header-on ringkas (kode + chunk di `title`); catatan skema operator tidak diubah |
+| 23 | Entri glosarium pemetaan "Must refuse / No gold / Unanswerable / Abstained": draf menunggu operator; label UI-SPEC tidak diubah |

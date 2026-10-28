@@ -45,9 +45,13 @@ describe("resolveStatic", () => {
     expect(resolveStatic(`/api/families/uupt/retrieval?setting_id=${B}&item_id=it-1`)).toEqual({ kind: "file", path: `data/retrieval/uupt/${B.slice(0, 16)}/it-1.json` });
     expect(resolveStatic("/api/families/uupt/proposals")).toEqual({ kind: "file", path: "data/proposals/uupt.json" });
   });
+  it("UX-09: W7 GET reads the stored profile file (read-only); without setting_id it is unknown", () => {
+    expect(resolveStatic(`/api/families/akta/profiles/export?setting_id=${B}`)).toEqual({ kind: "file", path: `data/profiles/akta/${B.slice(0, 16)}.json` });
+    expect(resolveStatic("/api/families/uupt/profiles/export")).toEqual({ kind: "unknown" });
+  });
   it("blocks every write and live W6", () => {
     for (const [u, m] of [["/api/families/uupt/grid/run", "POST"], ["/api/proposals/p1/decision", "POST"], ["/api/families/uupt/schemas/1/correct", "POST"],
-      ["/api/profiles/import", "POST"], ["/api/families/uupt/profiles/export?setting_id=x", "GET"]] as const) {
+      ["/api/profiles/import", "POST"], ["/api/families/uupt/profiles/export?setting_id=x", "POST"]] as const) {
       const t = resolveStatic(u, { method: m });
       expect(["blocked", "unknown"]).toContain(t.kind);
       if (m === "POST") expect(t.kind).toBe("blocked");

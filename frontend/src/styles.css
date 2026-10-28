@@ -15,6 +15,8 @@ button, select, input, textarea { font-family: var(--font-sans); }
 .app-header .hdr-item { display: inline-flex; align-items: baseline; gap: 6px; color: var(--head-muted); }
 .app-header .hint-btn { border-color: var(--head-ink); }
 .app-header a { color: var(--head-ink); }
+.app-header .hdr-group { display: inline-flex; align-items: center; gap: 6px; }
+.tagline { margin: -8px 0 12px; font-size: 1rem; color: var(--ink); }
 .app-footer { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; }
 
 .panel { min-width: 0; max-width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
@@ -52,7 +54,7 @@ mark { background: var(--gold); color: var(--ink); padding: 0 1px; border-radius
 .chunk-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; background: var(--panel-head); padding: 5px 8px; }
 .addr { background: none; border: 0; padding: 0; font: inherit; font-family: var(--font-mono); font-size: 0.9em; font-weight: 500; color: var(--accent); text-align: left; cursor: pointer; text-decoration: underline; }
 .chunk-stats { display: flex; gap: 12px; color: var(--muted); font-size: 0.8rem; }
-.chunk-text { font-family: var(--font-serif); white-space: pre-wrap; overflow-wrap: anywhere; padding: 8px 10px; line-height: 1.5; max-height: 20rem; overflow: auto; }
+.chunk-text { position: relative; font-family: var(--font-serif); white-space: pre-wrap; overflow-wrap: anywhere; padding: 8px 10px; line-height: 1.5; max-height: 20rem; overflow: auto; }
 .split-edge { background: var(--fail-bg); color: var(--fail-text); font-weight: 600; font-size: 0.8rem; padding: 2px 8px; }
 .split-edge.top { border-bottom: 1px dashed var(--fail-text); }
 .split-edge.bottom { border-top: 1px dashed var(--fail-text); }
@@ -152,6 +154,8 @@ table.data .addr { font-weight: 600; }
 .hint-pop { position: absolute; z-index: 20; left: 0; top: calc(100% + 4px); width: min(22rem, calc(100vw - 32px)); max-height: 16rem; overflow: auto; padding: 8px 10px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); font-size: 0.85rem; line-height: 1.4; text-align: left; }
 .hint-pop.sr-only { position: absolute; width: 1px; height: 1px; max-height: 1px; padding: 0; border: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; box-shadow: none; }
 .hint-body { margin: 4px 0 0; }
+.hint-pop, .hint-pop * { text-transform: none; letter-spacing: normal; font-weight: 400; } /* UX-12: popover di label .field / kepala tabel tidak mewarisi kapital */
+.hint-pop strong, .hint-pop .hint-title { font-weight: 600; }
 @media (max-width: 600px) {
   .hint { position: static; }
   .hint-pop { position: fixed; left: 16px; right: 16px; top: auto; width: auto; transform: none !important; }

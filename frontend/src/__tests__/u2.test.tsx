@@ -106,8 +106,8 @@ describe("U2 failed header-on settings", () => {
     expect(dots.map((d) => d.setting.setting_id)).not.toContain("bad");
     const h = render(sn);
     expect(h).toContain("Failed header-on settings");
-    expect(h).toContain("header missing for a chunk (header_missing)");
-    expect(h).toContain("chunk abcdef012345");
+    expect(h).toContain(">header missing for a chunk</span>"); // UX-21: kode dan chunk hanya di title
+    expect(h).toContain('title="header_missing, chunk abcdef0123456789zz"');
     expect(h).toContain("fixed-size · hybrid · header on");
     expect(h).toContain("3 settings"); // off, on, fx: tidak ada titik untuk 'bad'
   });
@@ -119,9 +119,9 @@ describe("U2 failed header-on settings", () => {
   });
   it("keeps unknown reason codes visible and tolerates unknown setting ids", () => {
     expect(failReason("something_new")).toBe("something_new");
-    expect(failReason("header_invalid")).toBe("header is empty (header_invalid)");
-    expect(failReason("header_stale")).toBe("header comes from a different clean text (header_stale)");
-    expect(failReason("granularity_mismatch")).toBe("header granularity does not match (granularity_mismatch)");
+    expect(failReason("header_invalid")).toBe("header is empty");
+    expect(failReason("header_stale")).toBe("header comes from a different clean text");
+    expect(failReason("granularity_mismatch")).toBe("header granularity does not match");
     const h = render(snap({ failed_settings: [{ setting_id: "zzzzzzzzzzzzzzzzzz", reason: "header_stale", chunk_id: null }] }));
     expect(h).toContain("zzzzzzzzzzzz");
     expect(h).toContain("header_stale");
@@ -173,5 +173,58 @@ describe("U2 header B series toggle", () => {
     expect(h).toMatch(/<label[^>]*><input type="checkbox" data-testid="toggle-on" checked=""[^>]*\/>Header B on<\/label>/);
     expect(h).not.toContain('tabindex="-1"');
     expect(h).not.toContain("series-hidden-note");
+  });
+});
+
+// F3 (putusan operator 12): UX-05 catatan tune, UX-11 legenda, UX-18 rata-rata desimal; UX-01/UX-16 keadaan awal store.
+describe("U2 opening screen fixes", () => {
+  const sel = (id: string) => {
+    mock.state = { ...blankState(), snapshot: { status: "ready", data: snap() }, split: "held_out", selectedSettingId: id };
+    return renderToStaticMarkup(<SettingSpace />);
+  };
+  it("UX-05: the selected (best) setting carries the chosen-on-tune note; another setting does not", () => {
+    expect(sel("off")).toContain("Chosen on tune; held-out shown for reporting.");
+    expect(sel("on")).not.toContain("chosen-on-tune");
+  });
+  it("UX-11: legend lists the selected-setting ring always and the schema-A triangle only when such points are drawn", () => {
+    const h = sel("off");
+    expect(h).toContain("Selected setting (ring)");
+    expect(h).not.toContain("legend-schema");
+    const withSchema = [...SET, mkSetting("sch", "structure_schema", "hybrid")];
+    const s2 = snap({ held_out: { points: [pt("off", 1500, 0.6, false), pt("sch", 1550, 0.7, false)], frontier: { split: "held_out", budget_tokens: 2000, point_ids: ["off", "sch"], grid_run_id: "g" } } }, withSchema);
+    expect(render(s2)).toContain("Structure (schema A)");
+  });
+  it("UX-18: means are two-decimal numbers with the exact fraction kept as a title; counts stay x of y", () => {
+    const p = { ...pt("off", 1500, 0.75, false), mrr: 0.6875, exact: { mean_span_recall: "3/4", mrr: "11/16" } };
+    const s = snap({ held_out: { points: [p], frontier: { split: "held_out", budget_tokens: 2000, point_ids: ["off"], grid_run_id: "g" } } });
+    mock.state = { ...blankState(), snapshot: { status: "ready", data: s }, split: "held_out", selectedSettingId: "off" };
+    const h = renderToStaticMarkup(<SettingSpace />);
+    expect(h).toContain(">0.75</span>");
+    expect(h).toContain(">0.69</span>");
+    expect(h).toContain('title="exact 11/16"');
+    expect(h).not.toMatch(/MRR: 11\/16/);
+    expect(h).toContain("1 of 2 items fully covered");
+  });
+});
+
+describe("store opening defaults (UX-01, UX-16)", () => {
+  const items = ["kontrol-K-01", "kontrol-K-09"].map((id) => ({ id, split: "held_out" as const, family: "uupt", query: "q", doc_id: "d", gold_spans: [], clean_sha256: "x", mode: "literal" as const, origin: "operator" as const }));
+  it("selects K-09 once when the URL had no item and the item exists", () => {
+    const s = reducer({ ...blankState(), wantDefaultItem: true }, { type: "snapshot_ready", data: mkSnapshot({ items }) });
+    expect(s.selectedItemId).toBe("kontrol-K-09");
+    expect(s.wantDefaultItem).toBe(false);
+    const again = reducer({ ...s, selectedItemId: null }, { type: "snapshot_ready", data: mkSnapshot({ items }) });
+    expect(again.selectedItemId).toBeNull(); // hanya sekali
+  });
+  it("keeps an item from the URL, and picks nothing when K-09 is absent or for another family", () => {
+    expect(reducer({ ...blankState(), wantDefaultItem: true, selectedItemId: "kontrol-K-01" }, { type: "snapshot_ready", data: mkSnapshot({ items }) }).selectedItemId).toBe("kontrol-K-01");
+    expect(reducer({ ...blankState(), wantDefaultItem: true }, { type: "snapshot_ready", data: mkSnapshot({ items: items.slice(0, 1) }) }).selectedItemId).toBeNull();
+    expect(reducer({ ...blankState("akta"), wantDefaultItem: true }, { type: "snapshot_ready", data: mkSnapshot({ family: "akta", items }) }).selectedItemId).toBeNull();
+    expect(reducer(blankState(), { type: "snapshot_ready", data: mkSnapshot({ items }) }).selectedItemId).toBeNull(); // tanpa permintaan default
+  });
+  it("U4 split filter defaults to held-out for Company Law and to all for the deed family", () => {
+    expect(blankState().filters.split).toBe("held_out");
+    expect(blankState("akta").filters.split).toBe("all");
+    expect(reducer(blankState(), { type: "set_family", value: "akta" }).filters.split).toBe("all");
   });
 });

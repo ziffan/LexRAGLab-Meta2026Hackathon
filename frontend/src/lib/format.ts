@@ -16,6 +16,9 @@ export function orNa<T>(v: T | null | undefined, fmt: (v: T) => string = String)
 export const fixed3 = (v: number): string => v.toFixed(3);
 export const intStr = (v: number): string => String(Math.round(v));
 
+/** Rata-rata untuk tampilan (UX-18, putusan operator 12): desimal dua angka; hitungan tetap "x of y". null -> "n/a". */
+export const mean2 = (v: number | null | undefined): string => orNa(v, (x) => x.toFixed(2));
+
 /** Pecahan eksak dari API ("2/3") bila ada. */
 export function exactStr(exact: Record<string, string> | null | undefined, key: string): string {
   const v = exact?.[key];

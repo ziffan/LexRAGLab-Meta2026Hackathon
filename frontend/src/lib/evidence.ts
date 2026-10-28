@@ -94,11 +94,17 @@ export interface ColumnView {
   quantization: string | null;
   effort: string | null;
   runStatus: string | null;
+  /** Jawaban dilayani dari cache: biaya dan token di atas milik panggilan asal ini (UX-03). null = panggilan sendiri / tak ada asal. */
+  origin: { runId: string; createdAt: string } | null;
 }
 
-/** Satu kolom dari jawaban + hasil verifier + run-nya (run dicari lewat `run_id`). */
-export function columnView(ans: AnswerRecord, verifier: VerifierResult[], runs: RunRecord[], title: string): ColumnView {
+/** Satu kolom dari jawaban + hasil verifier + run-nya (run dicari lewat `run_id`). Run `replay`/`cached` tanpa biaya: biaya dan
+ * token diambil dari RunRecord panggilan asal dengan `cache_key` sama (`originRuns`, W6 `origin_runs`; UX-03), apa adanya. */
+export function columnView(ans: AnswerRecord, verifier: VerifierResult[], runs: RunRecord[], title: string, originRuns: RunRecord[] = []): ColumnView {
   const run = runs.find((r) => r.run_id === ans.run_id) ?? null;
+  const fromCache = run !== null && (run.status === "replay" || run.status === "cached");
+  const orig = fromCache ? originRuns.find((r) => r.cache_key === run.cache_key && r.status === "ok") ?? null : null;
+  const usage = orig ?? run;
   const mine = verifier.filter((v) => v.answer_id === ans.answer_id);
   const citations = ans.output.kutipan.map((k, i): CitationView => {
     const v = mine.find((x) => x.citation_index === i);
@@ -123,14 +129,15 @@ export function columnView(ans: AnswerRecord, verifier: VerifierResult[], runs: 
     citations,
     flags: ans.flags,
     budgetTokens: ans.budget_tokens,
-    inputTokens: run?.usage_input_tokens ?? null,
-    cachedTokens: run?.usage_cached_tokens ?? null,
-    outputTokens: run?.usage_output_tokens ?? null,
-    costMicros: run?.cost_usd_micros ?? null,
+    inputTokens: usage?.usage_input_tokens ?? null,
+    cachedTokens: usage?.usage_cached_tokens ?? null,
+    outputTokens: usage?.usage_output_tokens ?? null,
+    costMicros: usage?.cost_usd_micros ?? null,
     model: run?.model ?? null,
     quantization: run?.quantization ?? null,
     effort: run?.effort ?? null,
     runStatus: run?.status ?? null,
+    origin: orig ? { runId: orig.run_id, createdAt: orig.created_at } : null,
   };
 }
 

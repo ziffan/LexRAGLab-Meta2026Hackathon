@@ -15,6 +15,7 @@ vi.mock("../state", async (orig) => {
 
 import {
   CHUNK_MATCH_TEXT, CHUNK_MISMATCH_TEXT, CORPUS_MISMATCH_TEXT, EMPTY_TEXT, BUILDING_TEXT, ProfilePanel, ProfileView, profileFileName,
+  STATIC_PROFILE_MISSING, STATIC_PROFILE_NOTE,
   runExport, runLoad, type ExportPhase, type LoadPhase, type ProfileViewProps, type U7Client,
 } from "../components/ProfileExport";
 
@@ -254,3 +255,20 @@ describe("keadaan snapshot dan hint", () => {
     expect(`${h!.title} ${h!.body}`).not.toMatch(/held[- ]?out/i);
   });
 });
+
+describe("UX-09 statis: pratinjau baca-saja + Download JSON", () => {
+  it("profil siap di statis: tombol Export/Load tetap nonaktif, Download JSON dan pratinjau tampil dengan catatan", () => {
+    const h = view({ disabled: "Static replay: live calls are disabled", exportPhase: { kind: "ready", profile: UUPT }, staticNote: STATIC_PROFILE_NOTE });
+    expect(exportBtn(h)).toContain("disabled");
+    expect(loadBtn(h)).toContain("disabled");
+    expect(h).toContain("Download JSON");
+    expect(h).toContain("Profile JSON preview");
+    expect(h).toContain(STATIC_PROFILE_NOTE);
+  });
+  it("profil tidak ada di ekspor statis: catatan, tanpa pratinjau", () => {
+    const h = view({ disabled: "Static replay: live calls are disabled", staticNote: STATIC_PROFILE_MISSING });
+    expect(h).toContain("selected setting only");
+    expect(h).not.toContain("Download JSON");
+  });
+});
+

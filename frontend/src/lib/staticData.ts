@@ -55,6 +55,11 @@ export function resolveStatic(url: string, init?: RequestInit): StaticTarget {
       return { kind: "file", path: `${DATA}/snapshot/${fam}/${b && /^\d+$/.test(b) ? b : "default"}.json` };
     }
     if (seg[2] === "proposals" && seg.length === 3) return { kind: "file", path: `${DATA}/proposals/${fam}.json` };
+    if (seg[2] === "profiles" && seg[3] === "export" && seg.length === 4) {
+      // UX-09: profil tersimpan setting terpilih/transfer (berkas statis, baca-saja); setting lain -> 404 dari berkas yang tak ada
+      const s = q.get("setting_id");
+      return s ? { kind: "file", path: `${DATA}/profiles/${fam}/${sid(s)}.json` } : { kind: "unknown" };
+    }
     if (seg[2] === "docs" && seg.length === 4) {
       const doc = `${DATA}/docs/${fam}/${enc(seg[3])}`;
       const s = q.get("setting_id");

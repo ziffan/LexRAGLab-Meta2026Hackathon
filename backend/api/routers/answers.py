@@ -27,7 +27,7 @@ from backend.spark.settings import API_CHAT, profile_api
 from backend.grid.types import Setting
 from backend.pipeline.grid_run import baseline_for, to_grid_items
 from backend.pipeline.pipeline import SettingNotAvailable
-from backend.spark import BudgetExceeded, ConfigInvalid, SparkClient
+from backend.spark import BudgetExceeded, ConfigInvalid, SparkClient, store
 from backend.verifier import (ChunkSpan, VerifierConfigError, grade_answer, parse_verifier_config, summarize,
                               units_from_address_map)
 
@@ -139,5 +139,13 @@ def post_answers(request: Request, family: str, body: AnswersBody) -> dict[str, 
             verdicts, cell = grade_answer(ans["answer_id"], ans["output"], units, spans, item.gold_spans, vcfg)
             verifier += [v.result.to_dict() for v in verdicts]
             cells.append((ans["setting_id"], slot, ans["model_profile"], cell))
+    # UX-03: jawaban dari cache (run `replay`/`cached`, tanpa biaya) -> RunRecord panggilan asal dengan cache_key sama, apa adanya.
+    origin: list[dict[str, Any]] = []
+    for o in outcomes:
+        if o.run.status in ("replay", "cached"):
+            rec = store.origin_record(svc.runs_dir, "c", o.run.cache_key)
+            if rec is not None and all(x["run_id"] != rec.run_id for x in origin):
+                origin.append(rec.to_dict())
     return {"best": by_slot["best"].answer, "baseline": by_slot["baseline"].answer, "verifier": verifier,
-            "summary": [x.to_dict() for x in summarize(cells)], "runs": [o.run.to_dict() for o in outcomes]}
+            "summary": [x.to_dict() for x in summarize(cells)], "runs": [o.run.to_dict() for o in outcomes],
+            "origin_runs": origin}

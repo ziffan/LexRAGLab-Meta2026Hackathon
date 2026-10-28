@@ -87,3 +87,18 @@ def cache_read(runs_dir: Path, role: str, key: str) -> str | None:
         return canonical_json(parsed)
     except (OSError, ValueError, KeyError, TypeError):
         return None
+
+
+def origin_record(runs_dir: Path, role: str, key: str) -> RunRecord | None:
+    """RunRecord panggilan asal (berbayar) yang menghasilkan entri cache `key` (UX-03): `run_id` dari entri cache, lalu record
+    tersimpan `records/<run_id>.json` (sumber kebenaran, bukan salinan di cache). Hanya bila record itu berstatus `ok` dengan
+    `cache_key` yang sama. Selain itu None. Hanya membaca."""
+    try:
+        entry = json.loads(cache_path(runs_dir, role, key).read_text(encoding="utf-8"))
+        rid = entry["record"]["run_id"]
+        if entry.get("cache_key") != key or not isinstance(rid, str) or not rid.isalnum():
+            return None
+        rec = RunRecord.from_dict(json.loads((spark_dir(runs_dir) / RECORDS_DIR / f"{rid}.json").read_text(encoding="utf-8")))
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    return rec if rec.status == "ok" and rec.cache_key == key else None

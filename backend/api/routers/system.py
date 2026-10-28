@@ -10,7 +10,7 @@ from typing import Any
 from fastapi import APIRouter, Request
 
 from backend.api.errors import ApiError
-from backend.spark import local_server, store
+from backend.spark import ConfigInvalid, Ledger, local_server, store
 from backend.spark.runrecord import KINDS, RunRecord
 from backend.spark.settings import API_CHAT, clean_env_value, profile_api
 
@@ -74,6 +74,37 @@ def run_cost_micros(runs_dir: Path) -> int | None:
         return None
 
 
+def ledger_spent_micros(runs_dir: Path) -> int | None:
+    """Buku belanja `Ledger.spent()` (`spend_micros` = cost + projected per record; disebut `cost ?? projected` di H-063): angka biaya tunggal yang dikutip header, README, video
+    (putusan operator 12 butir 2). Integer micro-USD. None bila record tidak terbaca."""
+    try:
+        return Ledger(runs_dir).spent()
+    except (ConfigInvalid, ValueError):
+        return None
+
+
+def run_totals_by_kind(runs_dir: Path) -> list[dict[str, Any]] | None:
+    """Agregat per jenis run atas SEMUA RunRecord tersimpan (records + grid, tanpa limit R6), untuk tabel per peran U8.
+    `spend_usd_micros` = jumlah `spend_micros()` (buku belanja, sama dengan `Ledger.spent` per peran; grid = 0). Token null = 0;
+    `unknown_runs` = run dengan salah satu token atau `cost_usd_micros` null. Urutan = `KINDS`. None bila record tidak terbaca."""
+    try:
+        records = all_records(runs_dir)
+    except ValueError:
+        return None
+    acc: dict[str, dict[str, Any]] = {}
+    for r in records:
+        a = acc.setdefault(r.kind, {"kind": r.kind, "runs": 0, "usage_input_tokens": 0, "usage_cached_tokens": 0,
+                                    "usage_output_tokens": 0, "spend_usd_micros": 0, "unknown_runs": 0})
+        a["runs"] += 1
+        a["usage_input_tokens"] += r.usage_input_tokens or 0
+        a["usage_cached_tokens"] += r.usage_cached_tokens or 0
+        a["usage_output_tokens"] += r.usage_output_tokens or 0
+        a["spend_usd_micros"] += r.spend_micros()
+        if any(v is None for v in (r.usage_input_tokens, r.usage_cached_tokens, r.usage_output_tokens, r.cost_usd_micros)):
+            a["unknown_runs"] += 1
+    return [acc[k] for k in KINDS if k in acc]
+
+
 def _profile_row(request: Request, name: str, p: Mapping[str, Any]) -> dict[str, Any]:
     available, reason = profile_status(request, p)
     st = request.app.state
@@ -95,6 +126,8 @@ def health(request: Request) -> dict[str, Any]:
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
         "run_cost_usd_micros": run_cost_micros(st.service.runs_dir),
+        "ledger_spent_usd_micros": ledger_spent_micros(st.service.runs_dir),
+        "run_totals_by_kind": run_totals_by_kind(st.service.runs_dir),
         "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiFailure, fetchProfileExport, postProfileImport } from "../api";
-import { fixed3, orNa, xOfY } from "../lib/format";
-import { modeLabel, retrievalModeLabel } from "../lib/labels";
+import { fixed3, mean2, orNa, xOfY } from "../lib/format";
+import { modeLabel, originLabel, retrievalModeLabel, splitLabel } from "../lib/labels";
 import { DEGENERATE_NOTE, TRANSFER_LABEL, hasDegenerate } from "../lib/settings";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { useStore } from "../state";
@@ -21,7 +21,12 @@ export const CHUNK_MATCH_TEXT = "chunk hash matches source run";
 export const CHUNK_MISMATCH_TEXT = "Chunk hash does not match source run";
 export const NOT_JSON_TEXT = "Could not read profile file: it is not a JSON object. Nothing was sent.";
 
+export const STATIC_PROFILE_NOTE = "Static replay: read-only preview of the stored profile. Download JSON saves it in your browser.";
+export const STATIC_PROFILE_MISSING = "The static export includes the stored profile of the selected setting only (Company Law: best profile; Deed: transfer setting).";
+
 export const TITLE_UUPT = "Held-out results";
+/** UX-21: enum asal -> label UI-SPEC §6; nilai tak dikenal apa adanya. */
+const originText = (o: string): string => (o === "operator" || o === "spark_disetujui" ? originLabel(o) : o);
 export const TITLE_AKTA = "Transfer results";
 
 export interface U7Client {
@@ -160,9 +165,9 @@ function HeldOutSummary({ profile }: { profile: Profile }) {
     <dl className="kv">
       <dt>Items</dt><dd>{h.n_items}</dd>
       <dt>Fully covered</dt><dd>{xOfY(h.fully_covered.covered, h.fully_covered.total, "items with gold")}</dd>
-      <dt>Mean span recall</dt><dd>{orNa(h.mean_span_recall, fixed3)}</dd>
+      <dt>Mean span recall</dt><dd>{mean2(h.mean_span_recall)}</dd>
       <dt>Mean token precision</dt><dd>{orNa(h.mean_token_precision, fixed3)}</dd>
-      <dt>By origin</dt><dd>{Object.entries(h.by_origin).map(([k, v]) => `${k}: ${v}`).join(", ") || "n/a"}</dd>
+      <dt>By origin</dt><dd>{Object.entries(h.by_origin).map(([k, v]) => `${originText(k)}: ${v}`).join(", ") || "n/a"}</dd>
     </dl>
   );
 }
@@ -183,7 +188,7 @@ export function ReportTable({ report }: { report: Report }) {
         <tbody>
           {report.rows.map((r) => (
             <tr key={r.item_id}>
-              <td className="mono">{r.item_id}</td><td>{r.split}</td><td>{r.origin}</td><td>{modeLabel(r.mode)}</td>
+              <td className="mono">{r.item_id}</td><td>{r.split === "tune" || r.split === "held_out" ? splitLabel(r.split) : r.split}</td><td>{originText(r.origin)}</td><td>{modeLabel(r.mode)}</td>
               <td>{r.span_recall ? r.span_recall.text : "n/a"}</td>
               <td>{r.token_precision ? r.token_precision.text : "n/a"}{r.note ? ` (${r.note})` : ""}</td>
             </tr>
@@ -243,6 +248,8 @@ export interface ProfileViewProps {
   onExport: () => void;
   onFile: (file: File) => void;
   onDownload: (profile: Profile) => void;
+  /** Statis (UX-09): catatan di atas pratinjau baca-saja, atau alasan tidak ada profil. */
+  staticNote?: string | null;
 }
 
 export function ProfileView(p: ProfileViewProps) {
@@ -268,6 +275,7 @@ export function ProfileView(p: ProfileViewProps) {
         />
         {p.disabled && <span className="note">{p.disabled}</span>}
       </div>
+      {p.staticNote && <p className="note" data-testid="static-profile-note">{p.staticNote}</p>}
       {p.exportPhase.kind === "idle" && !p.disabled && !p.settingId && <EmptyBlock>{EMPTY_TEXT}</EmptyBlock>}
       {p.exportPhase.kind === "building" && <LoadingBlock text={BUILDING_TEXT} />}
       {p.exportPhase.kind === "error" && <ErrorBlock title={p.exportPhase.message} />}
@@ -305,6 +313,20 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
     setLoadPhase({ kind: "idle" });
   }, [state.family, settingId]);
   const disabled = disabledReason({ staticMode: isStatic(), replay: snap?.replay === true, settingId });
+  // UX-09: di ekspor statis, profil tersimpan setting terpilih dibaca otomatis (berkas statis, GET saja) untuk pratinjau + Download JSON.
+  const [staticMissing, setStaticMissing] = useState(false);
+  useEffect(() => {
+    setStaticMissing(false);
+    if (!isStatic() || !settingId || state.snapshot.status !== "ready") return;
+    const fam = state.family;
+    void runGuardedExport(guard.current, client, fam, settingId, (ph) => {
+      if (ph.kind === "error") {
+        setStaticMissing(true);
+        setExportPhase({ kind: "idle" });
+      } else setExportPhase(ph);
+    }, () => undefined);
+  }, [state.family, settingId, state.snapshot.status, client]);
+  const staticNote = !isStatic() ? null : staticMissing ? STATIC_PROFILE_MISSING : exportPhase.kind === "ready" ? STATIC_PROFILE_NOTE : null;
 
   let body;
   if (state.snapshot.status === "idle" || state.snapshot.status === "loading") body = <LoadingBlock text="Loading snapshot…" />;
@@ -320,6 +342,7 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
         loadPhase={loadPhase}
         report={snap?.report ?? null}
         degenerate={snap ? hasDegenerate(snap) : false}
+        staticNote={staticNote}
         onExport={() => {
           const fam = state.family;
           void runGuardedExport(guard.current, client, fam, settingId, setExportPhase, (pr) => {

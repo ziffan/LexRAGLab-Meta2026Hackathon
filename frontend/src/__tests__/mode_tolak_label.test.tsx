@@ -30,7 +30,7 @@ describe("label tolak", () => {
 
   it("PerItem: opsi filter Must refuse selalu ada, juga tanpa butir tolak; baris tolak berlabel", () => {
     const withGrid = (items: Item[]) => {
-      mock.state = { ...blankState(), selectedSettingId: SETTINGS[0].setting_id, snapshot: { status: "ready", data: mkSnapshot({ items, grid: GRID }) } };
+      mock.state = { ...blankState(), filters: { origin: "all", mode: "all", split: "all" }, selectedSettingId: SETTINGS[0].setting_id, snapshot: { status: "ready", data: mkSnapshot({ items, grid: GRID }) } };
       return renderToStaticMarkup(<PerItem />);
     };
     const none = withGrid([ITEM("a", "literal", true)]);
@@ -42,7 +42,7 @@ describe("label tolak", () => {
   });
 
   it("ChunksVsGold: butir tolak berlabel di daftar pilihan", () => {
-    mock.state = { ...blankState(), snapshot: { status: "ready", data: mkSnapshot({ items: [ITEM("b", "tolak", false)] }) } };
+    mock.state = { ...blankState(), filters: { origin: "all", mode: "all", split: "all" }, snapshot: { status: "ready", data: mkSnapshot({ items: [ITEM("b", "tolak", false)] }) } };
     const h = renderToStaticMarkup(<ChunksVsGold />);
     expect(h).toContain("b · Must refuse");
     expect(h).not.toContain("tolak</option>");

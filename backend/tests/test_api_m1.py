@@ -84,6 +84,46 @@ def test_r1_run_cost_zero_without_records_and_null_when_unreadable(tmp_path):
     assert r.status_code == 200 and r.json()["run_cost_usd_micros"] is None
 
 
+def test_r1_ledger_spent_and_totals_by_kind_cover_all_runs(tmp_path):
+    """Putusan operator 12 butir 2 (UX-02): satu angka biaya = Ledger.spent (cost ?? projected), agregat per peran atas semua run."""
+    from backend.api.routers.system import MAX_LIMIT
+    from backend.spark import Ledger
+
+    from .spark_fakes import synth
+
+    runs = tmp_path / "runs"
+    n = MAX_LIMIT + 3
+    for i in range(n):  # peran a: cost terukur; tiap ke-10 tanpa cost tapi dengan projected (upaya gagal)
+        synth(runs, "a", "meta", None if i % 10 == 0 else 5, run_id=f"a-{i:04d}", projected=7 if i % 10 == 0 else None)
+    synth(runs, "c", "meta", 11, run_id="c-1")
+    synth(runs, "c", "meta", None, run_id="c-2")  # cache-hit: tanpa cost, tanpa projected
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=runs, encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
+    c = TestClient(create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg()))
+    h = c.get("/api/health").json()
+    want_a = sum(7 if i % 10 == 0 else 5 for i in range(n))
+    assert h["ledger_spent_usd_micros"] == Ledger(runs).spent() == want_a + 11
+    assert h["ledger_spent_usd_micros"] != h["run_cost_usd_micros"]  # projected ikut di buku belanja, tidak di jumlah mentah
+    by = {r["kind"]: r for r in h["run_totals_by_kind"]}
+    assert [r["kind"] for r in h["run_totals_by_kind"]] == ["spark_a", "spark_c"]
+    assert by["spark_a"]["runs"] == n and by["spark_a"]["spend_usd_micros"] == want_a  # > MAX_LIMIT: tidak terpotong R6
+    assert by["spark_c"] == {"kind": "spark_c", "runs": 2, "usage_input_tokens": 0, "usage_cached_tokens": 0, "usage_output_tokens": 0,
+                             "spend_usd_micros": 11, "unknown_runs": 2}
+    assert sum(r["spend_usd_micros"] for r in h["run_totals_by_kind"]) == h["ledger_spent_usd_micros"]
+    assert all(type(r["spend_usd_micros"]) is int for r in h["run_totals_by_kind"])
+
+
+def test_r1_ledger_fields_null_when_unreadable(tmp_path):
+    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs", encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
+    c = TestClient(create_app(svc, env={"MUSE_API_KEY": K, "MUSE_BASE_URL": BASE}, model_config=model_cfg(), budget_config=budget_cfg()))
+    h = c.get("/api/health").json()
+    assert h["ledger_spent_usd_micros"] == 0 and h["run_totals_by_kind"] == []
+    d = tmp_path / "runs" / "spark" / "records"
+    d.mkdir(parents=True)
+    (d / "bad.json").write_text("{not json", encoding="utf-8")
+    h = c.get("/api/health").json()
+    assert h["ledger_spent_usd_micros"] is None and h["run_totals_by_kind"] is None
+
+
 def test_uniform_error_shape_across_modules(client, world):
     clean_error(client.get("/api/runs", params={"kind": "bogus"}), 400, "invalid_request")
     clean_error(client.get("/api/does-not-exist"), 404, "not_found")

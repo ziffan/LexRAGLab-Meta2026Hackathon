@@ -188,7 +188,7 @@ describe("store reducer", () => {
   });
   it("updates filters and split independently", () => {
     const s = reducer(reducer(blankState(), { type: "set_filters", value: { mode: "parafrase" } }), { type: "set_split", value: "tune" });
-    expect(s.filters).toEqual({ origin: "all", mode: "parafrase", split: "all" });
+    expect(s.filters).toEqual({ origin: "all", mode: "parafrase", split: "held_out" }); // UX-16: UU PT bawaan held-out
     expect(s.split).toBe("tune");
   });
 });

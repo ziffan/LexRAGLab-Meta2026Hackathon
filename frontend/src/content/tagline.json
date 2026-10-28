@@ -1,0 +1,5 @@
+{
+  "_note": "UX-01 (putusan operator 12, Q-UX-5): teks klaim produk. Tampil hanya bila status = final; final hanya setelah operator menyetujui teksnya. Draf diambil apa adanya dari kalimat pembuka README.",
+  "status": "draft",
+  "text": "Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed."
+}
