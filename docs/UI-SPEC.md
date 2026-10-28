@@ -388,3 +388,13 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 | 08 | U6 daftar baca-saja "Decided ({n})" (Approved/Edited/Rejected) di bawah antrean |
 | 09 | Ekspor statis memuat profil tersimpan setting terpilih (UU PT) dan setting transfer (akta), `data/profiles/<fam>/<sid16>.json`, byte-identik dengan `profiles/` bila masih sama dengan W7 selain `created_at`. U7 statis: pratinjau baca-saja + Download JSON; Export/Load tetap nonaktif (H-051) |
 | 17 | U9 baris provenance dari `items_summary` |
+| 07 | 502/503/504 tanpa badan galat API (proxy dev, backend mati) = `unreachable`: "Backend unreachable. Showing replay data if available."; U5 saat snapshot gagal: "Could not load schema: the family snapshot did not load." (bukan galat validasi) |
+| 10 | Sublabel sel "Abstained, correctly": "(no gold, or gold not in its context)" (EVAL-SPEC 2×2). Hint `verifier.matrix_2x2` 1.5.0: draf menunggu operator, belum di `hints.json` |
+| 12 | Isi popover hint tidak mewarisi `text-transform: uppercase` dari `.field`/kepala tabel |
+| 13 | Titik degenerate berlabel (H-093) tetap digambar dan tetap anggota frontier backend, tetapi tidak disambung garis frontier |
+| 14 | U8 menampilkan 20 baris + "Show more" (+100); baris terpilih tetap terlihat |
+| 15 | Kotak teks potongan U1 bergulir otomatis ke awal gold |
+| 19 | Opsi butir U1: "id · mode · query terpotong" |
+| 20 | `family` dicerminkan ke URL (`?family=akta`; uupt tanpa parameter) |
+| 21 | U7: enum asal dan split dipetakan ke label; alasan gagal header-on ringkas (kode + chunk di `title`); catatan skema operator tidak diubah |
+| 23 | Entri glosarium pemetaan "Must refuse / No gold / Unanswerable / Abstained": draf menunggu operator; label UI-SPEC tidak diubah |

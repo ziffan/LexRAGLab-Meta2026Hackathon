@@ -28,7 +28,7 @@ describe("panel U3/U5/U8", () => {
   it("error snapshot", () => {
     set({ status: "error", code: "http_500", message: "kaput" });
     expect(renderToStaticMarkup(<EvidencePanel />)).toContain("kaput");
-    expect(renderToStaticMarkup(<SchemaPanel />)).toContain("Schema failed validation");
+    expect(renderToStaticMarkup(<SchemaPanel />)).toContain("Could not load schema"); // UX-07: bukan galat validasi
   });
   it("kosong: tanpa butir terpilih, tanpa skema", () => {
     set({ status: "ready", data: mkSnapshot() });

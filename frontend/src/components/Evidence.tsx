@@ -89,7 +89,7 @@ export function SummaryTable({ data, settings }: { data: AnswersResponse; settin
         <thead>
           <tr>
             <th scope="col">Setting</th><th scope="col">Slot</th><th scope="col">Model profile</th>
-            {SUMMARY_HEADERS.map((h) => <th key={h} scope="col">{h}</th>)}
+            {SUMMARY_HEADERS.map((h) => <th key={h} scope="col">{h}{h === "Abstained, correctly" && <span className="muted sublabel"> (no gold, or gold not in its context)</span>}</th>)}
             <th scope="col">Items</th>
           </tr>
         </thead>

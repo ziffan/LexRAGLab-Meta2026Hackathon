@@ -106,8 +106,8 @@ describe("U2 failed header-on settings", () => {
     expect(dots.map((d) => d.setting.setting_id)).not.toContain("bad");
     const h = render(sn);
     expect(h).toContain("Failed header-on settings");
-    expect(h).toContain("header missing for a chunk (header_missing)");
-    expect(h).toContain("chunk abcdef012345");
+    expect(h).toContain(">header missing for a chunk</span>"); // UX-21: kode dan chunk hanya di title
+    expect(h).toContain('title="header_missing, chunk abcdef0123456789zz"');
     expect(h).toContain("fixed-size · hybrid · header on");
     expect(h).toContain("3 settings"); // off, on, fx: tidak ada titik untuk 'bad'
   });
@@ -119,9 +119,9 @@ describe("U2 failed header-on settings", () => {
   });
   it("keeps unknown reason codes visible and tolerates unknown setting ids", () => {
     expect(failReason("something_new")).toBe("something_new");
-    expect(failReason("header_invalid")).toBe("header is empty (header_invalid)");
-    expect(failReason("header_stale")).toBe("header comes from a different clean text (header_stale)");
-    expect(failReason("granularity_mismatch")).toBe("header granularity does not match (granularity_mismatch)");
+    expect(failReason("header_invalid")).toBe("header is empty");
+    expect(failReason("header_stale")).toBe("header comes from a different clean text");
+    expect(failReason("granularity_mismatch")).toBe("header granularity does not match");
     const h = render(snap({ failed_settings: [{ setting_id: "zzzzzzzzzzzzzzzzzz", reason: "header_stale", chunk_id: null }] }));
     expect(h).toContain("zzzzzzzzzzzz");
     expect(h).toContain("header_stale");

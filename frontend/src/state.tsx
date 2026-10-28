@@ -131,8 +131,9 @@ const oneOf = <T extends string>(v: string | null, ok: readonly T[], d: T): T =>
 function initialState(): State {
   const q = new URLSearchParams(window.location.search);
   const b = Number(q.get("budget"));
+  const fam = oneOf(q.get("family"), ["uupt", "akta"] as const, "uupt"); // UX-20: keluarga di URL (`?family=`), selain itu uupt
   return {
-    ...blankState(),
+    ...blankState(fam),
     budget: Number.isInteger(b) && b > 0 ? b : null,
     selectedItemId: q.get("item"),
     wantDefaultItem: !q.has("item"),
@@ -142,7 +143,7 @@ function initialState(): State {
     filters: {
       origin: oneOf(q.get("origin"), ["all", "operator", "spark_disetujui"] as const, "all"),
       mode: oneOf(q.get("mode"), ["all", "literal", "parafrase", "tolak"] as const, "all"),
-      split: oneOf(q.get("fsplit"), ["all", "tune", "held_out"] as const, defaultFilterSplit("uupt")),
+      split: oneOf(q.get("fsplit"), ["all", "tune", "held_out"] as const, defaultFilterSplit(fam)),
     },
   };
 }
@@ -237,6 +238,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (isStatic() && new URLSearchParams(window.location.search).get("view") === "review") return; // layar Review statis tetap di URL-nya
     if (!isStatic() && /\/review\/?$/.test(window.location.pathname)) return; // `/review?family=` (U6) tidak ditimpa cermin state halaman utama
     const q = new URLSearchParams();
+    if (state.family !== "uupt") q.set("family", state.family);
     if (state.selectedItemId) q.set("item", state.selectedItemId);
     if (state.compare) q.set("compare", "1");
     if (state.budget) q.set("budget", String(state.budget));
@@ -248,7 +250,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     else if (state.paramSetting) q.set("setting", state.paramSetting);
     const qs = q.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [state.selectedItemId, state.compare, state.budget, state.split, state.filters, primary, state.paramSetting]);
+  }, [state.family, state.selectedItemId, state.compare, state.budget, state.split, state.filters, primary, state.paramSetting]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

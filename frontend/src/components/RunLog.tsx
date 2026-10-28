@@ -13,10 +13,14 @@ import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U8 Run log & cost (docs/UI-SPEC.md U8). `RunLogView` dan `HeaderBPanel` murni; `RunLogPanel` menyambung R6 + snapshot.
 
-export function RunLogView({ runs, role, onRole, selected, onSelect, totals = null }: {
+export const RUNLOG_PAGE = 20; // UX-14: baris awal tabel U8; "Show more" menambah per halaman
+
+export function RunLogView({ runs, role, onRole, selected, onSelect, totals = null, shown = RUNLOG_PAGE, onMore }: {
   runs: RunRecord[];
   /** R1 `run_totals_by_kind` (semua run, server). null = tidak tersedia: agregat dihitung dari baris terbaru saja dan diberi label. */
   totals?: RunTotal[] | null;
+  shown?: number;
+  onMore?: () => void;
   role: RoleFilter;
   onRole: (r: RoleFilter) => void;
   selected: string | null;
@@ -73,7 +77,7 @@ export function RunLogView({ runs, role, onRole, selected, onSelect, totals = nu
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {rows.slice(0, Math.max(shown, rows.findIndex((r) => r.run_id === selected) + 1)).map((r) => (
               <tr key={r.run_id} className={r.run_id === selected ? "sel" : undefined}>
                 <td><button type="button" className="addr" onClick={() => onSelect(r.run_id === selected ? null : r.run_id)} aria-expanded={r.run_id === selected}>{utcStamp(r.created_at)}</button></td>
                 <td>{roleLabel(r.kind)}</td>
@@ -91,6 +95,12 @@ export function RunLogView({ runs, role, onRole, selected, onSelect, totals = nu
           </tbody>
         </table>
       </div>
+      {rows.length > shown && (
+        <div className="card-actions">
+          <span className="note">{`Showing ${Math.min(shown, rows.length)} of ${rows.length} runs.`}</span>
+          {onMore && <button type="button" onClick={onMore}>Show more</button>}
+        </div>
+      )}
       {detail && <pre className="ctx mono" aria-label="Run record JSON">{JSON.stringify(detail, null, 2)}</pre>}
     </>
   );
@@ -147,6 +157,7 @@ export function RunLogPanel() {
   const [totals, setTotals] = useState<RunTotal[] | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [role, setRole] = useState<RoleFilter>("all");
+  const [shown, setShown] = useState(RUNLOG_PAGE);
   const [selected, setSelected] = useState<string | null>(null);
   const [addresses, setAddresses] = useState<Record<string, string>>({});
 
@@ -193,7 +204,7 @@ export function RunLogPanel() {
         <button type="button" onClick={() => { setRuns({ status: "loading" }); setAttempt((n) => n + 1); }}>Retry</button>
       </>
     );
-  else body = <RunLogView runs={runs.data} totals={totals} role={role} onRole={setRole} selected={selected} onSelect={setSelected} />;
+  else body = <RunLogView runs={runs.data} totals={totals} role={role} onRole={(r) => { setRole(r); setShown(RUNLOG_PAGE); }} selected={selected} onSelect={setSelected} shown={shown} onMore={() => setShown((n) => n + 100)} />;
   return (
     <section className="panel" aria-labelledby="runlog-title" id="runlog">
       <div className="panel-head"><h2 id="runlog-title">Run log &amp; cost</h2><Hint id="role.a" /><Hint id="role.b" /><Hint id="role.c" /><Hint id="role.d" /><Hint id="header_b.what" /><Hint id="metric.local_tokenizer" /></div>

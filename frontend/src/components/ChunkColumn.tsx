@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "../state";
 import type { Chunk, DocResponse, Item, Load, Retrieval, Setting } from "../types";
 import { edgeSplit, offsetsMatch, pieces, splitSpans, visibleChunks } from "../lib/gold";
@@ -109,6 +109,15 @@ function ChunkCard({ chunk, parts, edges, rank, selected, onSelect }: {
   selected: boolean;
   onSelect: () => void;
 }) {
+  // UX-15: kotak teks bergulir sendiri; gulir ke awal gold supaya titik belah terlihat tanpa menggulir manual.
+  const box = useRef<HTMLDivElement>(null);
+  const goldKey = parts.map((p) => (p.gold ? "g" : "t") + p.text.length).join(",");
+  useEffect(() => {
+    const el = box.current;
+    const mark = el?.querySelector("mark");
+    if (!el || !(mark instanceof HTMLElement) || el.scrollHeight <= el.clientHeight) return;
+    el.scrollTop = Math.max(0, mark.offsetTop - 8);
+  }, [goldKey]);
   return (
     <li className={`chunk${selected ? " selected" : ""}`}>
       {edges.top && <div className="split-edge top">Gold split across chunks</div>}
@@ -121,7 +130,7 @@ function ChunkCard({ chunk, parts, edges, rank, selected, onSelect }: {
           {rank !== undefined && <span className={`rank${rank === null ? "" : " hit"}`}>{rank === null ? "Not retrieved" : `Retrieved #${rank}`}</span>}
         </span>
       </div>
-      <div className="chunk-text" tabIndex={0} role="region" aria-label={`Text of ${chunk.address}`}>
+      <div ref={box} className="chunk-text" tabIndex={0} role="region" aria-label={`Text of ${chunk.address}`}>
         {parts.map((p, i) => (p.gold ? <mark key={i} title="Gold span">{p.text}</mark> : <span key={i}>{p.text}</span>))}
       </div>
       {edges.bottom && <div className="split-edge bottom">Gold split across chunks</div>}

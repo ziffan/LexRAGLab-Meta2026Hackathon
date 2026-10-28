@@ -30,6 +30,8 @@ async function requestJson<T>(url: string, init?: RequestInit, fetchFn: FetchLik
   }
   if (!res.ok) {
     const e = (body as { error?: { code?: string; message?: string } } | null)?.error;
+    // UX-07: proxy dev tanpa backend memberi 502/503/504 tanpa badan galat API -> sama dengan fetch gagal (UI-SPEC U0).
+    if (!e?.code && res.status >= 502 && res.status <= 504) throw new ApiFailure("unreachable", "Backend unreachable. Showing replay data if available.");
     throw new ApiFailure(e?.code ?? `http_${res.status}`, e?.message ?? res.statusText);
   }
   return body as T;

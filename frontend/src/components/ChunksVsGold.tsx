@@ -3,6 +3,7 @@ import { fetchDocBySchema } from "../api";
 import { retrievalKey, useStore } from "../state";
 import { availableSettings, fixedFor } from "../lib/settings";
 import { Hint } from "./Hint";
+import { truncate } from "../lib/format";
 import { modeLabel, originLabel, settingLabel } from "../lib/labels";
 import { ChunkColumn } from "./ChunkColumn";
 import { ChunkDetail } from "./ChunkDetail";
@@ -77,7 +78,7 @@ export function ChunksVsGold() {
   } else if (snapState.status === "error") {
     body = (
       <div className="state error" role="alert">
-        <strong>{snapState.code === "unreachable" ? "Backend unreachable." : "Could not load the family snapshot."}</strong>
+        <strong>{snapState.code === "unreachable" ? "Backend unreachable. Showing replay data if available." : "Could not load the family snapshot."}</strong>
         <div>{snapState.message}</div>
       </div>
     );
@@ -111,7 +112,7 @@ export function ChunksVsGold() {
               <option value="">Select an item…</option>
               {snap.items.map((i) => (
                 <option key={i.id} value={i.id}>
-                  {i.id} · {modeLabel(i.mode)}
+                  {i.id} · {modeLabel(i.mode)} · {truncate(i.query, 60)}
                 </option>
               ))}
             </select>

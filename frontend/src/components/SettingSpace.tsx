@@ -49,9 +49,11 @@ const FAIL_TEXT: Record<string, string> = {
   granularity_mismatch: "header granularity does not match",
 };
 /** Alasan gagal (kode dari RunRecord.failed_settings) dalam bahasa Inggris, dengan kode aslinya. */
-export const failReason = (code: string): string => (FAIL_TEXT[code] ? `${FAIL_TEXT[code]} (${code})` : code);
+export const failReason = (code: string): string => FAIL_TEXT[code] ?? code;
 
-export const frontierLine = (dots: Dot[]): Dot[] => dots.filter((d) => d.onFrontier).sort((a, b) => a.x - b.x || b.y - a.y);
+/** Garis frontier. UX-13 (putusan operator 12 Q-UX-10): titik degenerate berlabel (H-093, akta "no structure recognized") tetap
+ * digambar dan tetap anggota frontier backend, tetapi tidak disambung garis. */
+export const frontierLine = (dots: Dot[]): Dot[] => dots.filter((d) => d.onFrontier && !d.point.label).sort((a, b) => a.x - b.x || b.y - a.y);
 
 function MarkerShape({ cx, cy, chunker, hollow, selected, on }: { cx: number; cy: number; chunker: Setting["chunker"]; hollow: boolean; selected: boolean; on: boolean }) {
   const color = colorOf(on);
@@ -275,8 +277,7 @@ function Body({ snap }: { snap: Snapshot }) {
               const st = byId.get(f.setting_id);
               return (
                 <li key={f.setting_id}>
-                  <strong>{st ? settingShort(st) : f.setting_id.slice(0, 12)}</strong>: {failReason(f.reason)}
-                  {f.chunk_id ? ` (chunk ${f.chunk_id.slice(0, 12)})` : ""}
+                  <strong>{st ? settingShort(st) : f.setting_id.slice(0, 12)}</strong>: <span title={`${f.reason}${f.chunk_id ? `, chunk ${f.chunk_id}` : ""}`}>{failReason(f.reason)}</span>
                 </li>
               );
             })}
