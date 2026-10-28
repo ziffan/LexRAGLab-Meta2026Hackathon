@@ -1,0 +1,162 @@
+{
+ "body": {
+  "default_chunk_level": 4,
+  "family": "uupt",
+  "levels": [
+   {
+    "examples": [
+     "## BAB I — KETENTUAN UMUM",
+     "## BAB III — MODAL DAN SAHAM",
+     "## BAB VII — DIREKSI DAN DEWAN KOMISARIS"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^##\\s+BAB\\s+[IVXLCDM]+\\b",
+    "name": "bab",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "### Bagian Kesatu — Pendirian",
+     "### Bagian Kedua — Perlindungan Modal dan Kekayaan Perseroan",
+     "### Bagian Kesatu — Direksi"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^###\\s+Bagian\\s+\\S+",
+    "name": "bagian",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "#### Paragraf 1 — Anggaran Dasar",
+     "#### Paragraf 2 — Perubahan Anggaran Dasar",
+     "#### Paragraf 1 — Daftar Perseroan"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^####\\s+Paragraf\\s+\\d+\\b",
+    "name": "paragraf",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "### Pasal 1",
+     "### Pasal 15",
+     "### Pasal 153A"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^###\\s+Pasal\\s+\\d+[A-Z]*\\b",
+    "name": "pasal",
+    "order": 4,
+    "parent_order": 3
+   },
+   {
+    "examples": [
+     "#### Penjelasan Pasal 1",
+     "#### Penjelasan Pasal 15",
+     "#### Penjelasan Pasal 153A"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^####\\s+Penjelasan\\s+Pasal\\s+\\d+[A-Z]*\\b",
+    "name": "penjelasan pasal",
+    "order": 5,
+    "parent_order": 4
+   }
+  ],
+  "notes": "Tidak semua BAB memiliki Bagian dan Paragraf; Pasal dapat langsung berada di bawah BAB dan memakai sufiks huruf seperti 153A-153J. Pembuka (Menimbang, Mengingat, Menetapkan) serta heading ## PENJELASAN UMUM dan ## PENGESAHAN DAN PENGUNDANGAN tidak memakai penanda BAB dan Penjelasan Pasal disisipkan setelah tiap Pasal."
+ },
+ "cache_key": "61004f9b290d814dcc5d1302fdbabc4587da918a9831162456637ebaae872286",
+ "created_at": "2026-10-28T19:01:10Z",
+ "family": "uupt",
+ "model_profile": "sweep_meta_xhigh",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "61bfaca7203849eabf7f4e64c71b3d07",
+ "sample": [
+  {
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "doc_id": "uupt-40-2007"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "## BAB I — KETENTUAN UMUM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB III — MODAL DAN SAHAM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB VII — DIREKSI DAN DEWAN KOMISARIS",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "### Bagian Kesatu — Pendirian",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kedua — Perlindungan Modal dan Kekayaan Perseroan",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kesatu — Direksi",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "#### Paragraf 1 — Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 2 — Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 1 — Daftar Perseroan",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "### Pasal 1",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 15",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 153A",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "#### Penjelasan Pasal 1",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 15",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 153A",
+   "matched": true,
+   "order": 5
+  }
+ ]
+}

@@ -29,7 +29,7 @@ label = "Contributor (effort medium)"
 [profiles.sweep_meta_high]
 sweep_of = "meta"
 reasoning_effort = "high"
-max_output_tokens = 6000
+max_output_tokens = 16000  # P6: dinaikkan dari 6000 setelah A high incomplete dua upaya (29 Okt, sebelum batch B)
 roles = ["a", "b", "c"]
 rate_group = "meta"
 label = "Contributor (effort high)"
@@ -37,7 +37,7 @@ label = "Contributor (effort high)"
 [profiles.sweep_meta_xhigh]
 sweep_of = "meta"
 reasoning_effort = "xhigh"
-max_output_tokens = 6000
+max_output_tokens = 32000  # P6: dinaikkan dari 6000 setelah A xhigh incomplete dua upaya (29 Okt, sebelum batch B)
 roles = ["a", "b", "c"]
 rate_group = "meta"
 label = "Contributor (effort xhigh)"
