@@ -1,0 +1,97 @@
+{
+ "body": {
+  "default_chunk_level": 4,
+  "family": "uupt",
+  "levels": [
+   {
+    "examples": [
+     "## BAB I — KETENTUAN UMUM",
+     "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+     "## BAB III — MODAL DAN SAHAM"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^##\\s*BAB\\s+[IVXLCDM]+\\b.*",
+    "name": "bab",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "### Bagian Kesatu — Pendirian",
+     "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+     "### Bagian Ketiga — Daftar Perseroan dan Pengumuman"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^###\\s*Bagian\\s+.*",
+    "name": "bagian",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "#### Paragraf 1 — Anggaran Dasar",
+     "#### Paragraf 2 — Perubahan Anggaran Dasar",
+     "#### Paragraf 1 — Daftar Perseroan"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^####\\s*Paragraf\\s+.*",
+    "name": "paragraf",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "### Pasal 1",
+     "### Pasal 2",
+     "### Pasal 7",
+     "### Pasal 153A"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^###\\s*Pasal\\s+\\d+[A-Z]*\\b.*",
+    "name": "pasal",
+    "order": 4,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "(1) Perseroan Terbatas, yang selanjutnya disebut Perseroan, adalah badan hukum yang merupakan persekutuan modal, didirikan berdasarkan perjanjian, melakukan kegiatan usaha dengan modal dasar yang seluruhnya terbagi dalam saham atau badan hukum perorangan yang memenuhi kriteria usaha mikro dan kecil sebagaimana diatur dalam peraturan perundang-undangan mengenai usaha mikro dan kecil.",
+     "(1) Pemegang saham Perseroan tidak bertanggung jawab secara pribadi atas perikatan yang dibuat atas nama Perseroan dan tidak bertanggung jawab atas kerugian Perseroan melebihi saham yang dimiliki.",
+     "(1) Perseroan didirikan oleh 2 (dua) orang atau lebih dengan akta notaris yang dibuat dalam bahasa Indonesia."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^\\(\\d+\\)\\s.*",
+    "name": "ayat",
+    "order": 5,
+    "parent_order": 4
+   },
+   {
+    "examples": [
+     "a. bahwa perekonomian nasional yang diselenggarakan berdasar atas demokrasi ekonomi dengan prinsip kebersamaan, efisiensi berkeadilan, berkelanjutan, berwawasan lingkungan, kemandirian, serta dengan menjaga keseimbangan kemajuan dan kesatuan ekonomi nasional, perlu didukung oleh kelembagaan perekonomian yang kokoh dalam rangka mewujudkan kesejahteraan masyarakat;",
+     "a. persyaratan Perseroan sebagai badan hukum belum atau tidak terpenuhi;",
+     "1. Perseroan Terbatas, yang selanjutnya disebut Perseroan, adalah badan hukum yang merupakan persekutuan modal, didirikan berdasarkan perjanjian, melakukan kegiatan usaha dengan modal dasar yang seluruhnya terbagi dalam saham atau badan hukum perorangan yang memenuhi kriteria usaha mikro dan kecil sebagaimana diatur dalam peraturan perundang-undangan mengenai usaha mikro dan kecil."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^(?:[a-z]\\.\\s.*|\\d+\\.\\s.*)",
+    "name": "butir",
+    "order": 6,
+    "parent_order": 5
+   }
+  ],
+  "notes": "BAB I tidak memiliki Bagian/Paragraf, sedangkan BAB II-BAB VIII memiliki Bagian dan Paragraf yang tidak konsisten; Pasal 153A-153J menunjukkan variasi penomoran Pasal alfanumerik; penanda Penjelasan Pasal (#### Penjelasan Pasal ...) dan daftar bernomor/berhuruf di Penjelasan Umum tidak dimasukkan sebagai level terpisah karena tidak konsisten sebagai penanda hierarki utama."
+ },
+ "cache_key": "24ebca8fae3621a14bccff13d32a7c3697ab82d38c4a479820e855209e21cc78",
+ "created_at": "2026-10-28T19:15:59Z",
+ "errors": [
+  "level[4] order 5: an example is not a single short line",
+  "level[5] order 6: an example is not a single short line",
+  "level[5] order 6: an example is not a single short line"
+ ],
+ "family": "uupt",
+ "run_id": "b62c0f5bb61741b6b670cd400e28407c",
+ "sample": [
+  {
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "doc_id": "uupt-40-2007"
+  }
+ ]
+}

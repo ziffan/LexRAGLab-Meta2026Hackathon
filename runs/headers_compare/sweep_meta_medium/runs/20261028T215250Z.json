@@ -1,0 +1,295 @@
+{
+ "attempts": {
+  "uupt-40-2007/fixed_size": 8,
+  "uupt-40-2007/pasal": 5,
+  "uupt-40-2007/structure_schema": 3
+ },
+ "batches": [
+  {
+   "batas_atas": 432224,
+   "called": 323,
+   "expected": 72584,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 299,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 104408,
+   "stopped": null,
+   "units": 323,
+   "upper_cached": 432224
+  },
+  {
+   "batas_atas": 37672,
+   "called": 24,
+   "expected": 9922,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 18,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 858029,
+   "stopped": null,
+   "units": 24,
+   "upper_cached": 37672
+  },
+  {
+   "batas_atas": 13867,
+   "called": 6,
+   "expected": 6097,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 5,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 866090,
+   "stopped": null,
+   "units": 6,
+   "upper_cached": 13867
+  },
+  {
+   "batas_atas": 7915,
+   "called": 1,
+   "expected": 5041,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 868416,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 7261
+  },
+  {
+   "batas_atas": 7915,
+   "called": 1,
+   "expected": 5041,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 869183,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 7261
+  },
+  {
+   "batas_atas": 146046,
+   "called": 103,
+   "expected": 30606,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 81,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 869778,
+   "stopped": null,
+   "units": 103,
+   "upper_cached": 146046
+  },
+  {
+   "batas_atas": 35847,
+   "called": 22,
+   "expected": 10317,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 12,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 913795,
+   "stopped": null,
+   "units": 22,
+   "upper_cached": 35847
+  },
+  {
+   "batas_atas": 19521,
+   "called": 10,
+   "expected": 7311,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 3,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 928207,
+   "stopped": null,
+   "units": 10,
+   "upper_cached": 19521
+  },
+  {
+   "batas_atas": 15455,
+   "called": 7,
+   "expected": 6575,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 2,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 931899,
+   "stopped": null,
+   "units": 7,
+   "upper_cached": 15455
+  },
+  {
+   "batas_atas": 12733,
+   "called": 5,
+   "expected": 6073,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 2,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 934349,
+   "stopped": null,
+   "units": 5,
+   "upper_cached": 12733
+  },
+  {
+   "batas_atas": 10011,
+   "called": 3,
+   "expected": 5571,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 6,
+   "spent_pool": 936175,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 10011
+  },
+  {
+   "batas_atas": 10011,
+   "called": 3,
+   "expected": 5571,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 7,
+   "spent_pool": 937373,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 10011
+  },
+  {
+   "batas_atas": 10011,
+   "called": 3,
+   "expected": 5571,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 8,
+   "spent_pool": 938518,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 10011
+  },
+  {
+   "batas_atas": 459394,
+   "called": 343,
+   "expected": 77554,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 325,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 939748,
+   "stopped": null,
+   "units": 343,
+   "upper_cached": 459394
+  },
+  {
+   "batas_atas": 29707,
+   "called": 18,
+   "expected": 8617,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 16,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 1064439,
+   "stopped": null,
+   "units": 18,
+   "upper_cached": 29707
+  },
+  {
+   "batas_atas": 8559,
+   "called": 2,
+   "expected": 5229,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 2,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 1070946,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 8559
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "uupt-40-2007/fixed_size": {
+   "stored": 100,
+   "units": 103
+  },
+  "uupt-40-2007/pasal": {
+   "stored": 343,
+   "units": 343
+  },
+  "uupt-40-2007/structure_schema": {
+   "stored": 343,
+   "units": 343
+  }
+ },
+ "failed": {
+  "uupt-40-2007/fixed_size": [
+   "2d45de366c7421e761ed56dbc9754dd7c1d3fb5e6d2450fb61d6852fea66e40c",
+   "eb619c9e4bb2fc3e5e8400268e88ea9ce26cd6656e2916b7ac4c13e2caf82f4a",
+   "bdf33142089e493d1fbe1dc7cf705db02710acd9cb370a820eda8df25a7e0638"
+  ]
+ },
+ "family": "uupt",
+ "finished_at": "2026-10-28T21:52:50Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "medium",
+  "max_header_tokens": 40,
+  "model": "muse-spark-1.3-contributor",
+  "profile": "sweep_meta_medium",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "meta",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  14653,
+  13079,
+  16806,
+  10530,
+  9696
+ ],
+ "main_identity": "main_identity_changed: the main (Contributor) identity changed: schemas_listing",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_meta_medium",
+ "sources": [
+  "pasal",
+  "fixed_size",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-28T19:15:20Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 766,
+ "sweep": {
+  "effort": "medium",
+  "pool_remaining_micros": 48927983,
+  "profile": "sweep_meta_medium",
+  "status": "partial (786/789 unit)"
+ },
+ "warm": true
+}

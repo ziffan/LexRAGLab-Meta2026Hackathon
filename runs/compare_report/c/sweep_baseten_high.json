@@ -1,0 +1,26 @@
+{
+ "label": "Spark Open (Baseten, effort high)",
+ "profile": "sweep_baseten_high",
+ "summary": [
+  {
+   "abstained_correct": 1,
+   "abstained_should_answer": 0,
+   "answered_supported": 2,
+   "answered_unsupported": 0,
+   "model_profile": "sweep_baseten_high",
+   "n_items": 3,
+   "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+   "slot": "best"
+  },
+  {
+   "abstained_correct": 2,
+   "abstained_should_answer": 1,
+   "answered_supported": 0,
+   "answered_unsupported": 0,
+   "model_profile": "sweep_baseten_high",
+   "n_items": 3,
+   "setting_id": "ed489a1ecd8390a091ee91a721945211980eecee2b362e236a486a615c6e7c7d",
+   "slot": "baseline"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0a36583f9d8ea77c9cae278b2d7eb0ed3935d5a09b86ee65c136f5b21c1e6428",
+ "chunk_id_returned": "0a36583f9d8ea77c9cae278b2d7eb0ed3935d5a09b86ee65c136f5b21c1e6428",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "69c16f66276e4284814efda1d2725480",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): kewajiban pencatatan dan penyimpanan dokumen serta akses pemegang saham.",
+ "tokens_local": 42
+}

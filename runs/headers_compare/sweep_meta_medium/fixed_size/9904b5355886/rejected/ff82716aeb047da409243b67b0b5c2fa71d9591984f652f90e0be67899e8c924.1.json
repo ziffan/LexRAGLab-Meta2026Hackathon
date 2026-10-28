@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ff82716aeb047da409243b67b0b5c2fa71d9591984f652f90e0be67899e8c924",
+ "chunk_id_returned": "ff82716aeb047da409243b67b0b5c2fa71d9591984f652f90e0be67899e8c924",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "5a6959b1a311457c9edd0ec78315096f",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham), Bagian Kelima (Saham): syarat kepemilikan saham, nilai saham rupiah, dan daftar pemegang saham.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2d45de366c7421e761ed56dbc9754dd7c1d3fb5e6d2450fb61d6852fea66e40c",
+ "chunk_id_returned": "2d45de366c7421e761ed56dbc9754dd7c1d3fb5e6d2450fb61d6852fea66e40c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "01143a3d4d3d473ba0ce9856b8ba2bb8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.) dan Bab V (Tanggung Jawab dkk.): dividen tak diambil dan kewajiban sosial lingkungan.",
+ "tokens_local": 42
+}
