@@ -61,7 +61,8 @@ def test_live_two_columns_then_cache_then_replay(svc, tmp_path):
     r = c.post(URL, json=body(svc))
     assert r.status_code == 200, r.text
     d = r.json()
-    assert set(d) == {"best", "baseline", "verifier", "summary", "runs"}
+    assert set(d) == {"best", "baseline", "verifier", "summary", "runs", "origin_runs"}
+    assert d["origin_runs"] == []  # panggilan sendiri berbayar: tanpa asal
     assert isinstance(d["verifier"], list) and len(d["summary"]) == 2 and all(x["n_items"] == 1 for x in d["summary"])
     assert tr.calls == 2
     for slot in ("best", "baseline"):
@@ -82,6 +83,10 @@ def test_live_two_columns_then_cache_then_replay(svc, tmp_path):
     d2 = c.post(URL, json=body(svc)).json()
     assert tr.calls == 2 and [x["status"] for x in d2["runs"]] == ["cached", "cached"]
     assert all(x["cost_usd_micros"] == 0 for x in d2["runs"]) and Ledger(s.runs_dir).spent() == spent
+    # UX-03: run cache -> RunRecord panggilan asal (cache_key sama, status ok, biaya terukur) apa adanya
+    assert [o["run_id"] for o in d2["origin_runs"]] == [x["run_id"] for x in d["runs"]]
+    assert d2["origin_runs"] == d["runs"]
+    assert [o["cache_key"] for o in d2["origin_runs"]] == [x["cache_key"] for x in d2["runs"]]
     assert d2["best"]["output"] == d["best"]["output"] and d2["best"]["answer_id"] == d["best"]["answer_id"]
     assert scan_runs_dir(s.runs_dir) == []
     # replay (app baru, runs/ yang sama): tanpa panggilan
@@ -89,6 +94,7 @@ def test_live_two_columns_then_cache_then_replay(svc, tmp_path):
     d3 = c3.post(URL, json=body(svc, live=False)).json()
     assert tr3.calls == 0 and [x["status"] for x in d3["runs"]] == ["replay", "replay"]
     assert d3["best"]["output"] == d["best"]["output"]
+    assert d3["origin_runs"] == d["runs"] and all(o["cost_usd_micros"] is not None for o in d3["origin_runs"])
     # live=false di mode non-replay: juga hanya baca
     d4 = c.post(URL, json=body(svc, live=False)).json()
     assert tr.calls == 2 and [x["status"] for x in d4["runs"]] == ["replay", "replay"]
@@ -214,3 +220,25 @@ def test_m23_v1_answer_records_still_replayable(svc, tmp_path, monkeypatch):
     d2 = c.post(URL, json=body(svc, live=False)).json()  # replay: v2 tak ada -> jatuh ke v1
     assert tr.calls == calls and all(x["prompt_version"] == "v1" for x in d2["runs"])
     assert d2["best"]["output"] == d1["best"]["output"] and d2["verifier"] == d1["verifier"]
+
+
+def test_origin_record_only_for_matching_ok_record(svc, tmp_path):
+    """UX-03: asal dibaca dari records/<run_id> (bukan salinan cache), hanya bila status ok dan cache_key sama."""
+    import json as _json
+
+    from backend.spark import store
+
+    c, tr, s = make(svc, tmp_path)
+    d = c.post(URL, json=body(svc)).json()
+    run = d["runs"][0]
+    key = run["cache_key"]
+    assert store.origin_record(s.runs_dir, "c", key).to_dict() == run
+    assert store.origin_record(s.runs_dir, "c", "0" * 64) is None  # tanpa entri cache
+    rec_path = s.runs_dir / "spark" / "records" / f"{run['run_id']}.json"
+    rec = _json.loads(rec_path.read_text(encoding="utf-8"))
+    rec_path.write_text(_json.dumps({**rec, "status": "error"}), encoding="utf-8")
+    assert store.origin_record(s.runs_dir, "c", key) is None  # record asal bukan ok
+    rec_path.write_text(_json.dumps({**rec, "cache_key": "1" * 64}), encoding="utf-8")
+    assert store.origin_record(s.runs_dir, "c", key) is None  # kunci tidak cocok
+    rec_path.unlink()
+    assert store.origin_record(s.runs_dir, "c", key) is None  # record asal hilang

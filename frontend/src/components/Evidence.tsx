@@ -73,7 +73,7 @@ export function EvidenceColumn({ col, settings, modelName }: { col: ColumnView; 
         <div><dt>Actual input tokens (usage)</dt><dd>{tokenStr(col.inputTokens)}</dd></div>
         <div><dt>Cached tokens</dt><dd>{tokenStr(col.cachedTokens)}</dd></div>
         <div><dt>Output tokens</dt><dd>{tokenStr(col.outputTokens)}</dd></div>
-        <div><dt>Run</dt><dd>{orNa(col.runStatus)}</dd></div>
+        <div><dt>Run</dt><dd>{col.origin ? `${orNa(col.runStatus)}: served from cache; original call ${col.origin.createdAt.replace("T", " ")} (cost and tokens above are from that call)` : orNa(col.runStatus)}</dd></div>
       </dl>
     </article>
   );
@@ -143,8 +143,8 @@ export function EvidenceView({ state, settings, elapsedSeconds = 0, noItem = fal
             Actual input tokens come from the model usage and are shown per column.
           </p>
           <div className="columns two">
-            <EvidenceColumn col={columnView(data.best, data.verifier, data.runs, "Best profile")} settings={settings} modelName={profileName?.(data.best.model_profile)} />
-            <EvidenceColumn col={columnView(data.baseline, data.verifier, data.runs, "Baseline")} settings={settings} modelName={profileName?.(data.baseline.model_profile)} />
+            <EvidenceColumn col={columnView(data.best, data.verifier, data.runs, "Best profile", data.origin_runs)} settings={settings} modelName={profileName?.(data.best.model_profile)} />
+            <EvidenceColumn col={columnView(data.baseline, data.verifier, data.runs, "Baseline", data.origin_runs)} settings={settings} modelName={profileName?.(data.baseline.model_profile)} />
           </div>
           <h3 className="detail-title">2x2 summary<Hint id="verifier.matrix_2x2" /></h3>
           <SummaryTable data={data} settings={settings} />

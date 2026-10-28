@@ -310,6 +310,8 @@ export interface AnswersResponse {
   verifier: VerifierResult[];
   summary: RejectionSummary[];
   runs: RunRecord[];
+  /** UX-03: RunRecord panggilan asal (berbayar) untuk run `replay`/`cached`, dicocokkan lewat `cache_key`. Tidak ada di respons lama. */
+  origin_runs?: RunRecord[];
 }
 
 export interface ModelProfileInfo {
