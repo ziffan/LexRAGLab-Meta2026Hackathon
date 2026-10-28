@@ -1,0 +1,11 @@
+{
+ "chunk_id": "daf22702f9fa132c99cc669af68a99e5e4aa14169bb4a7bb37af2d2647c35cb7",
+ "chunk_id_returned": "daf22702f9fa132c99cc669af68a99e5e4aa14169bb4a7bb37af2d2647c35cb7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c5cc6b3a6fb847b69d834928689417ea",
+ "text": "Akta Pendirian PT GUMITIR SELARAS PERKASA (Anggaran Dasar), Pasal 1: nama perseroan, kedudukan di Bandung, dan kewenangan membuka kantor cabang atau perwakilan.",
+ "tokens_local": 45
+}

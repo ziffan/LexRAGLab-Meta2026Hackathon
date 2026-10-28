@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5b659de4fe58e5ef2935f7d4087d1cc7732adccb154a34d4d5c3505fff8a65d0",
+ "chunk_id_returned": "5b659de4fe58e5ef2935f7d4087d1cc7732adccb154a34d4d5c3505fff8a65d0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "72959c41136d446e9031ac1f598198cb",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah Nomor 41, Keterangan Pendiri dan Pengangkatan Pengurus: pembagian saham pendiri dan penetapan direksi-komisaris awal.",
+ "tokens_local": 45
+}
