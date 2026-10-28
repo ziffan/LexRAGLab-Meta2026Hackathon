@@ -58,7 +58,8 @@ def env_secrets(environ: Mapping[str, str]) -> tuple[list[str], list[str]]:
     return keys, urls
 
 
-def scan_text(text: str, path: str = "<text>", *, secrets: Iterable[str] = (), base_urls: Iterable[str] = ()) -> list[Finding]:
+def scan_text(text: str, path: str = "<text>", *, secrets: Iterable[str] = (), base_urls: Iterable[str] = (),
+              skip_kinds: Iterable[str] = ()) -> list[Finding]:
     out: list[Finding] = []
     for s in secrets:
         s = (s or "").strip()
@@ -73,18 +74,22 @@ def scan_text(text: str, path: str = "<text>", *, secrets: Iterable[str] = (), b
         u = (u or "").strip().rstrip("/")
         if len(u) >= MIN_SECRET_LEN and (i := text.find(u)) >= 0:
             out.append(Finding(path, "base_url_value", i))
+    skip = set(skip_kinds)
     for kind, pat in PATTERNS.items():
+        if kind in skip:
+            continue
         m = pat.search(text)
         if m:
             out.append(Finding(path, kind, m.start()))
     return out
 
 
-def scan_files(files: Mapping[str, bytes], *, secrets: Iterable[str] = (), base_urls: Iterable[str] = ()) -> list[Finding]:
-    secrets, base_urls = list(secrets), list(base_urls)
+def scan_files(files: Mapping[str, bytes], *, secrets: Iterable[str] = (), base_urls: Iterable[str] = (),
+               skip_kinds: Iterable[str] = ()) -> list[Finding]:
+    secrets, base_urls, skip_kinds = list(secrets), list(base_urls), list(skip_kinds)
     out: list[Finding] = []
     for rel in sorted(files):
-        out += scan_text(files[rel].decode("utf-8", "replace"), rel, secrets=secrets, base_urls=base_urls)
+        out += scan_text(files[rel].decode("utf-8", "replace"), rel, secrets=secrets, base_urls=base_urls, skip_kinds=skip_kinds)
     return out
 
 

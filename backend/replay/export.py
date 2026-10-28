@@ -17,6 +17,10 @@ Tata letak (jalur relatif terhadap `data/`; dipetakan frontend di `frontend/src/
   retrieval/<family>/<setting_id[:16]>/<item_id>.json
   answers/<family>/<item_id>/<best[:16]>/<baseline[:16]>/<model_profile>.json
   proposals/<family>.json
+Di root keluaran (disalin byte-identik dari root repo, H-097; lisensi wajib menyertai font OFL yang terbundel):
+  LICENSE  NOTICE  licenses/*.txt
+Penyalinan hanya menimpa berkas-berkas itu; berkas lain di root keluaran (bundel frontend) tidak disentuh.
+Pemindai memeriksanya dengan pengecualian sempit: jenis `host_url` dilewati (teks lisensi memuat URL resmi apache.org / scripts.sil.org).
 """
 
 from __future__ import annotations
@@ -37,6 +41,8 @@ from backend.replay.scan import Finding, SnapshotLeak, env_secrets, scan_dir, sc
 
 SAFE = re.compile(r"^[A-Za-z0-9._\-]+$")
 EXPORT_FAMILIES = ("uupt", "akta")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+LICENSE_SKIP_KINDS = ("host_url",)  # teks lisensi sah memuat URL resmi; key, path lokal, dan base URL env tetap diperiksa
 
 
 class ExportError(Exception):
@@ -176,6 +182,32 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
     return files
 
 
+def collect_license_files(root: Path = REPO_ROOT) -> dict[str, bytes]:
+    """`LICENSE`, `NOTICE`, `licenses/*.txt` dari `root` (jalur relatif -> byte mentah). Yang tidak ada dilewati."""
+    root = Path(root)
+    out: dict[str, bytes] = {}
+    for name in ("LICENSE", "NOTICE"):
+        if (root / name).is_file():
+            out[name] = (root / name).read_bytes()
+    lic = root / "licenses"
+    if lic.is_dir():
+        for p in sorted(lic.glob("*.txt")):
+            out[f"licenses/{p.name}"] = p.read_bytes()
+    return out
+
+
+def write_license_files(out_dir: Path, files: Mapping[str, bytes]) -> None:
+    for rel, blob in files.items():
+        p = Path(out_dir) / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "wb") as f:
+            f.write(blob)
+
+
+def scan_license_files(out_dir: Path, *, secrets: Iterable[str] = (), base_urls: Iterable[str] = ()) -> list[Finding]:
+    return scan_files(collect_license_files(out_dir), secrets=secrets, base_urls=base_urls, skip_kinds=LICENSE_SKIP_KINDS)
+
+
 def write_files(out_dir: Path, files: Mapping[str, bytes]) -> Path:
     data = Path(out_dir) / "data"
     if data.exists():
@@ -189,14 +221,17 @@ def write_files(out_dir: Path, files: Mapping[str, bytes]) -> Path:
 
 
 def export_static(out_dir: Path, app: Any, *, secrets: Iterable[str] = (), base_urls: Iterable[str] = (), retrieval: bool = True,
-                  answers: bool = True, now: datetime | None = None) -> dict[str, Any]:
-    """Bangun, periksa, lalu tulis. Bocor -> `SnapshotLeak` dan tidak ada yang ditulis."""
+                  answers: bool = True, now: datetime | None = None, license_root: Path = REPO_ROOT) -> dict[str, Any]:
+    """Bangun, periksa, lalu tulis (data + salinan lisensi). Bocor -> `SnapshotLeak` dan tidak ada yang ditulis."""
     files = build_files(app, retrieval=retrieval, answers=answers, now=now)
+    lic = collect_license_files(license_root)
     findings = scan_files(files, secrets=secrets, base_urls=base_urls)
+    findings += scan_files(lic, secrets=secrets, base_urls=base_urls, skip_kinds=LICENSE_SKIP_KINDS)
     if findings:
         raise SnapshotLeak(findings)
     data = write_files(Path(out_dir), files)
-    return {"data_dir": str(data), "n_files": len(files), "bytes": sum(len(v) for v in files.values())}
+    write_license_files(Path(out_dir), lic)
+    return {"data_dir": str(data), "n_files": len(files), "bytes": sum(len(v) for v in files.values()), "license_files": sorted(lic)}
 
 
 def source_date(environ: Mapping[str, str]) -> datetime | None:
@@ -216,6 +251,7 @@ def main(argv: list[str] | None = None) -> int:
     now = source_date(os.environ)
     if args.check:
         findings: list[Finding] = scan_dir(args.check / "data", secrets=keys, base_urls=urls)
+        findings += scan_license_files(args.check, secrets=keys, base_urls=urls)
         print(f"snapshot check: {len(findings)} finding(s)")
         for f in findings:
             print(f"  {f}")

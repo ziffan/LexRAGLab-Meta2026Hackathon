@@ -133,6 +133,29 @@ def test_export_static_writes_to_disk_and_replaces_old_data(world, tmp_path):
     assert b"\r" not in (out / "data" / "health.json").read_bytes()
 
 
+def test_export_copies_license_files_byte_identical_and_check_passes(world, tmp_path):
+    from backend.replay.export import REPO_ROOT, scan_license_files
+
+    src = tmp_path / "repo"
+    (src / "licenses").mkdir(parents=True)
+    (src / "LICENSE").write_bytes(b"Apache License\nhttp://www.apache.org/licenses/\n")
+    (src / "NOTICE").write_bytes(b"LexRAGLab\n")
+    (src / "licenses" / "OFL-x.txt").write_bytes(b"OFL 1.1 http://scripts.sil.org/OFL\n\xc2\xa9 caf\xc3\xa9\n")
+    (src / "licenses" / "skip.md").write_bytes(b"not copied")
+    out = tmp_path / "dist-static"
+    out.mkdir()
+    (out / "index.html").write_text("bundle", encoding="utf-8")
+    export_static(out, world["app"], secrets=[K], base_urls=[BASE], retrieval=False, answers=False, license_root=src)
+    for rel in ("LICENSE", "NOTICE", "licenses/OFL-x.txt"):
+        assert (out / rel).read_bytes() == (src / rel).read_bytes()
+    assert not (out / "licenses" / "skip.md").exists()
+    assert (out / "index.html").read_text(encoding="utf-8") == "bundle"  # berkas bukan milik ekspor tetap
+    assert export_main(["--check", str(out)]) == 0
+    (out / "NOTICE").write_text("path C:\\Data\\x", encoding="utf-8")  # pemindai tetap menangkap kebocoran sungguhan
+    assert export_main(["--check", str(out)]) == 1
+    assert scan_license_files(REPO_ROOT) == []  # berkas lisensi repo sungguhan lolos pemindai
+
+
 def test_export_clean_of_env_key_and_host(world):
     blob = b"".join(world["files"].values()).decode("utf-8")
     assert K not in blob and BASE not in blob and "fake-host.invalid" not in blob
