@@ -302,8 +302,8 @@ def test_diff_reports_against_contributor_and_operator(tmp_path):
 def test_real_config_profiles_allow_role_a_for_comparators_only():
     m = config.load("model")
     assert "a" in m["profiles"]["baseten_open"]["roles"] and "a" in m["profiles"]["glimmer_local"]["roles"]
-    assert "b" not in m["profiles"]["baseten_open"]["roles"]  # B menunggu skenario Tier 1 (H-052, H-100)
-    assert "b" not in m["profiles"]["glimmer_local"]["roles"]
+    assert "b" in m["profiles"]["baseten_open"]["roles"]  # B pembanding: skenario Tier 1 disetujui (H-101); CLI `backend.header_b.compare`
+    assert "b" in m["profiles"]["glimmer_local"]["roles"]
     assert not m["profiles"]["meta"].get("roles")
 
 

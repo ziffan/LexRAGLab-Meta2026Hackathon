@@ -67,16 +67,34 @@ class GateVerdict:
                 "reasons": list(self.reasons)}
 
 
-def evaluate_gate(expected_per_call: Sequence[int], spent: int, cfg: GateConfig) -> GateVerdict:
-    """Putusan gerbang atas `expected` = jumlah ekspektasi per panggilan (satu per akta)."""
+def cumulative_threshold_for(provider: str, budget_cfg: Mapping[str, Any], caps: Mapping[str, int]) -> int:
+    """Ambang kumulatif gerbang per pool (H-101 P9). Provider tercantum di `caps` (`[provider_cap_micros]`) ->
+    `caps[provider] * cumulative_pct // 100`; selain itu (pool default) -> `cumulative_cap_micros * cumulative_pct // 100`."""
+    gcfg = load_gate_config(budget_cfg)
+    if provider in caps:
+        return caps[provider] * gcfg.cumulative_pct // 100
+    return gcfg.cumulative_threshold_micros
+
+
+def evaluate_gate(expected_per_call: Sequence[int], spent: int, cfg: GateConfig, *, upper_floor: int = 0,
+                  threshold_micros: int | None = None) -> GateVerdict:
+    """Putusan gerbang atas `expected` = jumlah ekspektasi per panggilan (satu per akta).
+
+    `batas_atas = max(ceil(expected * factor_bp / 10000), upper_floor)` (H-101 P7; `upper_floor=0` = perilaku lama persis).
+    Ambang kumulatif = `threshold_micros` bila diberikan (ambang per pool, P9), selain itu `cfg.cumulative_threshold_micros`."""
     if not _is_int(spent) or spent < 0:
         raise ValueError("spent must be a non-negative integer (micro-USD)")
+    if not _is_int(upper_floor) or upper_floor < 0:
+        raise ValueError("upper_floor must be a non-negative integer (micro-USD)")
+    if threshold_micros is not None and (not _is_int(threshold_micros) or threshold_micros < 0):
+        raise ValueError("threshold_micros must be a non-negative integer (micro-USD)")
+    threshold = cfg.cumulative_threshold_micros if threshold_micros is None else threshold_micros
     expected = sum(expected_per_call)
-    upper = upper_bound(expected, cfg.factor_bp)
+    upper = max(upper_bound(expected, cfg.factor_bp), upper_floor)
     reasons = []
     if upper > cfg.batch_cap_micros:
         reasons.append("batas_atas_over_batch_cap")
-    if spent + upper > cfg.cumulative_threshold_micros:
+    if spent + upper > threshold:
         reasons.append("cumulative_over_threshold")
     return GateVerdict(expected, upper, spent, not reasons, tuple(reasons))
 

@@ -185,7 +185,19 @@ class SparkClient:
         return compute_cost_micros({"input": est_input, "cached": 0, "output": out}, self._s.pricing)
 
     def _caps(self) -> Caps:
-        return effective_caps(self._budget_cfg, self._env)
+        return effective_caps(self._budget_cfg, self._env, self._model_cfg)
+
+    def _evaluate(self, role: str, caps: Caps, per: list[int]) -> Projection:
+        """Pool provider berplafon (H-101 P6): bandingkan belanja provider itu vs plafon provider. Selain itu pool
+        default: belanja total dan belanja peran dihitung atas rekaman provider tak berplafon saja."""
+        pc = caps.provider_micros
+        prov = self._s.provider
+        if prov in pc:
+            return evaluate(role, caps, per, 0, self._ledger.spent_pool(prov, pc, role),
+                            provider=prov, spent_provider=self._ledger.spent_pool(prov, pc))
+        if not pc:
+            return evaluate(role, caps, per, self._ledger.spent(), self._ledger.spent(role=role))
+        return evaluate(role, caps, per, self._ledger.spent_pool(prov, pc), self._ledger.spent_pool(prov, pc, role))
 
     def _effort(self, role: str) -> str:
         """Effort untuk RunRecord/cache: profil yang memin `reasoning_effort` (Glimmer) menang atas `[effort]` per peran."""
@@ -227,13 +239,13 @@ class SparkClient:
                 per.append(self._projected(c["est_input"], c["max_output_tokens"]))
             seen.add(key)
         caps = self._caps()
-        return evaluate(role, caps, per, self._ledger.spent(), self._ledger.spent(role=role))
+        return self._evaluate(role, caps, per)
 
     def _guard(self, role: str, projected: int) -> None:
         if self._s.api == API_CHAT:
             return  # lokal: harga 0, tidak menambah belanja Model API; cap tidak relevan (H-047)
         caps = self._caps()
-        p = evaluate(role, caps, [projected], self._ledger.spent(), self._ledger.spent(role=role))
+        p = self._evaluate(role, caps, [projected])
         if p.verdict != "ok":
             raise BudgetExceeded(p.reason)
 

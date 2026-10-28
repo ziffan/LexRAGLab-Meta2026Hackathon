@@ -57,7 +57,7 @@ def make_call(prompt: PromptB, prefix: DocPrefix, unit: Unit, tokenizer: Any, *,
               max_output_tokens: int, warm_max_output_tokens: int, meta: dict[str, Any],
               max_length_chars: int | None = None) -> dict[str, Any]:
     validate_schema(max_length_chars)
-    warm = unit is WARM_UNIT
+    warm = unit is WARM_UNIT or (unit.key == WARM_UNIT.key and not unit.chunk_ids)  # pemanas (juga varian ber-nonce H-101)
     est = prefix.tokens + tokenizer.count(render_suffix(prefix, unit))
     if warm:
         def validator(out: dict) -> str | None:
@@ -124,13 +124,13 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
                 max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True,
                 cache_guard_calls: int | None = None, cache_guard_min_ratio: Fraction | None = None,
-                max_length_chars: int | None = None, save_headers: bool = True) -> HeaderRun:
+                max_length_chars: int | None = None, save_headers: bool = True, warm_unit: Unit | None = None) -> HeaderRun:
     """Guard cache (H-074): setelah `cache_guard_calls` panggilan berbayar (bukan cache hit lokal, tanpa pemanas) rasio
     agregat cached/input < `cache_guard_min_ratio` (inklusif: sama dengan batas lanjut) -> berhenti `cache_ratio_low`."""
     run = HeaderRun()
     paid = in_tok = cached_tok = 0
     if warm and units:
-        w = client.call(**make_call(prompt, prefix, WARM_UNIT, tokenizer, max_header_tokens=max_header_tokens,
+        w = client.call(**make_call(prompt, prefix, warm_unit or WARM_UNIT, tokenizer, max_header_tokens=max_header_tokens,
                                     max_output_tokens=max_output_tokens,
                                     warm_max_output_tokens=warm_max_output_tokens, meta=meta,
                                     max_length_chars=max_length_chars))

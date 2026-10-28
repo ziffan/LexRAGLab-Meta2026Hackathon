@@ -1,5 +1,5 @@
 # config/header_b — peran B (contextual chunking), M3.1. Nilai bertanda "usulan agen" boleh diubah operator.
-version = 2
+version = 3   # H-101: tabel [max_attempts] dan [projection.glimmer_local] (pembanding B open-weight)
 
 # H-074: granularitas B = pasal (diputus operator); fixed_size tetap dijalankan. Nilai: "pasal" | "ayat".
 granularity = "pasal"
@@ -46,3 +46,17 @@ cache_guard_min_ratio = "4/5"
 [projection]
 # RPM dokumentasi Contributor (H-028); proyeksi default memakai [limits].max_rpm config/model (140, G-19).
 doc_rpm = 150
+
+[projection.glimmer_local]
+# H-101 Q-B10 / S17: parameter proyeksi WAKTU Glimmer lokal (regresi O1, `_kerja/orkestrasi/open/O1-proyeksi.md`); dipin sebelum run.
+# Waktu satu panggilan = prefill + base_ms + keluaran. prefill (ms) = ceil(token * 1000 / prefill_tokens_per_s); keluaran (ms) =
+# ceil(token * 10000 / output_tokens_per_10s) (23,7 token/dtk = 237 per 10 dtk). Semua integer; tanpa float.
+prefill_tokens_per_s = 650
+base_ms = 4800
+output_tokens_per_10s = 237
+
+[max_attempts]
+# H-101 P14 / Q-B3: sampai N upaya total per unit untuk run B pembanding, per profil di config/model (integer >= 1).
+# Baseten membayar prefiks ter-cache + pemanas tiap ronde (G-36); Glimmer kehilangan 45-120 dtk per panggilan gagal.
+baseten_open = 8
+glimmer_local = 3

@@ -126,12 +126,13 @@ def _meta(svc: Any) -> dict[str, Any]:
 def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str, str] | None = None,
          model_config: Mapping[str, Any] | None = None, budget_config: Mapping[str, Any] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
-         probe: Callable[[str, str], tuple[bool, str]] | None = None) -> int:
+         probe: Callable[[str, str], tuple[bool, str]] | None = None, pid_alive: Callable[[int], bool] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.answer.compare_c", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil di config/model dengan roles memuat 'c'")
     ap.add_argument("--items", nargs="*", default=None, help="item_id; bawaan: butir scene_checked bersumber tersimpan")
     ap.add_argument("--source-profile", default=SOURCE_PROFILE)
     ap.add_argument("--project-only", action="store_true", help="cetak proyeksi biaya; tanpa panggilan")
+    ap.add_argument("--break-stale-lock", action="store_true", help="profil lokal: hapus kunci GPU kedaluwarsa (pid tak hidup) lalu lanjut")
     a = ap.parse_args(argv)
 
     from backend.api.service import Service
@@ -188,31 +189,43 @@ def main(argv: list[str] | None = None, *, service: Any = None, env: Mapping[str
         f"model={prof.get('model')} quantization={prof.get('quantization')} effort={prof.get('reasoning_effort') or model_config['effort']['c']}")
     if a.project_only:
         return 0
-    if local:
-        from backend.spark import local_server
-        ok, why = (probe or local_server.probe_models)(prof.get("base_url", ""), prof.get("model", ""))
-        if not ok:
-            print(f"error: {why}", file=sys.stderr)
-            return 3
-    rc = 0
-    for iid, ps in by_item.items():
-        slots = [(p.slot, p.bundle) for p in ps]
-        prompt = ps[0].prompt
+    lock = None
+    if local:  # H-101 S16: kunci GPU eksklusif (Glimmer vs embedding), diambil SEBELUM request apa pun ke 127.0.0.1
+        from backend import gpulock
         try:
-            outcomes, _ = run_answers(client, prompt, slots, item_id=iid, model_profile=a.model_profile, meta=meta,  # type: ignore[arg-type]
-                                      answers_dir=svc.runs_dir / "answers")
-        except BudgetExceeded as exc:
-            print(f"error: budget_exceeded: {str(exc)[:200]}", file=sys.stderr)
+            lock = gpulock.acquire(svc.runs_dir, "glimmer-c", break_stale=a.break_stale_lock,
+                                   **({"pid_alive": pid_alive} if pid_alive is not None else {}))
+        except gpulock.GpuLockError as exc:
+            print(f"error: {exc}", file=sys.stderr)
             return 3
-        for o in outcomes:
-            if o.error is not None:
-                rc = 4
-                out(f"{iid} {o.slot}: ERROR {o.error['code']} run_id={o.run.run_id}")
-            else:
-                out(f"{iid} {o.slot}: {o.answer['output']['status']} run_status={o.run.status} "
-                    f"cost_micro_usd={o.run.cost_usd_micros} answer_id={o.answer['answer_id'][:12]}")
-    return rc
-
+    try:
+        if local:
+            from backend.spark import local_server
+            ok, why = (probe or local_server.probe_models)(prof.get("base_url", ""), prof.get("model", ""))
+            if not ok:
+                print(f"error: {why}", file=sys.stderr)
+                return 3
+        rc = 0
+        for iid, ps in by_item.items():
+            slots = [(p.slot, p.bundle) for p in ps]
+            prompt = ps[0].prompt
+            try:
+                outcomes, _ = run_answers(client, prompt, slots, item_id=iid, model_profile=a.model_profile, meta=meta,  # type: ignore[arg-type]
+                                          answers_dir=svc.runs_dir / "answers")
+            except BudgetExceeded as exc:
+                print(f"error: budget_exceeded: {str(exc)[:200]}", file=sys.stderr)
+                return 3
+            for o in outcomes:
+                if o.error is not None:
+                    rc = 4
+                    out(f"{iid} {o.slot}: ERROR {o.error['code']} run_id={o.run.run_id}")
+                else:
+                    out(f"{iid} {o.slot}: {o.answer['output']['status']} run_status={o.run.status} "
+                        f"cost_micro_usd={o.run.cost_usd_micros} answer_id={o.answer['answer_id'][:12]}")
+        return rc
+    finally:
+        if lock is not None:
+            lock.release()
 
 if __name__ == "__main__":
     raise SystemExit(main())

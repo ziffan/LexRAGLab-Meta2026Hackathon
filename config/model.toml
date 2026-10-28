@@ -55,7 +55,7 @@ model = "meta-models/muse-spark-open-1026"
 base_url_env = "BASETEN_BASE_URL"   # nilai di .env lokal, tidak dicetak
 api_key_env = "BASETEN_API_KEY"
 for_reported_numbers = false
-roles = ["c", "a"]   # H-100: A lewat `python -m backend.schema_a.compare_a`; skema pembanding tidak pernah aktif
+roles = ["c", "a", "b"]   # H-100: A lewat `python -m backend.schema_a.compare_a`; skema pembanding tidak pernah aktif; B (H-101) lewat `python -m backend.header_b.compare`
 label = "Spark Open (Baseten)"
 max_output_tokens = 6000   # usulan agen, operator boleh ubah; reasoning ~93% keluaran (G-33): 2000 dari prompt berisiko terpotong; biaya diproyeksikan dengan batas ini
 
@@ -81,7 +81,7 @@ live_via_cli = true            # W6 live ditolak 409 (G-26: jangan berbarengan d
 max_retries = 0                # tanpa retry timeout: satu upaya bisa belasan menit
 max_output_tokens = 16000      # usulan agen, operator boleh ubah; batas keluaran minimal; reasoning ~75% keluaran, 2000 dari prompt akan terpotong
 for_reported_numbers = false
-roles = ["c", "a"]   # H-100: A lewat `python -m backend.schema_a.compare_a` (CLI, bukan W2)
+roles = ["c", "a", "b"]   # H-100: A lewat `python -m backend.schema_a.compare_a` (CLI, bukan W2); B (H-101) lewat `python -m backend.header_b.compare`
 label = "Glimmer (local)"
 
 [pricing.glimmer_local]

@@ -101,13 +101,14 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
          model_config: Mapping[str, Any] | None = None, budget_config: Mapping[str, Any] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
          probe: Callable[[str, str], tuple[bool, str]] | None = None, load_doc: Callable[[str], Any] | None = None,
-         tokenizer: Any = None) -> int:
+         tokenizer: Any = None, pid_alive: Callable[[int], bool] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.schema_a.compare_a", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil pembanding di config/model dengan roles memuat 'a'")
     ap.add_argument("--family", nargs="+", choices=FAMILIES, default=list(FAMILIES))
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--project-only", action="store_true", help="proyeksi + gerbang; tanpa panggilan, tanpa tulis")
     g.add_argument("--diff", action="store_true", help="diff skema pembanding tersimpan (JSON); tanpa panggilan")
+    ap.add_argument("--break-stale-lock", action="store_true", help="profil lokal: hapus kunci GPU kedaluwarsa (pid tak hidup) lalu lanjut")
     a = ap.parse_args(argv)
 
     runs = Path(runs_dir) if runs_dir is not None else config.REPO_ROOT / "runs"
@@ -173,35 +174,48 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     if not verdict.ok:
         print("error: projection rejected by [batch_gate]; nothing was sent", file=sys.stderr)
         return 3
-    if local:
-        from backend.spark import local_server
-        ok, why = (probe or local_server.probe_models)(prof.get("base_url", ""), prof.get("model", ""))
-        if not ok:
-            print(f"error: {why}", file=sys.stderr)
+    lock = None
+    if local:  # H-101 S16: kunci GPU eksklusif (Glimmer vs embedding), diambil SEBELUM request apa pun ke 127.0.0.1
+        from backend import gpulock
+        try:
+            lock = gpulock.acquire(runs, "glimmer-a", break_stale=a.break_stale_lock,
+                                   **({"pid_alive": pid_alive} if pid_alive is not None else {}))
+        except gpulock.GpuLockError as exc:
+            print(f"error: {exc}", file=sys.stderr)
             return 3
-    rc = 0
-    for p in plans:
-        res = None
-        for attempt in range(1, MAX_ATTEMPTS + 1):
-            try:
-                res = induce(client, prompt, family=p.family, samples=p.samples, count_tokens=tokenizer.count,
-                             meta=p.meta, store=cmp_store, extra={"model_profile": a.model_profile})
-            except BudgetExceeded as exc:
-                print(f"error: budget_exceeded: {str(exc)[:200]}", file=sys.stderr)
+    try:
+        if local:
+            from backend.spark import local_server
+            ok, why = (probe or local_server.probe_models)(prof.get("base_url", ""), prof.get("model", ""))
+            if not ok:
+                print(f"error: {why}", file=sys.stderr)
                 return 3
-            except SchemaStoreError as exc:
-                print(f"error: SchemaStoreError: {str(exc)[:200]}", file=sys.stderr)
-                return 1
-            r = res.run
-            out(f"{p.family} attempt {attempt}: run_status={r.status} cost_micro_usd={r.cost_usd_micros} "
-                f"run_id={r.run_id} " + (f"saved compare v{res.record['schema_version']}" if res.record
-                                         else f"ERROR {res.error['code']}"))
-            if res.record is not None or (res.error or {}).get("code") not in RETRY_CODES:
-                break
-        if res is None or res.record is None:
-            rc = 4
-    return rc
+        rc = 0
+        for p in plans:
+            res = None
+            for attempt in range(1, MAX_ATTEMPTS + 1):
+                try:
+                    res = induce(client, prompt, family=p.family, samples=p.samples, count_tokens=tokenizer.count,
+                                 meta=p.meta, store=cmp_store, extra={"model_profile": a.model_profile})
+                except BudgetExceeded as exc:
+                    print(f"error: budget_exceeded: {str(exc)[:200]}", file=sys.stderr)
+                    return 3
+                except SchemaStoreError as exc:
+                    print(f"error: SchemaStoreError: {str(exc)[:200]}", file=sys.stderr)
+                    return 1
+                r = res.run
+                out(f"{p.family} attempt {attempt}: run_status={r.status} cost_micro_usd={r.cost_usd_micros} "
+                    f"run_id={r.run_id} " + (f"saved compare v{res.record['schema_version']}" if res.record
+                                             else f"ERROR {res.error['code']}"))
+                if res.record is not None or (res.error or {}).get("code") not in RETRY_CODES:
+                    break
+            if res is None or res.record is None:
+                rc = 4
+        return rc
 
+    finally:
+        if lock is not None:
+            lock.release()
 
 if __name__ == "__main__":
     raise SystemExit(main())

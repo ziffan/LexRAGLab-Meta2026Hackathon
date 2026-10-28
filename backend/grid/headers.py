@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Protocol, Sequence
 
@@ -167,6 +167,9 @@ class HeaderBinding:
     scope: str = "frontier_only"
     prompt_hash: str = ""
     model: str = ""
+    # H-101 (grid pembanding): blok identitas model pembanding (profile, provider, model, quantization, effort). None pada
+    # binding utama sehingga `identity()` dan `pipeline_config_hash` utama TIDAK berubah (G-38); terisi hanya di binding pembanding.
+    compare: Mapping[str, Any] | None = field(default=None, hash=False, compare=False)
 
     def __post_init__(self) -> None:
         if self.scope not in SCOPES:
@@ -179,8 +182,11 @@ class HeaderBinding:
 
     def identity(self) -> dict[str, str]:
         """Komponen `config_hash` grid (A10): isi store, granularitas, `prompt_hash` B, model, scope. Tanpa `run_id`."""
-        return {"store": self.store.content_hash(), "granularity": self.granularity, "prompt_hash": self.prompt_hash,
-                "model": self.model, "scope": self.scope}
+        d = {"store": self.store.content_hash(), "granularity": self.granularity, "prompt_hash": self.prompt_hash,
+             "model": self.model, "scope": self.scope}
+        if self.compare is not None:
+            d["compare"] = dict(self.compare)  # hanya binding pembanding (H-101)
+        return d
 
 
 # ---------- akuntansi ----------
