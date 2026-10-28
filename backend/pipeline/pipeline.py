@@ -97,6 +97,7 @@ class Pipeline:
                  cache_dir: Any = None, headers: HeaderBinding | None = None, schemas: SchemaBinding | None = None):
         self.doc, self.tok = doc, tokenizer
         self.headers = headers
+        self.coverage_report: dict[str, dict[str, Any]] = {}  # S11: setting_id -> {chunks, headered, coverage_bp, missing}
         self.schemas = schemas
         self.rcfg, self.gcfg = retrieval_cfg, grid_cfg
         self._encoder, self._encoder_factory, self.cache_dir = encoder, encoder_factory, cache_dir
@@ -189,9 +190,16 @@ class Pipeline:
         cs = self.chunk_set(s)
         if cs.headers is None:
             assert self.headers is not None
-            cs.headers = resolve_headers(cs.chunks, self.headers.store, setting_id=s.setting_id,
-                                         granularity=self.headers.expected_granularity(s.chunker),
-                                         clean_sha256=self.doc.clean_sha256)
+            rep: dict[str, Any] = {}
+            try:
+                cs.headers = resolve_headers(cs.chunks, self.headers.store, setting_id=s.setting_id,
+                                             granularity=self.headers.expected_granularity(s.chunker),
+                                             clean_sha256=self.doc.clean_sha256,
+                                             **({"coverage": self.headers.coverage, "mask": self.headers.mask, "report": rep}
+                                                if (self.headers.coverage is not None or self.headers.mask) else {}))
+            finally:
+                if rep:  # S11: cakupan per setting (juga untuk setting di bawah ambang)
+                    self.coverage_report[s.setting_id] = rep
         return cs.headers
 
     def index(self, s: Setting) -> IndexView:
@@ -205,7 +213,8 @@ class Pipeline:
             hdr = self.headers_for(s)
             parts, chunks, pos = [], [], 0
             for c in cs.chunks:
-                t = index_text(hdr[c.chunk_id], self.doc.text[c.start:c.end])
+                src = self.doc.text[c.start:c.end]
+                t = index_text(hdr[c.chunk_id], src) if c.chunk_id in hdr else src  # tanpa header (S11 mask): teks header-OFF
                 chunks.append(SimpleNamespace(chunk_id=c.chunk_id, start=pos, end=pos + len(t)))
                 parts.append(t)
                 pos += len(t)

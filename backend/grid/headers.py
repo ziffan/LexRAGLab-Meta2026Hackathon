@@ -170,6 +170,10 @@ class HeaderBinding:
     # H-101 (grid pembanding): blok identitas model pembanding (profile, provider, model, quantization, effort). None pada
     # binding utama sehingga `identity()` dan `pipeline_config_hash` utama TIDAK berubah (G-38); terisi hanya di binding pembanding.
     compare: Mapping[str, Any] | None = field(default=None, hash=False, compare=False)
+    # H-102 S11: kebijakan cakupan sebagian `(policy, threshold_pct)` HANYA untuk binding pembanding profil sapuan; None = strict persis
+    # (binding utama dan profil non-sapuan tidak pernah memakainya). `mask`: chunk_id yang diperlakukan tanpa header (titik rujukan).
+    coverage: tuple[str, int] | None = field(default=None, hash=False, compare=False)
+    mask: frozenset[str] = field(default=frozenset(), hash=False, compare=False)
 
     def __post_init__(self) -> None:
         if self.scope not in SCOPES:
@@ -191,14 +195,30 @@ class HeaderBinding:
 
 # ---------- akuntansi ----------
 def resolve_headers(chunks: Sequence[Any], store: HeaderStore, *, setting_id: str, granularity: str,
-                    clean_sha256: str) -> dict[str, str]:
+                    clean_sha256: str, coverage: tuple[str, int] | None = None, mask: Iterable[str] = (),
+                    report: dict[str, Any] | None = None) -> dict[str, str]:
     """Header tiap potongan (`chunk_id` -> teks, tanpa strip; tokenisasi nanti atas string itu saja).
-    Diperiksa untuk SEMUA potongan, berurutan menurut offset awal naik; galat pertama menang."""
+    Diperiksa untuk SEMUA potongan, berurutan menurut offset awal naik; galat pertama menang.
+
+    `coverage = (policy, pct)` dengan policy `mask_*` (H-102 S11, hanya grid pembanding profil sapuan): potongan yang tak
+    punya header di store DILEWATI (tanpa kunci di hasil -> diindeks tanpa header, token header 0) selama
+    `headered x 100 >= pct x n` (inklusif); di bawah ambang tetap `HeaderMissingError` (chunk_id pertama yang hilang, urut dokumen).
+    `mask`: chunk_id yang dipaksa tanpa header (titik rujukan Contributor). `report` diisi {chunks, headered, coverage_bp, missing}.
+    Tanpa `coverage`/`mask` perilaku persis lama."""
     out: dict[str, str] = {}
     runs: dict[Any, str | None] = {}
+    lenient = coverage is not None and coverage[0] != "strict"
+    forced = set(mask)
+    missing: list[str] = []
     for c in sorted(chunks, key=lambda c: (c.start, c.end, c.chunk_id)):
         cid = c.chunk_id
+        if cid in forced:
+            missing.append(cid)
+            continue
         rec = store.get(cid, granularity)
+        if rec is None and lenient:
+            missing.append(cid)
+            continue
         if rec is None:
             raise HeaderMissingError(f"header missing for chunk_id {cid} (setting_id {setting_id})",
                                      setting_id=setting_id, chunk_id=cid)
@@ -219,6 +239,16 @@ def resolve_headers(chunks: Sequence[Any], store: HeaderStore, *, setting_id: st
             raise HeaderInvalidError(f"header is empty (0 tokens) for chunk_id {cid} (setting_id {setting_id})",
                                      setting_id=setting_id, chunk_id=cid)
         out[cid] = h
+    if (lenient or forced) and report is not None:
+        n = len(chunks)
+        report.update({"chunks": n, "headered": n - len(missing), "coverage_bp": ((n - len(missing)) * 10000 // n) if n else 0,
+                       "missing": list(missing)})
+    if missing and not forced:
+        assert coverage is not None
+        n, pct = len(chunks), coverage[1]
+        if (n - len(missing)) * 100 < pct * n:
+            raise HeaderMissingError(f"header missing for chunk_id {missing[0]} (setting_id {setting_id}); coverage "
+                                     f"{n - len(missing)}/{n} is below {pct}%", setting_id=setting_id, chunk_id=missing[0])
     return out
 
 
