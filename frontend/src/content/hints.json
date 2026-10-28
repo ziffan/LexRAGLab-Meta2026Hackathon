@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "final",
   "locale": "en",
   "entries": [
@@ -68,6 +68,13 @@
       "id": "metric.recall_at_k",
       "title": "Recall@K",
       "body": "The gold span is first split at ayat boundaries into parts. Recall@K is the share of parts that each lie entirely inside one of the top K ranked chunks, with no token budget applied. It differs from span recall, which counts characters within the budget. Scope (held-out or tune) is shown next to the figure."
+    },
+    {
+      "id": "metric.recall_at_k.akta",
+      "title": "Recall@K (deeds)",
+      "status": "final",
+      "source": "H-094",
+      "body": "The gold span is first split into parts. Recall@K is the share of parts that each lie entirely inside one of the top K ranked chunks, with no token budget applied. For deeds: computed over all items with a gold span (transfer test); deed Recall@K uses whole units (Kepala Akta, Komparisi, Pasal n, Keterangan Pendiri, Penutup Akta) and is not comparable with Company Law."
     },
     {
       "id": "metric.mrr",

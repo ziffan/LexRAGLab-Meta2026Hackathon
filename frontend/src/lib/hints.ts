@@ -9,7 +9,9 @@ export interface HintEntry {
   body: string;
   stretch?: boolean;
   /** Entri baru yang belum disetujui operator (I-49); file tetap `final` untuk entri lain. */
-  status?: "draft";
+  status?: "draft" | "final";
+  /** Rujukan keputusan operator untuk entri yang disetujui lewat H (mis. H-094). */
+  source?: string;
 }
 
 export interface HintFile {

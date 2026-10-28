@@ -160,8 +160,28 @@ describe("akta: tidak ada label held-out di U2/U4 (arahan L2, H-078)", () => {
     set(akta(grid({ final: true }), { items: [{ id: "i1", family: "akta", origin: "operator", mode: "literal", split: null, gold_spans: [{ start: 0, end: 5 }], query: "q" } as never] }));
     expect(renderToStaticMarkup(<SettingSpace />)).not.toMatch(heldOut); // hint disaring, bukan teksnya diubah
     const h = renderToStaticMarkup(<PerItem />);
-    expect(noHints(h)).not.toMatch(heldOut); // hint Recall@K (teks disetujui) masih menyebut "held-out or tune": dilaporkan ke L2
+    expect(noHints(h)).not.toMatch(heldOut);
     expect(h).not.toContain("Tune vs held-out");
+  });
+  it("hint Recall@K akta memakai varian akta (H-094), tanpa kata held-out/tune; UU PT tetap entri lama", async () => {
+    const { PerItem } = await import("../components/PerItem");
+    const { getHint } = await import("../lib/hints");
+    const item = { id: "i1", family: "akta", origin: "operator", mode: "literal", split: null, gold_spans: [{ start: 0, end: 5 }], query: "q" } as never;
+    set(akta(grid({ final: true }), { items: [item] }));
+    const h = renderToStaticMarkup(<PerItem />);
+    const v = getHint("metric.recall_at_k.akta");
+    expect(v?.status).toBe("final");
+    expect(v?.source).toBe("H-094");
+    expect(h).toContain("Recall@K (deeds)");
+    expect(h).toContain("Komparisi");
+    expect(h).toContain("not comparable with Company Law");
+    expect(h).not.toMatch(heldOut); // seluruh keluaran, termasuk pop-up hint
+    expect(h).not.toMatch(/tune/i);
+    expect(v?.body).not.toMatch(/\d/); // tanpa angka
+    set({ ...akta(grid({ final: true }), { items: [{ ...(item as object), family: "uupt", split: "heldout" } as never] }), family: "uupt" });
+    const u = renderToStaticMarkup(<PerItem />);
+    expect(u).not.toContain("Recall@K (deeds)");
+    expect(u).toContain(getHint("metric.recall_at_k")!.body.replace(/&/g, "&amp;"));
   });
   it("filterScopeLabel akta", async () => {
     const { filterScopeLabel } = await import("../lib/rows");

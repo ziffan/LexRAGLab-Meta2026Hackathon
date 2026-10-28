@@ -46,8 +46,8 @@ describe("akta tanpa grid: Pending operator review", () => {
     set(mkSnapshot({ family: "uupt", grid: null }));
     expect(renderToStaticMarkup(<PerItem />)).not.toContain(PENDING);
   });
-  it("entri hint baru berstatus draft; versi 1.2.0", () => {
-    expect(HINT_FILE.version).toBe("1.2.0");
+  it("entri hint baru berstatus draft; versi 1.3.0", () => {
+    expect(HINT_FILE.version).toBe("1.3.0");
     expect(getHint("ui.pending_review")?.status).toBe("draft");
     expect(draftIds()).toEqual(["ui.pending_review"]);
   });

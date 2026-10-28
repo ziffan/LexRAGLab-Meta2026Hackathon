@@ -95,7 +95,7 @@ function Body({ snap }: { snap: Snapshot }) {
                 <th scope="col">Span recall<Hint id="metric.span_recall" /></th>
                 <th scope="col">Token precision<Hint id="metric.token_precision" /></th>
                 <th scope="col">Reciprocal rank<Hint id="metric.mrr" /></th>
-                <th scope="col">Recall@K<Hint id="metric.recall_at_k" /></th>
+                <th scope="col">Recall@K<Hint id={transfer ? "metric.recall_at_k.akta" : "metric.recall_at_k"} /></th>
                 <th scope="col">Fully covered</th>
                 <th scope="col">Retrieved tokens (local tokenizer)</th>
               </tr>
