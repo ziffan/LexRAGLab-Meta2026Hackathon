@@ -14,7 +14,11 @@ hash (run ulang tidak memanggil). `--project-only` tidak memanggil apa pun dan t
 
 Profil sapuan effort (H-102, `config/sweep.toml`): gerbang G-36 per butir (dua slot) atas pool sapuan SEBELUM jaringan
 (ditolak -> butir `not_run`, bukan kegagalan model), kunci `model_api_meta.lock` untuk Contributor sapuan, dan
-`--grade`: sel 2x2 OFFLINE (tanpa model) atas jawaban tersimpan profil itu -> `runs/compare_report/c/<profil>.json` + `.md`."""
+`--grade`: sel 2x2 OFFLINE (tanpa model) atas jawaban tersimpan profil itu -> `runs/compare_report/c/<profil>.json` + `.md`.
+
+Penyimpangan dari skenario S20 (a), dinyatakan: batas atas gerbang butir = jumlah `Projection.per_call_micros` (batas atas sadar-floor
+TANPA cache, sudah konservatif) sebagai `upper_floor`, tanpa faktor ulang ganda; token cached tidak dihitung. Angka skenario
+(55.000 per panggilan, 110.000 per butir) diuji di fungsi gerbang."""
 
 from __future__ import annotations
 

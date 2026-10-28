@@ -9,7 +9,12 @@ tidak dijalankan ulang (P4: amplop utama dirujuk lewat `off_ref`, tidak disalin,
 (`selections` kosong). Header yang hilang/basi/kosong/salah granularitas = galat per setting di `failed_settings` (D4) tanpa
 GridPoint. Kunci = kunci grid yang sama (korpus, `config_hash`, butir, split) dengan `config_hash` memuat blok `compare`
 (profile, provider, model, quantization, effort) dan isi store pembanding; identitas utama tidak berubah (G-38).
-Laporan berkas (Q-B5, tanpa UI): `runs/grid_compare/<profile>/report-<kunci>.md` (+ `.json`), label `Header B: <label>`."""
+Laporan berkas (Q-B5, tanpa UI): `runs/grid_compare/<profile>/report-<kunci>.md` (+ `.json`), label `Header B: <label>`.
+
+Profil sapuan (H-102, `config/sweep.toml`, S11): kebijakan cakupan sebagian `mask_threshold`/`mask_ref` (ambang `>=` integer); blok
+`coverage` amplop memuat kunci lama (`sources_run`, `sources_not_run`) DIGABUNG dengan `policy`, `threshold_pct`, `settings`
+(penyimpangan dinyatakan dari S11 (b): satu kunci `coverage`; setting di bawah ambang diberi `below_threshold`). Profil non-sapuan
+tidak membaca `config/sweep.toml` dan tetap `strict` persis H-101."""
 
 from __future__ import annotations
 

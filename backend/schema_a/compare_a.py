@@ -11,7 +11,11 @@ Contributor dan versi operator terbaru.
 
 Proyeksi + gerbang `[batch_gate]` (G-36) atas batas atas `MAX_ATTEMPTS` upaya sebelum panggilan apa pun; profil lokal
 (Glimmer) berbiaya 0 dan diperiksa ketersediaannya dulu. Keluaran gagal validasi tidak di-cache; diulang paling banyak
-`MAX_ATTEMPTS` kali, lalu gagal jujur. `--project-only` dan `--diff` tidak memanggil apa pun dan tidak menulis."""
+`MAX_ATTEMPTS` kali, lalu gagal jujur. `--project-only` dan `--diff` tidak memanggil apa pun dan tidak menulis.
+
+Profil sapuan (H-102): gerbang atas pool sapuan (belanja off-pin, ambang 40.000.000) dengan `factor_bp` EFEKTIF profil itu
+(`max([batch_gate].factor_bp`, entri induk `config/header_b`, entri `config/sweep.toml`), mis. 19.312 untuk Spark Open sapuan) dan kunci
+`model_api_meta.lock` untuk Contributor sapuan."""
 
 from __future__ import annotations
 
