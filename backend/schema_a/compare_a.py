@@ -92,11 +92,17 @@ def diff_report(main: SchemaStore, cmp: SchemaStore, family: str) -> dict[str, A
             "rejected": [{"run_id": x.get("run_id"), "errors": x.get("errors", [])[:5]} for x in cmp.list_rejected(family)]}
 
 
-def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int, *, threshold: int | None = None) -> Any:
+def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int, *, threshold: int | None = None,
+          factor_bp: int | None = None) -> Any:
+    import dataclasses
+
     from backend.proposal.gate import evaluate_gate, load_gate_config
+    cfg = load_gate_config(budget_cfg)
+    if factor_bp is not None:  # profil sapuan: factor_bp efektif (max gerbang, entri sweep/induk), H-102 P7
+        cfg = dataclasses.replace(cfg, factor_bp=factor_bp)
     if threshold is None:
-        return evaluate_gate(expected, spent, load_gate_config(budget_cfg))
-    return evaluate_gate(expected, spent, load_gate_config(budget_cfg), threshold_micros=threshold)
+        return evaluate_gate(expected, spent, cfg)
+    return evaluate_gate(expected, spent, cfg, threshold_micros=threshold)
 
 
 def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
@@ -104,7 +110,8 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
          probe: Callable[[str, str], tuple[bool, str]] | None = None, load_doc: Callable[[str], Any] | None = None,
          tokenizer: Any = None, pid_alive: Callable[[int], bool] | None = None,
-         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None) -> int:
+         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None,
+         header_config: Mapping[str, Any] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.schema_a.compare_a", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil pembanding di config/model dengan roles memuat 'a'")
     ap.add_argument("--family", nargs="+", choices=FAMILIES, default=list(FAMILIES))
@@ -178,9 +185,12 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         prov = profile_provider(model_config, a.model_profile)
         # S9 (e): belanja pool provider profil (tanpa tabel plafon = total ledger, perilaku lama persis).
         if sweep_cfg is not None:  # S13 (b), D13/P14: pool sapuan (belanja off-pin) dan ambang 40.000.000
-            from backend.proposal.gate import sweep_threshold_micros
+            from backend.header_b.run import load_header_cfg
+            from backend.proposal.gate import load_gate_config, sweep_threshold_micros
+            fbp = sweep_run.factor_bp(load_header_cfg() if header_config is None else dict(header_config), sweep_cfg,
+                                      a.model_profile, load_gate_config(budget_config).factor_bp)
             verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_off_pin(model_cfg=model_config),
-                            threshold=sweep_threshold_micros(budget_config, sweep_cfg))
+                            threshold=sweep_threshold_micros(budget_config, sweep_cfg), factor_bp=fbp)
         else:
             verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps, model_cfg=model_config),
                             threshold=cumulative_threshold_for(prov, budget_config, pcaps) if prov in pcaps else None)

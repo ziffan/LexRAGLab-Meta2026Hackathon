@@ -26,7 +26,8 @@ class _Ledger:
     def spent(self, role=None):
         return self.r if role == "b" else self.t
 
-    def spent_pool(self, provider, caps, role=None, *, model_cfg=None):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
+    def spent_pool(self, provider, caps, role=None, *, model_cfg):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
+        assert model_cfg.get("sentinel") == 1, "pemanggil harus meneruskan model_cfg nyata (bukan {} atau None)"
         return self.spent(role=role)
 
 
@@ -73,7 +74,7 @@ def run(sample=0, project_only=False):
     tok = SimpleNamespace(info=SimpleNamespace(name="t", version="1"))
     hc = {"max_header_tokens": 1, "max_output_tokens": 1, "max_consecutive_errors": 1, "warm_max_output_tokens": 1,
           "cache_guard_calls": 1, "cache_guard_min_ratio": 0.0}
-    return m._schema_main(a, hc, {}, {}, tok, {})
+    return m._schema_main(a, hc, {"sentinel": 1}, {}, tok, {})
 
 
 def test_sample_limits_plan_to_first_n_chunks(monkeypatch, tmp_path):  # M8

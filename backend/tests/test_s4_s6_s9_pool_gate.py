@@ -76,7 +76,7 @@ def test_s4_b_role_and_total_caps_do_not_apply_in_sweep_pool(world):
     m, b, s, tmp = world
     c, _ = make_client(tmp, "sweep_meta_high")
     p = project_total(c, "b", [1])
-    assert p.verdict == "ok" and p.pool == "sweep" and p.pool_spent_micros >= 11_000_000  # >> cap peran b 1.000.000
+    assert p.verdict == "ok" and p.pool == "sweep" and p.pool_spent_micros == 38_005_250  # >> cap peran b 1.000.000
 
 
 def test_s4_c_full_sweep_pool_does_not_block_other_pools(world):

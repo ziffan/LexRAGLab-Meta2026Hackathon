@@ -63,6 +63,12 @@ def test_s18_e_group_max_rpm_is_minimum_of_members():
     assert lim.acquire(140, clk.now, clk.sleep) == 60.0  # ke-71 menunggu: 70 berlaku untuk kelompok
 
 
+def test_s18_e_group_max_rpm_minimum_in_reverse_order():
+    clk = Clock(0.0)
+    lim = get_limiter("p1", KEY, "grp2", 70)
+    assert get_limiter("p2", KEY, "grp2", 140) is lim and lim.group_max_rpm == 70
+
+
 def test_s18_client_uses_rate_group_for_sweep_meta(tmp_path):
     from .sweep_helpers import make_client
     c, _ = make_client(tmp_path, "sweep_meta_medium")
