@@ -210,8 +210,14 @@ def test_final_marker_is_bound_to_grid_key(world):
         assert c.get("/api/families/akta/snapshot").json()["grid"]["final"] is False
     finally:
         cfg.write_text('version = 1\ngrid_run_id = ""\n', encoding="utf-8", newline="\n")
+    # config repo: penanda kosong (belum final) ATAU terikat ke amplop grid akta yang benar-benar tersimpan
     t = (config.CONFIG_DIR / "akta_grid_final.toml").read_text(encoding="utf-8")
-    assert re.search(r'^grid_run_id = ""$', t, re.M)  # config repo: belum final; agen tidak mengisinya
+    m = re.search(r'^grid_run_id = "([0-9a-f]*)"$', t, re.M)
+    assert m is not None
+    if m.group(1):
+        env = config.REPO_ROOT / "runs" / "grid" / f"{m.group(1)}.json"
+        assert env.is_file(), "penanda final menunjuk amplop grid yang tidak ada"
+        assert json.loads(env.read_text(encoding="utf-8")).get("family") == "akta"
 
 
 def test_marker_file_does_not_enter_config_hash_or_uupt_key(world):
