@@ -148,6 +148,8 @@ class Settings:
     api: str = API_RESPONSES
     effort_override: str | None = None  # profil Glimmer: reasoning_effort dipin di profil (H-047)
     max_output_tokens_floor: int | None = None  # profil reasoning-berat: batas keluaran minimal (G-26)
+    sweep: bool = False  # profil sapuan effort (H-102): hasil gabungan `merge_sweep`, bukan dari `config/model`
+    rate_group: str | None = None  # kelompok pembatas laju bersama (P9); None = kunci per profil
 
     def __repr__(self) -> str:  # tanpa key dan base URL (S10)
         return f"Settings(profile={self.profile!r}, provider={self.provider!r}, model={self.model!r})"
@@ -221,6 +223,7 @@ def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str,
             for_reported_numbers=bool(p.get("for_reported_numbers", False)), all_secrets=(), api=API_CHAT,
             effort_override=_opt_str(profile, p, "reasoning_effort"),
             max_output_tokens_floor=_opt_int(profile, p, "max_output_tokens"),
+            sweep=p.get("sweep") is True, rate_group=_opt_str(profile, p, "rate_group"),
         )
     key_env = p["api_key_env"]
     api_key = clean_env_value(env.get(key_env))
@@ -250,4 +253,8 @@ def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str,
         api_key=api_key, base_url=base_url, api_key_env=key_env,
         for_reported_numbers=bool(p.get("for_reported_numbers", False)), all_secrets=secrets,
         max_output_tokens_floor=_opt_int(profile, p, "max_output_tokens"),
+        # S2 (H-102): profil Responses yang memin `reasoning_effort` (profil sapuan) benar-benar mengirim pin itu.
+        # Profil tanpa kunci (meta, openrouter_dev, baseten_open) tetap None: byte-identik (S19).
+        effort_override=_opt_str(profile, p, "reasoning_effort"),
+        sweep=p.get("sweep") is True, rate_group=_opt_str(profile, p, "rate_group"),
     )

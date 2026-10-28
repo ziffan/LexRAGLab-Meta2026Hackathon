@@ -220,12 +220,12 @@ def test_s9e_contributor_gate_ignores_baseten_spend_only_with_provider_table(tmp
     from backend.spark.budget import effective_caps
     caps = effective_caps(rig.budget, None, rig.model).provider_micros
     led = Ledger(rig.runs)
-    assert led.spent_pool("meta", caps) == 561_741 and led.spent() == 708_759 and led.spent_pool("baseten", caps) == 147_018
+    assert led.spent_pool("meta", caps, model_cfg=rig.model) == 561_741 and led.spent() == 708_759 and led.spent_pool("baseten", caps, model_cfg=rig.model) == 147_018
     assert cumulative_threshold_for("meta", rig.budget, caps) == 16_000_000
     no_table = budget_b()
     del no_table["provider_cap_micros"]
     no_table["version"] = 1
-    assert led.spent_pool("meta", effective_caps(no_table, None, rig.model).provider_micros) == 708_759  # kembali ke total ledger
+    assert led.spent_pool("meta", effective_caps(no_table, None, rig.model).provider_micros, model_cfg=rig.model) == 708_759  # kembali ke total ledger
 
 
 # ------------------------------------------------------------------------------------------------ S12

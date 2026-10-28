@@ -26,7 +26,7 @@ class _Ledger:
     def spent(self, role=None):
         return self.r if role == "b" else self.t
 
-    def spent_pool(self, provider, caps, role=None):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
+    def spent_pool(self, provider, caps, role=None, *, model_cfg=None):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
         return self.spent(role=role)
 
 

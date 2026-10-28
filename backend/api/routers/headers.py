@@ -59,7 +59,8 @@ def post_headers_run(request: Request, family: str, body: HeadersBody) -> dict[s
     cost = proj["cost_usd_micros"]["upper_cached"]
     caps = effective_caps(st.budget_config, st.env)
     ledger = Ledger(svc.runs_dir)
-    sr, rc, stt, tc = pool_limits(ledger, caps, profile_provider(st.model_config, None), "b")
+    sr, rc, stt, tc = pool_limits(ledger, caps, profile_provider(st.model_config, None), "b",
+                                  model_cfg=st.model_config)
     if not st.replay and (sr + cost > rc or stt + cost > tc):
         raise ApiError(402, "budget_exceeded", "Projected cost exceeds config/budget; nothing was sent.")
     units = p.units if body.sample is None else p.units[:body.sample]

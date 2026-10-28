@@ -28,12 +28,13 @@ import openai
 from backend import config as cfg
 
 from . import ratelimit, store
-from .budget import Caps, Ledger, Projection, effective_caps, evaluate
+from .budget import Caps, Ledger, Projection, effective_caps, evaluate, evaluate_sweep
 from .errors import BudgetExceeded, ConfigInvalid, UsageInvalid
 from .money import compute_cost_micros
 from .runrecord import RunRecord, kind_for_role, utc_iso
 from .schema_check import check_schema_name, check_strict, validate_instance
 from .settings import API_CHAT, Settings, build_settings, effort_for
+from .sweep import has_sweep_profile, load_sweep, merge_sweep, sweep_config_hash, sweep_pool_cap
 
 _SENSOR = "[REDACTED]"
 _MAX_MSG = 300
@@ -129,9 +130,10 @@ class SparkClient:
     def __init__(self, profile: str, *, model_config: Mapping[str, Any], budget_config: Mapping[str, Any],
                  env: Mapping[str, str], runs_dir: Path, transport: Any = None,
                  now: Callable[[], float] = time.time, sleep: Callable[[float], None] = time.sleep,
-                 logger: logging.Logger | None = None, replay: bool = False) -> None:
+                 logger: logging.Logger | None = None, replay: bool = False,
+                 sweep_config: Mapping[str, Any] | None = None) -> None:
         self._profile = profile
-        self._model_cfg = model_config
+        self._model_cfg = model_config  # ASLI (config/model): dipakai Ledger, [effort], plafon; tanpa profil sapuan
         self._budget_cfg = budget_config
         self._env = dict(env)
         self._runs = Path(runs_dir)
@@ -139,8 +141,21 @@ class SparkClient:
         self._sleep = sleep
         self._log = logger or logging.getLogger("backend.spark")
         self._replay = bool(replay)
-        self._s: Settings = build_settings(profile, model_config, self._env, need_credentials=not self._replay)
-        self._config_hash = cfg.config_hash({"model": dict(model_config), "budget": dict(budget_config)})
+        # H-102 P16: `config/sweep.toml` dimuat malas, HANYA bila nama profil tidak ada di `config/model`. Jalur utama
+        # (profil ada di config/model) tidak membacanya dan `config_hash`-nya = hash dua berkas (byte-identik basis).
+        self._sweep_cfg: Mapping[str, Any] | None = None
+        effective_model: Mapping[str, Any] = model_config
+        profiles = model_config.get("profiles") if isinstance(model_config, Mapping) else None
+        if not (isinstance(profiles, Mapping) and profile in profiles):
+            sw = sweep_config if sweep_config is not None else load_sweep()
+            if has_sweep_profile(sw, profile):
+                effective_model = merge_sweep(model_config, sw)
+                self._sweep_cfg = sw
+        self._s: Settings = build_settings(profile, effective_model, self._env, need_credentials=not self._replay)
+        if self._sweep_cfg is not None:
+            self._config_hash = sweep_config_hash(model_config, budget_config, self._sweep_cfg)
+        else:
+            self._config_hash = cfg.config_hash({"model": dict(model_config), "budget": dict(budget_config)})
         self._ledger = Ledger(self._runs)
         host = urlsplit(self._s.base_url).hostname if self._s.base_url and self._s.api != API_CHAT else None
         extra = [v.strip() for k, v in self._env.items()
@@ -160,7 +175,7 @@ class SparkClient:
                 http_client = None
             self._sdk = openai.OpenAI(api_key=self._s.api_key, base_url=self._s.base_url, max_retries=0,
                                       timeout=self._s.limits.timeout_s, http_client=http_client)
-            self._limiter = ratelimit.get_limiter(profile, self._s.api_key)
+            self._limiter = ratelimit.get_limiter(profile, self._s.api_key, self._s.rate_group, self._s.limits.max_rpm)
 
     def __repr__(self) -> str:
         return f"SparkClient(profile={self._profile!r}, replay={self._replay})"
@@ -190,14 +205,17 @@ class SparkClient:
     def _evaluate(self, role: str, caps: Caps, per: list[int]) -> Projection:
         """Pool provider berplafon (H-101 P6): bandingkan belanja provider itu vs plafon provider. Selain itu pool
         default: belanja total dan belanja peran dihitung atas rekaman provider tak berplafon saja."""
+        mc = self._model_cfg
+        if self._s.sweep and self._sweep_cfg is not None:  # pool sapuan (H-102 D2/P3): rekaman off-pin, plafon 50M
+            return evaluate_sweep(role, caps, per, self._ledger.spent_off_pin(model_cfg=mc), sweep_pool_cap(self._sweep_cfg))
         pc = caps.provider_micros
         prov = self._s.provider
         if prov in pc:
-            return evaluate(role, caps, per, 0, self._ledger.spent_pool(prov, pc, role),
-                            provider=prov, spent_provider=self._ledger.spent_pool(prov, pc))
-        if not pc:
-            return evaluate(role, caps, per, self._ledger.spent(), self._ledger.spent(role=role))
-        return evaluate(role, caps, per, self._ledger.spent_pool(prov, pc), self._ledger.spent_pool(prov, pc, role))
+            return evaluate(role, caps, per, 0, self._ledger.spent_pool(prov, pc, role, model_cfg=mc),
+                            provider=prov, spent_provider=self._ledger.spent_pool(prov, pc, model_cfg=mc))
+        # Tanpa tabel plafon (`not pc`): `spent_pool` = semua rekaman on-pin (rekaman off-pin tidak masuk pool utama).
+        return evaluate(role, caps, per, self._ledger.spent_pool(prov, pc, model_cfg=mc),
+                        self._ledger.spent_pool(prov, pc, role, model_cfg=mc))
 
     def _effort(self, role: str) -> str:
         """Effort untuk RunRecord/cache: profil yang memin `reasoning_effort` (Glimmer) menang atas `[effort]` per peran."""
@@ -458,6 +476,13 @@ class SparkClient:
 
         if chat:
             return self._interpret_chat(ctx, data, schema, validator, usage, cost, err)
+        if self._s.effort_override is not None:  # P5: profil Responses berpin memeriksa pantulan effort (gagal tertutup)
+            sent = ctx.effort
+            r_eff = data.get("reasoning")
+            got = r_eff.get("effort") if isinstance(r_eff, dict) else None
+            if got != sent:
+                shown = self._sanitize(got) if isinstance(got, str) and got else "none"
+                return err("effort_mismatch", f"effort mismatch: sent '{sent}', the server reflected '{shown}'")
         status = data.get("status")
         if status == "incomplete":
             d = data.get("incomplete_details")

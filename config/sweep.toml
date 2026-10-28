@@ -1,0 +1,98 @@
+# config/sweep — sapuan reasoning effort A/B/C untuk Contributor, Spark Open (Baseten), Glimmer (H-102, H-103).
+# Dibaca HANYA oleh runner sapuan (header_b.compare, compare_a, compare_c, grid_compare) dan SparkClient yang diberi nama
+# profil sapuan. Jalur utama tidak membacanya (ARCHITECTURE §7). Pemilik nilai: operator.
+# Profil sapuan HANYA memuat kunci: sweep_of, reasoning_effort, max_output_tokens, roles, label, rate_group.
+# model, provider, quantization, api, base_url*, api_key_env, pricing diturunkan dari profil induk di config/model
+# (Model ID tidak punya salinan kedua). Effort `low` Contributor = profil `meta`, `low` Spark Open = `baseten_open`,
+# `high` Glimmer = `glimmer_local`; tidak diduplikasi di sini. `max` ditolak (Contributor tanpa `max`, G-19; Spark Open
+# memantul `xhigh`, S1-smoke).
+version = 1
+
+[sweep_pool]
+# Pool belanja TERPISAH khusus sapuan (D2): jumlah rekaman off-pin (aturan atas config/model). Ambang gerbang kumulatif
+# = cap_micros x [batch_gate].cumulative_pct // 100 = 40.000.000 (P4). Semua profil di berkas ini WAJIB terdaftar.
+cap_micros = 50000000
+profiles = [
+    "sweep_meta_medium", "sweep_meta_high", "sweep_meta_xhigh",
+    "sweep_baseten_medium", "sweep_baseten_high", "sweep_baseten_xhigh",
+    "sweep_glimmer_low", "sweep_glimmer_medium", "sweep_glimmer_xhigh",
+]
+
+[profiles.sweep_meta_medium]
+sweep_of = "meta"
+reasoning_effort = "medium"
+max_output_tokens = 6000   # usulan agen (P6): reasoning ditagih sebagai output; naik hanya SEBELUM batch penuh bila pilot menemukan `incomplete`
+roles = ["a", "b", "c"]
+rate_group = "meta"        # berbagi pembatas laju dengan profil `meta` (key sama; P9, G-19)
+label = "Contributor (effort medium)"
+
+[profiles.sweep_meta_high]
+sweep_of = "meta"
+reasoning_effort = "high"
+max_output_tokens = 6000
+roles = ["a", "b", "c"]
+rate_group = "meta"
+label = "Contributor (effort high)"
+
+[profiles.sweep_meta_xhigh]
+sweep_of = "meta"
+reasoning_effort = "xhigh"
+max_output_tokens = 6000
+roles = ["a", "b", "c"]
+rate_group = "meta"
+label = "Contributor (effort xhigh)"
+
+[profiles.sweep_baseten_medium]
+sweep_of = "baseten_open"
+reasoning_effort = "medium"
+max_output_tokens = 8000   # usulan agen (P6)
+roles = ["a", "b", "c"]
+rate_group = "baseten_open"
+label = "Spark Open (Baseten, effort medium)"
+
+[profiles.sweep_baseten_high]
+sweep_of = "baseten_open"
+reasoning_effort = "high"
+max_output_tokens = 12000
+roles = ["a", "b", "c"]
+rate_group = "baseten_open"
+label = "Spark Open (Baseten, effort high)"
+
+[profiles.sweep_baseten_xhigh]
+sweep_of = "baseten_open"
+reasoning_effort = "xhigh"
+max_output_tokens = 16000
+roles = ["a", "b", "c"]
+rate_group = "baseten_open"
+label = "Spark Open (Baseten, effort xhigh)"
+
+[profiles.sweep_glimmer_low]
+sweep_of = "glimmer_local"   # max_output_tokens 16000, timeout, kuantisasi, base_url loopback diwarisi dari induk
+reasoning_effort = "low"
+roles = ["a", "b", "c"]
+label = "Glimmer (local, effort low)"
+
+[profiles.sweep_glimmer_medium]
+sweep_of = "glimmer_local"
+reasoning_effort = "medium"
+roles = ["a", "b", "c"]
+label = "Glimmer (local, effort medium)"
+
+[profiles.sweep_glimmer_xhigh]
+sweep_of = "glimmer_local"
+reasoning_effort = "xhigh"
+roles = ["a", "b", "c"]
+label = "Glimmer (local, effort xhigh)"
+
+[factor_bp]
+# Faktor ulang G-36 (basis point) profil Spark Open sapuan: faktor terukur H-101 UU PT = ceil(14.075.194 x 10.000 / 7.288.645)
+# = 19312 (belanja aktual Ledger run 876321e atas proyeksi `--project-only` sebelum run; P7, S15 (a)). Entri hilang atau < 19312
+# = config_invalid di runner. Pilot per effort boleh menaikkan (dipin oleh L1/operator sebelum batch penuh); tidak diturunkan.
+sweep_baseten_medium = 19312
+sweep_baseten_high = 19312
+sweep_baseten_xhigh = 19312
+
+[compare]
+# Kebijakan cakupan sebagian grid pembanding (P12, Q-S4): HANYA untuk profil sapuan. strict | mask_threshold | mask_ref.
+coverage_policy = "mask_ref"
+coverage_threshold_pct = 95

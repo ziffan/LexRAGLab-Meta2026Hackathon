@@ -168,7 +168,7 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         pcaps = provider_caps(budget_config, model_config)
         prov = profile_provider(model_config, a.model_profile)
         # S9 (e): belanja pool provider profil (tanpa tabel plafon = total ledger, perilaku lama persis).
-        verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps),
+        verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps, model_cfg=model_config),
                         threshold=cumulative_threshold_for(prov, budget_config, pcaps) if prov in pcaps else None)
     except ConfigInvalid as exc:
         print(f"error: {str(exc)[:200]}", file=sys.stderr)

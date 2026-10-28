@@ -13,6 +13,7 @@ from typing import Any
 
 from . import store
 from .errors import ConfigInvalid
+from .runrecord import role_for_kind
 
 ENV_CAP = "DEV_SPEND_CAP_MICRO_USD"
 _DIGITS = re.compile(r"[0-9]+")
@@ -86,13 +87,76 @@ def effective_caps(budget_cfg: Mapping[str, Any], env: Mapping[str, str] | None,
                 provider_micros=provider_caps(budget_cfg, model_cfg))
 
 
+def _rec_field(rec: Any, name: str) -> Any:
+    return rec.get(name) if isinstance(rec, Mapping) else getattr(rec, name, None)
+
+
+def _opt_quant(p: Mapping[str, Any]) -> str | None:
+    q = p.get("quantization")
+    return q if isinstance(q, str) else None
+
+
+def _effective_efforts(model_cfg: Mapping[str, Any], p: Mapping[str, Any], role: str | None) -> set[str] | None:
+    """Himpunan effort efektif profil non-`sweep` `p`: pin `reasoning_effort` bila ada; selain itu `[effort].<role>`
+    (`role` None = semua peran di `[effort]`, untuk gerbang laporan kind `grid`). None = tak terdefinisi."""
+    pin = p.get("reasoning_effort")
+    if isinstance(pin, str) and pin:
+        return {pin}
+    tbl = model_cfg.get("effort") if isinstance(model_cfg, Mapping) else None
+    if not isinstance(tbl, Mapping):
+        return None
+    if role is None:
+        vals = {v for v in tbl.values() if isinstance(v, str) and v}
+        return vals or None
+    v = tbl.get(role)
+    return {v} if isinstance(v, str) and v else None
+
+
+def is_off_pin(record: Any, model_cfg: Mapping[str, Any], *, grid_by_set: bool = False) -> bool:
+    """Rekaman OFF-PIN (H-102 P3): (`provider`, `model`, `quantization`) cocok profil NON-`sweep` di `config/model`
+    tetapi `effort` bukan effort efektif profil itu untuk peran rekaman (pin `reasoning_effort` profil, selain itu
+    `[effort].<peran>`). Kasus tepi (semua = ON-PIN, tetap di pool utama seperti basis): `provider`/`effort` null; tak ada
+    profil yang cocok; kind tanpa peran (`grid`; biaya 0) kecuali `grid_by_set=True` (gerbang laporan S9: himpunan
+    effort efektif profil); effort efektif tak terdefinisi. Beberapa profil cocok -> off-pin hanya bila effort
+    berbeda dari SEMUA effort efektifnya. Hanya membaca `config/model` (jalur utama, ter-hash)."""
+    provider, model, effort = _rec_field(record, "provider"), _rec_field(record, "model"), _rec_field(record, "effort")
+    if provider is None or effort is None:
+        return False
+    kind = _rec_field(record, "kind")
+    role = role_for_kind(kind) if isinstance(kind, str) else None
+    if role is None and not grid_by_set:
+        return False
+    profiles = model_cfg.get("profiles") if isinstance(model_cfg, Mapping) else None
+    if not isinstance(profiles, Mapping):
+        return False
+    quant = _rec_field(record, "quantization")
+    effs: set[str] = set()
+    matched = False
+    for p in profiles.values():
+        if not isinstance(p, Mapping) or p.get("sweep") is True:
+            continue
+        if p.get("provider") == provider and p.get("model") == model and _opt_quant(p) == quant:
+            matched = True
+            e = _effective_efforts(model_cfg, p, role)
+            if e is None:
+                return False
+            effs |= e
+    return matched and effort not in effs
+
+
 class Ledger:
-    """Buku belanja = jumlah `cost ?? projected` semua RunRecord tersimpan (T6, O-3 cabang A)."""
+    """Buku belanja = jumlah `cost ?? projected` semua RunRecord tersimpan (T6, O-3 cabang A).
+
+    Pool (H-102): rekaman off-pin (`is_off_pin`) dikecualikan dari pool default dan pool provider berplafon dan hanya
+    dihitung di pool sapuan (`spent_off_pin`). `model_cfg` = isi `config/model` (jalur utama), keyword WAJIB tanpa default:
+    pemanggil yang lupa meneruskannya mendapat `TypeError`, bukan pool basis diam-diam."""
 
     def __init__(self, runs_dir: Path) -> None:
         self.runs_dir = Path(runs_dir)
 
     def spent(self, role: str | None = None, provider: str | None = None) -> int:
+        """Total SEMUA rekaman (termasuk off-pin). Hanya untuk tampilan (`/api/health` `ledger_spent_usd_micros`),
+        BUKAN untuk keputusan biaya: gunakan `spent_pool`/`spent_off_pin`."""
         try:
             records = store.load_records(self.runs_dir)
         except ValueError as exc:
@@ -106,10 +170,12 @@ class Ledger:
             total += r.spend_micros()
         return total
 
-    def spent_pool(self, provider: str, caps: Mapping[str, int], role: str | None = None) -> int:
+    def spent_pool(self, provider: str, caps: Mapping[str, int], role: str | None = None, *,
+                   model_cfg: Mapping[str, Any]) -> int:
         """Belanja pool tempat `provider` berada (H-101 P6). Provider tercantum di `caps` -> belanja provider itu saja
         (semua peran, atau satu peran). Selain itu -> pool default = semua rekaman yang provider-nya TIDAK tercantum
-        di `caps` (= total dikurangi semua provider tercantum), dengan filter peran bila diberikan."""
+        di `caps` (= total dikurangi semua provider tercantum), dengan filter peran bila diberikan. Rekaman off-pin
+        (H-102 P3) tidak dihitung."""
         try:
             records = store.load_records(self.runs_dir)
         except ValueError as exc:
@@ -120,8 +186,17 @@ class Ledger:
             if role is not None and r.role() != role:
                 continue
             if (r.provider == provider) if listed else (r.provider not in caps):
-                total += r.spend_micros()
+                if not is_off_pin(r, model_cfg):
+                    total += r.spend_micros()
         return total
+
+    def spent_off_pin(self, *, model_cfg: Mapping[str, Any]) -> int:
+        """Belanja pool sapuan (H-102 P3): jumlah `spend_micros()` SEMUA rekaman off-pin, semua provider."""
+        try:
+            records = store.load_records(self.runs_dir)
+        except ValueError as exc:
+            raise ConfigInvalid(str(exc)) from None
+        return sum(r.spend_micros() for r in records if is_off_pin(r, model_cfg))
 
 
 @dataclass
@@ -182,6 +257,25 @@ def evaluate(role: str, caps: Caps, projected: list[int], spent_total: int, spen
     )
 
 
+def evaluate_sweep(role: str, caps: Caps, projected: list[int], spent_sweep: int, cap_micros: int) -> Projection:
+    """Pool sapuan (H-102 D2/P3): belanja pool sapuan (`Ledger.spent_off_pin`) vs plafon `[sweep_pool].cap_micros`.
+    Cap total, cap peran, dan plafon provider TIDAK berlaku. Batas inklusif (sama persis lolos)."""
+    if role not in caps.per_role_micros:
+        raise ConfigInvalid(f"config/budget: no per_role_cap_micros entry for role '{role}'")
+    total_proj = sum(projected)
+    reason = None
+    if spent_sweep + total_proj > cap_micros:
+        reason = (f"spent {spent_sweep} + projected {total_proj} = {spent_sweep + total_proj} micro-USD "
+                  f"exceeds pool sweep cap {cap_micros} micro-USD")
+    return Projection(
+        per_call_micros=list(projected), total_micros=total_proj,
+        effective_total_cap_micros=caps.total_micros, total_cap_source=caps.total_source,
+        role=role, role_cap_micros=caps.per_role_micros[role], spent_micros=spent_sweep, spent_role_micros=0,
+        verdict="ok" if reason is None else "budget_exceeded", reason=reason,
+        pool="sweep", pool_cap_micros=cap_micros, pool_spent_micros=spent_sweep,
+    )
+
+
 def profile_provider(model_cfg: Mapping[str, Any], profile: str | None) -> str:
     """Provider profil (`profile` None = `default_profile`). Tak terselesaikan -> "" (pool default)."""
     name = profile or (model_cfg.get("default_profile") if isinstance(model_cfg, Mapping) else None)
@@ -191,13 +285,15 @@ def profile_provider(model_cfg: Mapping[str, Any], profile: str | None) -> str:
     return p["provider"] if isinstance(p, Mapping) and isinstance(p.get("provider"), str) else ""
 
 
-def pool_limits(ledger: Ledger, caps: Caps, provider: str, role: str) -> tuple[int, int, int, int]:
+def pool_limits(ledger: Ledger, caps: Caps, provider: str, role: str, *,
+                model_cfg: Mapping[str, Any]) -> tuple[int, int, int, int]:
     """(belanja peran, batas peran, belanja total, batas total) untuk pemeriksaan pra-run CLI/API (H-101 S9 (e)).
-    Pool default: belanja atas rekaman provider tak berplafon vs cap peran dan cap total (tanpa tabel = `Ledger.spent()`
-    persis). Provider berplafon: belanja provider vs plafon provider (cap peran dan total tidak berlaku)."""
+    Pool default: belanja atas rekaman provider tak berplafon vs cap peran dan cap total. Provider berplafon: belanja
+    provider vs plafon provider (cap peran dan total tidak berlaku). Rekaman off-pin tidak dihitung (H-102 P3);
+    `model_cfg` keyword WAJIB."""
     pc = getattr(caps, "provider_micros", None) or {}
     if provider in pc:
-        spent = ledger.spent_pool(provider, pc)
+        spent = ledger.spent_pool(provider, pc, model_cfg=model_cfg)
         return spent, pc[provider], spent, pc[provider]
-    return (ledger.spent_pool(provider, pc, role), caps.per_role_micros[role],
-            ledger.spent_pool(provider, pc), caps.total_micros)
+    return (ledger.spent_pool(provider, pc, role, model_cfg=model_cfg), caps.per_role_micros[role],
+            ledger.spent_pool(provider, pc, model_cfg=model_cfg), caps.total_micros)

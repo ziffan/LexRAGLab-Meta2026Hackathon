@@ -161,15 +161,23 @@ def reuse_confirmed(latencies_ms: Sequence[int], threshold_ms: int = REUSE_MEDIA
 
 # ---------------------------------------------------------------- gerbang per pool
 def make_gate(provider: str, budget_cfg: Mapping[str, Any], model_cfg: Mapping[str, Any], env: Mapping[str, str] | None,
-              runs_dir: Path) -> Callable[[Sequence[int], int], Any]:
+              runs_dir: Path, *, sweep_cfg: Mapping[str, Any] | None = None) -> Callable[[Sequence[int], int], Any]:
     """Gerbang per batch atas belanja AKTUAL pool provider (P9): `spent_pool` + `cumulative_threshold_for` + `evaluate_gate`
-    dengan lantai batas atas (P7). Dibaca ulang dari buku belanja tiap pemanggilan."""
-    from backend.proposal.gate import cumulative_threshold_for, evaluate_gate, load_gate_config
+    dengan lantai batas atas (P7). Dibaca ulang dari buku belanja tiap pemanggilan.
+
+    `sweep_cfg` diberikan (profil sapuan, H-102 P4/D13): `spent` = belanja pool sapuan (`Ledger.spent_off_pin`) dan ambang
+    = `[sweep_pool].cap_micros x cumulative_pct // 100` (50.000.000 x 80 // 100 = 40.000.000). `model_cfg` = `config/model`
+    ASLI (tanpa profil sapuan)."""
+    from backend.proposal.gate import cumulative_threshold_for, evaluate_gate, load_gate_config, sweep_threshold_micros
     from backend.spark.budget import Ledger, effective_caps
 
     def gate(expected_per_call: Sequence[int], upper_floor: int) -> Any:
         pc = effective_caps(budget_cfg, env, model_cfg).provider_micros
-        spent = Ledger(runs_dir).spent_pool(provider, pc)
+        if sweep_cfg is not None:
+            return evaluate_gate(list(expected_per_call), Ledger(runs_dir).spent_off_pin(model_cfg=model_cfg),
+                                 load_gate_config(budget_cfg), upper_floor=upper_floor,
+                                 threshold_micros=sweep_threshold_micros(budget_cfg, sweep_cfg))
+        spent = Ledger(runs_dir).spent_pool(provider, pc, model_cfg=model_cfg)
         return evaluate_gate(list(expected_per_call), spent, load_gate_config(budget_cfg), upper_floor=upper_floor,
                              threshold_micros=cumulative_threshold_for(provider, budget_cfg, pc))
 

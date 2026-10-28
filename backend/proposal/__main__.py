@@ -96,7 +96,7 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
         print(f"error: config_invalid: {exc}", file=sys.stderr)
         return 2
     # S9 (e): pool default = belanja rekaman provider tak berplafon; provider berplafon = pool-nya sendiri (H-101 P6/P9).
-    used = spent if spent is not None else Ledger(base.runs_dir).spent_pool(prov, pcaps)
+    used = spent if spent is not None else Ledger(base.runs_dir).spent_pool(prov, pcaps, model_cfg=model_cfg)
     thr = cumulative_threshold_for(prov, budget_cfg, pcaps)
     v = evaluate_gate(expected, used, gcfg) if prov not in pcaps else evaluate_gate(expected, used, gcfg, threshold_micros=thr)
     print(f"prompt {prm.version} {prm.prompt_hash[:12]} schema {promptmod.SCHEMA_NAME_U} {promptmod.schema_hash(MODE_U)[:12]} "
