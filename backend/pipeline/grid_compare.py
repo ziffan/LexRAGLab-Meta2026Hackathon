@@ -25,6 +25,7 @@ from backend import config, gpulock
 from backend.grid.frontier import aggregate_points, compute_frontiers
 from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderStore
 from backend.grid.runner import GridError, _frontier_twins, run_grid
+from backend.grid.schemas import SchemaBinding
 from backend.grid.types import (MULTI_DOC_FAMILIES, GridPoint, Setting, canonical_json, metrics_from_cache, metrics_to_cache)
 from backend.header_b.compare_store import (CompareError, build_identity, check_forbidden_profile_keys, check_identity,
                                             compare_profile_root, compare_store_dir, comparison_profile, read_identity)
@@ -85,6 +86,7 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
                      encoder_factory: Callable[[], Encoder] | None = None, embed_cache_dir: Path | None = None,
                      log: Callable[[str], None] = lambda _m: None, main_headers: HeaderBinding | None = None,
                      compare_store: HeaderStore | None = None, identity: Mapping[str, Any] | None = None,
+                     schemas: SchemaBinding | None | str = "auto",
                      gpu_lock: bool = False, gpu_pid_alive: Callable[[int], bool] | None = None) -> CompareGridResult:
     """Jalankan (atau baca dari cache) grid pembanding satu keluarga. Tanpa Model API.
 
@@ -107,8 +109,11 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
     block = compare_block(ident)
     cbind = HeaderBinding(store, base.granularity, base.scope, base.prompt_hash, str(prof.get("model")), compare=block)
 
+    if schemas == "auto":  # sama dengan `Service.schema_binding`: skema A keluarga bila store punya rekaman (kunci K0 memuat identitasnya)
+        sb = SchemaBinding.from_store(runs, family)
+        schemas = sb if sb.records else None
     common: dict[str, Any] = dict(doc=doc, docs=docs, tokenizer=tokenizer, butir_dir=butir_dir, runs_dir=runs, config_dir=config_dir,
-                                  create_split=False)
+                                  create_split=False, schemas=schemas)
     main_plan = make_plan(family, headers=base, **common)
     if main_plan.key is None:
         raise GridRunError("no grid key for the main plan (no items or no split record)")
