@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d16a0daa89ad0b9e1c2f580da802b8044024e4894085e0d7dad7fada73d9310e",
+ "chunk_id_returned": "d16a0daa89ad0b9e1c2f580da802b8044024e4894085e0d7dad7fada73d9310e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "62eda1252f4f4cc8860cb1051a0f2b84",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Pasal 26: saat berlakunya perubahan anggaran dasar dalam penggabungan atau pengambilalihan.",
+ "tokens_local": 42
+}

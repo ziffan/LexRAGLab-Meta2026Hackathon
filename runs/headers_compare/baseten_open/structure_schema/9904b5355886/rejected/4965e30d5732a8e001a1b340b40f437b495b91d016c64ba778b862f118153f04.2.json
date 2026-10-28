@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4965e30d5732a8e001a1b340b40f437b495b91d016c64ba778b862f118153f04",
+ "chunk_id_returned": "4965e30d5732a8e001a1b340b40f437b495b91d016c64ba778b862f118153f04",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6ee6ae3cd9584b659e32fbbe710c1231",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 22 Bab II (Pendirian dkk.): tenggat pengajuan perpanjangan jangka waktu berdirinya Perseroan.",
+ "tokens_local": 42
+}

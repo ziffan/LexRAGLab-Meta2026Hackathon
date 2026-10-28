@@ -1,0 +1,11 @@
+{
+ "chunk_id": "41745d56f4d57446a1ecce7cab565366df27670f668ebc1be3d624cb4dcefa90",
+ "chunk_id_returned": "41745d56f4d57446a1ecce7cab565366df27670f668ebc1be3d624cb4dcefa90",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "be9b439ee7354e4e9d7a244ce21555a2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Penjelasan Pasal 67: makna penandatanganan laporan tahunan dan konsekuensi tidak menandatangani.",
+ "tokens_local": 45
+}

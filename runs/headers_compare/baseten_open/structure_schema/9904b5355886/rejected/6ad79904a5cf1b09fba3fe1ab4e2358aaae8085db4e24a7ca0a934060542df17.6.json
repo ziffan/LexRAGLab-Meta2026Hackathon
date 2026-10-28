@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6ad79904a5cf1b09fba3fe1ab4e2358aaae8085db4e24a7ca0a934060542df17",
+ "chunk_id_returned": "6ad79904a5cf1b09fba3fe1ab4e2358aaae8085db4e24a7ca0a934060542df17",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "e13a4d52e7b541b4b5a04547e72b6edc",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Kedua (Laporan Tahunan): penandatanganan laporan tahunan dan penyediaannya bagi pemegang saham.",
+ "tokens_local": 46
+}

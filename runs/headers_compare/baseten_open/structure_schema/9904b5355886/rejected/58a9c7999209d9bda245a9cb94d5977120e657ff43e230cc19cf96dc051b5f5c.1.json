@@ -1,0 +1,11 @@
+{
+ "chunk_id": "58a9c7999209d9bda245a9cb94d5977120e657ff43e230cc19cf96dc051b5f5c",
+ "chunk_id_returned": "58a9c7999209d9bda245a9cb94d5977120e657ff43e230cc19cf96dc051b5f5c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1c45d5f8c6cd4e48805f3ab117d95e16",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): penjelasan kewajiban penawaran saham satu kali sebelum jual ke pihak ketiga.",
+ "tokens_local": 42
+}

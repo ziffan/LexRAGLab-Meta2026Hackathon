@@ -1,0 +1,11 @@
+{
+ "chunk_id": "522a8db2789240e0b18bf6e43a8ca8b69560ff63c5b256396741aa1b32fac8f9",
+ "chunk_id_returned": "522a8db2789240e0b18bf6e43a8ca8b69560ff63c5b256396741aa1b32fac8f9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b61a6dc252ed4844b180dae9aed9ae57",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Penjelasan Pasal 48: ketentuan saham atas nama dan akibat bila syarat kepemilikan tidak terpenuhi.",
+ "tokens_local": 43
+}

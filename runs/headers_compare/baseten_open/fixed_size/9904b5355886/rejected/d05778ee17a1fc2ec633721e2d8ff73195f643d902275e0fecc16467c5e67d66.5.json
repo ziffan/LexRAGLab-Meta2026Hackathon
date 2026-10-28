@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d05778ee17a1fc2ec633721e2d8ff73195f643d902275e0fecc16467c5e67d66",
+ "chunk_id_returned": "d05778ee17a1fc2ec633721e2d8ff73195f643d902275e0fecc16467c5e67d66",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "02ee7e1571df44ca9c300cb0c9dc8b2b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): syarat pemindahan hak atas saham dan pengagunan saham dengan gadai atau fidusia.",
+ "tokens_local": 46
+}

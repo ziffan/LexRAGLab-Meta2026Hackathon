@@ -1,0 +1,11 @@
+{
+ "chunk_id": "eebd873a21e33c3648e0b936684d8beb9490784fab5ae36a0769e6158b564636",
+ "chunk_id_returned": "eebd873a21e33c3648e0b936684d8beb9490784fab5ae36a0769e6158b564636",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "26104e19f13544e98ad256078e0723b1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kesatu (Direksi): kewajiban persetujuan RUPS untuk pengalihan atau penjaminan kekayaan Perseroan melebihi batas tertentu.",
+ "tokens_local": 46
+}

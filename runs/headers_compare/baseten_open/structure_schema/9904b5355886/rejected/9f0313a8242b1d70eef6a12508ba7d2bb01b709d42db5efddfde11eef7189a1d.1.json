@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9f0313a8242b1d70eef6a12508ba7d2bb01b709d42db5efddfde11eef7189a1d",
+ "chunk_id_returned": "9f0313a8242b1d70eef6a12508ba7d2bb01b709d42db5efddfde11eef7189a1d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6bf263c0bb4641afb0769b6996c08ab8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): pengaturan lebih lanjut penggabungan, peleburan atau pengambilalihan dengan Peraturan Pemerintah.",
+ "tokens_local": 41
+}

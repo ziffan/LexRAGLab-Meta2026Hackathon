@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7bd779587ea6892f9ce1da580af40b5f39335d4fb7064477282beb03d7e03827",
+ "chunk_id_returned": "7bd779587ea6892f9ce1da580af40b5f39335d4fb7064477282beb03d7e03827",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "6f2870b30dbb49c5949a9d655f0e6b80",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Ketiga (Penggunaan Laba): syarat pembagian dividen interim dan kewajibannya.",
+ "tokens_local": 42
+}

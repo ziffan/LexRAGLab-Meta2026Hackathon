@@ -1,0 +1,11 @@
+{
+ "chunk_id": "fa354076bf11db7ef426bfdac0b3844485e1fdab5535bd530fa7fd3d345eec93",
+ "chunk_id_returned": "fa354076bf11db7ef426bfdac0b3844485e1fdab5535bd530fa7fd3d345eec93",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f7aa7573fd214cd880354b214fbfe83e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): akta notaris penggabungan, peleburan, pengambilalihan atau pemisahan.",
+ "tokens_local": 43
+}

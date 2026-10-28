@@ -1,0 +1,11 @@
+{
+ "chunk_id": "76f35c1340b184b4de639acf2ae1e2d7d51660a9f45841647f849dc5d9634a69",
+ "chunk_id_returned": "76f35c1340b184b4de639acf2ae1e2d7d51660a9f45841647f849dc5d9634a69",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "281ebbc6278b4e0aa72ea36a065d44a6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): syarat akta notaris berbahasa Indonesia untuk rancangan yang disetujui RUPS.",
+ "tokens_local": 41
+}

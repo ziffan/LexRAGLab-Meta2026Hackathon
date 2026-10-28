@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9f99919660870f507a9764c55f33721097b18302862ba073569a8001be0a3fc8",
+ "chunk_id_returned": "9f99919660870f507a9764c55f33721097b18302862ba073569a8001be0a3fc8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "55a080a5098b47cba32ad91037715bc5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 61 pada BAB III Bagian Kelima (Saham): ruang lingkup gugatan pemegang saham terhadap Perseroan.",
+ "tokens_local": 42
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0894a14df571354a681db57f58e1e6854967393cd156f799a905f6083e2fa976",
+ "chunk_id_returned": "0894a14df571354a681db57f58e1e6854967393cd156f799a905f6083e2fa976",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "cdb871e5b2a446698ef4d08cde3e97a3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): kelangsungan status badan hukum selama likuidasi dan kewajiban pencantuman keterangan likuidasi.",
+ "tokens_local": 42
+}

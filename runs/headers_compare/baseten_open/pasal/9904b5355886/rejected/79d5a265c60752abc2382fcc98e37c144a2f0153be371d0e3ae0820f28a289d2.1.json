@@ -1,0 +1,11 @@
+{
+ "chunk_id": "79d5a265c60752abc2382fcc98e37c144a2f0153be371d0e3ae0820f28a289d2",
+ "chunk_id_returned": "79d5a265c60752abc2382fcc98e37c144a2f0153be371d0e3ae0820f28a289d2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "45bf68b90075423e901a4ec79a9a3444",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): pengumuman pendahuluan sebelum pemanggilan RUPS Perseroan Terbuka.",
+ "tokens_local": 42
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2d45de366c7421e761ed56dbc9754dd7c1d3fb5e6d2450fb61d6852fea66e40c",
+ "chunk_id_returned": "2d45de366c7421e761ed56dbc9754dd7c1d3fb5e6d2450fb61d6852fea66e40c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "8c746de36b6e49d3939a27bac468be8a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Bab IV dan Bab V (Tanggung Jawab Sosial dkk.): pengaturan dividen interim, dividen tak diambil, dan kewajiban TJSL.",
+ "tokens_local": 44
+}

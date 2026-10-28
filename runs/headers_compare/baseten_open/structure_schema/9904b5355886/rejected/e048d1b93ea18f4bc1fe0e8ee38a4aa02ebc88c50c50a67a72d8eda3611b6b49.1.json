@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e048d1b93ea18f4bc1fe0e8ee38a4aa02ebc88c50c50a67a72d8eda3611b6b49",
+ "chunk_id_returned": "e048d1b93ea18f4bc1fe0e8ee38a4aa02ebc88c50c50a67a72d8eda3611b6b49",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "ed724a74d94b43ba822ab048b3a4c7b8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): tata cara pengajuan permohonan pengesahan badan hukum perseroan dan tenggat waktunya.",
+ "tokens_local": 48
+}

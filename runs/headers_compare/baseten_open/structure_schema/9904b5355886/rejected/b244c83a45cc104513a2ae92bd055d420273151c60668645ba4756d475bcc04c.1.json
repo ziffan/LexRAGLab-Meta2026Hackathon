@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b244c83a45cc104513a2ae92bd055d420273151c60668645ba4756d475bcc04c",
+ "chunk_id_returned": "b244c83a45cc104513a2ae92bd055d420273151c60668645ba4756d475bcc04c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "98be6ad2f0d545ef8c0bb152bff594d4",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya), Penjelasan Pasal 153D: penjelasan ketentuan pengurusan Perseroan perorangan usaha mikro kecil oleh Direksi.",
+ "tokens_local": 43
+}

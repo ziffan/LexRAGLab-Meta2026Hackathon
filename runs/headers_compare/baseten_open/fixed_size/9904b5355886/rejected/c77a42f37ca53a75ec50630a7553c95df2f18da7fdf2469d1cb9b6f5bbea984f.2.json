@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c77a42f37ca53a75ec50630a7553c95df2f18da7fdf2469d1cb9b6f5bbea984f",
+ "chunk_id_returned": "c77a42f37ca53a75ec50630a7553c95df2f18da7fdf2469d1cb9b6f5bbea984f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "97e0a34d522c40ed9ec2d6c80e780831",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Laporan Tahunan: kewajiban audit laporan keuangan dan pengesahan laporan tahunan oleh RUPS.",
+ "tokens_local": 42
+}

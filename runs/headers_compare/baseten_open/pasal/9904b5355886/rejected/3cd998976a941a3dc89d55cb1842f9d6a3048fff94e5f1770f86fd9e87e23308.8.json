@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3cd998976a941a3dc89d55cb1842f9d6a3048fff94e5f1770f86fd9e87e23308",
+ "chunk_id_returned": "3cd998976a941a3dc89d55cb1842f9d6a3048fff94e5f1770f86fd9e87e23308",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "fb5254e13b5d4b65b6fb0b6b3b874e9a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.), Penjelasan Pasal 128: bentuk akta notaris untuk Penggabungan, Peleburan, Pengambilalihan atau Pemisahan.",
+ "tokens_local": 51
+}

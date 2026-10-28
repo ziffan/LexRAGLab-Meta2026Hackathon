@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ad5877c56c9e207828e31d451e83ccd0ffb0838d0436967c93f45bd36f0c68a7",
+ "chunk_id_returned": "ad5877c56c9e207828e31d451e83ccd0ffb0838d0436967c93f45bd36f0c68a7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "d4de5b94596d45ec9369bd444807def6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Keempat (Pengurangan Modal): syarat sah keputusan RUPS pengurangan modal dan kewajiban pemberitahuan kepada kreditor.",
+ "tokens_local": 46
+}

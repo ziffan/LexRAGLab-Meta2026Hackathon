@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2a6a0d5071b4d164e0f18a7104a06048f58fca8c3d70b3af8f8c27a38977f1cc",
+ "chunk_id_returned": "2a6a0d5071b4d164e0f18a7104a06048f58fca8c3d70b3af8f8c27a38977f1cc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "a8efe311ce1b489bb90a93e9a80885ce",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Penjelasan Pasal 102: penjelasan tentang persetujuan RUPS untuk pengalihan atau penjaminan kekayaan Perseroan bernilai besar.",
+ "tokens_local": 51
+}

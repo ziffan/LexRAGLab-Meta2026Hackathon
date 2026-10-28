@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e5ed661f9f14095047e6d40f9ee75bfb2711ea88e1418b639e7fff630ed34fc9",
+ "chunk_id_returned": "e5ed661f9f14095047e6d40f9ee75bfb2711ea88e1418b639e7fff630ed34fc9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ee2c7d62da024987a588978609820bd8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (RUPS) dan Bab VII (Direksi dkk.): risalah RUPS, keputusan sirkuler, dan tugas direksi.",
+ "tokens_local": 43
+}

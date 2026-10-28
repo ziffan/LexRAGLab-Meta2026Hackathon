@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c10717aed81d743f4044e56fab4f5e920575bde6b67b13dfb19d61c2266e6473",
+ "chunk_id_returned": "c10717aed81d743f4044e56fab4f5e920575bde6b67b13dfb19d61c2266e6473",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "2bf51d4bcc444ec6a980b7ed3c1fefa5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham), Penjelasan Pasal 75: hak pemegang saham memperoleh keterangan terkait mata acara RUPS.",
+ "tokens_local": 42
+}

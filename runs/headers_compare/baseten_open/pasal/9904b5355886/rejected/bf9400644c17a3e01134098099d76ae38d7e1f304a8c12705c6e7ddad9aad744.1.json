@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "chunk_id_returned": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "05e6af32043940a8a21870563c304dd0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.), Penjelasan Pasal 131: lampiran akta pengambilalihan untuk pemberitahuan kepada Menteri.",
+ "tokens_local": 43
+}

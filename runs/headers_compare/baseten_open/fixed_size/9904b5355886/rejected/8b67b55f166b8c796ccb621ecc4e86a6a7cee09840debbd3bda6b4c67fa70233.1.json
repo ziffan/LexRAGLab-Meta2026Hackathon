@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8b67b55f166b8c796ccb621ecc4e86a6a7cee09840debbd3bda6b4c67fa70233",
+ "chunk_id_returned": "8b67b55f166b8c796ccb621ecc4e86a6a7cee09840debbd3bda6b4c67fa70233",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "599052e15e7c4a0390b9cf7d1c17e228",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Umum: latar belakang pembaruan hukum perseroan dan penegasan hakikat Perseroan sebagai badan hukum persekutuan modal.",
+ "tokens_local": 44
+}

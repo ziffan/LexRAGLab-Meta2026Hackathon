@@ -1,0 +1,11 @@
+{
+ "chunk_id": "eee79cebd21fe362ee165d1e9316fc425b5af5befc7754d536284ca87dc0e5af",
+ "chunk_id_returned": "eee79cebd21fe362ee165d1e9316fc425b5af5befc7754d536284ca87dc0e5af",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ae2994b8f595417ca40bf30a370d2ca9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab I (Ketentuan Umum): penjelasan penghapusan tanggung jawab terbatas serta ketentuan nama, tempat kedudukan, dan jangka waktu Perseroan.",
+ "tokens_local": 42
+}

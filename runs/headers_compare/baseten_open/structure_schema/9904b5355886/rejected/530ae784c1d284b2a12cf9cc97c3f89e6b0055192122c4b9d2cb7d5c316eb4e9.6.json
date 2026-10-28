@@ -1,0 +1,11 @@
+{
+ "chunk_id": "530ae784c1d284b2a12cf9cc97c3f89e6b0055192122c4b9d2cb7d5c316eb4e9",
+ "chunk_id_returned": "530ae784c1d284b2a12cf9cc97c3f89e6b0055192122c4b9d2cb7d5c316eb4e9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "adcca2a3ab624a54b5e438b45c83b97d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Laporan Tahunan: makna penandatanganan laporan tahunan dan alasan tertulis bila tidak menandatangani.",
+ "tokens_local": 44
+}

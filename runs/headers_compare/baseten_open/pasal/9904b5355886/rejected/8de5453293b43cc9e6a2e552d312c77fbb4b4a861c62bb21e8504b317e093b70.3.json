@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8de5453293b43cc9e6a2e552d312c77fbb4b4a861c62bb21e8504b317e093b70",
+ "chunk_id_returned": "8de5453293b43cc9e6a2e552d312c77fbb4b4a861c62bb21e8504b317e093b70",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "893fa7ec828740b4ac3fc579d74dbe19",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kedua (Dewan Komisaris): penetapan gaji/honorarium dan tunjangan anggota Dewan Komisaris oleh RUPS.",
+ "tokens_local": 50
+}

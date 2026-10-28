@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b9821e5480a86f846057a4c6ac56aa9b585d9f9dc47b12692d02bcfd85ed4d58",
+ "chunk_id_returned": "b9821e5480a86f846057a4c6ac56aa9b585d9f9dc47b12692d02bcfd85ed4d58",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "2ad433d389dd423490a072e752ecfeb9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II Bagian Kedua Paragraf 2 (Perubahan Anggaran Dasar): keberlakuan mutatis mutandis tata cara permohonan pengesahan badan hukum untuk persetujuan perubah",
+ "tokens_local": 49
+}

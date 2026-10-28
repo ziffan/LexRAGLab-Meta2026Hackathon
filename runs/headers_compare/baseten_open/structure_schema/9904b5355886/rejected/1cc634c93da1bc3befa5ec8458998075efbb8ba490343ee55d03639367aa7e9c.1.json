@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1cc634c93da1bc3befa5ec8458998075efbb8ba490343ee55d03639367aa7e9c",
+ "chunk_id_returned": "1cc634c93da1bc3befa5ec8458998075efbb8ba490343ee55d03639367aa7e9c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a714eadd052946e3b326eca0bc782767",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.), Penjelasan Pasal 147: penghitungan jangka waktu pemberitahuan pembubaran Perseroan.",
+ "tokens_local": 42
+}

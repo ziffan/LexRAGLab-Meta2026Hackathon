@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2f79f068c0c0c7e4a423aac31636d33dab0a2fa8545cd2b287e9a469446e9bae",
+ "chunk_id_returned": "2f79f068c0c0c7e4a423aac31636d33dab0a2fa8545cd2b287e9a469446e9bae",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c9f91539ecb049009c7b870793046c40",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Keempat (Pengurangan Modal): cara pengurangan modal ditempatkan dan disetor melalui penarikan atau penurunan nominal saham.",
+ "tokens_local": 47
+}

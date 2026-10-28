@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ff6833ae561c2e2306b84694bfd46ab00be940a708c5481f37ab1125216857e1",
+ "chunk_id_returned": "ff6833ae561c2e2306b84694bfd46ab00be940a708c5481f37ab1125216857e1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "95c4a8a442184e7a8313bdc3eea951dc",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Penjelasan Pasal 117: wewenang Dewan Komisaris memberi persetujuan atau bantuan kepada Direksi untuk perbuatan hukum.",
+ "tokens_local": 47
+}

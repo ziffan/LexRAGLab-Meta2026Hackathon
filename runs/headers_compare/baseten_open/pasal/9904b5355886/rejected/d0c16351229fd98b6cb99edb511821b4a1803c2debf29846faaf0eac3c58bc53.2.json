@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d0c16351229fd98b6cb99edb511821b4a1803c2debf29846faaf0eac3c58bc53",
+ "chunk_id_returned": "d0c16351229fd98b6cb99edb511821b4a1803c2debf29846faaf0eac3c58bc53",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "aa7f0f5f1ec546a597a53e5aeac61634",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 13 - BAB II (Pendirian): tata cara pengalihan hak/kewajiban perbuatan calon pendiri kepada Perseroan.",
+ "tokens_local": 43
+}

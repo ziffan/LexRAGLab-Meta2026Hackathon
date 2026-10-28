@@ -1,0 +1,11 @@
+{
+ "chunk_id": "090a1919ea10ae8f7abac63ad605dc3d6aa1c1a261cd8448cb9190b254e81e71",
+ "chunk_id_returned": "090a1919ea10ae8f7abac63ad605dc3d6aa1c1a261cd8448cb9190b254e81e71",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6196d476cc74419baa97859759754def",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): pemberlakuan ketentuan rancangan penggabungan untuk peleburan secara mutatis mutandis.",
+ "tokens_local": 41
+}

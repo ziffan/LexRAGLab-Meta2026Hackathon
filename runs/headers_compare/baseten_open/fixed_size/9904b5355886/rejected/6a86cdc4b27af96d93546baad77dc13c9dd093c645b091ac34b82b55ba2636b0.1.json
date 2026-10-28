@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6a86cdc4b27af96d93546baad77dc13c9dd093c645b091ac34b82b55ba2636b0",
+ "chunk_id_returned": "6a86cdc4b27af96d93546baad77dc13c9dd093c645b091ac34b82b55ba2636b0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ad211f88c52f4ffa9e21309ec40b5598",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kedua Paragraf 2 (Perubahan Anggaran Dasar): keberlakuan perubahan anggaran dasar terkait status terbuka/tertutup, penggab./d",
+ "tokens_local": 50
+}

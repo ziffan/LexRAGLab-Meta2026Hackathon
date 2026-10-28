@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5b6a27b9356e78b92ca5c7c7117f008885e323f99b39c67a377ba97d0952fb53",
+ "chunk_id_returned": "5b6a27b9356e78b92ca5c7c7117f008885e323f99b39c67a377ba97d0952fb53",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5f05a693ac3942cabfb719fd0c087ddf",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris) Bagian Kesatu (Direksi): kewajiban Direksi membuat dan memelihara daftar dan dokumen Perseroan.",
+ "tokens_local": 45
+}

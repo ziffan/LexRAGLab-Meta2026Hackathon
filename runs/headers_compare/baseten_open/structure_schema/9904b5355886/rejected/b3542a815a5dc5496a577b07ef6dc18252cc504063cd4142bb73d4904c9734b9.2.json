@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b3542a815a5dc5496a577b07ef6dc18252cc504063cd4142bb73d4904c9734b9",
+ "chunk_id_returned": "b3542a8155dc5496a577b07ef6dc18252cc504063cd4142bb73d4904c9734b9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: chunk_id does not match the requested chunk",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "40ba15556cc541f184c7f0d2f7c795ec",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.) Bagian Kedua: penjelasan tugas dan susunan Dewan Komisaris.",
+ "tokens_local": 33
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "48df60cbfcb06acb9190da4d93d4b114d3e26e550b1434ae83ea438e6c2b18a3",
+ "chunk_id_returned": "48df60cbfcb06acb9190da4d93d4b114d3e26e550b1434ae83ea438e6c2b18a3",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "47f231304dd246b0adea003acdf69838",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Ketiga (Daftar Perseroan dkk.): tata cara persetujuan perubahan anggaran dasar dan penyelenggaraan daftar Perseroan.",
+ "tokens_local": 48
+}

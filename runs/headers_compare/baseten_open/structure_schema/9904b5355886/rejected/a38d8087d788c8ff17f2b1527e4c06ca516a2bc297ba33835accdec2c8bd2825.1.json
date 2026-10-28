@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a38d8087d788c8ff17f2b1527e4c06ca516a2bc297ba33835accdec2c8bd2825",
+ "chunk_id_returned": "a38d8087d788c8ff17f2b1527e4c06ca516a2bc297ba33835accdec2c8bd2825",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "077a26b834d74c1ebfecca54f8f5ed8c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham): tata cara pemindahan hak atas saham dan pemberitahuan perubahan pemegang saham.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "31ee31107794eba1b1871bd28ae2754f97c37ef4f1967d86962f894b0fcba865",
+ "chunk_id_returned": "31ee31107794eba1b1871bd28ae2754f97c37ef4f1967d86962f894b0fcba865",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f01f61e1acb64e6492a37d7ac77742a6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): penjelasan kewajiban Direksi meminta persetujuan RUPS untuk mengalihkan atau menjaminkan kekayaan Perseroan.",
+ "tokens_local": 46
+}

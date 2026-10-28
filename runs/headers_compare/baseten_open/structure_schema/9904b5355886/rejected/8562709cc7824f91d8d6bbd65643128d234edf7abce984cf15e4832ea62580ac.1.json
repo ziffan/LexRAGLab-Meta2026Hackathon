@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8562709cc7824f91d8d6bbd65643128d234edf7abce984cf15e4832ea62580ac",
+ "chunk_id_returned": "8562709cc7824f91d8d6bbd65643128d234edf7abce984cf15e4832ea62580ac",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "14351cf0dcb0427f9d46ce7a33b12b16",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): penjelasan mengenai bentuk penyetoran modal saham dan tujuan pengumuman setoran benda tidak bergerak.",
+ "tokens_local": 46
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f9456e58eb00cd1d9a7cc18de81709ef0b09e2be53906c642b94025b210b65d0",
+ "chunk_id_returned": "f9456e58eb00cd1d9a7cc18de81709ef0b09e2be53906c642b94025b210b65d0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "a291552d26a5454f84d24446d6f68cd7",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): ketentuan daftar pemegang saham, daftar khusus, bukti pemilikan, dan hak atas saham.",
+ "tokens_local": 47
+}
