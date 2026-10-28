@@ -74,24 +74,24 @@ def test_s13a_reported_or_default_profile_still_rejected_and_sweep_profile_ok(tm
     assert r("--model-profile", "sweep_meta_medium", "--project-only", "--family", "uupt") == 0
 
 
-def test_s13b_gate_uses_sweep_pool_and_threshold_50m(tmp_path):
-    """H-105: ambang sapuan 100% = 50.000.000. Pool sapuan 48.005.250 + batas atas 1.994.750 lolos; 1.994.751 ditolak."""
+def test_s13b_gate_uses_sweep_pool_and_threshold_75m(tmp_path):
+    """H-105/H-106: ambang sapuan 100% = 75.000.000. Pool sapuan 73.005.250 + batas atas 1.994.750 lolos; 1.994.751 ditolak."""
     cfg = GateConfig(**GATE)
-    thr = 50_000_000
+    thr = 75_000_000
     assert sweep_pool_cap(sweep_cfg()) * sweep_pool_cumulative_pct(sweep_cfg()) // 100 == thr
-    assert evaluate_gate([0], 48_005_250, cfg, upper_floor=1_994_750, threshold_micros=thr).ok
-    v = evaluate_gate([0], 48_005_250, cfg, upper_floor=1_994_751, threshold_micros=thr)
+    assert evaluate_gate([0], 73_005_250, cfg, upper_floor=1_994_750, threshold_micros=thr).ok
+    v = evaluate_gate([0], 73_005_250, cfg, upper_floor=1_994_751, threshold_micros=thr)
     assert not v.ok and "cumulative_over_threshold" in v.reasons
 
 
 def test_s13b_a_runner_gate_rejects_when_sweep_pool_is_full_before_any_request(tmp_path):
     r = SweepRun(tmp_path, default=a_default())
-    syn(r.runs, "b", "baseten", OPEN, "xhigh", 49_999_990, rid="sweep-fill")  # off-pin -> pool sapuan 49.999.990
+    syn(r.runs, "b", "baseten", OPEN, "xhigh", 74_999_990, rid="sweep-fill")  # off-pin -> pool sapuan 49.999.990
     n = r("--model-profile", "sweep_meta_medium", "--family", "uupt")
     assert n == 3 and r.tr.calls == 0 and any("cumulative_over_threshold" in ln for ln in r.lines)
     # profil non-sapuan memakai pool lain: belanja sapuan tidak menggeser gerbang baseten_open (S6 d)
     r2 = SweepRun(tmp_path / "x", default=reflect(lambda req: body_for("uupt")))
-    syn(r2.runs, "b", "baseten", OPEN, "xhigh", 49_999_990, rid="sweep-fill")
+    syn(r2.runs, "b", "baseten", OPEN, "xhigh", 74_999_990, rid="sweep-fill")
     assert r2("--model-profile", "baseten_open", "--family", "uupt", "--project-only") == 0
     gate_line = next(ln for ln in r2.lines if ln.startswith("gate [batch_gate]"))
     assert "spent=0" in gate_line
@@ -99,7 +99,7 @@ def test_s13b_a_runner_gate_rejects_when_sweep_pool_is_full_before_any_request(t
 
 def test_s13_glimmer_sweep_a_passes_gate_cost_zero(tmp_path):
     r = SweepRun(tmp_path, default=Resp(200, chat_body(body_for("uupt"))))
-    syn(r.runs, "b", "baseten", OPEN, "xhigh", 49_999_990, rid="sweep-fill")
+    syn(r.runs, "b", "baseten", OPEN, "xhigh", 74_999_990, rid="sweep-fill")
     assert r("--model-profile", "sweep_glimmer_medium", "--family", "uupt") == 0, r.lines
     assert r.tr.requests[0]["body"]["reasoning_effort"] == "medium"
 
@@ -173,7 +173,7 @@ def test_s14b_sweep_c_stores_under_sweep_profile_and_keeps_meta_answers(svc, tmp
 
 def test_s20a_c_gate_rejects_item_not_run_zero_requests(svc, tmp_path):
     s = _seed(svc, tmp_path)
-    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 49_999_990, rid="fill")
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 74_999_990, rid="fill")
     tr = _tr()
     rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
     assert rc == 3 and tr.calls == 0 and any("not_run (gate rejected" in ln and "cumulative_over_threshold" in ln for ln in lines)
@@ -183,7 +183,7 @@ def test_s20a_c_gate_rejects_item_not_run_zero_requests(svc, tmp_path):
 
 def test_s20b_non_sweep_baseten_open_c_has_no_extra_gate(svc, tmp_path):
     s = _seed(svc, tmp_path)
-    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 49_999_990, rid="fill")  # off-pin: bukan pool Baseten
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 74_999_990, rid="fill")  # off-pin: bukan pool Baseten
     tr = FakeTransport(Clock(), None, Resp(200, body_ok(JAWAB)))
     rc, lines = _cli(s, ["--model-profile", "baseten_open", "--items", ITEM], tr, sweep={"version": 1})
     assert rc == 0 and tr.calls == 2 and not any("gate" in ln for ln in lines)
@@ -235,7 +235,7 @@ def test_s20a_c_gate_edge_via_main_full_g36_factor_and_sum_not_max(svc, tmp_path
     """S-2 (pemeriksa Tier 1 BC): tepi S20(a) lewat `compare_c.main`. Angka skenario (55.000 x 2 = 110.000 inklusif) mengandaikan
     faktor 1; di profil `sweep_baseten_high` gerbang G-36 penuh: expected = jumlah `per_call_micros` P (dua slot, tanpa cache),
     batas atas U = max(ceil(P x 19312 / 10000), P) (19312 = max(gerbang 15700, entri `[factor_bp]` sweep)). Tepi dihitung dari P hasil
-    proyeksi nyata fixture: belanja pool 50.000.000 - U + 1 ditolak `cumulative_over_threshold`, 0 request; tepat 50.000.000 - U
+    proyeksi nyata fixture: belanja pool 75.000.000 - U + 1 ditolak `cumulative_over_threshold`, 0 request; tepat 75.000.000 - U
     lolos (tes berikut). Membunuh mutan `sum` -> `max` (U bergeser ke satu slot) dan mutan tanpa faktor (U = P)."""
     s = _seed(svc, tmp_path)
     P = _item_projection(s)
@@ -243,18 +243,18 @@ def test_s20a_c_gate_edge_via_main_full_g36_factor_and_sum_not_max(svc, tmp_path
     U = max(-(-P * 19312 // 10000), P)
     assert U > P  # faktor benar-benar berlaku
     tr = _tr()
-    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 50_000_000 - U + 1, rid="fill")
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 75_000_000 - U + 1, rid="fill")
     rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
     assert rc == 3 and tr.calls == 0, lines
     assert any("cumulative_over_threshold" in ln and f"upper_bound={U}" in ln for ln in lines), lines
 
 
 def test_s20a_c_gate_edge_via_main_exact_edge_passes(svc, tmp_path):
-    """Pasangan inklusif dari tes di atas: belanja = 50.000.000 - U tepat -> lolos, dua request jalan."""
+    """Pasangan inklusif dari tes di atas: belanja = 75.000.000 - U tepat -> lolos, dua request jalan."""
     s = _seed(svc, tmp_path)
     P = _item_projection(s)
     U = max(-(-P * 19312 // 10000), P)
-    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 50_000_000 - U, rid="fill")
+    syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 75_000_000 - U, rid="fill")
     tr = _tr()
     rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
     assert rc == 0 and tr.calls == 2, lines

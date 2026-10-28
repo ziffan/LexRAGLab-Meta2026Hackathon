@@ -48,7 +48,7 @@ def test_s4_g_projection_fields_and_pool_label(world):
     m, b, s, tmp = world
     c, tr = make_client(tmp, "sweep_baseten_high")
     p = project_total(c, "b", [100])
-    assert (p.pool, p.pool_cap_micros, p.pool_spent_micros) == ("sweep", 50_000_000, 38_005_250)
+    assert (p.pool, p.pool_cap_micros, p.pool_spent_micros) == ("sweep", 75_000_000, 38_005_250)
     main, _ = make_client(tmp, "baseten_open")
     q = project_total(main, "b", [100])
     assert (q.pool, q.pool_cap_micros, q.pool_spent_micros) == ("baseten", 20_000_000, 15_513_750)
@@ -58,13 +58,13 @@ def test_s4_g_projection_fields_and_pool_label(world):
 def test_s4_a_client_guard_boundary_inclusive(world):
     m, b, s, tmp = world
     c, tr = make_client(tmp, "sweep_baseten_high")
-    ests = calls_for_total(11_994_750, BT, 12_000)
+    ests = calls_for_total(36_994_750, BT, 12_000)
     p = project_total(c, "b", ests)
-    assert p.total_micros == 11_994_750 and p.verdict == "ok"
-    ests = calls_for_total(11_994_751, BT, 12_000)
+    assert p.total_micros == 36_994_750 and p.verdict == "ok"
+    ests = calls_for_total(36_994_751, BT, 12_000)
     p = project_total(c, "b", ests)
-    assert p.total_micros == 11_994_751 and p.verdict == "budget_exceeded"
-    for needle in ("sweep", "38005250", "11994751", "50000000"):
+    assert p.total_micros == 36_994_751 and p.verdict == "budget_exceeded"
+    for needle in ("sweep", "38005250", "36994751", "75000000"):
         assert needle in p.reason
     with pytest.raises(BudgetExceeded):
         c.run_batch([dict(role="b", prompt_version="v", prompt_hash="P", input=f"x{i}", schema={}, schema_name="S",
@@ -82,8 +82,8 @@ def test_s4_b_role_and_total_caps_do_not_apply_in_sweep_pool(world):
 
 def test_s4_c_full_sweep_pool_does_not_block_other_pools(world):
     m, b, s, tmp = world
-    syn(tmp / "runs", "c", "baseten", OPEN, "xhigh", 11_994_750, rid="fill-sweep")
-    assert Ledger(tmp / "runs").spent_off_pin(model_cfg=m) == 50_000_000
+    syn(tmp / "runs", "c", "baseten", OPEN, "xhigh", 36_994_750, rid="fill-sweep")
+    assert Ledger(tmp / "runs").spent_off_pin(model_cfg=m) == 75_000_000
     bt, _ = make_client(tmp, "baseten_open")
     ok = project_total(bt, "b", calls_for_total(4_486_250, BT, 6_000))
     no = project_total(bt, "b", calls_for_total(4_486_251, BT, 6_000))
@@ -98,7 +98,7 @@ def test_s4_c_full_sweep_pool_does_not_block_other_pools(world):
 
 def test_s4_c_sweep_pool_exactly_full_rejects_positive_projection(world):
     m, b, s, tmp = world
-    syn(tmp / "runs", "c", "baseten", OPEN, "xhigh", 11_994_750, rid="fill-sweep")
+    syn(tmp / "runs", "c", "baseten", OPEN, "xhigh", 36_994_750, rid="fill-sweep")
     sw, _ = make_client(tmp, "sweep_glimmer_low")  # biaya 0: proyeksi 0 lolos walau pool penuh
     assert project_total(sw, "b", [100]).verdict == "ok"
     sm, _ = make_client(tmp, "sweep_meta_high")
@@ -124,7 +124,7 @@ def test_s4_e_env_cap_applies_to_default_pool_only(world):
     assert p.verdict == "budget_exceeded" and "source: env" in p.reason
     sw, _ = make_client(tmp, "sweep_meta_high", env=env)
     q = project_total(sw, "b", [1])
-    assert q.verdict == "ok" and q.pool_cap_micros == 50_000_000
+    assert q.verdict == "ok" and q.pool_cap_micros == 75_000_000
     bad, _ = make_client(tmp, "sweep_meta_high", env=env_m25(DEV_SPEND_CAP_MICRO_USD="abc"))
     with pytest.raises(ConfigInvalid):
         project_total(bad, "b", [1])
@@ -326,12 +326,12 @@ def test_s6_e_contributor_sweep_floor_and_low_control():
 def test_s6_c_cumulative_gate_on_sweep_pool(world):
     m, b, s, tmp = world
     runs = tmp / "runs"
-    assert sweep_threshold_micros(b, s) == 50_000_000  # H-105: sweep.toml nyata cumulative_pct = 100
+    assert sweep_threshold_micros(b, s) == 75_000_000  # H-105/H-106: sweep.toml nyata cumulative_pct = 100, cap 75M
     gate = cmp.make_gate("baseten", b, m, None, runs, sweep_cfg=s)
-    syn(runs, "b", "baseten", OPEN, "xhigh", 10_000_000, rid="fill10m")  # pool sapuan 48.005.250 (batas atas <= batch cap 2.000.000)
+    syn(runs, "b", "baseten", OPEN, "xhigh", 35_000_000, rid="fill35m")  # pool sapuan 73.005.250 (batas atas <= batch cap 2.000.000)
     ub = 1_994_750
     v = gate([0], ub)
-    assert v.ok and v.spent == 48_005_250 and v.spent + v.batas_atas == 50_000_000
+    assert v.ok and v.spent == 73_005_250 and v.spent + v.batas_atas == 75_000_000
     syn(runs, "b", "baseten", OPEN, "xhigh", 1, rid="plus1")
     v = gate([0], ub)
     assert not v.ok and "cumulative_over_threshold" in v.reasons
@@ -344,6 +344,7 @@ def test_h105_sweep_pct_missing_falls_back_to_batch_gate_40m(world):
     m, b, s, tmp = world
     s2 = dict(s)
     s2["sweep_pool"] = {k: v for k, v in s["sweep_pool"].items() if k != "cumulative_pct"}
+    s2["sweep_pool"]["cap_micros"] = 50_000_000  # config sendiri (sintetis): 50M x 80 // 100
     assert sweep_threshold_micros(b, s2) == 40_000_000
 
 

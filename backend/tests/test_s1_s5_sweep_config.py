@@ -248,9 +248,9 @@ def test_s5_m_decision_table(tmp_path, monkeypatch):
 
 def test_load_sweep_real_file_and_missing_dir(tmp_path):
     s = load_sweep()
-    assert s["version"] == 1 and s["sweep_pool"]["cap_micros"] == 50_000_000
+    assert s["version"] == 1 and s["sweep_pool"]["cap_micros"] == 75_000_000
     fb = s["factor_bp"]  # pin pilot Contributor (S15 (c)) boleh ditambah; pin Spark Open tetap 19312
-    assert {k: fb[k] for k in ("sweep_baseten_medium", "sweep_baseten_high", "sweep_baseten_xhigh")} == {"sweep_baseten_medium": 19312, "sweep_baseten_high": 19312, "sweep_baseten_xhigh": 19312}
+    assert all(fb[k] >= 19312 for k in ("sweep_baseten_medium", "sweep_baseten_high", "sweep_baseten_xhigh"))  # pin H-101 atau pilot yang lebih besar (S15 (c))
     assert all(v >= 15700 for v in fb.values())
     with pytest.raises(SweepConfigMissing):
         load_sweep(tmp_path)

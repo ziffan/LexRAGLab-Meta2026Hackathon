@@ -29,8 +29,8 @@ def test_s20d_baseten_sweep_held_until_confirm_go(tmp_path):
     assert run_main(rig, args("sweep_baseten_medium", "--project-only"), sweep=sw, out=out) == 0
     text = "\n".join(out)
     assert rig.tr.calls == 0 and not (rig.runs / "headers_compare").exists()
-    assert "sweep projection: profile=sweep_baseten_medium effort=medium role=b" in text and "factor_bp=19312" in text
-    assert "sweep_pool_remaining=50000000" in text
+    assert "sweep projection: profile=sweep_baseten_medium effort=medium role=b" in text and f"factor_bp={sw['factor_bp']['sweep_baseten_medium']}" in text
+    assert "sweep_pool_remaining=75000000" in text
     # --confirm-go: jalan (lewat gerbang)
     assert run_main(rig, args("sweep_baseten_medium", "--confirm-go"), sweep=sw) == 0
     assert rig.tr.calls > 0

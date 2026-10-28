@@ -57,13 +57,13 @@ def test_s15e_expected_zero_is_config_invalid_not_division_by_zero():
 
 def test_s15e_pilot_over_gate_is_rejected_before_network(tmp_path):
     rig, sw = sweep_rig(tmp_path, "sweep_meta_medium")
-    syn(rig.runs, "b", "baseten", OPEN, "xhigh", 49_999_999, rid="fill")  # pool sapuan hampir di ambang 50.000.000
+    syn(rig.runs, "b", "baseten", OPEN, "xhigh", 74_999_999, rid="fill")  # pool sapuan hampir di ambang 75.000.000
     n0 = rig.tr.calls
     rc = run_main(rig, args("sweep_meta_medium", "--max-units", "3"), sweep=sw)
     assert rc == 1 and rig.tr.calls == n0  # gerbang menolak SEBELUM request (stopped = gate_rejected)
     rep = json.loads(next((rig.runs / "headers_compare" / "sweep_meta_medium" / "runs").glob("*.json")).read_text(encoding="utf-8"))
     assert rep["stopped"] == "gate_rejected" and rep["sweep"]["status"] == "not_run (pool)"
-    assert rep["sweep"]["pool_remaining_micros"] == 50_000_000 - 49_999_999
+    assert rep["sweep"]["pool_remaining_micros"] == 75_000_000 - 74_999_999
 
 
 # ------------------------------------------------------------------------------------------------ S16
