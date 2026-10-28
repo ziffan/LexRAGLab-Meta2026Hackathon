@@ -5,6 +5,7 @@ Tanpa jaringan dan tanpa Model API. Skema sintetis (bukan isi koreksi operator, 
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 
 import pytest
@@ -133,7 +134,7 @@ def client(tmp_path):
     return TestClient(create_app(svc), raise_server_exceptions=False), svc
 
 
-def test_r2_families_lists_deed(client, tmp_path):
+def test_r2_families_lists_deed(client, tmp_path, docs):
     c, _ = client
     r = c.get("/api/families")
     assert r.status_code == 200
@@ -143,7 +144,9 @@ def test_r2_families_lists_deed(client, tmp_path):
     assert by["uupt"]["n_docs"] == 1 and by["uupt"]["n_items"] >= 0
     butir = tmp_path / "butir"
     butir.mkdir()
-    (butir / "akta.v1.jsonl").write_text('{"id":"a"}\n{"id":"b"}\n', encoding="utf-8", newline="\n")
+    rows = [{"id": i, "family": "akta", "origin": "operator", "mode": "literal", "doc_id": "akta-01", "query": "q", "gold_spans": [],
+             "clean_sha256": docs["akta-01"].clean_sha256} for i in ("a", "b")]  # sejak W62 R2 akta menghitung rencana grid: baris harus sah
+    (butir / "akta.v1.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8", newline="\n")
     c2 = TestClient(create_app(Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "r2", butir_dir=butir)))
     assert {x["family"]: x["n_items"] for x in c2.get("/api/families").json()}["akta"] == 2
 
@@ -154,7 +157,7 @@ def test_r3_snapshot_akta_without_grid(client, docs):
     assert r.status_code == 200, r.text
     j = r.json()
     assert j["family"] == "akta" and j["grid"] is None and j["items"] == [] and j["split"] is None
-    assert j["settings"] == [] and j["metrics"] == [] and j["schemas"] == []
+    assert len(j["settings"]) == 36 and j["metrics"] == [] and j["schemas"] == []  # grid akta = seluruh config/grid (H-091); belum ada amplop
     assert [d["doc_id"] for d in j["corpus"]] == DEEDS
     for d in j["corpus"]:
         assert d["clean_sha256"] == docs[d["doc_id"]].clean_sha256 and d["family"] == "akta" and "text" not in d

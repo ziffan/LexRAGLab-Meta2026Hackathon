@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiFailure, fetchProfileExport, postProfileImport } from "../api";
 import { fixed3, orNa, xOfY } from "../lib/format";
-import { modeLabel } from "../lib/labels";
+import { modeLabel, retrievalModeLabel } from "../lib/labels";
+import { DEGENERATE_NOTE, TRANSFER_LABEL, hasDegenerate } from "../lib/settings";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { useStore } from "../state";
-import type { ImportResult, Profile, Report, Snapshot } from "../types";
+import type { ImportResult, Profile, Report, Snapshot, TransferSetting } from "../types";
 import { Hint } from "./Hint";
 import { EmptyBlock, ErrorBlock, LoadingBlock, PendingReview, isPendingReview } from "./Shell";
 
@@ -166,6 +167,11 @@ function HeldOutSummary({ profile }: { profile: Profile }) {
   );
 }
 
+/** Teks setting transfer akta (H-091): chunker structure_schema + mode retrieval + header B + anggaran dari profil terbaik UU PT. */
+export function transferText(t: TransferSetting): string {
+  return `Structure (schema A${t.schema_version !== null ? ` v${t.schema_version}` : ""}) · ${retrievalModeLabel(t.retrieval_mode)} · header B ${t.header_b ? "on" : "off"} · ${t.budget_tokens} tokens (local tokenizer)`;
+}
+
 export function ReportTable({ report }: { report: Report }) {
   return (
     <div className="table-wrap">
@@ -189,13 +195,19 @@ export function ReportTable({ report }: { report: Report }) {
 }
 
 /** Bagian hasil. UU PT: `Held-out results` setelah ekspor. Akta: `Transfer results`, tanpa kata held-out (H-054, A15). */
-export function ResultsSection({ family, profile, report }: { family: string; profile: Profile | null; report: Report | null }) {
+export function ResultsSection({ family, profile, report, degenerate = false }: { family: string; profile: Profile | null; report: Report | null; degenerate?: boolean }) {
   const akta = family === "akta";
   if (!akta && !profile) return null;
   return (
     <section className="subpanel" aria-label={akta ? TITLE_AKTA : TITLE_UUPT}>
       <h3>{akta ? TITLE_AKTA : TITLE_UUPT}{akta ? <><span className="tag neutral">Transfer test</span><Hint id="metric.transfer_test" /></> : <Hint id="metric.tune_heldout" />}</h3>
       {!akta && profile && <HeldOutSummary profile={profile} />}
+      {akta && report?.setting && (
+        <p className="note" data-testid="transfer-setting">
+          <span className="tag neutral">{report.setting.label || TRANSFER_LABEL}</span> Reported setting: <strong>{transferText(report.setting)}</strong>. Its retrieval mode, header B and budget come from the best Company Law profile; nothing is chosen from the deeds.
+        </p>
+      )}
+      {akta && degenerate && <p className="note" data-testid="degenerate-note">{DEGENERATE_NOTE}</p>}
       {report ? <ReportTable report={report} /> : akta ? <EmptyBlock>No per-item transfer report is included in this snapshot.</EmptyBlock> : null}
     </section>
   );
@@ -226,6 +238,8 @@ export interface ProfileViewProps {
   exportPhase: ExportPhase;
   loadPhase: LoadPhase;
   report: Report | null;
+  /** Akta: ada titik structure_handwritten berlabel "no structure recognized" (H-093). */
+  degenerate?: boolean;
   onExport: () => void;
   onFile: (file: File) => void;
   onDownload: (profile: Profile) => void;
@@ -269,7 +283,7 @@ export function ProfileView(p: ProfileViewProps) {
           <pre className="mono profile-preview" tabIndex={0} aria-label="Profile JSON preview" style={{ maxHeight: 320, overflow: "auto" }}>{pretty(p.exportPhase.profile)}</pre>
         </>
       )}
-      <ResultsSection family={p.family} profile={p.exportPhase.kind === "ready" ? p.exportPhase.profile : null} report={p.report} />
+      <ResultsSection family={p.family} profile={p.exportPhase.kind === "ready" ? p.exportPhase.profile : null} report={p.report} degenerate={p.degenerate} />
       <LoadResult phase={p.loadPhase} />
     </>
   );
@@ -305,6 +319,7 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
         exportPhase={exportPhase}
         loadPhase={loadPhase}
         report={snap?.report ?? null}
+        degenerate={snap ? hasDegenerate(snap) : false}
         onExport={() => {
           const fam = state.family;
           void runGuardedExport(guard.current, client, fam, settingId, setExportPhase, (pr) => {

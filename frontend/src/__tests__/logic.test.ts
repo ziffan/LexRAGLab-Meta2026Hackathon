@@ -160,7 +160,7 @@ describe("settings and frontier", () => {
   });
   it("drops points without gold from the plot and joins the frontier left to right", () => {
     const sn = snap();
-    const { dots, hidden } = plottable(sn.grid!.held_out.points, availableSettings(sn), frontierIds(sn, "held_out"));
+    const { dots, hidden } = plottable(sn.grid!.held_out!.points, availableSettings(sn), frontierIds(sn, "held_out"));
     expect(hidden).toBe(1);
     expect(dots.map((d) => d.setting.setting_id)).toEqual(["a", "d"]);
     expect(frontierLine(dots).map((d) => d.setting.setting_id)).toEqual(["a", "d"]);

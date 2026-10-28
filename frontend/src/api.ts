@@ -39,6 +39,18 @@ const getJson = <T>(url: string): Promise<T> => requestJson<T>(url);
 const postJson = <T>(url: string, body: unknown, fetchFn?: FetchLike): Promise<T> =>
   requestJson<T>(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }, fetchFn);
 
+/** R2 `GET /api/families`. Di ekspor statis dibaca dari `data/families.json` (hanya UU PT dan keluarga ber-amplop grid). */
+export interface FamilyInfo {
+  family: string;
+  n_docs: number;
+  n_items: number;
+  has_grid: boolean;
+  error?: string; // R2: kode galat bila butir keluarga cacat (W64)
+}
+export function fetchFamilies(): Promise<FamilyInfo[]> {
+  return getJson<FamilyInfo[]>("/api/families");
+}
+
 export function fetchSnapshot(family: string, budget: number | null = null): Promise<Snapshot> {
   const q = budget ? `?budget_tokens=${budget}` : "";
   return getJson<Snapshot>(`/api/families/${encodeURIComponent(family)}/snapshot${q}`);

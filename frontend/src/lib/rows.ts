@@ -50,6 +50,7 @@ export function originSummary(items: Item[], metrics: Map<string, ItemMetrics>):
 }
 
 /** Cakupan ringkasan per asal mengikuti filter split aktif. */
-export function filterScopeLabel(split: Filters["split"]): string {
+export function filterScopeLabel(split: Filters["split"], transfer = false): string {
+  if (transfer) return "all items (transfer test)"; // akta: tanpa split, tanpa kata held-out (H-078)
   return split === "all" ? "all items (tune + held-out)" : split === "tune" ? "tune items only" : "held-out items only";
 }

@@ -18,6 +18,9 @@ NO_GOLD_NOTE = "no gold (must abstain)"
 TITLE_UUPT = "Held-out results"
 TITLE_AKTA = "Transfer results"  # A19; label laporan, bukan nilai data (H-054, H-059)
 SPLIT_LABEL_AKTA = "Transfer"
+TRANSFER_LABEL = "transfer test, no profile selection"  # H-091: baris laporan transfer akta; tanpa kata held-out (H-078)
+DEGENERATE_LABEL = "no structure recognized"  # H-093: titik structure_handwritten akta (1 potongan per akta)
+TRANSFER_CHUNKER = "structure_schema"
 
 
 def _f(x: Fraction | None) -> float | None:
@@ -110,3 +113,25 @@ def build_report(family: str, items: Iterable[Mapping[str, Any]], metrics: Itera
                     "fully_covered": _count(s["fully_covered"]["covered"], s["fully_covered"]["total"])},
         "by_origin": _groups(by_id, used, "origin"), "by_mode": _groups(by_id, used, "mode", ITEM_MODES),  # H-092 rev3: tiga kunci selalu ada
     }
+
+
+def transfer_setting(akta_env: Mapping[str, Any] | None, uupt_env: Mapping[str, Any] | None, budget: int) -> dict[str, Any] | None:
+    """Setting baris laporan transfer akta (H-091, H-078 butir 3): chunker `structure_schema` (skema A akta aktif) dengan mode
+    retrieval, header B, dan anggaran dari setting terpilih UU PT pada anggaran `budget` yang sama. Fungsi murni atas amplop
+    grid tersimpan; tidak memilih apa pun di akta. `None` bila amplop salah satu keluarga tak ada, UU PT tak punya pilihan pada
+    anggaran itu, atau setting padanan tak ada (tepat satu padanan) di titik grid akta yang dijalankan."""
+    if not akta_env or not uupt_env:
+        return None
+    usel = (uupt_env.get("selections") or {}).get(str(budget))
+    ust = next((s for s in uupt_env.get("settings_run") or [] if usel and s.get("setting_id") == usel.get("setting_id")), None)
+    if ust is None:
+        return None
+    cand = [s for s in akta_env.get("settings_run") or []
+            if s.get("chunker") == TRANSFER_CHUNKER and s.get("retrieval_mode") == ust.get("retrieval_mode")
+            and bool(s.get("header_b")) == bool(ust.get("header_b")) and s.get("budget_tokens") == budget]
+    if len(cand) != 1:
+        return None
+    a = cand[0]
+    return {"setting_id": a["setting_id"], "chunker": a["chunker"], "schema_version": a.get("schema_version"),
+            "retrieval_mode": a["retrieval_mode"], "header_b": bool(a.get("header_b")), "budget_tokens": budget,
+            "source_setting_id": ust["setting_id"], "label": TRANSFER_LABEL}

@@ -73,7 +73,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Tampil | Sumbu X: tokens (local tokenizer) yang dipakai, sampai anggaran. Sumbu Y: span recall. Setiap titik = satu `Setting`. Titik frontier dihubungkan garis. Dua deret warna: header B off, header B on (H-012). Bentuk penanda per chunker (structure-handwritten, structure-schema-A, fixed-size). Tooltip: setting, span recall, token precision, MRR, hitungan "{x} of {y} items fully covered" (`fully_covered_count`) |
 | Interaksi | Klik titik → `selectedSettingId`. Pemilih anggaran (default 2.000, pembanding dari konfigurasi). Toggle split `Tune` / `Held-out` (default held-out untuk laporan, tune untuk pemilihan; label jelas). Toggle seri header B (tampilan saja). Frontier dihitung gabungan lintas deret header on/off (satu garis; header B adalah salah satu sumbu setting, H-058), bukan per deret (I-48). Filter asal/mode berbagi state dengan U4 |
 | Loading / empty / error | Skeleton sumbu / "No grid run for this family yet" / "Grid run failed: {message}" |
-| Akta (H-054) | Keluarga Deed tidak punya split: toggle `Tune` / `Held-out` disembunyikan, frontier diberi label "Transfer test, no tune/held-out split", dan tidak ada penanda profil terpilih |
+| Akta (H-054, H-091, H-093) | Keluarga Deed tidak punya split: toggle `Tune` / `Held-out` disembunyikan; satu frontier (`grid.all`, 36 titik pada dua anggaran) diberi label "transfer test, no profile selection" dan tidak ada penanda profil terpilih. Setting transfer (`grid.transfer`) dipilih-awal dan disebut di catatan. Titik `structure_handwritten` tetap digambar dan berlabel "no structure recognized" (1 potongan per akta): di tooltip, di detail setting terpilih, dan di catatan di bawah legenda. Banner "Pending operator review" menggantikan isi U2/U4/U7 selama `grid.final` bukan `true` (tanpa angka sementara); banner hilang sendiri saat `grid_run_id` di `config/akta_grid_final.toml` = kunci amplop grid akta tersimpan (diisi operator/L2, UI tidak memutus "final") |
 | Catatan potong (H-017) | Kalau header B hanya untuk setting di frontier, deret "header on" hanya punya titik itu, dengan catatan "header B computed for frontier settings only". Kalau frontier akta dipotong, U2 untuk Deed tampil empty dengan "Deed frontier not run (scope cut)" |
 | Label | `Setting space`, `Span recall`, `Tokens (local tokenizer)`, `Token budget`, `Tune`, `Held-out`, `Header B off`, `Header B on`, `Frontier`, `Dominated` |
 | Adegan video | 1 (frontier UU PT, dua titik disorot), 2 (deret header B on vs off, filter parafrase) |
@@ -149,6 +149,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Tampil | Pratinjau JSON profil terformat, versi, hash korpus, metrik held-out dalam hitungan mentah |
 | Interaksi | `Export profile` mengunduh berkas. `Load profile` memuat berkas; hasil round-trip ditampilkan ("chunk hash matches source run" atau penolakan hash korpus) |
 | Loading / empty / error | "Building profile…" / "Select a setting on the frontier to export" / "Profile corpus hash does not match loaded corpus" |
+| Akta (H-091, H-093) | Bagian `Transfer results` menyorot `report.setting` berlabel "transfer test, no profile selection": chunker `structure_schema` (skema A akta aktif) + mode retrieval, header B, dan anggaran dari profil terbaik UU PT pada anggaran yang sama. Tabel per butir memuat butir `tolak` ("Must refuse") dengan kolom metrik `n/a`. Catatan label degenerate "no structure recognized" bila grid memuat titik `structure_handwritten` |
 | Label | `Export profile`, `Load profile`, `Profile version`, `Corpus hash`, `Held-out results` (UU PT); `Transfer results` (akta, tanpa kata held-out, H-054). Pesan round-trip tidak cocok: `Chunk hash does not match source run` (H-068, M4.3 A19) |
 | Adegan video | 5 |
 
@@ -175,7 +176,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 ## 4. Mode putar ulang dan live
 
 - Mode putar ulang (default saat demo): semua panel dibaca dari `runs/` dan `data/` (H-050) lewat endpoint yang sama, dengan header respons `X-Replay: true`. Lencana "REPLAY" tampil di U0.
-- Versi live di GitHub Pages (H-051) adalah ekspor statis mode putar ulang: tanpa backend, tanpa key, tanpa panggilan model. Tombol "Run live" dan endpoint tulis (W1–W9) nonaktif dengan teks "Static replay: live calls are disabled".
+- Versi live di GitHub Pages (H-051) adalah ekspor statis mode putar ulang: tanpa backend, tanpa key, tanpa panggilan model. Pemilih `Family` (U0) tampil bila `data/families.json` (R2 terbatas pada UU PT dan keluarga yang punya amplop grid tersimpan, H-091) memuat lebih dari satu keluarga; selain itu hanya label keluarga. Tombol "Run live" dan endpoint tulis (W1–W9) nonaktif dengan teks "Static replay: live calls are disabled".
 - Satu panggilan live boleh di adegan 4 (W6, `docs/VIDEO.md`). Tombol "Run live" hanya aktif untuk butir yang ditandai `scene_checked` oleh operator.
 - Dengan API diputus, semua adegan tetap bisa diputar (kriteria M5.1).
 

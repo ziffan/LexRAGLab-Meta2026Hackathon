@@ -18,7 +18,7 @@ from backend.config import ConfigError
 from backend.corpus import CorpusDoc, CorpusError, akta_entries, load_corpus
 from backend.grid.expand import expand_grid
 from backend.grid.schemas import SchemaBinding, bind_schema_versions
-from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError
+from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError, header_store_dir
 from backend.grid.types import MULTI_DOC_FAMILIES, Setting, setting_content
 from backend.pipeline.grid_run import (GridResult, GridRunError, Plan, RunFileStore, load_header_binding, load_items, make_plan,
                                        run_family_grid, to_grid_items)
@@ -99,13 +99,13 @@ class Service:
             raise ApiError(422, "validation_failed", str(exc)) from None
 
     # --- header B (M3.2) ---
-    def header_binding(self) -> HeaderBinding | None:
-        """Binding ke store header `runs/headers/` bila store itu punya header untuk `prompt_hash` B saat ini; selain itu None
+    def header_binding(self, family: str = "uupt") -> HeaderBinding | None:
+        """Binding ke store header keluarga (`header_store_dir`: UU PT `runs/headers/`, akta `runs/headers/akta/`, G-38) bila store itu punya header untuk `prompt_hash` B saat ini; selain itu None
         (perilaku M1: setting header-on tidak tersedia). Hanya membaca berkas; tanpa Spark."""
-        if not (self.runs_dir / "headers").is_dir():
+        if not header_store_dir(self.runs_dir, family).is_dir():
             return None
         try:
-            hb = load_header_binding(runs_dir=self.runs_dir, config_dir=self.config_dir)
+            hb = load_header_binding(runs_dir=self.runs_dir, config_dir=self.config_dir, family=family)
         except _BINDING_UNREADABLE as exc:  # config/prompt B tak terbaca: anggap tak ada store (dicatat, tanpa isi config)
             log.warning("header B binding unavailable: %s", type(exc).__name__)
             return None
@@ -128,8 +128,8 @@ class Service:
 
     # --- setting ---
     def grid_settings(self, family: str) -> list[Setting]:
-        """Semua setting hasil ekspansi `config/grid` (termasuk yang belum tersedia di M1)."""
-        if family != "uupt":
+        """Semua setting hasil ekspansi `config/grid` (termasuk yang belum tersedia di M1). Akta: grid yang sama, skema A akta (H-091)."""
+        if family not in FAMILIES:
             return []
         return bind_schema_versions(expand_grid(self.cfg("grid"), family), self.schema_binding(family))
 
@@ -140,7 +140,7 @@ class Service:
         s = next((x for x in self.grid_settings(family) if x.setting_id == setting_id), None)
         if s is None:
             raise ApiError(404, "not_found", f"Unknown setting_id {setting_id[:16]!r}.")
-        reason = unavailable_reason(s, headers=self.header_binding() is not None, schemas=self.schema_binding(family))
+        reason = unavailable_reason(s, headers=self.header_binding(family) is not None, schemas=self.schema_binding(family))
         if reason:
             raise ApiError(422, "validation_failed", f"Setting is not available yet: {reason}.")
         return s
@@ -181,11 +181,12 @@ class Service:
             raise ApiError(409, "hash_mismatch", str(exc)) from None
 
     def stored_grid(self, family: str) -> tuple[Plan | None, dict[str, Any] | None]:
-        """(rencana, amplop tersimpan). Tanpa menjalankan apa pun dan tanpa menulis (R3)."""
-        if family != "uupt":
+        """(rencana, amplop tersimpan). Tanpa menjalankan apa pun dan tanpa menulis (R3). Akta: kunci multi-dokumen (H-086) dan
+        peta unit (H-090) dihitung `make_plan`; tanpa butir akta atau tanpa amplop: (rencana, None)."""
+        if family not in FAMILIES:
             return None, None
         store = RunFileStore(self.runs_dir / "grid")
-        hb = self.header_binding()
+        hb = self.header_binding(family)
         skw = {"schemas": sb} if (sb := self.schema_binding(family)) is not None else {}  # tanpa skema: panggilan lama
         if hb is not None:  # run dengan kembaran header-on punya kunci sendiri (config_hash memuat identitas store)
             hplan = self.plan(family, headers=hb, **skw)
@@ -197,6 +198,15 @@ class Service:
             return plan, None
         env = store.read(plan.key)
         return plan, (env if env and env.get("record") else None)
+
+    def akta_grid_final(self, grid_key: str) -> bool:
+        """True bila operator menandai amplop grid akta `grid_key` final (`config/akta_grid_final` `grid_run_id`). Terikat ke kunci:
+        run akta baru (kunci lain) kembali belum final. Berkas hilang/cacat atau kosong = belum final. Hanya membaca."""
+        try:
+            marked = self.cfg("akta_grid_final").get("grid_run_id")
+        except ConfigError:
+            return False
+        return isinstance(marked, str) and marked != "" and marked == grid_key
 
     # --- hitung (R5, W1) ---
     def _encoder_factory_or_default(self) -> Callable[[], Encoder]:
@@ -247,7 +257,7 @@ class Service:
             try:
                 return run_family_grid(family, **self.grid_docs(family), tokenizer=self.tok(), runs_dir=self.runs_dir,
                                        butir_dir=self.butir_dir, config_dir=self.config_dir, encoder=self._encoder,
-                                       encoder_factory=self._encoder_factory, embed_cache_dir=self.embed_cache_dir, headers=self.header_binding(),
+                                       encoder_factory=self._encoder_factory, embed_cache_dir=self.embed_cache_dir, headers=self.header_binding(family),
                                        schemas=self.schema_binding(family))
             except GridRunError as exc:
                 raise ApiError(422, "validation_failed", str(exc)) from None

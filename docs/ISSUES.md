@@ -9,6 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
+| I-68 | Teks hint final `metric.recall_at_k` (disetujui operator) menyebut "held-out or tune" dan tampil di pop-up U4 keluarga akta, padahal H-078 melarang label held-out untuk akta (cakupan akta = "transfer", H-090) | Varian hint khusus akta berstatus draft, mis. "For deeds: computed over all items with gold (transfer test)", menunggu persetujuan operator; sementara hint `metric.tune_heldout` sudah disembunyikan untuk akta (W62) dan hint Recall@K dibiarkan apa adanya. Mengubah angka: tidak | operator | sebelum ekspor statis final |
 | I-66 | Cakupan keluarga `Item.mode = "tolak"` (H-092): enum lintas keluarga, padahal usulan `unanswerable` hanya akta (P13). Bila butir UU PT ber-`tolak` ditulis, strata `SplitRecord` (`origin`, `mode`) dan komposisi held-out UU PT berubah | Sementara (skenario revisi 3): `tolak` hanya sah untuk `akta`, validator menolak `uupt` + `tolak`; tidak mengubah angka apa pun karena belum ada butir semacam itu. Alternatif: semua keluarga, dampak strata dicatat dan penugasan lama tetap per DATA-CONTRACTS §4. Mengubah angka laporan: tidak sekarang | operator | sebelum butir tolak UU PT ditulis (tidak memblokir) |
 
 ## Ditutup

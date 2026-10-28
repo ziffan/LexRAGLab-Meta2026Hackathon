@@ -62,7 +62,7 @@ export function reducer(s: State, a: Action): State {
       const avail = availableSettings(a.data);
       const prev = s.snapshot.status === "ready" ? s.snapshot.data.settings.find((x) => x.setting_id === s.selectedSettingId) : undefined;
       const fromParam = s.paramSetting ? resolveSettingParam(avail, s.paramSetting) : undefined;
-      const sel = fromParam ?? matchSetting(avail, prev) ?? avail.find((x) => x.setting_id === a.data.grid?.selected?.setting_id) ?? avail[0];
+      const sel = fromParam ?? matchSetting(avail, prev) ?? avail.find((x) => x.setting_id === (a.data.grid?.selected?.setting_id ?? a.data.grid?.transfer?.setting_id)) ?? avail[0];
       return { ...s, snapshot: { status: "ready", data: a.data }, selectedSettingId: sel?.setting_id ?? null, paramSetting: null, docs: {}, retrievals: {} };
     }
     case "set_family":

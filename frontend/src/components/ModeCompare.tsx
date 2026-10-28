@@ -2,7 +2,7 @@ import { useStore } from "../state";
 import { exactStr, xOfY } from "../lib/format";
 import { chunkerLabel, retrievalModeLabel } from "../lib/labels";
 import { toRow } from "../lib/rows";
-import { pointOf, siblingModes } from "../lib/settings";
+import { gridKey, isTransferGrid, pointOf, siblingModes } from "../lib/settings";
 import type { ItemMetrics, Setting, Snapshot } from "../types";
 import { EmptyBlock } from "./Shell";
 
@@ -13,6 +13,7 @@ export function ModeCompare({ snap, setting, metricsFor }: { snap: Snapshot; set
   const modes = siblingModes(snap, setting);
   const item = snap.items.find((i) => i.id === state.selectedItemId);
   const split = state.split;
+  const key = gridKey(snap, split);
 
   return (
     <>
@@ -62,7 +63,7 @@ export function ModeCompare({ snap, setting, metricsFor }: { snap: Snapshot; set
 
       <div className="table-wrap">
         <table className="data" aria-label="Three retrieval modes, aggregate">
-          <caption className="cap">All items in the {split === "held_out" ? "held-out" : "tune"} split</caption>
+          <caption className="cap">{isTransferGrid(snap) ? "All items (transfer test)" : `All items in the ${split === "held_out" ? "held-out" : "tune"} split`}</caption>
           <thead>
             <tr>
               <th scope="col">Mode</th>
@@ -73,7 +74,7 @@ export function ModeCompare({ snap, setting, metricsFor }: { snap: Snapshot; set
           </thead>
           <tbody>
             {modes.map((s) => {
-              const p = pointOf(snap, s.setting_id, split);
+              const p = pointOf(snap, s.setting_id, key);
               return (
                 <tr key={s.setting_id} className={s.setting_id === setting.setting_id ? "sel" : ""}>
                   <th scope="row">{retrievalModeLabel(s.retrieval_mode)}</th>

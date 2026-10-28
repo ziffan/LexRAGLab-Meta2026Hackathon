@@ -503,6 +503,8 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 
 **Frontier**: `{family, split, budget_tokens, point_ids: array of string, grid_run_id}`. `split` `null` untuk akta; "transfer" hanya label laporan, bukan nilai data (H-054, H-059).
 
+**Bentuk R3 `grid` akta (H-091, H-093; W62)**: `FamilySnapshot.grid` akta = `{all: {points, frontier}, selected: null, quality_comparison: null, skipped, grid_run_id, failed_settings, header_scope, transfer, final}`; tanpa `tune`/`held_out`. Titik `GridPoint` akta (`split = null`) membawa `label`: `"no structure recognized"` untuk `structure_handwritten` (satu potongan per akta, H-093; titik tidak dibuang) dan `null` untuk lainnya. Field `label` tidak ada di amplop `runs/grid` dan tidak ada di titik UU PT; ia ditambahkan saat R3 membangun tampilan. `transfer` = `{setting_id, chunker: "structure_schema", schema_version, retrieval_mode, header_b, budget_tokens, source_setting_id, label: "transfer test, no profile selection"}` atau `null` (lihat API.md §5); `final` = `bool`, benar bila `grid_run_id` di `config/akta_grid_final.toml` sama dengan `grid.grid_run_id` (berkas itu tidak masuk `config_hash`). `report.setting` akta = `transfer`. Bentuk UU PT tidak berubah satu byte.
+
 **QualityMetrics** (per setting): `{setting_id, entity_preservation: number | null, boundary_coherence: number | null, recall_at_k: number | null, k: int}`. Penyebut nol (`|E| = 0`, `|Bnd| = 0`, atau agregat Recall@K tanpa butir ber-gold) → `null`, UI "n/a" (M1.5 A5 alt. N1, H-059). Definisi di `docs/EVAL-SPEC.md` §6–§7.
 
 ## 11. Profile

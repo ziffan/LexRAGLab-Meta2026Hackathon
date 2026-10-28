@@ -37,6 +37,8 @@ export interface Setting {
 }
 
 export type SplitName = "tune" | "held_out";
+/** Kunci blok grid: UU PT `tune`/`held_out`; akta `all` (tanpa split, H-091). */
+export type SplitKey = SplitName | "all";
 export type RetrievalMode = "dense" | "bm25" | "hybrid";
 
 export interface Item {
@@ -75,6 +77,8 @@ export interface GridPoint {
   mean_retrieved_tokens: number | null;
   fully_covered_count: Frac;
   dominated: boolean;
+  /** Hanya akta (H-093): "no structure recognized" pada titik structure_handwritten; null untuk titik lain. */
+  label?: string | null;
   /** Deret U2: true = header B on. Titik lama tanpa label dianggap off. */
   header_b?: boolean;
   n_gold: number;
@@ -116,7 +120,7 @@ export interface QualityCounts {
 
 export interface QualityWithCounts extends QualityMetrics {
   counts?: QualityCounts;
-  items_scope?: "all" | SplitName;
+  items_scope?: "all" | SplitName | "transfer";
   recall_n_items?: number;
 }
 
@@ -135,9 +139,27 @@ export interface FailedSetting {
   chunk_id: string | null;
 }
 
+/** Setting baris laporan transfer akta (H-091): structure_schema + mode/header/anggaran dari profil terbaik UU PT. */
+export interface TransferSetting {
+  setting_id: string;
+  chunker: Setting["chunker"];
+  schema_version: number | null;
+  retrieval_mode: RetrievalMode;
+  header_b: boolean;
+  budget_tokens: number;
+  source_setting_id: string;
+  label: string;
+}
+
 export interface Grid {
-  tune: GridSplit;
-  held_out: GridSplit;
+  /** UU PT: tune + held_out. Akta: hanya `all` (H-091). */
+  tune?: GridSplit;
+  held_out?: GridSplit;
+  all?: GridSplit;
+  /** Akta: setting transfer (null bila UU PT belum punya pilihan atau tak ada padanan). */
+  transfer?: TransferSetting | null;
+  /** Akta: amplop ini ditandai final lewat config/akta_grid_final (banner "Pending operator review" hilang). */
+  final?: boolean;
   selected: { setting_id: string } | null;
   quality_comparison: QualityComparison | null;
   skipped: Skipped[];
@@ -445,6 +467,8 @@ export interface ReportRow {
 export interface Report {
   family: string;
   title: string;
+  /** Akta (H-091): setting yang dilaporkan, berlabel "transfer test, no profile selection". */
+  setting?: TransferSetting;
   rows: ReportRow[];
   summary: { n_items: number; mean_span_recall: number | null; mean_token_precision: number | null; fully_covered: ReportCount };
   by_origin: Record<string, ReportGroup>;

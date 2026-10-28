@@ -17,7 +17,7 @@ interface Col {
 
 function recallText(snap: Snapshot, s: Setting, q: QualityWithCounts | undefined): string {
   const scope = q?.items_scope;
-  const c = recallAtKCounts(metricsFor(snap, s.setting_id).filter((m) => scope === undefined || scope === "all" || m.split === scope));
+  const c = recallAtKCounts(metricsFor(snap, s.setting_id).filter((m) => scope === undefined || scope === "all" || scope === "transfer" || m.split === scope));
   if (c.withGold === 0) return NA;
   const base = xOfY(c.full, c.withGold, `items with all gold parts in top ${q?.k ?? "K"}`);
   return c.partial > 0 ? `${base} (+${c.partial} partial)` : base;

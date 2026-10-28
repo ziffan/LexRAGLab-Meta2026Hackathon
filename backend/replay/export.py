@@ -8,7 +8,8 @@ identik dengan respons live. Tanpa jaringan, tanpa panggilan model (W6 `live` se
 (`backend/replay/scan.py`) SEBELUM ditulis; bocor -> `SnapshotLeak`, tidak ada berkas yang ditulis. Tidak membaca `.env`.
 
 Tata letak (jalur relatif terhadap `data/`; dipetakan frontend di `frontend/src/lib/staticData.ts`):
-  health.json  runs.json  manifest.json
+  health.json  runs.json  families.json  manifest.json
+  families.json                                      R2 terbatas pada UU PT dan keluarga yang punya amplop grid tersimpan (pemilih Family, U0)
   snapshot/<family>/default.json  snapshot/<family>/<budget>.json
   docs/<family>/<doc_id>/_text.json            DocResponse tanpa setting (teks penuh, chunks null)
   docs/<family>/<doc_id>/<setting_id[:16]>.json     {doc_id, chunks, headers} (teks diambil dari _text.json oleh klien)
@@ -92,6 +93,7 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
     budgets = [grid_cfg["default_tokens"], *grid_cfg.get("comparison_tokens", [])]
     profiles = [p["model_profile"] for p in health.get("model_profiles", [])]
     stored_profiles: set[str] = set()
+    with_grid: list[str] = []
 
     for fam in families:
         _safe(fam)
@@ -99,6 +101,8 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
         if default is None:
             raise ExportError(f"snapshot unavailable for {fam}")
         files[f"snapshot/{fam}/default.json"] = dump(default)
+        if default.get("grid") is not None:
+            with_grid.append(fam)
         by_budget = {default["budget_tokens"]: default}
         for b in budgets:
             if b not in by_budget:
@@ -108,7 +112,8 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
         for b, snap in by_budget.items():
             files[f"snapshot/{fam}/{int(b)}.json"] = dump(snap)
 
-        settings = default["settings"]
+        # Keluarga tanpa amplop grid tersimpan (akta sebelum run, H-091): hanya teks dokumen; potongan per setting menunggu amplop.
+        settings = default["settings"] if default.get("grid") is not None or fam == "uupt" else []
         usable_ids: set[str] = set()
         for doc in default["corpus"]:
             doc_id = _safe(doc["doc_id"])
@@ -131,14 +136,14 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
         if len({sid(s["setting_id"]) for s in usable}) != len(usable):
             raise ExportError("setting_id prefix collision")
 
-        if retrieval:
+        if retrieval and fam == "uupt":  # R5 hanya UU PT
             for s in usable:
                 for it in default["items"]:
                     r = get(f"/api/families/{fam}/retrieval", setting_id=s["setting_id"], item_id=it["id"])
                     if r is not None:
                         files[f"retrieval/{fam}/{sid(s['setting_id'])}/{_safe(it['id'])}.json"] = dump(r)
 
-        if answers:
+        if answers and fam == "uupt":  # W6 hanya UU PT (API.md section 5)
             for it in default["items"]:
                 for best in usable:
                     base_id = baseline_id(app, fam, best["setting_id"])
@@ -162,6 +167,8 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
     static_health = {**health, "replay": True, "static": True,
                      "model_profiles": [{**p, "available": True} for p in health.get("model_profiles", []) if p["model_profile"] in stored_profiles]}
     files["health.json"] = dump(static_health)
+    r2 = get("/api/families") or []
+    files["families.json"] = dump([f for f in r2 if f.get("family") in with_grid or f.get("family") == "uupt"])
     ts = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     files["manifest.json"] = dump({
         "static": True, "generated_at": ts, "config_hash": health.get("config_hash"),

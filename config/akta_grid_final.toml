@@ -1,0 +1,6 @@
+# config/akta_grid_final -- penanda "angka grid akta final" (H-091). Milik operator; agen tidak mengisinya.
+# Banner "Pending operator review" (hint ui.pending_review) tampil untuk akta sampai `grid_run_id` di bawah sama dengan kunci
+# amplop grid akta yang tersimpan (`runs/grid/<kunci>.json`). Kosong = belum final. Run akta baru (kunci lain) kembali pending.
+# Berkas ini TIDAK masuk config_hash grid (tidak dimuat pipeline), jadi mengisinya tidak mengubah kunci cache.
+version = 1
+grid_run_id = ""

@@ -17,9 +17,9 @@ from backend import config
 from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
 from backend.api.routers.proposals import get_proposals
-from backend.profile.aggregate import build_report
+from backend.profile.aggregate import DEGENERATE_LABEL, build_report, transfer_setting
 from backend.proposal.report import items_summary, origin_report
-from backend.grid.types import metrics_from_cache
+from backend.grid.types import NO_SPLIT_FAMILY, metrics_from_cache
 from backend.schema_a import SchemaStore, SchemaStoreError, snapshot_view
 
 router = APIRouter()
@@ -28,25 +28,37 @@ CORPUS_FIELDS = ("doc_id", "family", "title", "path", "sha256", "clean_sha256", 
                  "tokens_local", "tokens_endpoint", "calibration_ratio", "sections", "annotations")
 
 
-def grid_view(env: dict[str, Any], budget: int, settings: list[dict[str, Any]] | None = None, header_scope: str | None = None
+def grid_view(env: dict[str, Any], budget: int, settings: list[dict[str, Any]] | None = None, header_scope: str | None = None,
+              transfer: dict[str, Any] | None = None, final: bool = False
               ) -> tuple[dict[str, Any] | None, list[dict[str, Any]], list[dict[str, Any]]]:
     """(grid, metrics, quality) untuk satu anggaran; grid None bila anggaran itu tidak ada di run tersimpan.
 
     U2 dua deret (M3.2): tiap titik membawa `header_b` (dari envelope; titik lama tanpa label dilengkapi dari `settings_run`).
     `failed_settings` = setting header-on yang gagal pada run tersimpan (`record.failed_settings`: setting_id, reason, chunk_id),
-    disaring ke anggaran ini lewat `settings` bila diberikan. `header_scope` = scope header B bila run memuat titik header-on."""
+    disaring ke anggaran ini lewat `settings` bila diberikan. `header_scope` = scope header B bila run memuat titik header-on.
+
+    Keluarga tanpa split (akta, amplop `split: null`; H-091): `grid = {all: {points, frontier}}` tanpa `tune`/`held_out`, ditambah
+    `transfer` (setting baris laporan transfer atau null), `final` (amplop ini ditandai final oleh operator) dan, pada tiap titik
+    `structure_handwritten`, `label = "no structure recognized"` (H-093). Bentuk UU PT tidak berubah."""
     ids = {s["setting_id"] for s in env["settings_run"] if s["budget_tokens"] == budget}
     if not ids:
         return None, [], []
     hdr = {s["setting_id"]: bool(s.get("header_b")) for s in env["settings_run"]}
+    chunker_of = {s["setting_id"]: s.get("chunker") for s in env["settings_run"]}
     budget_of = {s["setting_id"]: s["budget_tokens"] for s in (settings or [])}
+    no_split = env.get("family") == NO_SPLIT_FAMILY  # amplop akta (H-054); amplop UU PT selalu bersplit
     grid: dict[str, Any] = {}
-    for split in ("tune", "held_out"):
-        grid[split] = {
-            "points": [{**p, "header_b": bool(p["header_b"]) if "header_b" in p else hdr.get(p["setting_id"], False)}
-                       for p in env["points"] if p["split"] == split and p["budget_tokens"] == budget],
-            "frontier": next((f for f in env["frontiers"] if f["split"] == split and f["budget_tokens"] == budget), None),
-        }
+    for key, split in ((("all", None),) if no_split else (("tune", "tune"), ("held_out", "held_out"))):
+        pts = []
+        for p in env["points"]:
+            if p["split"] != split or p["budget_tokens"] != budget:
+                continue
+            q = {**p, "header_b": bool(p["header_b"]) if "header_b" in p else hdr.get(p["setting_id"], False)}
+            if no_split:
+                q["label"] = DEGENERATE_LABEL if chunker_of.get(p["setting_id"]) == "structure_handwritten" else None
+            pts.append(q)
+        grid[key] = {"points": pts,
+                     "frontier": next((f for f in env["frontiers"] if f["split"] == split and f["budget_tokens"] == budget), None)}
     grid["selected"] = env["selections"].get(str(budget))
     grid["quality_comparison"] = next((c for c in env["quality_comparison"] if c["budget_tokens"] == budget), None)
     grid["skipped"] = [s for s in env["skipped"] if s["budget_tokens"] == budget]
@@ -55,16 +67,19 @@ def grid_view(env: dict[str, Any], budget: int, settings: list[dict[str, Any]] |
               if isinstance(f, dict) and (not budget_of or budget_of.get(f.get("setting_id")) == budget)]
     grid["failed_settings"] = [{"setting_id": f.get("setting_id"), "reason": f.get("reason"), "chunk_id": f.get("chunk_id")} for f in failed]
     grid["header_scope"] = header_scope if any(hdr.values()) or failed else None
+    if no_split:
+        grid["transfer"], grid["final"] = transfer, bool(final)
     metrics = [metrics_from_cache(m).to_dict() for m in env["metrics"] if m["setting_id"] in ids]
     quality = [q for q in env["quality"] if q["setting_id"] in ids]
     return grid, metrics, quality
 
 
-def report_view(family: str, items: list[dict[str, Any]], env: dict[str, Any] | None, selected: dict[str, Any] | None
-                ) -> dict[str, Any] | None:
+def report_view(family: str, items: list[dict[str, Any]], env: dict[str, Any] | None, selected: dict[str, Any] | None,
+                transfer: dict[str, Any] | None = None) -> dict[str, Any] | None:
     """`FamilySnapshot.report` (H-077, API.md §4): laporan per butir `build_report` untuk setting terpilih pada anggaran ini,
     dibangun dari butir + metrik grid tersimpan (tanpa menghitung ulang). `None` bila belum ada grid, belum ada setting terpilih,
-    atau tak ada baris metrik untuk setting itu. Logika agregat ada di `backend.profile.aggregate`; di sini hanya pemanggilan."""
+    atau tak ada baris metrik untuk setting itu. Akta (H-091): `selected` = setting transfer dan `transfer` (bila diberikan) disorot
+    sebagai `report.setting` berlabel "transfer test, no profile selection"; UU PT tidak berubah. Logika agregat ada di `backend.profile.aggregate`; di sini hanya pemanggilan."""
     sid = (selected or {}).get("setting_id")
     if env is None or not sid:
         return None
@@ -72,9 +87,12 @@ def report_view(family: str, items: list[dict[str, Any]], env: dict[str, Any] | 
     if not rows:
         return None
     try:
-        return build_report(family, items, rows)
+        rep = build_report(family, items, rows)
     except (KeyError, ValueError):  # butir tak dikenal / keluarga tak dikenal: tanpa laporan, bukan 500
         return None
+    if family == "akta" and transfer is not None:
+        rep["setting"] = dict(transfer)
+    return rep
 
 
 HEADER_SAMPLE_PER_GRANULARITY = 10
@@ -142,8 +160,12 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     split_of = split.split_of() if split is not None else {}
     if split is not None:
         items = [{**i, "split": split_of.get(i["id"])} for i in items]
-    hb = svc.header_binding() if env is not None else None
-    grid, metrics, quality = (grid_view(env, budget, svc.settings(family), hb.scope if hb is not None else None)
+    hb = svc.header_binding(family) if env is not None else None
+    transfer = None
+    if family == "akta" and env is not None:  # H-091: setting transfer dari pilihan UU PT tersimpan (baca-saja)
+        transfer = transfer_setting(env, svc.stored_grid("uupt")[1], budget)
+    grid, metrics, quality = (grid_view(env, budget, svc.settings(family), hb.scope if hb is not None else None, transfer,
+                                        svc.akta_grid_final(env["key"]) if family == "akta" else False)
                               if env is not None else (None, [], []))
     by_split = dict(Counter(split_of.values())) if split is not None else None
     try:
@@ -160,7 +182,8 @@ def get_snapshot(request: Request, family: str, budget_tokens: int | None = None
     if split is not None and sel:
         rows = [m for m in metrics if m.get("setting_id") == sel.get("setting_id")]
         by_origin_report = origin_report(items, rows, split="held_out")
-    report = report_view(family, items, env, sel)
+    report = (report_view(family, items, env, {"setting_id": transfer["setting_id"]} if transfer else None, transfer)
+              if family == "akta" else report_view(family, items, env, sel))
     return {
         "family": family, "budget_tokens": budget, "replay": request.app.state.replay, "config_hash": config.config_hash(cfgs),
         "corpus": corpus, "items": items, "split": split.to_dict() if split is not None else None,

@@ -45,26 +45,26 @@ const render = (s: Snapshot): string => {
 describe("U2 two series", () => {
   it("splits dots into off and on series from the point label", () => {
     const sn = snap();
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), frontierIds(sn, "held_out"));
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), frontierIds(sn, "held_out"));
     expect(dots.filter((d) => !d.headerOn).map((d) => d.setting.setting_id)).toEqual(["off", "fx"]);
     expect(dots.filter((d) => d.headerOn).map((d) => d.setting.setting_id)).toEqual(["on"]);
     expect(frontierLine(dots).map((d) => d.setting.setting_id)).toEqual(["off", "on"]);
   });
   it("falls back to the setting's header_b when the point has no label", () => {
     const sn = snap();
-    sn.grid!.held_out.points = [pt("on", 1600, 0.8), pt("off", 1500, 0.6)];
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    sn.grid!.held_out!.points = [pt("on", 1600, 0.8), pt("off", 1500, 0.6)];
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set());
     expect(dots.map((d) => d.headerOn)).toEqual([true, false]);
   });
   it("point label wins over the setting's own header_b (label off, setting on)", () => {
     const sn = snap();
-    sn.grid!.held_out.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    sn.grid!.held_out!.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set());
     expect(dots.map((d) => [d.setting.setting_id, d.headerOn])).toEqual([["on", false], ["off", true]]);
   });
   it("seriesGroups keeps off and on dots in separate, correctly named groups per chunker", () => {
     const sn = snap();
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set());
     const g = seriesGroups(dots, ["structure_handwritten", "structure_schema", "fixed_size"] as const);
     expect(g.map((x) => [x.key, x.on, x.name, x.data.map((d) => d.setting.setting_id)])).toEqual([
       ["off-structure_handwritten", false, "Header B off · structure_handwritten", ["off"]],
@@ -74,8 +74,8 @@ describe("U2 two series", () => {
   });
   it("seriesGroups follows the dot's headerOn, not the setting's own flag", () => {
     const sn = snap();
-    sn.grid!.held_out.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    sn.grid!.held_out!.points = [pt("on", 1600, 0.8, false), pt("off", 1500, 0.6, true)];
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set());
     const g = seriesGroups(dots, ["structure_handwritten", "structure_schema", "fixed_size"] as const);
     expect(g.find((x) => !x.on)?.data.map((d) => d.setting.setting_id)).toEqual(["on"]);
     expect(g.find((x) => x.on)?.data.map((d) => d.setting.setting_id)).toEqual(["off"]);
@@ -89,7 +89,7 @@ describe("U2 two series", () => {
   });
   it("legend says there are no header-on points when the series is empty", () => {
     const sn = snap();
-    sn.grid!.held_out.points = [pt("off", 1500, 0.6, false)];
+    sn.grid!.held_out!.points = [pt("off", 1500, 0.6, false)];
     expect(render(sn)).toContain("Header B on: no points");
   });
   it("shows the frontier-only note when scope is frontier_only", () => {
@@ -102,7 +102,7 @@ describe("U2 failed header-on settings", () => {
   const failed = [{ setting_id: "bad", reason: "header_missing", chunk_id: "abcdef0123456789zz" }];
   it("lists them with reason and does not plot them", () => {
     const sn = snap({ failed_settings: failed });
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), new Set());
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set());
     expect(dots.map((d) => d.setting.setting_id)).not.toContain("bad");
     const h = render(sn);
     expect(h).toContain("Failed header-on settings");
@@ -146,7 +146,7 @@ describe("U2 header B series toggle", () => {
   const CH = ["structure_handwritten", "structure_schema", "fixed_size"] as const;
   const groups = () => {
     const sn = snap();
-    return seriesGroups(plottable(sn.grid!.held_out.points, availableSettings(sn), new Set()).dots, CH);
+    return seriesGroups(plottable(sn.grid!.held_out!.points, availableSettings(sn), new Set()).dots, CH);
   };
   it("default shows both series", () => {
     expect(visibleGroups(groups(), NONE_HIDDEN).map((g) => g.key)).toEqual(["off-structure_handwritten", "off-fixed_size", "on-structure_handwritten"]);
@@ -161,7 +161,7 @@ describe("U2 header B series toggle", () => {
   });
   it("hiding does not alter the frontier line (computed from the payload)", () => {
     const sn = snap();
-    const { dots } = plottable(sn.grid!.held_out.points, availableSettings(sn), frontierIds(sn, "held_out"));
+    const { dots } = plottable(sn.grid!.held_out!.points, availableSettings(sn), frontierIds(sn, "held_out"));
     const before = frontierLine(dots).map((d) => d.setting.setting_id);
     visibleGroups(seriesGroups(dots, CH), toggleSeries(NONE_HIDDEN, true));
     expect(frontierLine(dots).map((d) => d.setting.setting_id)).toEqual(before);

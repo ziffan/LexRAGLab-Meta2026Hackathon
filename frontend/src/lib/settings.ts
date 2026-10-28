@@ -1,4 +1,14 @@
-import type { GridPoint, ItemMetrics, QualityWithCounts, Retrieval, RetrievalMode, Setting, Snapshot, SplitName } from "../types";
+import type { GridPoint, ItemMetrics, QualityWithCounts, Retrieval, RetrievalMode, Setting, Snapshot, SplitKey, SplitName } from "../types";
+
+export const TRANSFER_LABEL = "transfer test, no profile selection";
+export const DEGENERATE_LABEL = "no structure recognized";
+export const DEGENERATE_NOTE = `Structure (handwritten parser) points: ${DEGENERATE_LABEL} (one chunk per deed). They stay in the grid.`;
+
+/** Grid akta (H-091): satu blok `all`, tanpa kontrol split. */
+export const isTransferGrid = (snap: Snapshot): boolean => snap.grid?.all !== undefined;
+/** Kunci blok grid yang dipakai: `all` untuk akta, selain itu split pilihan pengguna. */
+export const gridKey = (snap: Snapshot, split: SplitName): SplitKey => (isTransferGrid(snap) ? "all" : split);
+export const hasDegenerate = (snap: Snapshot): boolean => (snap.grid?.all?.points ?? []).some((p) => !!p.label);
 
 export const MODES: RetrievalMode[] = ["dense", "bm25", "hybrid"];
 
@@ -47,12 +57,12 @@ export function metricsFor(snap: Snapshot, settingId: string): ItemMetrics[] {
   return snap.metrics.filter((m) => m.setting_id === settingId);
 }
 
-export function pointOf(snap: Snapshot, settingId: string, split: SplitName): GridPoint | undefined {
-  return snap.grid?.[split].points.find((p) => p.setting_id === settingId);
+export function pointOf(snap: Snapshot, settingId: string, split: SplitKey): GridPoint | undefined {
+  return snap.grid?.[split]?.points.find((p) => p.setting_id === settingId);
 }
 
-export function frontierIds(snap: Snapshot, split: SplitName): Set<string> {
-  return new Set(snap.grid?.[split].frontier?.point_ids ?? []);
+export function frontierIds(snap: Snapshot, split: SplitKey): Set<string> {
+  return new Set(snap.grid?.[split]?.frontier?.point_ids ?? []);
 }
 
 export function qualityOf(snap: Snapshot, settingId: string): QualityWithCounts | undefined {

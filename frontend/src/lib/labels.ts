@@ -35,5 +35,6 @@ export function scopeLabel(scope: string | null | undefined): string {
   if (scope === "all") return "all items (tune + held-out)";
   if (scope === "tune") return "tune items only";
   if (scope === "held_out") return "held-out items only";
+  if (scope === "transfer") return "all items (transfer test)";
   return "item scope not reported";
 }

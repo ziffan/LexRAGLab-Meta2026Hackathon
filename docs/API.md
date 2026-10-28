@@ -23,7 +23,7 @@ Bentuk ini mengikuti H-020: endpoint baca dilebur menjadi snapshot per keluarga,
 | # | Metode dan jalur | Request | Response | Panel | Slice |
 |---|---|---|---|---|---|
 | R1 | `GET /api/health` | — | `{status, replay, model, config_hash, run_cost_usd_micros, model_profiles: [{model_profile, model, available, label, provider, quantization, effort, roles, local, live_via_cli, unavailable_reason}]}` | U0, U3 | M0.1 |
-| R2 | `GET /api/families` | — | `[{family, n_docs, n_items, has_grid}]` | U0 | M0.2 |
+| R2 | `GET /api/families` | — | `[{family, n_docs, n_items, has_grid, error?}]` (`error` = kode galat bila butir keluarga itu cacat; baris itu `n_items = 0`, `has_grid = false`; keluarga lain tetap 200, W64) | U0 | M0.2 |
 | R3 | `GET /api/families/{family}/snapshot` | query `budget_tokens` opsional (default dari `config/grid`) | `FamilySnapshot` (bagian 4) | U0–U9 | M0.2, diperluas tiap slice |
 | R4 | `GET /api/families/{family}/docs/{doc_id}` | query `setting_id` opsional, atau `schema_version` opsional (int, saling eksklusif dengan `setting_id` → 400 `invalid_request`; versi tak ada → 404 `not_found`; skema tak cocok → 422 `validation_failed`; H-078) | `{doc_id, text, chunks: Chunk[] \| null, headers: HeaderB[] \| null}` (§3, §7) | U1, U6 | M1.1, M3.2 |
 | R5 | `GET /api/families/{family}/retrieval` | query `setting_id`, `item_id` | `{retrieved_chunk_ids, ranks, scores, packed_tokens}` | U1 | M1.2 |
@@ -63,7 +63,7 @@ Gabungan kontrak yang sudah ada di `docs/DATA-CONTRACTS.md`. Bukan skema keluara
 | `split` | penugasan tune/held-out; `null` untuk akta (H-054) | `SplitRecord` (§4) | U4 |
 | `items_summary` | `{n_items, by_origin, by_mode, by_split, control_in_held_out}` | — | U9 |
 | `settings` | semua setting grid | `Setting[]` (§10) | U2 |
-| `grid` | `{tune: {points, frontier}, held_out: {points, frontier}}` pada `budget_tokens` | `GridPoint[]`, `Frontier` (§10) | U2 |
+| `grid` | UU PT: `{tune: {points, frontier}, held_out: {points, frontier}, selected, ...}` pada `budget_tokens`. Akta (H-091): `{all: {points, frontier}, selected: null, transfer, final, ...}` tanpa `tune`/`held_out`; `transfer` = setting baris laporan transfer atau `null`, `final` = penanda final (`config/akta_grid_final`); tiap titik `structure_handwritten` membawa `label: "no structure recognized"` (H-093), titik lain `label: null` | `GridPoint[]`, `Frontier` (§10) | U2 |
 | `metrics` | per setting × butir, kedua split | `ItemMetrics[]` (§10) | U4 |
 | `quality` | per setting | `QualityMetrics` (§10) | U4 |
 | `schemas` | semua versi skema keluarga | `SchemaRecord[]` (§6) | U5 |
@@ -71,11 +71,12 @@ Gabungan kontrak yang sudah ada di `docs/DATA-CONTRACTS.md`. Bukan skema keluara
 | `proposals` | semua usulan D | `ProposalRecord[]` (§9) | U6, U0 |
 | `answers` | per butir dan per `model_profile` yang sudah dijawab: `{item_id, model_profile, best, baseline, verifier}` | `AnswerRecord`, `VerifierResult` (§8) | U3 |
 | `answers_summary` | per setting dan per `model_profile` yang dipakai C | `RejectionSummary` (§8) | U3 |
-| `report` | laporan held-out UU PT atau laporan transfer akta per butir (tanpa label held-out untuk akta, H-054); `null` bila belum ada grid | `build_report` M4.3 (H-077) | U7 |
+| `report` | laporan held-out UU PT atau laporan transfer akta per butir (tanpa label held-out untuk akta, H-054); `null` bila belum ada grid. Akta (H-091): memuat `setting` (= `grid.transfer`, berlabel "transfer test, no profile selection"), `null` bila UU PT belum punya setting terpilih pada anggaran itu; butir `tolak` (H-092) masuk dengan kolom metrik `null` | `build_report` M4.3 (H-077) | U7 |
 | `runs_summary` | agregat per `kind`: jumlah run, token input/cached/output, biaya | — | U8, U0 |
 
 ## 5. Aturan per endpoint yang tidak terlihat dari tabel
 
+- **R3 akta (H-091, H-093).** `Service.stored_grid("akta")` menemukan amplop lewat kunci multi-dokumen (H-086) dan peta unit (H-090); `settings` akta = seluruh `config/grid` (36). Setting transfer = `structure_schema` skema A akta aktif dengan mode retrieval, header B, dan anggaran dari setting terpilih UU PT tersimpan pada anggaran yang sama (baca-saja `runs/grid`; tanpa pilihan di akta). `transfer`/`report.setting` `null` bila UU PT tak punya pilihan pada anggaran itu atau tak ada tepat satu padanan di titik akta yang dijalankan. W1 akta dalam replay: amplop ada = `cached`, tidak ada = `409 replay_no_stored_run`. Ekspor statis: `data/families.json` (R2 terbatas pada UU PT dan keluarga ber-amplop) dan potongan per setting akta hanya bila amplop ada; R5 dan W6 tidak diekspor untuk akta.
 - **R3** dibangun dari berkas dan cache per hash (`docs/ARCHITECTURE.md` §8). Ia tidak pernah menjalankan grid, chunker, atau Spark. Bila hasil grid belum ada untuk `budget_tokens` itu, `grid` bernilai `null`.
 - **W1** tidak memanggil Spark. Hasil disimpan per kunci cache; kunci sama → respons `RunRecord.status = cached`.
 - **W2** menyimpan v1 dari Spark. Koreksi operator (v2+) masuk lewat editor U5 dan W9 (H-037).

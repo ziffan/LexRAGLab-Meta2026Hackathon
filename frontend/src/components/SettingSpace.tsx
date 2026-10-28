@@ -4,8 +4,8 @@ import { useStore } from "../state";
 import { exactStr, fixed3, intStr, orNa, xOfY } from "../lib/format";
 import { chunkerLabel, settingShort, splitLabel } from "../lib/labels";
 import { NONE_HIDDEN, SERIES, isHidden, seriesGroups, toggleSeries, visibleGroups } from "../lib/series";
-import { availableSettings, frontierIds, pointOf } from "../lib/settings";
-import type { GridPoint, Setting, Snapshot, SplitName } from "../types";
+import { DEGENERATE_NOTE, TRANSFER_LABEL, availableSettings, frontierIds, gridKey, hasDegenerate, isTransferGrid, pointOf } from "../lib/settings";
+import type { GridPoint, Setting, Snapshot, SplitKey, SplitName } from "../types";
 import { EmptyBlock, SnapshotPanel } from "./Shell";
 
 // U2 Setting space (docs/UI-SPEC.md U2). Dua deret: header B off (biru) dan on (oranye, M3.2). Titik header-on yang gagal
@@ -91,6 +91,7 @@ function Tip({ active, payload }: TipProps) {
       <div>Tokens (local tokenizer), mean: {orNa(p.mean_retrieved_tokens, intStr)}</div>
       <div>{xOfY(p.fully_covered_count.covered, p.fully_covered_count.total, "items fully covered")}</div>
       <div>{d.headerOn ? "Header B on" : "Header B off"}</div>
+      {p.label && <div data-testid="degenerate-tip">{p.label}</div>}
       <div>{d.onFrontier ? "Frontier" : "Dominated"}</div>
     </div>
   );
@@ -110,11 +111,13 @@ function Body({ snap }: { snap: Snapshot }) {
   const grid = snap.grid;
   if (!grid) return <EmptyBlock>No grid run for this family yet</EmptyBlock>;
 
+  const transfer = isTransferGrid(snap); // akta (H-091): satu frontier `all`, tanpa pilihan split
   const split = state.split;
+  const key = gridKey(snap, split);
   const settings = availableSettings(snap);
   const budgets = [...new Set(snap.settings.map((s) => s.budget_tokens))].sort((a, b) => a - b);
-  const frontier = frontierIds(snap, split);
-  const { dots, hidden } = plottable(grid[split].points, settings, frontier);
+  const frontier = frontierIds(snap, key);
+  const { dots, hidden } = plottable(grid[key]?.points ?? [], settings, frontier);
   const line = frontierLine(dots);
   const selected = state.selectedSettingId;
   const pick = (id: string) => dispatch({ type: "select_setting", id });
@@ -137,27 +140,36 @@ function Body({ snap }: { snap: Snapshot }) {
             ))}
           </select>
         </label>
-        <fieldset className="seg">
-          <legend>Split</legend>
-          {(["tune", "held_out"] as SplitName[]).map((sp) => (
-            <label key={sp} className={`seg-item${split === sp ? " on" : ""}`}>
-              <input type="radio" name="u2-split" checked={split === sp} onChange={() => dispatch({ type: "set_split", value: sp })} />
-              {splitLabel(sp)}
-            </label>
-          ))}
-        </fieldset>
+        {!transfer && (
+          <fieldset className="seg">
+            <legend>Split</legend>
+            {(["tune", "held_out"] as SplitName[]).map((sp) => (
+              <label key={sp} className={`seg-item${split === sp ? " on" : ""}`}>
+                <input type="radio" name="u2-split" checked={split === sp} onChange={() => dispatch({ type: "set_split", value: sp })} />
+                {splitLabel(sp)}
+              </label>
+            ))}
+          </fieldset>
+        )}
       </div>
-      <p className="note">
-        {split === "held_out" ? (
-          <span className="tag ok">held-out</span>
-        ) : (
-          <span className="tag neutral">tune</span>
-        )}{" "}
-        {split === "held_out" ? "Reported numbers come from the held-out split." : "Tune split: used to choose the setting, not reported as a result."}
-      </p>
+      {transfer ? (
+        <p className="note" data-testid="transfer-note">
+          <span className="tag neutral">{grid.transfer?.label ?? TRANSFER_LABEL}</span> One frontier over all deed items; nothing is chosen from them.
+          {grid.transfer && <> The reported setting is the structure-schema setting with the retrieval mode, header B and budget of the best Company Law profile{(() => { const t = snap.settings.find((x) => x.setting_id === grid.transfer?.setting_id); return t ? <>: <strong>{settingShort(t)}</strong></> : null; })()}.</>}
+        </p>
+      ) : (
+        <p className="note">
+          {split === "held_out" ? (
+            <span className="tag ok">held-out</span>
+          ) : (
+            <span className="tag neutral">tune</span>
+          )}{" "}
+          {split === "held_out" ? "Reported numbers come from the held-out split." : "Tune split: used to choose the setting, not reported as a result."}
+        </p>
+      )}
 
       {dots.length === 0 ? (
-        <EmptyBlock>No plottable points in this split: every item here lacks gold.</EmptyBlock>
+        <EmptyBlock>{transfer ? "No plottable points: every item here lacks gold." : "No plottable points in this split: every item here lacks gold."}</EmptyBlock>
       ) : (
         <div className="chart" role="img" aria-label={`Span recall against tokens (local tokenizer), ${dots.length} settings, ${line.length} on the frontier, ${onDots} with header B on`}>
           <ResponsiveContainer width="100%" minWidth={0} height={340}>
@@ -248,6 +260,7 @@ function Body({ snap }: { snap: Snapshot }) {
           <li className="muted" data-testid="legend-on"><span className="swatch none" aria-hidden="true" /> Header B on: no points</li>
         )}
       </ul>
+      {hasDegenerate(snap) && <p className="note" data-testid="degenerate-note">{DEGENERATE_NOTE}</p>}
       {grid.header_scope === "frontier_only" && onDots > 0 && <p className="note">Header B computed for frontier settings only.</p>}
       {failed.length > 0 && (
         <section aria-label="Failed header-on settings" data-testid="failed-settings">
@@ -266,7 +279,7 @@ function Body({ snap }: { snap: Snapshot }) {
           </ul>
         </section>
       )}
-      {hidden > 0 && <p className="note">{hidden} point{hidden > 1 ? "s" : ""} not plotted: no gold items in this split (n/a).</p>}
+      {hidden > 0 && <p className="note">{hidden} point{hidden > 1 ? "s" : ""} not plotted: {transfer ? "no gold items" : "no gold items in this split"} (n/a).</p>}
 
       <h3 className="detail-title">Selected setting</h3>
       {sel ? (
@@ -275,12 +288,12 @@ function Body({ snap }: { snap: Snapshot }) {
             <dt>Setting</dt>
             <dd>{settingShort(sel)}</dd>
           </div>
-          {(["held_out", "tune"] as SplitName[]).map((sp) => {
+          {(transfer ? (["all"] as SplitKey[]) : (["held_out", "tune"] as SplitKey[])).map((sp) => {
             const p = pointOf(snap, sel.setting_id, sp);
             return (
               <div key={sp}>
                 <dt>
-                  <span className={`tag ${sp === "held_out" ? "ok" : "neutral"}`}>{sp === "held_out" ? "held-out" : "tune"}</span>
+                  <span className={`tag ${sp === "held_out" ? "ok" : "neutral"}`}>{sp === "all" ? "transfer" : sp === "held_out" ? "held-out" : "tune"}</span>
                 </dt>
                 <dd>
                   {p ? (
@@ -292,6 +305,7 @@ function Body({ snap }: { snap: Snapshot }) {
                       MRR: {exactStr(p.exact, "mrr")}
                       <br />
                       {frontierIds(snap, sp).has(sel.setting_id) ? "On the frontier" : "Dominated"}
+                      {p.label && <><br /><span data-testid="degenerate-selected">{p.label}</span></>}
                     </>
                   ) : (
                     "n/a"

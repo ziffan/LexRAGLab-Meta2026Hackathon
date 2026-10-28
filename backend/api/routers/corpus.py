@@ -24,8 +24,12 @@ def get_families(request: Request) -> list[dict[str, Any]]:
     svc = request.app.state.service
     out = []
     for family in FAMILIES:
-        _plan, env = svc.stored_grid(family)
-        out.append({"family": family, "n_docs": len(svc.doc_ids(family)), "n_items": len(svc.items(family)), "has_grid": env is not None})
+        try:  # galat satu keluarga (butir cacat, 409/422) tidak boleh menjatuhkan keluarga lain
+            _plan, env = svc.stored_grid(family)
+            row = {"family": family, "n_docs": len(svc.doc_ids(family)), "n_items": len(svc.items(family)), "has_grid": env is not None}
+        except ApiError as exc:
+            row = {"family": family, "n_docs": len(svc.doc_ids(family)), "n_items": 0, "has_grid": False, "error": exc.code}
+        out.append(row)
     return out
 
 

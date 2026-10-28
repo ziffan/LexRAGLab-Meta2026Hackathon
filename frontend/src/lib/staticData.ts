@@ -47,6 +47,7 @@ export function resolveStatic(url: string, init?: RequestInit): StaticTarget {
   }
   if (seg[0] === "health" && seg.length === 1) return { kind: "file", path: `${DATA}/health.json` };
   if (seg[0] === "runs" && seg.length === 1) return { kind: "file", path: `${DATA}/runs.json` };
+  if (seg[0] === "families" && seg.length === 1) return { kind: "file", path: `${DATA}/families.json` };
   if (seg[0] === "families" && seg.length >= 3) {
     const fam = enc(seg[1]);
     if (seg[2] === "snapshot" && seg.length === 3) {

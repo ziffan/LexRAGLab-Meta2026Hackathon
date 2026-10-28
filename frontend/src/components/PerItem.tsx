@@ -26,9 +26,10 @@ function Body({ snap }: { snap: Snapshot }) {
   if (snap.items.length === 0) return <EmptyBlock>No approved items for this family yet</EmptyBlock>;
   if (!sel || !snap.grid) return <EmptyBlock>No grid run for this family yet</EmptyBlock>;
 
+  const transfer = snap.family === "akta"; // filter split disembunyikan untuk akta (H-078)
   const metrics = new Map<string, ItemMetrics>(metricsFor(snap, sel.setting_id).map((m) => [m.item_id, m]));
   const splitOf = (id: string) => metrics.get(id)?.split ?? snap.items.find((i) => i.id === id)?.split;
-  const shown = snap.items.filter((i) => itemPasses(i, state.filters, splitOf));
+  const shown = snap.items.filter((i) => itemPasses(i, transfer ? { ...state.filters, split: "all" } : state.filters, splitOf));
   const withGold = shown.filter((i) => i.gold_spans.length > 0);
   const noGold = shown.filter((i) => i.gold_spans.length === 0);
   const summary = originSummary(shown, metrics);
@@ -57,17 +58,17 @@ function Body({ snap }: { snap: Snapshot }) {
             <option value="tolak">{modeLabel("tolak")}</option>
           </select>
         </label>
-        <label className="field">
+        {!transfer && <label className="field">
           <span>Split<Hint id="metric.tune_heldout" /></span>
           <select value={f.split} onChange={(e) => dispatch({ type: "set_filters", value: { split: e.target.value as typeof f.split } })}>
             <option value="all">All</option>
             <option value="tune">Tune</option>
             <option value="held_out">Held-out</option>
           </select>
-        </label>
+        </label>}
       </div>
 
-      <p className="note">Summary scope: {filterScopeLabel(f.split)}.</p>
+      <p className="note">Summary scope: {filterScopeLabel(f.split, transfer)}.</p>
       <ul className="summary-row" aria-label="Results by origin">
         {summary.length === 0 && <li className="muted">No items match the filters.</li>}
         {summary.map((s) => (
