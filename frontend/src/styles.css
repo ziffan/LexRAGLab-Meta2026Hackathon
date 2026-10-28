@@ -181,3 +181,4 @@ table.data .addr { font-weight: 600; }
 .closest { margin: 4px 0 0; padding-left: 20px; font-size: 0.85rem; }
 .review-counters { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; margin: 6px 0; font-weight: 600; }
 .review-counters .per-doc { flex-basis: 100%; margin: 0; padding-left: 18px; font-weight: 400; font-size: 0.85rem; color: var(--muted); }
+.kv dd.mono, .detail dd.mono { overflow-wrap: anywhere; word-break: break-all; } /* hash 64 hex di pratinjau profil (U7 statis) tidak melebarkan halaman 375 */

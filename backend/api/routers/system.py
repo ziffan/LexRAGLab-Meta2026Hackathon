@@ -91,6 +91,10 @@ def run_totals_by_kind(runs_dir: Path) -> list[dict[str, Any]] | None:
         records = all_records(runs_dir)
     except ValueError:
         return None
+    return _totals(records)
+
+
+def _totals(records: list[RunRecord]) -> list[dict[str, Any]]:
     acc: dict[str, dict[str, Any]] = {}
     for r in records:
         a = acc.setdefault(r.kind, {"kind": r.kind, "runs": 0, "usage_input_tokens": 0, "usage_cached_tokens": 0,
@@ -103,6 +107,20 @@ def run_totals_by_kind(runs_dir: Path) -> list[dict[str, Any]] | None:
         if any(v is None for v in (r.usage_input_tokens, r.usage_cached_tokens, r.usage_output_tokens, r.cost_usd_micros)):
             a["unknown_runs"] += 1
     return [acc[k] for k in KINDS if k in acc]
+
+
+def cost_fields(runs_dir: Path) -> dict[str, Any]:
+    """Tiga bidang biaya R1 dari SATU pembacaan record (5.000+ berkas; tiga pembacaan terpisah membuat R1 > 4 detik).
+    Nilai identik dengan `run_cost_micros`, `ledger_spent_micros` (= `Ledger.spent()`: hanya `records/`), `run_totals_by_kind`."""
+    try:
+        recs = store.load_records(runs_dir)
+    except ValueError:
+        return {"run_cost_usd_micros": None, "ledger_spent_usd_micros": None, "run_totals_by_kind": None}
+    grid = grid_records(runs_dir)
+    allr = recs + grid
+    return {"run_cost_usd_micros": sum(int(r.cost_usd_micros or 0) for r in allr),
+            "ledger_spent_usd_micros": sum(r.spend_micros() for r in recs),
+            "run_totals_by_kind": _totals(allr)}
 
 
 def _profile_row(request: Request, name: str, p: Mapping[str, Any]) -> dict[str, Any]:
@@ -125,9 +143,7 @@ def health(request: Request) -> dict[str, Any]:
         "replay": st.replay,
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
-        "run_cost_usd_micros": run_cost_micros(st.service.runs_dir),
-        "ledger_spent_usd_micros": ledger_spent_micros(st.service.runs_dir),
-        "run_totals_by_kind": run_totals_by_kind(st.service.runs_dir),
+        **cost_fields(st.service.runs_dir),
         "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 
