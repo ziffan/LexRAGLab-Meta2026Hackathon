@@ -9,7 +9,7 @@ diperbarui: 2026-10-28 UTC (session-end L2#8), sesi orkestrasi berlapis di mesin
 
 - M0, M1 **selesai** (sisa agen: screenshot M1.1/M1.4 pada chunker/grid terkini). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai, M3.1–M3.4 (status MILESTONES dicocokkan L2#8/W93; Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
-- M4 selesai kecuali Tier 4 domain review M4.1 (belum ada konfirmasi tertulis operator; W93): skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
+- M4 selesai (Tier 4 M4.1 dikonfirmasi operator 28 Okt, preseden M3.3: I-51 + koreksi v2 H-088/H-089 sebagai domain review): skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
 - M5.1: uji visual Chrome statis + live (375/768/1440) lolos setelah fix proxy keep-alive (`b79e37b`, G-39); bukti `_kerja/orkestrasi/bukti/M51-*`. Status tetap "berjalan" setelah dicocokkan (L2#8, W90): kriteria kode terpenuhi; sisa = adegan video dikunci operator (putusan 8) + Tier 4 UX review operator, lalu screenshot per adegan (agen).
 - M5.2 persiapan: LICENSE + NOTICE Apache-2.0 (H-097, copyright Ziffany Firdinal), README tema Build for Your World / Indie (H-098) + kalimat anti-RAG dan new-work-only, motivasi PRD = korpus aturan (angka LO dari laporan operator, anonim), hint 1.4.0 final, dist-static dibangun ulang dari `84c6513` (lihat baris HEAD). Rencana rewrite histori `_kerja/orkestrasi/M52-rewrite-histori-rencana.md` (H-096, belum dijalankan). Repo masih private.
 - `tolak` UU PT selesai (H-099): prompt D v3 268dd67, kode Tier 1 f2b5417, run D b709ac3 (4.992 micro-USD), 3 butir disetujui operator, split v3, grid ulang tanpa Spark (pilihan profil tidak berubah), profil + ekspor statis ulang (faa343d). Jawaban C untuk 3 butir `tolak` UU PT (`f52f6a7`, best `d7a9dd24` + baseline `ed489a1e`): Contributor 6/6 abstain (4 `tolak`, 2 `bukti_tidak_cukup`; 1.964 micro-USD), Spark Open Baseten 6/6 (5 + 1; 22.676 micro-USD), Glimmer lokal 6/6 (4 + 2; 0); sel 2×2 18/18 `abstained_correct`.
@@ -30,7 +30,6 @@ diperbarui: 2026-10-28 UTC (session-end L2#8), sesi orkestrasi berlapis di mesin
 
 ## Menunggu operator
 
-- Tier 4 domain review M4.1 (skema dan potongan akta): konfirmasi tertulis, seperti M2.3/M3.3 (putusan 10 butir 5).
 - M5.1: kunci adegan video (putusan 8) + Tier 4 UX review; setelah itu agen menyetor screenshot per adegan.
 - Pemicu 31 Okt H-017 (31 Okt malam WIB).
 - Gate M5.2: rewrite histori + force push (H-096), repo publik, Pages; butir NOTICE "unverified, pending operator" (kartu Glimmer HF, syarat keluaran Contributor, endpoint Baseten, Official Rules terpisah, versi jurnal Magesh).
@@ -54,6 +53,6 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 ## Berikutnya
 
 1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1402) dan npm (287) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
-2. Gerbang operator: Tier 4 M4.1, adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
+2. Gerbang operator: adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
 3. Agen (tidak terblok, kecil): screenshot M1.1/M1.4 pada chunker/grid terkini; opsional test Glimmer di mode statis.
 4. Frontend 5173 (operator) dan 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39); jawaban C butir tolak dibaca backend dari `runs/` (frontend tidak berubah sejak `b709ac3`; 5175 tailnet memakai `b709ac3`).
