@@ -1,0 +1,23 @@
+{
+ "answer_id": "56e6fd463e8127abd8e9f45a8cd0beb7261254d46131c7c42df7ca9e1f812b05",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "df9496b350f9f88ebb25915cc6888c595b0c12b124a17ab45afb5788a73e23c5",
+  "a23513fdc8cdcbe11c25bd43535f24635ee22d7be6a60c91155f698e7cdf9611",
+  "cd610b163f5ada8622eaf5e4e5b908028d54efce96ef69ce96b254a1d82c8146",
+  "15a5ea4ec08cbf6b16be5d622a220e8d307263be1071ee439ef039dbf6f82ab4",
+  "88b4452f7dbe19ebafca6bd9a09a151e286f090134f5d3977202b3215dfa0f39",
+  "522a8db2789240e0b18bf6e43a8ca8b69560ff63c5b256396741aa1b32fac8f9"
+ ],
+ "flags": [],
+ "item_id": "usulan-e73a0488fa17bf4a",
+ "model_profile": "glimmer_local",
+ "output": {
+  "jawaban": null,
+  "kutipan": [],
+  "status": "tolak"
+ },
+ "run_id": "e46e97cef78a47ac92177fccc664f1e4",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}

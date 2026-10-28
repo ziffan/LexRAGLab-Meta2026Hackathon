@@ -1,0 +1,29 @@
+{
+ "answer_id": "caf6aa4e27281bf04c84d0cd3cd525cf61d020d39aa6b7f8b421154ccb7ca046",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "cee29004c8267f969affc3be086c445bfe7ae82a3357f473ef9d86585e9b9505",
+  "48df60cbfcb06acb9190da4d93d4b114d3e26e550b1434ae83ea438e6c2b18a3",
+  "5aabec5df926bed8fe173ac37f64a6843730964d43f0f698ebc3c1397204b7bb"
+ ],
+ "flags": [],
+ "item_id": "usulan-d3f8a86a00f2beb1",
+ "model_profile": "glimmer_local",
+ "output": {
+  "jawaban": "Konteks tidak memuat besaran tarif PNBP untuk pengesahan badan hukum Perseroan dan persetujuan perubahan anggaran dasar.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Penjelasan Umum",
+    "teks": "Dalam hal pemberian status badan hukum, persetujuan dan/atau penerimaan pemberitahuan perubahan anggaran dasar, dan perubahan data lainnya, Undang-Undang ini tidak dikaitkan dengan Undang-Undang tentang Wajib Daftar Perusahaan."
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 29 › ayat (3)",
+    "teks": "a. Keputusan Menteri mengenai pengesahan badan hukum Perseroan, persetujuan atas perubahan anggaran dasar yang memerlukan persetujuan;"
+   }
+  ],
+  "status": "bukti_tidak_cukup"
+ },
+ "run_id": "99914b0dfc134ce5984ffe66036ac37d",
+ "setting_id": "ed489a1ecd8390a091ee91a721945211980eecee2b362e236a486a615c6e7c7d",
+ "slot": "baseline"
+}

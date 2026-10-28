@@ -1,0 +1,19 @@
+{
+ "answer_id": "a0bf37e46900579470e62abd207bedb1a90b807cf58261234ab9e909541b997a",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "257d503c542392fbbda12856d1637438c908a826b89854d789d5b0599810fff8",
+  "e9eac25bebacc77ed11e24c27a5f6521e60df83a737956907b5be9cbe1b95882"
+ ],
+ "flags": [],
+ "item_id": "usulan-83bb3dc705c43f4c",
+ "model_profile": "baseten_open",
+ "output": {
+  "jawaban": null,
+  "kutipan": [],
+  "status": "tolak"
+ },
+ "run_id": "560bbd3e5f124a698e428f592c4f3c35",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}

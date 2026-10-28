@@ -1,0 +1,34 @@
+{
+ "answer_id": "a50e61244a7199c9c709823a3fafd85de22960bd5c62df00c974191b893805fc",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "e68e8d0d390e01359827b6f23d2cbe6f658bdd1d3b582af189c3ae0a0da3cd8c",
+  "2e4b6b5f25b08b3206668c84e4d7fd5c3229759af50ae0238a8cf52bd7ad746b",
+  "3f906127e635613ff6474be7d826420d72ce8a2d371c06299152a417d2a53ab6",
+  "6b6135b3002e8a3bdbffb9c27992268cc991e3ebba86f33a110829d9b4c7b070",
+  "3c7272dd0d101c7d0044f702c2343f4840a50560dde35c560d876cca4ea59d18",
+  "4de2855c16cd9ec5d30ebee963204cd39ee9d825830cb57412958f1c0aeb5557",
+  "0ce55f448a65491416e9576518b6a4ccbdb8cc8cd0724df39e4e054b54517559",
+  "fce878488edd940bc8b80e15cb80d6f3d4ec4a68d52256967bf9d02d01f6f6fa"
+ ],
+ "flags": [],
+ "item_id": "usulan-d3f8a86a00f2beb1",
+ "model_profile": "glimmer_local",
+ "output": {
+  "jawaban": "Konteks tidak memuat besaran tarif PNBP untuk pengesahan badan hukum Perseroan dan persetujuan perubahan anggaran dasar; hanya disebutkan bahwa biaya diatur sesuai peraturan perundang-undangan di bidang penerimaan negara bukan pajak.",
+  "kutipan": [
+   {
+    "alamat": "UU 40/2007 › Pasal 153",
+    "teks": "Ketentuan mengenai biaya Perseroan sebagai badan hukum diatur sesuai dengan ketentuan peraturan perundang-undangan di bidang penerimaan negara bukan pajak."
+   },
+   {
+    "alamat": "UU 40/2007 › Pasal 153I › ayat (2)",
+    "teks": "(2) Ketentuan lebih lanjut mengenai keringanan biaya Perseroan untuk usaha mikro dan kecil sebagaimana dimaksud pada ayat (1) diatur sesuai dengan ketentuan peraturan perundang-undangan di bidang penerimaan negara bukan pajak."
+   }
+  ],
+  "status": "bukti_tidak_cukup"
+ },
+ "run_id": "16a4d0a40486449bafb468888dbb9720",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}
