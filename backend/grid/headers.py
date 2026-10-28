@@ -19,6 +19,15 @@ SCOPES = ("frontier_only", "all")
 FIXED_SIZE = "fixed_size"
 STRUCTURE_SCHEMA = "structure_schema"  # H-082: store sendiri; B dipanggil untuk semua potongan skema (tanpa reuse header Pasal)
 GRANULARITY_DIRS = ("pasal", "ayat", FIXED_SIZE, STRUCTURE_SCHEMA)
+FAMILY_STORE_SUBDIR = {"akta": "akta"}  # W63: store header per keluarga; UU PT tetap di akar `runs/headers/` (tanpa subdir)
+
+
+def header_store_dir(runs_dir: Path, family: str = "uupt") -> Path:
+    """Satu-satunya tempat jalur store header B per keluarga. UU PT: `<runs>/headers`; akta: `<runs>/headers/akta`, supaya
+    `DirHeaderStore.content_hash()` UU PT (hash isi direktori, A10) tidak berubah oleh header akta (regresi 82ae86f)."""
+    base = Path(runs_dir) / "headers"
+    sub = FAMILY_STORE_SUBDIR.get(family)
+    return base / sub if sub else base
 
 
 # ---------- galat ----------

@@ -22,7 +22,7 @@ from typing import Any, Callable
 from backend import config
 from backend.chunking import boundary_diff, chunk_document, schema_identity
 from backend.grid.expand import expand_grid
-from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding
+from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding, header_store_dir
 from backend.grid.runner import GridError, grid_cache_key, run_grid
 from backend.grid.schemas import SchemaBinding, bind_schema_versions, is_approved
 from backend.grid.split import SplitError, ensure_split, load_latest_split_record, make_split
@@ -140,8 +140,9 @@ def pipeline_config_hash(cfgs: dict[str, dict[str, Any]], tok_info: Any, headers
     return config.config_hash(parts)
 
 
-def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, headers_dir: Path | None = None) -> HeaderBinding:
-    """Binding dari `config/header_b` (granularity, scope, max_header_tokens) + `prompts/b` + `config/model` + `runs/`."""
+def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, headers_dir: Path | None = None,
+                        family: str = "uupt") -> HeaderBinding:
+    """Binding (store per keluarga: `header_store_dir`, W63) dari `config/header_b` (granularity, scope, max_header_tokens) + `prompts/b` + `config/model` + `runs/`."""
     from backend.header_b.prompt import load_prompt
 
     hc = config.load("header_b", config_dir)
@@ -152,7 +153,7 @@ def load_header_binding(*, runs_dir: Path, config_dir: Path | None = None, heade
         raise GridRunError("config/header_b: granularity must be 'pasal' or 'ayat'")
     prompt = load_prompt(int(hc["max_header_tokens"]), hc.get("prompt_version"))  # H-079: versi dari config, sama dengan CLI B
     mc = config.load("model", config_dir)
-    store = DirHeaderStore(headers_dir or Path(runs_dir) / "headers", prompt.prompt_hash, runs_dir)
+    store = DirHeaderStore(headers_dir or header_store_dir(runs_dir, family), prompt.prompt_hash, runs_dir)
     return HeaderBinding(store, hc["granularity"], scope, prompt.prompt_hash, mc["profiles"][mc["default_profile"]]["model"])
 
 
@@ -549,7 +550,7 @@ def main(argv: list[str] | None = None) -> int:
             dkw = {"doc": load_corpus()}
         res = run_family_grid(args.family, **dkw, tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
                               butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True),
-                              headers=load_header_binding(runs_dir=args.runs_dir) if args.with_headers else None,
+                              headers=load_header_binding(runs_dir=args.runs_dir, family=args.family) if args.with_headers else None,
                               schemas=SchemaBinding.from_store(args.runs_dir, args.family) if args.with_schema else None)
     except (GridRunError, GridError) as exc:
         print(f"error: {exc}", file=sys.stderr)

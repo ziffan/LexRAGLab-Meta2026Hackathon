@@ -11,6 +11,7 @@ import sys
 from datetime import UTC, datetime
 
 from backend import config
+from backend.grid.headers import header_store_dir
 from backend.spark import BudgetExceeded, Ledger, SparkClient, effective_caps, format_usd_micros
 from backend.tokenizer import get_tokenizer
 
@@ -166,7 +167,8 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
             print(f"error: unknown akta {a.doc!r}", file=sys.stderr)
             return 2
     prepared = prepare_family(ids, sources, tokenizer=tok, header_cfg=hc, retrieval_cfg=rcfg, grid_cfg=gcfg, schema_record=rec)
-    hdir = config.REPO_ROOT / "runs" / "headers"
+    hbase = config.REPO_ROOT / "runs" / "headers"
+    hdir = header_store_dir(config.REPO_ROOT / "runs", a.family)  # W63: store per keluarga; proyeksi tetap di hbase
     ledger = Ledger(config.REPO_ROOT / "runs")
     limit = a.sample or None
     res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent(), profile=a.profile, rpm=a.rpm,
@@ -177,10 +179,10 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
         for d, row in res["per_doc"].items():
             for s, r in row["sources"].items():
                 p = prepared[d][s]
-                write_projection(hdir / "projection" / f"{d}-{p.doc.clean_sha256[:12]}-{p.prompt.prompt_hash[:12]}-{s}.json",
+                write_projection(hbase / "projection" / f"{d}-{p.doc.clean_sha256[:12]}-{p.prompt.prompt_hash[:12]}-{s}.json",
                                  {"created_at": stamp, "factor_bp": res["factor_bp"], "row": r})
         first = next(iter(next(iter(prepared.values())).values()))
-        path = (hdir / "projection" / f"{a.family}-{a.doc or 'all'}-{first.prompt.prompt_hash[:12]}-{'+'.join(sources)}.json")
+        path = (hbase / "projection" / f"{a.family}-{a.doc or 'all'}-{first.prompt.prompt_hash[:12]}-{'+'.join(sources)}.json")
         write_projection(path, {"created_at": stamp, **res})
         print(f"written: {path.relative_to(config.REPO_ROOT)} (+ one file per akta per source)")
         return 0
