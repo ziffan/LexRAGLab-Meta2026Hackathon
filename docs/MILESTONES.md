@@ -12,7 +12,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 | Milestone | Tanggal | Isi | Slice | Estimasi (jam, sudah × 1,5) | Status |
 |---|---|---|---|---|---|
 | M0 Fondasi | 26 Okt malam–27 Okt | Official Rules, repo, klien Spark, korpus terukur | 2 | 4 | selesai 27 Okt |
-| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | selesai (kode + review); sisa agen: screenshot M1.1/M1.4 pada chunker/grid terkini (W93) |
+| M1 Grid tanpa LLM, UU PT | 27–29 Okt | Chunker, tiga mode retrieval, metrik, frontier | 5 | 13 | selesai (kode + review; screenshot M1.1/M1.4 pada chunker v2 dan grid `e7ffa7b0…`, L2#9) |
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | selesai, kecuali M2.4 stretch dipotong (M2.1–M2.3, M2.5 selesai; butir UU PT `data/butir/uupt.v16.jsonl` = 23 dengan 3 `tolak`, akta `akta.v85.jsonl` = 84 dengan 15 `tolak`) |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | selesai (M3.1–M3.4; header B v2 lengkap tiga sumber, grid header-on `82809c6`; skema A UU PT v2 `source: operator`, I-60 ditutup H-084) |
 | M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | **selesai** (Tier 4 M4.1 dikonfirmasi operator 28 Okt; M4.2, M4.3 selesai; akta disetujui operator 27 Okt; skema A akta v2 `source: operator` H-089, grid akta 36 setting `runs/grid/86e701f5…`) |
@@ -148,7 +148,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau dengan golden sample beberapa pasal, screenshot panel.
 **Tier review**: 2. Batas potongan diuji dengan golden sample yang dipilih operator.
 **Estimasi**: 3 jam.
-**Status**: selesai 2026-10-27 (kriteria kode) — kode `4e18c57`, chunker v2 `8e94269`, `80da6c9` (H-062 fixed_size lintas Pasal/section, H-064 heading Pasal di potongan ayat pertama); golden sample disetujui operator (I-36); review Tier 2 lulus (`_kerja/orkestrasi/l3/G3-periksa.md`, `W2-chunk-periksa-hasil.md`). Screenshot `_kerja/orkestrasi/bukti/M1.1-*.png` dari chunker v1; screenshot ulang v2 di pass visual. Update L2#8 (W93): sisa agen = screenshot panel potongan pada chunker v2.
+**Status**: selesai 2026-10-27 (kriteria kode) — kode `4e18c57`, chunker v2 `8e94269`, `80da6c9` (H-062 fixed_size lintas Pasal/section, H-064 heading Pasal di potongan ayat pertama); golden sample disetujui operator (I-36); review Tier 2 lulus (`_kerja/orkestrasi/l3/G3-periksa.md`, `W2-chunk-periksa-hasil.md`). Screenshot `_kerja/orkestrasi/bukti/M1.1-*.png` dari chunker v1; screenshot ulang v2 di pass visual. Update L2#9 (28 Okt): screenshot panel potongan pada chunker v2 dari ekspor statis lokal (iframe 1440 + 375, console 0 error): `_kerja/orkestrasi/bukti/M1.1-v2-*.png`, catatan `bukti/M1.1-v2-catatan.txt`. Unit I-36 yang tampil lewat butir: Pasal 1, 6/7 + Penjelasan, 102 ayat (1), 142 ayat (2), 153A; Pasal 86 + Penjelasan dan Pasal 2 tidak disentuh gold butir mana pun di `uupt.v16`, jadi tidak tampil di panel (tetap tercakup golden test).
 
 ### M1.2 — BM25 dan metrik span pada anggaran
 **Slice**: Untuk satu setting, tabel per butir menampilkan span recall, precision token, dan MRR pada anggaran token default, dengan retrieval BM25 + Sastrawi.
@@ -191,7 +191,7 @@ Prasyarat: minimal enam butir kontrol tulisan operator, dengan span gold.
 **Bukti verifikasi yang wajib disetor**: test hijau untuk split dan frontier, screenshot frontier, catatan run grid.
 **Tier review**: 1. Kebocoran held-out membuat "optimal" palsu.
 **Estimasi**: 3 jam.
-**Status**: selesai 2026-10-27 (kriteria kode) — split/frontier/pemilihan `1aac9e7`, `f970448` (Tier 1 dua putaran); integrasi `8450e1d` (Tier 1 INTa); grafik frontier `1789c4f` (INTb). Run grid v2 UU PT `23b606e` (`runs/grid/a822c0c1….json`: 12 setting jalan, 24 dilewati sampai header B/skema A; split v1 tune 5 / held-out 4). Bukti `bukti/M1.4-*.png` (v1), `bukti/grid-v2.txt`. Grid diulang dengan header B (M3.2) dan skema A (M3.4). Update L2#8 (W93): sisa agen = screenshot frontier pada grid terkini `runs/grid/e7ffa7b0…`.
+**Status**: selesai 2026-10-27 (kriteria kode) — split/frontier/pemilihan `1aac9e7`, `f970448` (Tier 1 dua putaran); integrasi `8450e1d` (Tier 1 INTa); grafik frontier `1789c4f` (INTb). Run grid v2 UU PT `23b606e` (`runs/grid/a822c0c1….json`: 12 setting jalan, 24 dilewati sampai header B/skema A; split v1 tune 5 / held-out 4). Bukti `bukti/M1.4-*.png` (v1), `bukti/grid-v2.txt`. Grid diulang dengan header B (M3.2) dan skema A (M3.4). Update L2#9 (28 Okt): screenshot frontier pada grid aktif `runs/grid/e7ffa7b0…` (dicek lewat R3; 27 setting, 0 dilewati) dari ekspor statis lokal, budget 2000 held-out + tune 1440 dan held-out 375, console 0 error: `_kerja/orkestrasi/bukti/M1.4-v2-*.png`, catatan run `bukti/M1.4-v2-catatan-run.txt`.
 
 ### M1.5 — Metrik janji form
 **Slice**: Untuk setting terpilih, layar menampilkan Recall@K, entity preservation, dan boundary coherence, struktur vs ukuran tetap.

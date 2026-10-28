@@ -7,7 +7,7 @@ diperbarui: 2026-10-28 UTC (session-end L2#8), sesi orkestrasi berlapis di mesin
 
 ## Status
 
-- M0, M1 **selesai** (sisa agen: screenshot M1.1/M1.4 pada chunker/grid terkini). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
+- M0, M1 **selesai** (screenshot M1.1/M1.4 pada chunker v2 dan grid `e7ffa7b0…` disetor L2#9, `_kerja/orkestrasi/bukti/M1.1-v2-*`, `M1.4-v2-*`). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai, M3.1–M3.4 (status MILESTONES dicocokkan L2#8/W93; Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
 - M4 selesai (Tier 4 M4.1 dikonfirmasi operator 28 Okt, preseden M3.3: I-51 + koreksi v2 H-088/H-089 sebagai domain review): skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
 - M5.1: uji visual Chrome statis + live (375/768/1440) lolos setelah fix proxy keep-alive (`b79e37b`, G-39); bukti `_kerja/orkestrasi/bukti/M51-*`. Status tetap "berjalan" setelah dicocokkan (L2#8, W90): kriteria kode terpenuhi; sisa = adegan video dikunci operator (putusan 8) + Tier 4 UX review operator, lalu screenshot per adegan (agen).
@@ -54,5 +54,5 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1402) dan npm (287) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
 2. Gerbang operator: adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
-3. Agen (tidak terblok, kecil): screenshot M1.1/M1.4 pada chunker/grid terkini; opsional test Glimmer di mode statis.
+3. Agen (tidak terblok, kecil): opsional test Glimmer di mode statis.
 4. Frontend 5173 (operator) dan 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39); jawaban C butir tolak dibaca backend dari `runs/` (frontend tidak berubah sejak `b709ac3`; 5175 tailnet memakai `b709ac3`).
