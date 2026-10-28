@@ -17,7 +17,7 @@ def _m(item_id, gold, cov, rt, gt, rank, parts=(1, 1)):
             "retrieved_chunk_ids": ["c1"]}
 
 
-ITEMS = [{"id": f"a{i}", "origin": "operator", "mode": "literal" if i % 2 else "paraphrase"} for i in range(1, 4)]
+ITEMS = [{"id": f"a{i}", "origin": "operator", "mode": "literal" if i % 2 else "parafrase"} for i in range(1, 4)]
 ENV = {"metrics": [_m("a1", 10, 10, 20, 10, 1), _m("a2", 10, 5, 20, 4, 2, (2, 1)), _m("a3", 0, 0, 20, 0, None, (0, 0)),
                    {**_m("x", 1, 1, 1, 1, 1), "setting_id": "other"}]}
 

@@ -8,12 +8,6 @@
         "n_items": 2
       },
       "parafrase": {
-        "mean_span_recall": null,
-        "mean_token_precision": null,
-        "n_gold": 0,
-        "n_items": 0
-      },
-      "paraphrase": {
         "mean_span_recall": 0.5,
         "mean_token_precision": 0.2,
         "n_gold": 1,
@@ -59,7 +53,7 @@
       {
         "fully_covered": false,
         "item_id": "a2",
-        "mode": "paraphrase",
+        "mode": "parafrase",
         "note": null,
         "origin": "operator",
         "recall_at_k": 0.5,
@@ -110,12 +104,6 @@
         "n_items": 2
       },
       "parafrase": {
-        "mean_span_recall": null,
-        "mean_token_precision": null,
-        "n_gold": 0,
-        "n_items": 0
-      },
-      "paraphrase": {
         "mean_span_recall": 0.5,
         "mean_token_precision": 0.2,
         "n_gold": 1,
@@ -161,7 +149,7 @@
       {
         "fully_covered": false,
         "item_id": "a2",
-        "mode": "paraphrase",
+        "mode": "parafrase",
         "note": null,
         "origin": "operator",
         "recall_at_k": 0.5,

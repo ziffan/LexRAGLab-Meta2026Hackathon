@@ -15,26 +15,25 @@ from backend import config
 from backend.answer.context import entry_labels, unit_label
 from backend.chunking import chunk_document, schema_address_fn, schema_address_map
 from backend.corpus import load_corpus
-from backend.schema_a import SchemaStore, load_correction_file, parent_samples, validate_body
+from backend.schema_a import SchemaStore, parent_samples, validate_body
 from backend.verifier import (ChunkSpan, load_verifier_config, units_from_address_map, verify_citation)
 
 from ._chunk_util import ToyWs
 
-CORR = config.REPO_ROOT / "_kerja" / "orkestrasi" / "skemaA-akta-v2-koreksi.json"
 DEEDS = [f"akta-0{i}" for i in range(1, 6)]
 N_PASAL = {"akta-01": 14, "akta-02": 17, "akta-03": 20, "akta-04": 22, "akta-05": 25}
 NON_PASAL = ["Kepala Akta", "Komparisi", "Keterangan Pendiri", "Penutup Akta"]
 
 
-CORR_B = config.REPO_ROOT / "_kerja" / "orkestrasi" / "skemaA-akta-v2-koreksi-b.json"
 _COMMON = (r"^(?:ANGGARAN DASAR\s+)?Pasal\s+\d+\s*$|^(?P<kepala_akta>AKTA [A-Z][A-Z ]*)$|")
 _TAIL = r"|^(?P<keterangan_pendiri>KETERANGAN PENDIRI)\b|^(?P<penutup_akta>PENUTUP)\s*$"
-# Pola level 1 disalin ke test (berkas di _kerja/ tidak di-commit): (a) komparisi mulai di 'Menghadap'; (b) di butir penghadap pertama.
+# Pola level 1 ada di test. Badan skema (level ayat/huruf, contoh) dari runs/schemas/akta/v2.json (varian b, source operator, ter-commit);
+# (a) komparisi mulai di 'Menghadap'; (b) di butir penghadap pertama. Tanpa _kerja/ (di-gitignore).
 PATTERNS = {
     "a": _COMMON + r"^(?P<komparisi>(?:Menghadap kepada|Berhadapan dengan) saya)\b" + _TAIL,
     "b": _COMMON + r"^(?P<komparisi>1\.)(?=\s+(?:Tuan|Nyonya|Nona)\s+[A-Z]{2,}\s)" + _TAIL,
 }
-FILES = {"a": CORR, "b": CORR_B}
+AKTA_V2 = config.REPO_ROOT / "runs" / "schemas" / "akta" / "v2.json"
 
 
 @pytest.fixture(scope="module", params=["a", "b"])
@@ -44,13 +43,14 @@ def variant(request):
 
 @pytest.fixture(scope="module")
 def corr(variant):
-    c = load_correction_file(FILES[variant]) if FILES[variant].exists() else load_correction_file(CORR)
-    c["schema"] = json.loads(json.dumps(c["schema"]))
-    c["schema"]["levels"][0]["marker_pattern"] = PATTERNS[variant]
-    if FILES[variant].exists():  # berkas ada: pola tertanam harus sama dengan berkas
-        assert load_correction_file(FILES[variant])["schema"]["levels"][0]["marker_pattern"] == PATTERNS[variant]
-    if variant == "b":
-        c["schema"]["levels"][0]["examples"] = [e for e in c["schema"]["levels"][0]["examples"] if not e.startswith("Menghadap")] + ["1. Tuan WIRASENA KARTAPRADJA LUBIS"]
+    base = json.loads(AKTA_V2.read_text(encoding="utf-8"))
+    assert base["source"] == "operator" and base["schema_version"] == 2 and base["body"]["levels"][0]["marker_pattern"] == PATTERNS["b"]
+    c = {"family": "akta", "parent_version": base["parent_version"], "operator_note": base["operator_note"],
+         "schema": json.loads(json.dumps(base["body"]))}
+    lv0 = c["schema"]["levels"][0]
+    lv0["marker_pattern"] = PATTERNS[variant]
+    if variant == "a":
+        lv0["examples"] = [e for e in lv0["examples"] if not e.startswith("1. Tuan")] + ["Menghadap kepada saya,"]
     return c
 
 
