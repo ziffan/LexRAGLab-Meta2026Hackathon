@@ -36,6 +36,14 @@ export function siblingModes(snap: Snapshot, s: Setting): Setting[] {
   return MODES.map((m) => avail.find((x) => chunkerKey(x) === chunkerKey(s) && x.retrieval_mode === m)).filter((x): x is Setting => !!x);
 }
 
+/** Kembaran header B (UX-04 (a), putusan operator 12): setting yang sama (chunker, parameter, mode, anggaran) dengan header B
+ * dibalik, hanya bila tersedia di snapshot. Bukan frontier per mode; hanya membaca metrik per butir yang sudah tersimpan. */
+export function headerTwin(snap: Snapshot, s: Setting): Setting | undefined {
+  return availableSettings(snap).find((x) => x.setting_id !== s.setting_id && x.header_b !== s.header_b && x.chunker === s.chunker
+    && x.chunk_size_tokens === s.chunk_size_tokens && x.overlap_tokens === s.overlap_tokens && x.schema_version === s.schema_version
+    && x.retrieval_mode === s.retrieval_mode && x.budget_tokens === s.budget_tokens);
+}
+
 /** Pembanding ukuran tetap: mode retrieval yang sama bila ada. */
 export function fixedFor(snap: Snapshot, primary: Setting | undefined): Setting | undefined {
   const fixed = availableSettings(snap).filter((s) => s.chunker === "fixed_size" && !s.header_b);

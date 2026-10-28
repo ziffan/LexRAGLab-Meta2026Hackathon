@@ -384,3 +384,7 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 | 16 | Filter Split U4 bawaan UU PT = Held-out (cakupan sama dengan U2); akta = all; `fsplit` di URL hanya bila beda dari bawaan |
 | 18 | Rata-rata (span recall mean, MRR) desimal dua angka, pecahan eksak sebagai `title`; hitungan tetap "x of y" |
 | 22 | Header: ikon hint dikelompokkan dengan label pemiliknya (`.hdr-group`) |
+| 04 (a) | U4 "Header B off vs on, per item": setting terpilih dan kembarannya (header dibalik, chunker/mode/anggaran sama), butir mengikuti filter Origin/Mode/Split; metrik per butir tersimpan. Tanpa frontier per mode |
+| 08 | U6 daftar baca-saja "Decided ({n})" (Approved/Edited/Rejected) di bawah antrean |
+| 09 | Ekspor statis memuat profil tersimpan setting terpilih (UU PT) dan setting transfer (akta), `data/profiles/<fam>/<sid16>.json`, byte-identik dengan `profiles/` bila masih sama dengan W7 selain `created_at`. U7 statis: pratinjau baca-saja + Download JSON; Export/Load tetap nonaktif (H-051) |
+| 17 | U9 baris provenance dari `items_summary` |

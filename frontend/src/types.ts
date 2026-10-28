@@ -336,7 +336,7 @@ export interface Health {
   config_hash: string;
   /** Jumlah `cost_usd_micros` seluruh RunRecord tersimpan (integer micro-USD); null/tidak ada = tidak terbaca. */
   run_cost_usd_micros?: number | null;
-  /** Buku belanja `Ledger.spent` (`cost ?? projected`, H-063): satu angka biaya U0/README/video (putusan operator 12). */
+  /** Buku belanja `Ledger.spent` (`spend_micros` = cost + projected per record, H-063): satu angka biaya U0/README/video (putusan operator 12). */
   ledger_spent_usd_micros?: number | null;
   /** Agregat per jenis run atas SEMUA RunRecord (server, tanpa limit R6); tabel per peran U8. */
   run_totals_by_kind?: RunTotal[] | null;

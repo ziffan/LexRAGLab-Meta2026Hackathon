@@ -75,7 +75,7 @@ def run_cost_micros(runs_dir: Path) -> int | None:
 
 
 def ledger_spent_micros(runs_dir: Path) -> int | None:
-    """Buku belanja `Ledger.spent()` (`cost ?? projected`, H-063): angka biaya tunggal yang dikutip header, README, video
+    """Buku belanja `Ledger.spent()` (`spend_micros` = cost + projected per record; disebut `cost ?? projected` di H-063): angka biaya tunggal yang dikutip header, README, video
     (putusan operator 12 butir 2). Integer micro-USD. None bila record tidak terbaca."""
     try:
         return Ledger(runs_dir).spent()

@@ -12,10 +12,10 @@ afterEach(() => {
 describe("unknown GET under /api in static mode", () => {
   it("resolves to unknown and never calls the raw fetch", async () => {
     expect(resolveStatic("/api/x").kind).toBe("unknown");
-    expect(resolveStatic("/api/families/uupt/profiles/export?setting_id=s").kind).toBe("unknown");
+    expect(resolveStatic("/api/families/uupt/profiles/export").kind).toBe("unknown"); // UX-09: dengan setting_id = berkas profil statis
     const raw = vi.fn(async (_u: string, _i?: RequestInit) => new Response("{}", { status: 200 }));
     const f = staticAwareFetch((u, i) => raw(u, i), () => true);
-    for (const u of ["/api/x", "/api/families/uupt/profiles/export?setting_id=s", "/api/families/uupt/retrieval"]) {
+    for (const u of ["/api/x", "/api/families/uupt/profiles/export", "/api/families/uupt/retrieval"]) {
       const res = await f(u);
       expect(res.status).toBe(404);
       expect(((await res.json()) as { error: { code: string } }).error.code).toBe("not_found");

@@ -4,6 +4,7 @@ import {
   type ContextView, type EditState, type ProposalRecord, type ReviewState,
 } from "../lib/review";
 import { apiFetch } from "../api";
+import { truncate } from "../lib/format";
 import { modeLabel } from "../lib/labels";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
 import { FAMILY_LABELS } from "./Header";
@@ -217,6 +218,41 @@ export function ReviewList({ state, ctl }: { state: ReviewState; ctl: ReviewCont
   );
 }
 
+const DECISION_LABEL: Record<string, string> = { disetujui: "Approved", diubah: "Edited", ditolak: "Rejected" };
+
+/** UX-08 (putusan operator 12): usulan yang sudah diputus operator, baca-saja, di bawah antrean. Tanpa tombol tulis. */
+export function DecidedList({ state }: { state: ReviewState }) {
+  if (state.load !== "ready") return null;
+  const done = state.all.filter((p) => p.review_status !== "usulan")
+    .sort((a, b) => (b.reviewed_at ?? "").localeCompare(a.reviewed_at ?? "") || a.proposal_id.localeCompare(b.proposal_id));
+  if (done.length === 0) return null;
+  return (
+    <section aria-label="Decided proposals" data-testid="decided">
+      <h3 className="detail-title">Decided ({done.length})</h3>
+      <p className="note">Read-only. Operator decisions on Spark proposals; approved and edited proposals became items.</p>
+      <div className="table-wrap">
+        <table className="data">
+          <thead>
+            <tr><th scope="col">Proposal</th><th scope="col">Mode</th><th scope="col">Query</th><th scope="col">Decision</th><th scope="col">Item</th><th scope="col">Reviewed (UTC)</th></tr>
+          </thead>
+          <tbody>
+            {done.map((p) => (
+              <tr key={p.proposal_id}>
+                <th scope="row" className="mono">{p.proposal_id}</th>
+                <td>{modeLabel(p.edited?.mode ?? p.body.mode)}</td>
+                <td lang="id">{truncate(p.edited?.query ?? p.body.query ?? "", 100)}</td>
+                <td>{DECISION_LABEL[p.review_status] ?? p.review_status}</td>
+                <td className="mono">{p.item_id ?? "n/a"}</td>
+                <td>{p.reviewed_at ? p.reviewed_at.replace("T", " ") : "n/a"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 /** Penghitung antrean dan butir wajib tolak per akta (H-087); informasional, bukan gerbang. Hanya bila ada rekaman unanswerable. */
 export function ReviewCounters({ state }: { state: ReviewState }) {
   const hasRefuse = state.all.some(isUnanswerable) || state.proposals.some(isUnanswerable);
@@ -273,6 +309,7 @@ export function ReviewScreen() {
           {isStatic() && <div className="note" role="note">{STATIC_DISABLED}</div>}
           <ReviewCounters state={state} />
           <ReviewList state={state} ctl={ctl} />
+          <DecidedList state={state} />
         </section>
       </main>
       <footer className="app-footer">Research demo. Not legal advice.</footer>

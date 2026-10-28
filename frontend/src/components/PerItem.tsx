@@ -1,11 +1,11 @@
 import { useStore } from "../state";
-import { truncate } from "../lib/format";
+import { truncate, xOfY } from "../lib/format";
 import { Hint } from "./Hint";
 import { modeLabel, originLabel, settingShort, splitLabel } from "../lib/labels";
 import { filterScopeLabel } from "../lib/rows";
 import { itemPasses, originSummary, toRow } from "../lib/rows";
-import { availableSettings, metricsFor } from "../lib/settings";
-import type { Item, ItemMetrics, Snapshot } from "../types";
+import { availableSettings, headerTwin, metricsFor } from "../lib/settings";
+import type { Item, ItemMetrics, Setting, Snapshot } from "../types";
 import { ModeCompare } from "./ModeCompare";
 import { QualityPanel } from "./QualityPanel";
 import { EmptyBlock, SnapshotPanel } from "./Shell";
@@ -148,6 +148,7 @@ function Body({ snap }: { snap: Snapshot }) {
         </>
       )}
 
+      {!transfer && <HeaderCompare snap={snap} setting={sel} items={withGold} splitOf={splitOf} selectedItemId={state.selectedItemId} onSelect={(id) => dispatch({ type: "select_item", id })} />}
       <ModeCompare snap={snap} setting={sel} metricsFor={(id) => new Map(metricsFor(snap, id).map((m) => [m.item_id, m]))} />
       <QualityPanel snap={snap} setting={sel} />
     </>
@@ -176,3 +177,63 @@ function ItemRow({ item, m, split, selected, onSelect }: { item: Item; m: ItemMe
     </tr>
   );
 }
+
+/** UX-04 (a): per butir (mengikuti filter Origin/Mode/Split di atas), setting terpilih dengan header B off vs on. Metrik dari snapshot. */
+export function HeaderCompare({ snap, setting, items, splitOf, selectedItemId, onSelect }: {
+  snap: Snapshot; setting: Setting; items: Item[]; splitOf: (id: string) => string | null | undefined; selectedItemId: string | null; onSelect: (id: string) => void;
+}) {
+  const twin = headerTwin(snap, setting);
+  if (!twin || items.length === 0) return null;
+  const off = setting.header_b ? twin : setting;
+  const on = setting.header_b ? setting : twin;
+  const mOff = new Map(metricsFor(snap, off.setting_id).map((m) => [m.item_id, m]));
+  const mOn = new Map(metricsFor(snap, on.setting_id).map((m) => [m.item_id, m]));
+  if (mOn.size === 0 || mOff.size === 0) return null;
+  const count = (m: Map<string, ItemMetrics>) => {
+    const g = items.map((i) => m.get(i.id)).filter((x): x is ItemMetrics => !!x && x.fully_covered !== null);
+    return xOfY(g.filter((x) => x.fully_covered).length, g.length, "items fully covered");
+  };
+  const cell = (m: ItemMetrics | undefined) => (m ? toRow(m) : null);
+  return (
+    <section aria-label="Header B off vs on, per item" data-testid="header-compare">
+      <h3 className="detail-title">Header B off vs on, per item<Hint id="header_b.what" /></h3>
+      <p className="note">
+        Same setting ({settingShort(off).replace(/ · header (on|off)$/, "")}), items matching the filters above. Header B off: {count(mOff)}. Header B on: {count(mOn)}.
+      </p>
+      <div className="table-wrap">
+        <table className="data">
+          <caption className="sr-only">Header B off and on for the same setting, per item</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Mode</th>
+              <th scope="col">Split</th>
+              <th scope="col">Span recall, header B off</th>
+              <th scope="col">Span recall, header B on</th>
+              <th scope="col">Fully covered, off</th>
+              <th scope="col">Fully covered, on</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((i) => {
+              const a = cell(mOff.get(i.id));
+              const b = cell(mOn.get(i.id));
+              return (
+                <tr key={i.id} className={selectedItemId === i.id ? "sel" : ""}>
+                  <th scope="row"><button type="button" className="addr" onClick={() => onSelect(i.id)}>{i.id}</button></th>
+                  <td>{modeLabel(i.mode)}</td>
+                  <td>{splitLabel(splitOf(i.id) as "tune" | "held_out" | null | undefined)}</td>
+                  <td>{a?.spanRecall ?? "n/a"}</td>
+                  <td>{b?.spanRecall ?? "n/a"}</td>
+                  <td>{a?.fullyCovered ?? "n/a"}</td>
+                  <td>{b?.fullyCovered ?? "n/a"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+

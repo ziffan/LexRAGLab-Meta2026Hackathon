@@ -21,6 +21,9 @@ export const CHUNK_MATCH_TEXT = "chunk hash matches source run";
 export const CHUNK_MISMATCH_TEXT = "Chunk hash does not match source run";
 export const NOT_JSON_TEXT = "Could not read profile file: it is not a JSON object. Nothing was sent.";
 
+export const STATIC_PROFILE_NOTE = "Static replay: read-only preview of the stored profile. Download JSON saves it in your browser.";
+export const STATIC_PROFILE_MISSING = "The static export includes the stored profile of the selected setting only (Company Law: best profile; Deed: transfer setting).";
+
 export const TITLE_UUPT = "Held-out results";
 export const TITLE_AKTA = "Transfer results";
 
@@ -243,6 +246,8 @@ export interface ProfileViewProps {
   onExport: () => void;
   onFile: (file: File) => void;
   onDownload: (profile: Profile) => void;
+  /** Statis (UX-09): catatan di atas pratinjau baca-saja, atau alasan tidak ada profil. */
+  staticNote?: string | null;
 }
 
 export function ProfileView(p: ProfileViewProps) {
@@ -268,6 +273,7 @@ export function ProfileView(p: ProfileViewProps) {
         />
         {p.disabled && <span className="note">{p.disabled}</span>}
       </div>
+      {p.staticNote && <p className="note" data-testid="static-profile-note">{p.staticNote}</p>}
       {p.exportPhase.kind === "idle" && !p.disabled && !p.settingId && <EmptyBlock>{EMPTY_TEXT}</EmptyBlock>}
       {p.exportPhase.kind === "building" && <LoadingBlock text={BUILDING_TEXT} />}
       {p.exportPhase.kind === "error" && <ErrorBlock title={p.exportPhase.message} />}
@@ -305,6 +311,20 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
     setLoadPhase({ kind: "idle" });
   }, [state.family, settingId]);
   const disabled = disabledReason({ staticMode: isStatic(), replay: snap?.replay === true, settingId });
+  // UX-09: di ekspor statis, profil tersimpan setting terpilih dibaca otomatis (berkas statis, GET saja) untuk pratinjau + Download JSON.
+  const [staticMissing, setStaticMissing] = useState(false);
+  useEffect(() => {
+    setStaticMissing(false);
+    if (!isStatic() || !settingId || state.snapshot.status !== "ready") return;
+    const fam = state.family;
+    void runGuardedExport(guard.current, client, fam, settingId, (ph) => {
+      if (ph.kind === "error") {
+        setStaticMissing(true);
+        setExportPhase({ kind: "idle" });
+      } else setExportPhase(ph);
+    }, () => undefined);
+  }, [state.family, settingId, state.snapshot.status, client]);
+  const staticNote = !isStatic() ? null : staticMissing ? STATIC_PROFILE_MISSING : exportPhase.kind === "ready" ? STATIC_PROFILE_NOTE : null;
 
   let body;
   if (state.snapshot.status === "idle" || state.snapshot.status === "loading") body = <LoadingBlock text="Loading snapshot…" />;
@@ -320,6 +340,7 @@ export function ProfilePanel({ client = liveClient }: { client?: U7Client }) {
         loadPhase={loadPhase}
         report={snap?.report ?? null}
         degenerate={snap ? hasDegenerate(snap) : false}
+        staticNote={staticNote}
         onExport={() => {
           const fam = state.family;
           void runGuardedExport(guard.current, client, fam, settingId, setExportPhase, (pr) => {

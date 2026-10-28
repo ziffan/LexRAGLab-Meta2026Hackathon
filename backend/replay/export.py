@@ -17,6 +17,7 @@ Tata letak (jalur relatif terhadap `data/`; dipetakan frontend di `frontend/src/
   retrieval/<family>/<setting_id[:16]>/<item_id>.json
   answers/<family>/<item_id>/<best[:16]>/<baseline[:16]>/<model_profile>.json
   proposals/<family>.json
+  profiles/<family>/<setting_id[:16]>.json         profil tersimpan setting terpilih/transfer (UX-09), byte-identik dengan `profiles/`
 Di root keluaran (disalin byte-identik dari root repo, H-097; lisensi wajib menyertai font OFL yang terbundel):
   LICENSE  NOTICE  licenses/*.txt
 Penyalinan hanya menimpa berkas-berkas itu; berkas lain di root keluaran (bundel frontend) tidak disentuh.
@@ -75,6 +76,28 @@ def baseline_id(app: Any, family: str, best_id: str) -> str | None:
     best = next((x for x in all_settings if x.setting_id == best_id), None)
     base = baseline_for(all_settings, best, svc.cfg("grid")["baseline"]) if best is not None else None
     return base.setting_id if base is not None else None
+
+
+def stored_profile(get: Any, profiles_dir: Path, fam: str, snapshot: Mapping[str, Any]) -> tuple[str, bytes] | None:
+    """UX-09: (jalur relatif data/, byte) profil tersimpan untuk setting terpilih (UU PT) atau setting transfer (akta), atau None.
+    Byte-identik dengan `profiles/<fam>/<setting_id>.json`; hanya bila sama dengan W7 replay sekarang (`get`) selain `created_at`."""
+    g = snapshot.get("grid") or {}
+    prof_id = (g.get("selected") or {}).get("setting_id") or (g.get("transfer") or {}).get("setting_id")
+    if not isinstance(prof_id, str):
+        return None
+    path = Path(profiles_dir) / _safe(fam) / f"{_safe(prof_id)}.json"
+    if not path.is_file():
+        return None
+    now = get(f"/api/families/{fam}/profiles/export", setting_id=prof_id)
+    blob = path.read_bytes()
+    try:
+        stored = json.loads(blob.decode("utf-8"))
+    except ValueError:
+        return None
+    if not isinstance(now, dict) or not isinstance(stored, dict):
+        return None
+    strip = lambda d: {k: v for k, v in d.items() if k != "created_at"}  # noqa: E731
+    return (f"profiles/{fam}/{sid(prof_id)}.json", blob) if strip(stored) == strip(now) else None
 
 
 def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieval: bool = True, answers: bool = True,
@@ -164,6 +187,14 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
                             stored_profiles.add(prof)
                             key = f"{_safe(it['id'])}/{sid(best['setting_id'])}/{sid(base['setting_id'])}/{_safe(prof)}"
                             files[f"answers/{fam}/{key}.json"] = dump(r.json())
+
+        # UX-09 (putusan operator 12, Q-UX-6): profil tersimpan setting terpilih (UU PT) / setting transfer (akta), disalin
+        # byte-identik dari `profiles/<fam>/<setting_id>.json` (keluaran W7), hanya bila sama dengan W7 replay sekarang selain
+        # `created_at` (profil basi tidak diekspor). Frontend statis: pratinjau baca-saja + Download JSON; tanpa endpoint tulis (H-051).
+        runs_dir = getattr(app.state.service, "runs_dir", None)  # layanan palsu di test boleh tanpa runs_dir
+        prof = stored_profile(get, Path(runs_dir).parent / "profiles", fam, default) if runs_dir is not None else None
+        if prof is not None:
+            files[prof[0]] = prof[1]
 
         q = get(f"/api/families/{fam}/proposals")
         if q is not None:
