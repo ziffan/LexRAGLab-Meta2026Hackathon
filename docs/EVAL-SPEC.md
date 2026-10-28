@@ -110,7 +110,7 @@ Kasus uji wajib (dari `docs/MILESTONES.md` M1.5): nomor pasal terbelah, batas di
 
 ## 8. Split berstrata (H-015, H-049)
 
-Berlaku untuk UU PT. Keluarga akta tidak dibagi tune/held-out (H-054): kelima butir akta dilaporkan per butir sebagai uji transfer, dan tidak ada `SplitRecord` akta.
+Berlaku untuk UU PT. Keluarga akta tidak dibagi tune/held-out (H-054): semua butir akta (`akta.v85`: 84 butir atas lima akta) dilaporkan per butir sebagai uji transfer, dan tidak ada `SplitRecord` akta.
 
 1. Strata = pasangan (`origin`, `mode`).
 2. Di tiap stratum, butir diurutkan menurut `id`, diacak dengan `seed` dari `config/grid`, lalu dibagi menurut `held_out_ratio = 0.4` dari `config/grid` (H-049).
