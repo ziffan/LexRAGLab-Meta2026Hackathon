@@ -56,4 +56,4 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1402) dan npm (287) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
 2. Gerbang operator: Tier 4 M4.1, adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
 3. Agen (tidak terblok, kecil): screenshot M1.1/M1.4 pada chunker/grid terkini; opsional test Glimmer di mode statis.
-4. Frontend 5173 (operator) dan 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39); 5175 perlu >= `f52f6a7` agar jawaban C butir tolak tampil.
+4. Frontend 5173 (operator) dan 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39); jawaban C butir tolak dibaca backend dari `runs/` (frontend tidak berubah sejak `b709ac3`; 5175 tailnet memakai `b709ac3`).
