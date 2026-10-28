@@ -178,7 +178,7 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
     try:
         g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
         pkw = dict(tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
-                   encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=cbind, schemas=plan.schemas)
+                   encoder_factory=encoder_factory or (lambda r=r: encoder_from_config(r)), headers=cbind, schemas=plan.schemas)
         pipe: Any = MultiDocPipeline(docs, **pkw) if multi else Pipeline(doc, **pkw)
         res = run_grid(settings=twins, items=plan.items, pipeline=pipe, cache=cstore, clean_sha256=plan.corpus_key,
                        config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family,
@@ -246,12 +246,13 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
             "n_truncated_by_chunker": trunc,
         }
         assert set(by_pt) <= executed_ids
-        cstore.write(plan.key, envelope)
         if pol == "mask_ref":  # S11 (c): rujukan Contributor ber-mask SAMA (tanpa panggilan model; hanya retrieval)
             masked = sorted({cid for sid, r in cov["settings"].items() if not r.get("below_threshold") for cid in r["missing"]})
             if masked:
                 ref_path = _run_reference(base, masked, profile, pol, pct, eff_model, executed, by_id_all, common, plan, pkw, multi, docs,
                                           doc, family, g, off_metrics, runs)
+        # Amplop ditulis SESUDAH rujukan: rujukan yang gagal tidak meninggalkan amplop yang kelak cache-hit tanpa rujukan.
+        cstore.write(plan.key, envelope)
         return CompareGridResult(plan.key, False, envelope, cstore.path(plan.key), ref_path)
     finally:
         if lock is not None:
