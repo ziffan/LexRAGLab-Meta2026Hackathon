@@ -33,12 +33,31 @@ def _is_num(v: Any) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
+FORBIDDEN_PROFILE_KEYS = ("max_header_tokens", "schema_max_length_chars")
+
+
+def check_forbidden_profile_keys(model_cfg: Mapping[str, Any]) -> None:
+    """H-101 P17: validator header sama untuk semua model; kunci ini di `[profiles.*]` = config_invalid.
+    Kunci tak dikenal lain tetap diabaikan."""
+    profiles = model_cfg.get("profiles") if isinstance(model_cfg, Mapping) else None
+    if not isinstance(profiles, Mapping):
+        return
+    for name, p in profiles.items():
+        if isinstance(p, Mapping):
+            for k in FORBIDDEN_PROFILE_KEYS:
+                if k in p:
+                    raise ConfigInvalid(f"config/model: profile '{name}' must not set '{k}' (the header validator is the "
+                                        f"same for every model; set it in config/header_b)")
+
+
 def load_configs(config_dir: Path | None = None) -> tuple[dict, dict]:
     """(model, budget) dari `config/`. Berkas hilang/rusak -> ConfigInvalid."""
     try:
-        return cfg.load("model", config_dir), cfg.load("budget", config_dir)
+        model, budget = cfg.load("model", config_dir), cfg.load("budget", config_dir)
     except cfg.ConfigError as exc:
         raise ConfigInvalid(str(exc)) from None
+    check_forbidden_profile_keys(model)
+    return model, budget
 
 
 @dataclass(frozen=True)
@@ -167,6 +186,7 @@ def _profile_limits(profile: str, p: Mapping[str, Any], base: Limits) -> Limits:
 
 def build_settings(profile: str, model_cfg: Mapping[str, Any], env: Mapping[str, str], *,
                    need_credentials: bool = True) -> Settings:
+    check_forbidden_profile_keys(model_cfg)
     p = profile_cfg(model_cfg, profile)
     limits = parse_limits(model_cfg)
     host = model_cfg.get("host")

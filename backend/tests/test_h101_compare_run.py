@@ -252,7 +252,7 @@ def test_s12c_glimmer_skips_guard_but_keeps_error_stop(tmp_path):
     rig = rig_for(tmp_path, "glimmer_local", chat_usage={"prompt_tokens": 47_500, "cached": 0, "completion_tokens": 50})
     s = go(rig, make_prepared(12), compare_store_dir(rig.runs, "glimmer_local"), profile="glimmer_local")
     assert s["stopped"] is None and s["stored"] == 12 and rig.tr.calls == 12 and s["cache_guard"] == "skipped"
-    bad = {f"CH-U{i}": [words(41)] for i in range(1, 13)}
+    bad = {f"CH-U{i}": ["TIMEOUT"] for i in range(1, 13)}  # galat teknis (semantic_invalid tidak dihitung, putusan 13)
     rig2 = rig_for(tmp_path / "e", "glimmer_local", bad)
     s2 = go(rig2, make_prepared(12), compare_store_dir(rig2.runs, "glimmer_local"), profile="glimmer_local",
             hc=hc_b(max_consecutive_errors=5), max_attempts=3)

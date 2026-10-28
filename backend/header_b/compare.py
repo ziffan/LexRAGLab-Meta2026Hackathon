@@ -300,7 +300,7 @@ def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mappi
                         warm_max_output_tokens=hc["warm_max_output_tokens"], meta=meta_for(pr.p), warm=warm,
                         cache_guard_calls=None if local else hc["cache_guard_calls"],
                         cache_guard_min_ratio=hc["cache_guard_min_ratio"], max_length_chars=hc.get("schema_max_length_chars"),
-                        warm_unit=warm_unit_for(uuid.uuid4().hex[:WARM_NONCE_LEN]))
+                        warm_unit=warm_unit_for(uuid.uuid4().hex[:WARM_NONCE_LEN]), count_semantic_errors=False)
                 except BudgetExceeded:
                     summary["stopped"], summary["stopped_at"] = "budget_exceeded", pr.key
                     done = True

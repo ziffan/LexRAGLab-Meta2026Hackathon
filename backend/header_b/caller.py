@@ -124,7 +124,8 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
                 tokenizer: Any, headers_dir: Path, max_header_tokens: int, max_output_tokens: int,
                 max_consecutive_errors: int, warm_max_output_tokens: int, meta: dict[str, Any], warm: bool = True,
                 cache_guard_calls: int | None = None, cache_guard_min_ratio: Fraction | None = None,
-                max_length_chars: int | None = None, save_headers: bool = True, warm_unit: Unit | None = None) -> HeaderRun:
+                max_length_chars: int | None = None, save_headers: bool = True, warm_unit: Unit | None = None,
+                count_semantic_errors: bool = True) -> HeaderRun:
     """Guard cache (H-074): setelah `cache_guard_calls` panggilan berbayar (bukan cache hit lokal, tanpa pemanas) rasio
     agregat cached/input < `cache_guard_min_ratio` (inklusif: sama dengan batas lanjut) -> berhenti `cache_ratio_low`."""
     run = HeaderRun()
@@ -161,7 +162,10 @@ def run_headers(client: SparkClient, prompt: PromptB, prefix: DocPrefix, units: 
                 _save_rejected(headers_dir, granularity, prompt, u, res, tokenizer)
             err = res.record.error or {"code": "model_error", "message": "call failed"}
             run.outcomes.append(HeaderOutcome(u, res.record, [], dict(err)))
-            consecutive += 1
+            # H-101 (putusan 13): jalur pembanding boleh tidak menghitung `semantic_invalid` (keluaran sah transport yang ditolak
+            # validator 40 token/maxLength); galat teknis tetap dihitung. Bawaan True = perilaku lama.
+            if count_semantic_errors or err.get("code") != "semantic_invalid":
+                consecutive += 1
             if consecutive >= max_consecutive_errors:
                 run.stopped_reason = "too_many_errors"
                 return run

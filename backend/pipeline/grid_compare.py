@@ -71,12 +71,20 @@ def comparison_frontier(off_points: Sequence[GridPoint], on_points: Sequence[Gri
     return compute_frontiers([*off_points, *on_points], key)
 
 
-def coverage_of(twins: Sequence[Setting], points: Sequence[Any], binding: HeaderBinding) -> dict[str, list[str]]:
-    """Sumber (granularitas header) yang menghasilkan minimal satu GridPoint = `sources_run`; sisanya `sources_not_run` (S17 (d))."""
-    have = {s.setting_id for s in twins}
-    pid = {p.setting_id for p in points}
+def store_has_source(store: Any, gran: str) -> bool:
+    """Ada minimal satu header tersimpan untuk sumber `gran` (dibaca dari isi store, bukan dari hasil titik grid)."""
+    if isinstance(store, DirHeaderStore):
+        return next((store.headers_dir / gran / store.prompt12).glob("*.json"), None) is not None
+    recs = getattr(store, "records", None)
+    return isinstance(recs, Mapping) and any(r.get("granularity") == gran for r in recs.values())
+
+
+def coverage_of(twins: Sequence[Setting], binding: HeaderBinding) -> dict[str, list[str]]:
+    """Cakupan per sumber header diturunkan dari ISI store pembanding: `sources_run` = sumber yang dibutuhkan kembaran dan punya
+    header tersimpan; `sources_not_run` = dibutuhkan tetapi store kosong (S17 (d)). Setting yang gagal sebagian tetap tercatat di
+    `failed_settings`, bukan sebagai sumber tak dijalankan."""
     need = {binding.expected_granularity(s.chunker) for s in twins}
-    ran = {binding.expected_granularity(s.chunker) for s in twins if s.setting_id in pid and s.setting_id in have}
+    ran = {g for g in need if store_has_source(binding.store, g)}
     order = {g: i for i, g in enumerate(GRANULARITY_DIRS)}
     return {"sources_run": sorted(ran, key=order.get), "sources_not_run": sorted(need - ran, key=order.get)}  # type: ignore[arg-type]
 
@@ -191,7 +199,7 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
                                                    (f.family, f.split, f.budget_tokens) and p.dominated)} for f in fronts],
             "selections": {},  # model pembanding tidak memilih profil (D3)
             "failed_settings": [f.to_dict() for f in res.failed_settings],
-            "coverage": coverage_of(twins, on_pts, cbind),
+            "coverage": coverage_of(twins, cbind),
             "n_truncated_by_chunker": trunc,
         }
         assert set(by_pt) <= executed_ids

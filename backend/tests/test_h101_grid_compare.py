@@ -146,12 +146,12 @@ def test_s17d_partial_coverage_one_source_run_two_header_missing():
         return Setting(sid, "uupt", chunker, None, None, None, "bm25", True, 2000)
 
     twins = [st("sA+hdr", "structure_handwritten"), st("sB+hdr", "fixed_size"), st("sC+hdr", "structure_schema")]
-    binding = HeaderBinding(MemoryHeaderStore(), "pasal", "frontier_only", "ph", "m")
+    binding = HeaderBinding(MemoryHeaderStore({"c1": {"chunk_id": "c1", "header": "H", "granularity": "pasal"}}), "pasal", "frontier_only", "ph", "m")
     pts = [pt("sA+hdr", 100, "1/2")]
-    assert gc.coverage_of(twins, pts, binding) == {"sources_run": ["pasal"], "sources_not_run": ["fixed_size", "structure_schema"]}
+    assert gc.coverage_of(twins, binding) == {"sources_run": ["pasal"], "sources_not_run": ["fixed_size", "structure_schema"]}
     env = {"label": "Header B: Glimmer (local)", "family": "uupt", "key": "K", "off_ref": {"key": "K0", "path": "runs/grid/K0.json"},
            "compare": {"provider": "lmstudio_local", "model": "m", "quantization": "Q4_K_M", "effort": "high"},
-           "coverage": gc.coverage_of(twins, pts, binding), "settings_run": [{"setting_id": "sA+hdr", "chunker": "structure_handwritten",
+           "coverage": gc.coverage_of(twins, binding), "settings_run": [{"setting_id": "sA+hdr", "chunker": "structure_handwritten",
                                                                                "retrieval_mode": "bm25"}],
            "points": [{"setting_id": "sA+hdr", "budget_tokens": 2000, "split": "tune", "mean_span_recall": 0.5,
                        "exact": {"mean_span_recall": "1/2", "mean_retrieved_tokens": "100/1"}, "mean_retrieved_tokens": 100.0, "dominated": False}],
