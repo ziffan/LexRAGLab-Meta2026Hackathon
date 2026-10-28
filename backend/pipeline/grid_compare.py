@@ -28,7 +28,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from backend import config, gpulock
 from backend.grid.frontier import aggregate_points, compute_frontiers
-from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderStore
+from backend.grid.headers import GRANULARITY_DIRS, DirHeaderStore, HeaderBinding, HeaderError, HeaderStore
 from backend.grid.runner import GridError, _frontier_twins, run_grid
 from backend.grid.schemas import SchemaBinding
 from backend.grid.types import (MULTI_DOC_FAMILIES, GridPoint, Setting, canonical_json, metrics_from_cache, metrics_to_cache)
@@ -196,6 +196,13 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
         if pol != "strict":  # S11 (b): cakupan per setting (juga setting di bawah ambang) di amplop
             sub = list(pipe.pipes.values()) if multi else [pipe]
             reports: dict[str, Any] = {}
+            for pp in sub:  # deterministik: setting yang metriknya diambil dari cache tidak pernah diindeks -> hitung dari chunk set + store
+                for st in twins:
+                    if st.setting_id not in pp.coverage_report:
+                        try:
+                            pp.headers_for(st)
+                        except HeaderError:
+                            pass  # laporan tetap terisi (finally di headers_for); galat dicatat run_grid pada jalur indeks
             for pp in sub:
                 for sid, r in pp.coverage_report.items():
                     if sid in reports:

@@ -285,7 +285,7 @@ def test_s11_mask_ref_default_encoder_factory_gets_retrieval_cfg_not_coverage_di
     assert res.ref_path is not None and res.ref_path.name.startswith("ref-") and res.ref_path.exists()
 
 
-def test_s11_mask_ref_reference_failure_leaves_no_envelope_and_retry_writes_both(w, monkeypatch):
+def test_s11_mask_ref_reference_failure_leaves_no_envelope_and_retry_writes_both(w, monkeypatch, tmp_path):
     """Regresi: amplop ditulis SESUDAH rujukan. Rujukan gagal -> exception, amplop berrekaman tidak ada (kelak tak cache-hit tanpa
     rujukan), kunci GPU terlepas; panggilan ulang dengan rujukan normal -> bukan cache hit, amplop dan rujukan ada."""
     from backend.gpulock import lock_path
@@ -304,10 +304,13 @@ def test_s11_mask_ref_reference_failure_leaves_no_envelope_and_retry_writes_both
     monkeypatch.setattr(gc, "_run_reference", real)
     res = run_masked(w, drop(store_of(w, "Cmp"), ids[:1]), sw, **kw)
     assert res.cache_hit is False and res.path.exists()
-    # TEMUAN: coverage_report diisi hanya saat setting diindeks; retry memakai cache per-setting percobaan gagal -> cakupan {} dan
-    # tanpa rujukan. Ditandai xfail(strict) agar perbaikan produksi memaksa menghapus tanda ini (lihat laporan L3).
-    if res.ref_path is None:
-        pytest.xfail("retry sesudah rujukan gagal: coverage_report kosong (setting dari cache), rujukan tak ditulis")
-    assert res.ref_path.exists()
+    assert res.ref_path is not None and res.ref_path.exists()
+    # cakupan dan masked identik dengan run bersih (runs terpisah) walau metrik per-setting diambil dari cache percobaan gagal
+    w2 = {**w, "runs": tmp_path / "runs_clean"}
+    run_main(w2, all_scope(w2))
+    clean = run_masked(w2, drop(store_of(w2, "Cmp"), ids[:1]), sw)
+    assert res.key == clean.key  # kunci amplop tak berubah oleh urutan/perbaikan
+    assert res.envelope["coverage"] == clean.envelope["coverage"] and res.envelope["coverage"]["settings"]
+    assert json.loads(res.ref_path.read_text(encoding="utf-8"))["masked"] == json.loads(clean.ref_path.read_text(encoding="utf-8"))["masked"] == ids[:1]
     assert RunFileStore(cdir).read(res.key).get("record")
     assert not lock_path(w["runs"]).exists()
