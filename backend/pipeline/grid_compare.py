@@ -14,7 +14,12 @@ Laporan berkas (Q-B5, tanpa UI): `runs/grid_compare/<profile>/report-<kunci>.md`
 Profil sapuan (H-102, `config/sweep.toml`, S11): kebijakan cakupan sebagian `mask_threshold`/`mask_ref` (ambang `>=` integer); blok
 `coverage` amplop memuat kunci lama (`sources_run`, `sources_not_run`) DIGABUNG dengan `policy`, `threshold_pct`, `settings`
 (penyimpangan dinyatakan dari S11 (b): satu kunci `coverage`; setting di bawah ambang diberi `below_threshold`). Profil non-sapuan
-tidak membaca `config/sweep.toml` dan tetap `strict` persis H-101."""
+tidak membaca `config/sweep.toml` dan tetap `strict` persis H-101.
+
+H-104 Q-S14: flag CLI eksplisit `--coverage-policy {strict,mask_threshold,mask_ref}` + `--coverage-threshold-pct N` (1..100, wajib untuk
+mask_*, dilarang untuk strict) berlaku untuk profil mana pun (`coverage_override` di `run_compare_grid`) dan menggantikan `[compare]`.
+Tanpa flag perilaku tidak berubah (non-sapuan strict tanpa membaca sweep.toml). Dengan flag non-strict, blok compare memuat
+`policy`/`threshold_pct` sehingga kunci beda dan amplop strict H-101 lama tidak ditimpa. Nilai tidak sah = rc 2 sebelum kerja."""
 
 from __future__ import annotations
 
@@ -107,6 +112,15 @@ def coverage_of(twins: Sequence[Setting], binding: HeaderBinding) -> dict[str, l
     return {"sources_run": sorted(ran, key=order.get), "sources_not_run": sorted(need - ran, key=order.get)}  # type: ignore[arg-type]
 
 
+def validate_coverage_override(policy: str, pct: int) -> tuple[str, int]:
+    """H-104 Q-S14: kebijakan eksplisit dari CLI. `strict` -> (strict, 100); mask_* butuh integer 1..100 (bool ditolak)."""
+    if policy not in sweep_run.COVERAGE_POLICIES:
+        raise ConfigInvalid(f"coverage policy must be one of {list(sweep_run.COVERAGE_POLICIES)}")
+    if isinstance(pct, bool) or not isinstance(pct, int) or not 1 <= pct <= 100:
+        raise ConfigInvalid("coverage threshold must be an integer between 1 and 100")
+    return policy, pct
+
+
 def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any], doc: Any = None, docs: Any = None, tokenizer: Any,
                      runs_dir: Path, butir_dir: Path, config_dir: Path | None = None, encoder: Encoder | None = None,
                      encoder_factory: Callable[[], Encoder] | None = None, embed_cache_dir: Path | None = None,
@@ -114,7 +128,8 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
                      compare_store: HeaderStore | None = None, identity: Mapping[str, Any] | None = None,
                      schemas: SchemaBinding | None | str = "auto",
                      gpu_lock: bool = False, gpu_pid_alive: Callable[[int], bool] | None = None,
-                     sweep_cfg: Mapping[str, Any] | None = None) -> CompareGridResult:
+                     sweep_cfg: Mapping[str, Any] | None = None,
+                     coverage_override: tuple[str, int] | None = None) -> CompareGridResult:
     """Jalankan (atau baca dari cache) grid pembanding satu keluarga. Tanpa Model API.
 
     `main_headers`/`compare_store`/`identity` disuntikkan oleh test; bawaan: binding utama dari `runs/headers`, store
@@ -125,7 +140,7 @@ def run_compare_grid(family: str, *, profile: str, model_cfg: Mapping[str, Any],
     eff_model, sw = sweep_run.resolve_profile(model_cfg, profile, sweep_cfg)
     if sw is not None:
         sweep_run.validate_runner_cfg(sw)
-    pol, pct = sweep_run.coverage_policy(sw)
+    pol, pct = validate_coverage_override(*coverage_override) if coverage_override is not None else sweep_run.coverage_policy(sw)
     prof = comparison_profile(eff_model, profile)
     multi = family in MULTI_DOC_FAMILIES
     runs = Path(runs_dir)
@@ -363,7 +378,25 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model-profile", required=True)
     ap.add_argument("--runs-dir", type=Path, default=config.REPO_ROOT / "runs")
     ap.add_argument("--butir-dir", type=Path, default=config.REPO_ROOT / "data" / "butir")
+    ap.add_argument("--coverage-policy", choices=list(sweep_run.COVERAGE_POLICIES), default=None)
+    ap.add_argument("--coverage-threshold-pct", type=int, default=None)
     args = ap.parse_args(argv)
+    override: tuple[str, int] | None = None
+    if args.coverage_policy is not None or args.coverage_threshold_pct is not None:  # divalidasi sebelum kerja apa pun
+        try:
+            if args.coverage_policy is None:
+                raise ConfigInvalid("--coverage-threshold-pct requires --coverage-policy")
+            if args.coverage_policy == "strict":
+                if args.coverage_threshold_pct is not None:
+                    raise ConfigInvalid("--coverage-threshold-pct is not allowed with --coverage-policy strict")
+                override = ("strict", 100)
+            else:
+                if args.coverage_threshold_pct is None:
+                    raise ConfigInvalid(f"--coverage-policy {args.coverage_policy} requires --coverage-threshold-pct")
+                override = validate_coverage_override(args.coverage_policy, args.coverage_threshold_pct)
+        except ConfigInvalid as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 2
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     from backend.corpus import akta_entries, load_corpus
     from backend.retrieval.dense import CACHE_DIR
@@ -378,7 +411,7 @@ def main(argv: list[str] | None = None) -> int:
             dkw = {"doc": load_corpus()}
         res = run_compare_grid(args.family, profile=args.model_profile, model_cfg=model_cfg, **dkw, tokenizer=get_tokenizer(),
                                runs_dir=args.runs_dir, butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR,
-                               log=lambda m: print(m, flush=True), gpu_lock=True)
+                               log=lambda m: print(m, flush=True), gpu_lock=True, coverage_override=override)
     except (GridRunError, GridError, CompareError, gpulock.GpuLockError, ConfigInvalid) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

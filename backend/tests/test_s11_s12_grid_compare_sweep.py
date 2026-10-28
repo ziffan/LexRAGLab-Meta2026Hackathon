@@ -314,3 +314,51 @@ def test_s11_mask_ref_reference_failure_leaves_no_envelope_and_retry_writes_both
     assert json.loads(res.ref_path.read_text(encoding="utf-8"))["masked"] == json.loads(clean.ref_path.read_text(encoding="utf-8"))["masked"] == ids[:1]
     assert RunFileStore(cdir).read(res.key).get("record")
     assert not lock_path(w["runs"]).exists()
+
+
+# ------------------------------------------------------------------------------------------------ H-104 Q-S14
+def test_q_s14_non_sweep_without_flag_is_byte_identical_and_never_reads_sweep_file(w, monkeypatch):
+    monkeypatch.setattr(sweep_run, "load_sweep", lambda *a, **k: (_ for _ in ()).throw(AssertionError("sweep file read")))
+    run_main(w)
+    base = run_cmp(w, store_of(w, "Cmp"))
+    raw = base.path.read_bytes()
+    explicit = run_cmp(w, store_of(w, "Cmp"), coverage_override=("strict", 100))  # strict eksplisit = kunci H-101 yang sama
+    assert explicit.key == base.key and explicit.cache_hit and base.path.read_bytes() == raw
+    assert "policy" not in base.envelope["compare"] and base.ref_path is None
+
+
+def test_q_s14_mask_ref_on_baseten_open_changes_key_and_masks_like_s11(w):
+    main = run_main(w)
+    sid, ids = target(w, main)
+    n = len(ids)
+    strict = run_cmp(w, store_of(w, "Cmp"))
+    raw = strict.path.read_bytes()
+    pct = (n - 1) * 100 // n
+    res = run_cmp(w, drop(store_of(w, "Cmp"), ids[:1]), coverage_override=("mask_ref", pct))
+    assert res.key != strict.key and res.path.parent == strict.path.parent and strict.path.read_bytes() == raw  # amplop strict tidak ditimpa
+    cov = res.envelope["coverage"]
+    assert cov["policy"] == "mask_ref" and cov["threshold_pct"] == pct
+    assert cov["settings"][sid] == {"chunks": n, "headered": n - 1, "coverage_bp": (n - 1) * 10000 // n, "missing": ids[:1]}
+    assert res.envelope["compare"]["policy"] == "mask_ref" and sid in {p["setting_id"] for p in res.envelope["points"]}
+    assert res.ref_path is not None and ids[0] in json.loads(res.ref_path.read_text(encoding="utf-8"))["masked"]
+
+
+@pytest.mark.parametrize("bad", [("lain", 95), ("mask_ref", 0), ("mask_ref", 101), ("mask_ref", True), ("mask_ref", 95.0), ("mask_ref", "95")])
+def test_q_s14_invalid_override_rejected_before_work(w, bad):
+    with pytest.raises(ConfigInvalid):
+        run_cmp(w, store_of(w, "Cmp"), coverage_override=bad)
+    assert not (w["runs"] / "grid_compare").exists()
+
+
+@pytest.mark.parametrize("argv", [
+    ["--coverage-policy", "lain"], ["--coverage-policy", "mask_ref"], ["--coverage-threshold-pct", "95"],
+    ["--coverage-policy", "mask_ref", "--coverage-threshold-pct", "0"], ["--coverage-policy", "mask_ref", "--coverage-threshold-pct", "101"],
+    ["--coverage-policy", "mask_ref", "--coverage-threshold-pct", "9.5"], ["--coverage-policy", "strict", "--coverage-threshold-pct", "95"],
+])
+def test_q_s14_cli_invalid_flags_rc2(argv, monkeypatch):
+    monkeypatch.setattr(bc, "load", lambda *a, **k: (_ for _ in ()).throw(AssertionError("work started")))
+    try:
+        rc = gc.main(["--model-profile", "baseten_open", *argv])
+    except SystemExit as e:
+        rc = e.code
+    assert rc == 2
