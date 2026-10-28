@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import {
-  REVIEW_FAMILIES, ReviewController, alasanLabel, canApprove, checkStale, flagLabel, isUnanswerable, mustRefuseCounts, mustRefuseLabel, codePointToUtf16, isEditableTarget, parseReviewFamily, pendingLabel, reviewSearch, splitHighlight,
+  REVIEW_FAMILIES, DOC_NOUN, ReviewController, alasanLabel, canApprove, checkStale, flagLabel, isUnanswerable, mustRefuseCounts, mustRefuseLabel, codePointToUtf16, isEditableTarget, parseReviewFamily, pendingLabel, reviewSearch, splitHighlight,
   type ContextView, type EditState, type ProposalRecord, type ReviewState,
 } from "../lib/review";
 import { apiFetch } from "../api";
@@ -83,14 +83,14 @@ function EditForm({ p, edit, docText, ctx, busy, a }: { p: ProposalRecord; edit:
   );
 }
 
-/** Kartu `unanswerable` (H-087, H-092; SU19): alasan, lencana pemeriksaan, `Closest passages`. Tanpa span dan tanpa validasi span. */
+/** Kartu `unanswerable` (H-087, H-092, H-099; SU19, SV16): alasan dan label per keluarga, lencana pemeriksaan, `Closest passages`. Tanpa span dan tanpa validasi span. */
 function RefuseDetail({ p, stale }: { p: ProposalRecord; stale: boolean }) {
   const ac = p.absence_check;
   return (
     <div className="refuse-detail">
       <dl className="detail">
         <dt>Reason</dt>
-        <dd>{alasanLabel(p.body.alasan_kode)}{p.body.alasan_teks ? `: ${p.body.alasan_teks}` : ""}</dd>
+        <dd>{alasanLabel(p.body.alasan_kode, p.family)}{p.body.alasan_teks ? `: ${p.body.alasan_teks}` : ""}</dd>
       </dl>
       <div className="badges">
         {ac?.status === "doubtful" && <span className="tag split">Doubtful</span>}
@@ -98,7 +98,7 @@ function RefuseDetail({ p, stale }: { p: ProposalRecord; stale: boolean }) {
         {stale && <span className="tag neutral">Check settings changed</span>}
       </div>
       {ac?.status === "doubtful" && (
-        <p className="note">Why flagged: {ac.reasons.map(flagLabel).join("; ")}</p>
+        <p className="note">Why flagged: {ac.reasons.map((r) => flagLabel(r, p.family)).join("; ")}</p>
       )}
       {ac && ac.top_k.length > 0 && (
         <div>
@@ -222,10 +222,12 @@ export function ReviewCounters({ state }: { state: ReviewState }) {
   const hasRefuse = state.all.some(isUnanswerable) || state.proposals.some(isUnanswerable);
   if (state.load !== "ready" || !hasRefuse) return null;
   const { total, perDoc } = mustRefuseCounts(state.all.length ? state.all : state.proposals);
+  const fam = (state.all.find(isUnanswerable) ?? state.proposals.find(isUnanswerable))?.family;
+  const noun = DOC_NOUN[fam ?? "akta"] ?? "deed";
   return (
     <div className="review-counters" role="status">
       <span>Pending {state.proposals.length}</span> <span>{mustRefuseLabel(total)}</span>
-      <ul className="per-doc" aria-label="Must-refuse approved per deed">
+      <ul className="per-doc" aria-label={`Must-refuse approved per ${noun}`}>
         {Object.entries(perDoc).sort(([x], [y]) => x.localeCompare(y)).map(([doc, n]) => (
           <li key={doc}>{doc}: {n} approved{n === 0 ? " (target: at least 1)" : ""}</li>
         ))}

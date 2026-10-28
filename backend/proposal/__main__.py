@@ -1,7 +1,10 @@
-"""CLI batch D `unanswerable` (H-092 P10): `uv run python -m backend.proposal unanswerable --family akta [--doc akta-01 ...]
---project-only | --run [--device cpu]`.
+"""CLI batch D `unanswerable` (H-092 P10, H-099 V1/V9): `uv run python -m backend.proposal unanswerable --family akta|uupt
+[--doc <doc_id> ...] --project-only | --run [--device cpu]`.
 
-`--project-only`: proyeksi per akta, total `expected`, `batas_atas` (faktor ulang G-36) dan putusan gerbang; tidak memanggil Spark dan
+Keluarga sah dari satu sumber (`prompt.FAMILIES_U`); `--family` lain = exit 2 sebelum apa pun. Tanpa `--doc` = semua dokumen
+keluarga itu di korpus. Prompt per (keluarga, mode) lewat `prompt.prompt_for` (akta v2, uupt v3).
+
+`--project-only`: proyeksi per dokumen, total `expected`, `batas_atas` (faktor ulang G-36) dan putusan gerbang; tidak memanggil Spark dan
 tidak menulis apa pun. `--run`: menolak (exit 3, nol panggilan) bila gerbang gagal; selain itu memanggil `ProposalService.generate`
 (jalur yang sama dengan W4: cache, RunRecord). Kumulatif terpakai dari `RunRecord` tersimpan (`Ledger`)."""
 
@@ -20,10 +23,10 @@ from backend.spark import BudgetExceeded, ConfigInvalid, Ledger, SparkClient, fo
 from . import prompt as promptmod
 from .absence import load_absence_config, service_checker_provider
 from .gate import evaluate_gate, expected_cost_micros, load_gate_config
-from .prompt import MODE_U
+from .prompt import FAMILIES_U, MODE_U
 from .service import DocInfo, ProposalService
 
-FAMILY = "akta"
+FAMILY = "akta"  # default `--family` saja; daftar sah = FAMILIES_U
 
 
 def _pricing(model_cfg: dict[str, Any], profile: str) -> dict[str, int]:
@@ -47,26 +50,29 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
     ap = argparse.ArgumentParser(prog="python -m backend.proposal")
     ap.add_argument("command", choices=("unanswerable",))
     ap.add_argument("--family", default=FAMILY)
-    ap.add_argument("--doc", action="append", default=None, help="doc_id akta (boleh berulang); default semua akta korpus")
+    ap.add_argument("--doc", action="append", default=None, help="doc_id (boleh berulang); default semua dokumen keluarga di korpus")
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--project-only", action="store_true")
     g.add_argument("--run", action="store_true")
     ap.add_argument("--device", default=None, help="perangkat encoder dense, mis. cpu (VRAM dipakai Glimmer, H-047)")
     ap.add_argument("--profile", default=None)
     a = ap.parse_args(argv)
-    if a.family != FAMILY:
-        print("error: mode 'unanswerable' is only available for family 'akta'", file=sys.stderr)
+    family = a.family
+    if family not in FAMILIES_U:
+        print(f"error: mode 'unanswerable' is only available for families: {', '.join(FAMILIES_U)}", file=sys.stderr)
         return 2
+    base = base or Service()
     try:
         if model_cfg is None or budget_cfg is None:
             model_cfg, budget_cfg = load_configs()
         gcfg = load_gate_config(budget_cfg)
-        acfg = load_absence_config()
+        acfg = load_absence_config(base.config_dir)
+        prm = promptmod.prompt_for(family, MODE_U)
     except ConfigInvalid as exc:
         print(f"error: config_invalid: {exc}", file=sys.stderr)
         return 2
-    base = base or Service()
-    ids = base.doc_ids(FAMILY)
+    cap = acfg.cap_for(family)
+    ids = base.doc_ids(family)
     if a.doc:
         unknown = [d for d in a.doc if d not in ids]
         if unknown:
@@ -75,11 +81,10 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
         ids = [d for d in ids if d in a.doc]
     profile = a.profile or model_cfg["default_profile"]
     pricing = _pricing(model_cfg, profile)
-    prm = promptmod.load_prompt(mode=MODE_U)
     docs = [base.doc(i) for i in ids]
     expected = []
     for d in docs:
-        text = promptmod.render_input(prm, d.doc_id, d.text, MODE_U, acfg.max_per_call, d.clean_sha256)
+        text = promptmod.render_input(prm, d.doc_id, d.text, MODE_U, cap, d.clean_sha256)
         n_in = int(base.tok().count(text))
         expected.append(expected_cost_micros(n_in, acfg.projection_expected_output_tokens, pricing))
         print(f"  {d.doc_id:<10} input_tokens={n_in} output_tokens(assumed)={acfg.projection_expected_output_tokens} "
@@ -87,7 +92,7 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
     used = spent if spent is not None else Ledger(base.runs_dir).spent()
     v = evaluate_gate(expected, used, gcfg)
     print(f"prompt {prm.version} {prm.prompt_hash[:12]} schema {promptmod.SCHEMA_NAME_U} {promptmod.schema_hash(MODE_U)[:12]} "
-          f"factor_bp={gcfg.factor_bp} (assumption, not measured for D)")
+          f"factor_bp={gcfg.factor_bp} (assumption, not measured for D) family={family} max_per_call={cap}")
     print(f"total expected={v.expected} batas_atas={v.batas_atas} ({format_usd_micros(v.batas_atas)}) cumulative_spent={v.spent} "
           f"batch_cap={gcfg.batch_cap_micros} cumulative_threshold={gcfg.cumulative_threshold_micros}")
     print("gate: " + ("PASS" if v.ok else "REFUSED (" + ", ".join(v.reasons) + ")"))
@@ -110,7 +115,7 @@ def main(argv: list[str] | None = None, *, base: Service | None = None, model_cf
     make = client_factory or _default_client_factory(profile, model_cfg, budget_cfg, base.runs_dir)
     for d in docs:
         try:
-            out = svc.generate(FAMILY, d.doc_id, [MODE_U], profile=profile, model_config=model_cfg, client_factory=make)
+            out = svc.generate(family, d.doc_id, [MODE_U], profile=profile, model_config=model_cfg, client_factory=make)
         except (ApiError, BudgetExceeded) as exc:
             print(f"error: {d.doc_id}: {getattr(exc, 'message', exc)}", file=sys.stderr)
             return 1

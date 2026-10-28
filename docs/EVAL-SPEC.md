@@ -121,6 +121,8 @@ Berlaku untuk UU PT. Keluarga akta tidak dibagi tune/held-out (H-054): kelima bu
 
 Dengan 15–20 butir UU PT, held-out sekitar 6–8 butir dan tune 9–12 (H-015, H-049).
 
+Catatan (H-095, H-099 Q6 a): rentang H-011 (15–20 butir UU PT disetujui) dan angka held-out/tune di atas berlaku untuk butir **bergold**. Butir wajib tolak UU PT (`mode = tolak`, `gold_spans = []`) dihitung terpisah: masuk split dengan aturan butir 4–5 di atas sebagai stratum sendiri, mis. (`spark_disetujui`, `tolak`), dengan target kumulatif `round(0,4 × N_stratum)` (stratum `tolak` berisi 1 butir → 0 di held-out; 2–3 → 1; 4–5 → 2), dan tidak masuk rata-rata recall/precision (H-059, H-061). Butir `operator` bermode `tolak` dihitung kontrol (Q2 a); baris "no gold (must abstain)" menghitung `mode = tolak` saja (Q3 a).
+
 ## 9. Frontier, pemilihan, dan laporan
 
 **Dominasi.** Titik `p` mendominasi `r` bila `mean_span_recall(p) ≥ mean_span_recall(r)` dan `mean_retrieved_tokens(p) ≤ mean_retrieved_tokens(r)`, dengan minimal satu ketidaksamaan tegas. Titik yang didominasi tidak masuk frontier.

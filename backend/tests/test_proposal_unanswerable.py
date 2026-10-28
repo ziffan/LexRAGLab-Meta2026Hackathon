@@ -228,10 +228,13 @@ def test_su3_modes_and_family(tmp_path):
     env = mk(tmp_path, "b")
     gen_ok(env, ("unanswerable", "unanswerable"))
     assert env.tr.calls == 1
-    for sub, modes, fam in (("c", ["unanswerable"], "uupt"), ("d", ["unanswerable", "campur"], "akta"), ("e", ["tolak"], "akta")):
+    # (c) dibalik H-099 (scenarios/M2.1-unanswerable-uupt SV1 (c)): uupt + unanswerable sah; doc akta di bawah uupt = 404
+    for sub, modes, fam, status, code in (("c", ["unanswerable"], "uupt", 404, "not_found"),
+                                          ("d", ["unanswerable", "campur"], "akta", 400, "invalid_request"),
+                                          ("e", ["tolak"], "akta", 400, "invalid_request")):
         env = mk(tmp_path, sub)
         r = env.http.post(f"/api/families/{fam}/proposals/generate", json={"doc_id": DOC, "modes": modes})
-        assert r.status_code == 400 and r.json()["error"]["code"] == "invalid_request"
+        assert r.status_code == status and r.json()["error"]["code"] == code
         assert env.tr.calls == 0 and list(env.ps.index_dir.glob("*.json")) == []
 
 
@@ -468,8 +471,7 @@ def test_su10b_item_validator_and_loader(tmp_path):
     assert row["mode"] == "parafrase" and row["gold_spans"] == [] and len(load_items("uupt", d)[0]) == 1
     with pytest.raises(GridRunError):  # (d) nama body.mode bukan enum Item.mode
         load([_row(mode="unanswerable")])
-    with pytest.raises(GridRunError):  # (e) uupt + tolak (I-66, sementara)
-        load([_row(family="uupt")], "uupt")
+    assert len(load([_row(family="uupt")], "uupt")) == 1  # (e) dibalik H-099 V4: uupt + tolak sah
 
 
 # ============================================================================= SU11
@@ -788,7 +790,7 @@ def test_su18_cli_refuses_before_spark(tmp_path, capsys):
     rc = main(["unanswerable", "--family", "akta", "--doc", "akta-01", "--project-only"], spent=0)
     out = capsys.readouterr().out
     assert rc == 0 and "batas_atas=" in out and "gate: PASS" in out and "akta-01" in out
-    assert main(["unanswerable", "--family", "uupt", "--project-only"]) == 2
+    assert main(["unanswerable", "--family", "lain", "--project-only"]) == 2  # uupt kini sah (H-099 V1), lihat SV1
 
 
 # ============================================================================= SU20
@@ -918,7 +920,7 @@ def test_w60_m14_stage_item_enforces_mode_invariant(tmp_path):
     base = {k: None for k in __import__("backend.proposal.service", fromlist=["ITEM_KEYS"]).ITEM_KEYS}
     ok = {**base, "id": "x1", "family": "akta", "mode": "tolak", "gold_spans": [], "query": "q"}
     assert env.ps._stage_item(ok)[0].exists()
-    for bad in ({**ok, "id": "x2", "gold_spans": [{"start": 0, "end": 1}]}, {**ok, "id": "x3", "family": "uupt"},
+    for bad in ({**ok, "id": "x2", "gold_spans": [{"start": 0, "end": 1}]},  # x3 (uupt + tolak) kini sah, H-099 V4
                 {**ok, "id": "x4", "mode": "unanswerable"}):
         with pytest.raises(OSError):
             env.ps._stage_item(bad)

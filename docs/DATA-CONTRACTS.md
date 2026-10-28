@@ -141,7 +141,7 @@ Alamat diberikan dari peta alamat yang sama untuk semua chunker (prinsip keadila
 | `doc_id` | string | dokumen gold | Operator |
 | `gold_spans` | array of `{start: int, end: int}` | span gold atas teks bersih; kosong = butir wajib tolak (mode `tolak`, H-092; butir lama `parafrase` + gold kosong, mis. `kontrol-K-08`, tetap sah). Span menandai semua ayat yang dibutuhkan untuk menjawab: boleh beberapa ayat, sampai seluruh Pasal bila semuanya relevan, tidak lebih (H-048). Sistem memecahnya di batas ayat menjadi bagian-ayat sebelum metrik dihitung (`docs/EVAL-SPEC.md` §6); operator tidak memecahnya sendiri | Operator |
 | `clean_sha256` | string | teks bersih tempat span ditulis (H-046) | Sistem |
-| `mode` | enum `literal` / `parafrase` / `tolak` | `tolak` = butir wajib tolak akta (H-092): invarian `mode = tolak` ⟹ `gold_spans = []`; arah sebaliknya tidak dipaksa. Sementara hanya `family = akta` (I-66); pemuat butir menolak `tolak` untuk `uupt`, `tolak` ber-gold, dan nilai di luar enum (mis. `unanswerable`, nama `ProposalRecord.body.mode`). Sumber: H-092 | Operator |
+| `mode` | enum `literal` / `parafrase` / `tolak` | `tolak` = butir wajib tolak (H-092; akta dan UU PT sejak H-095, H-099 V4): invarian `mode = tolak` ⟹ `gold_spans = []`; arah sebaliknya tidak dipaksa. Sah untuk `family` ∈ {`akta`, `uupt`}; pemuat butir menolak `tolak` ber-gold dan nilai di luar enum (mis. `unanswerable`, nama `ProposalRecord.body.mode`). Sumber: H-092, H-095, H-099 | Operator |
 | `origin` | enum `operator` / `spark_disetujui` | asal (H-006) | Sistem dari jalur masuk |
 | `review_status` | enum `disetujui` / `diubah` / null | hanya untuk `spark_disetujui`; `null` untuk `operator` | Operator |
 | `proposal_id` | string \| null | rujukan `ProposalD` | Sistem |
@@ -394,7 +394,7 @@ Definisi sel di `docs/EVAL-SPEC.md` §10.
 
 Sistem mencari `teks_gold` di dokumen untuk menetapkan offset. Bila Spark memberi offset, offset itu harus cocok dengan teks. Enum `mode` skema `ProposalD` = {`literal`, `parafrase`} (tidak berubah; `schema_hash` tetap).
 
-**Varian `unanswerable` (H-092, P1/P5)** — skema keluaran terpisah `ProposalU` (`strict: true`, prompt `prompts/d/v2.md`, hanya `family = akta`):
+**Varian `unanswerable` (H-092, P1/P5)** — skema keluaran terpisah `ProposalU` (`strict: true`; `family` ∈ {`akta`, `uupt`} sejak H-095, H-099 V1; prompt per keluarga, lihat "Prompt per (keluarga, mode)" di bawah):
 
 ```json
 {"type": "object", "additionalProperties": false, "required": ["usulan"],
@@ -417,7 +417,9 @@ Tanpa `mode`, `teks_gold`, `start`, `end`. `ProposalRecord` varian ini: `body` =
 | `absence_check.config_hash` | string | hash `config/proposals [unanswerable]` saat dihitung (R: daftar usulan melaporkan hash sekarang di `check_config_hash`) |
 | `duplicate_of` | string \| null | informatif, dihitung server saat daftar/simpan (tidak disimpan): `proposal_id` rekaman `unanswerable` terdahulu dengan `doc_id` dan query ternormalisasi sama; tidak membuang usulan |
 
-Pemeriksaan ketiadaan jawaban lokal dan deterministik atas potongan `structure_schema` skema A akta aktif (BM25 produksi dan dense bge-m3 opsional; satu fungsi tokenisasi). Nilai di `config/proposals.toml` `[unanswerable]`. Pada `diubah`, `absence_check` dihitung ulang atas query baru; `body` tidak berubah. Sumber: H-092.
+Pemeriksaan ketiadaan jawaban lokal dan deterministik atas potongan `structure_schema` skema A **aktif keluarga dokumen** (akta H-092; UU PT H-099 V2; tanpa skema aktif -> `404 not_found` sebelum Spark) (BM25 produksi dan dense bge-m3 opsional; satu fungsi tokenisasi). Nilai di `config/proposals.toml` `[unanswerable]`. Pada `diubah`, `absence_check` dihitung ulang atas query baru; `body` tidak berubah. Sumber: H-092, H-099.
+
+**Prompt per (keluarga, mode) (H-099 V3).** `prompts/d/versions.json`: `current` (v1, mode ber-span), `by_mode` (`unanswerable` -> v2), dan `by_family_mode` (`uupt.unanswerable` -> v3). Satu fungsi lookup (`backend/proposal/prompt.py` `prompt_for`), dipanggil sebelum klien Spark dibuat: (1) `by_family_mode[family][mode]` bila ada; (2) bila tidak ada dan `mode = unanswerable`: hanya `family = akta` jatuh ke `by_mode.unanswerable`, keluarga lain = `config_invalid`; (3) mode ber-span: `by_mode[mode]` bila ada, selain itu `current`. Versi hasil lookup untuk `unanswerable` wajib memuat `"unanswerable"` di `modes`; versi tak ada atau tanpa `modes` itu = `config_invalid` (W4 `503 model_unavailable`, CLI exit 2, nol panggilan). Kunci cache akta `unanswerable` dan kunci UU PT `literal`/`parafrase` tidak berubah; skema `ProposalU` dan enum `alasan_kode` tidak berubah (makna untuk UU PT dijelaskan di v3; `di_luar_akta` = di luar dokumen). Batas usulan per panggilan: `[unanswerable] max_per_call`; kunci opsional `max_per_call_uupt` (H-099 Q1 a1; bilangan bulat > 0, belum diisi) hanya menimpa batas `uupt`, dan karena batas ikut kunci cache D, hanya kunci `uupt` `unanswerable` yang berubah. Sumber: H-095, H-099.
 
 **Penyimpanan `ProposalRecord`**
 

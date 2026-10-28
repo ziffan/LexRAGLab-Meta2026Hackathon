@@ -65,8 +65,14 @@ export const FLAG_LABELS: Record<string, string> = {
   no_distinctive_terms: "No distinctive terms",
   dense_unavailable: "Semantic check unavailable",
 };
-export const alasanLabel = (k: string | undefined): string => (k ? ALASAN_LABELS[k] ?? k : "");
-export const flagLabel = (k: string): string => FLAG_LABELS[k] ?? k;
+/** Nama dokumen per keluarga untuk label yang menyebut dokumen (H-099 V3, Q4): akta `deed`, uupt `statute`. */
+export const DOC_NOUN: Record<string, string> = { akta: "deed", uupt: "statute" };
+const docNoun = (family: string | undefined): string => DOC_NOUN[family ?? "akta"] ?? "deed";
+/** Label per keluarga: `di_luar_akta` dan `lexical_overlap` menyebut dokumen; label lain sama untuk semua keluarga. */
+export const alasanLabel = (k: string | undefined, family?: string): string =>
+  !k ? "" : k === "di_luar_akta" ? `Outside the ${docNoun(family)}` : ALASAN_LABELS[k] ?? k;
+export const flagLabel = (k: string, family?: string): string =>
+  k === "lexical_overlap" ? `Shares distinctive terms with the ${docNoun(family)}` : FLAG_LABELS[k] ?? k;
 
 /** Penghitung butir wajib tolak yang disetujui (status `disetujui`/`diubah`), total dan per `doc_id` (H-087). */
 export function mustRefuseCounts(all: ProposalRecord[]): { total: number; perDoc: Record<string, number> } {

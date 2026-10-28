@@ -14,6 +14,7 @@ Keputusan penyusun (scenarios/M2.1, A1-A31):
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import re
@@ -33,7 +34,7 @@ from backend.spark.store import canonical_json, sha256_hex
 from . import prompt as promptmod
 from .absence import AbsenceChecker, load_absence_config, normalize_query
 from .item import MODE_TOLAK, item_mode_problem
-from .prompt import MODE_U, MODES, MODES_SPAN, PromptD
+from .prompt import FAMILIES_U, MODE_U, MODES, MODES_SPAN, PromptD
 from .span import span_in_bounds, validate_span
 
 ROLE = "d"
@@ -121,11 +122,12 @@ def _is_int(v: object) -> bool:
 
 class ProposalService:
     def __init__(self, *, runs_dir: Path, butir_dir: Path, doc_provider: Callable[[str], DocInfo | None],
-                 clock: Callable[[], float] = time.time, prompt_provider: Callable[[], PromptD] = promptmod.load_prompt,
+                 clock: Callable[[], float] = time.time, prompt_provider: Callable[[], PromptD] | None = None,
                  count_tokens: Callable[[str], int] | None = None, max_proposals: int | None = None,
                  hooks: Hooks | None = None, config_dir: Path | None = None,
                  prompt_provider_u: Callable[[], PromptD] | None = None,
-                 checker_provider: Callable[[DocInfo], AbsenceChecker] | None = None) -> None:
+                 checker_provider: Callable[[DocInfo], AbsenceChecker] | None = None,
+                 prompt_dir: Path | None = None) -> None:
         self.runs_dir = Path(runs_dir)
         self.butir_dir = Path(butir_dir)
         self.doc_provider = doc_provider
@@ -137,8 +139,10 @@ class ProposalService:
         self.context_lines = int(pcfg["context_lines"])
         self.hooks = hooks or Hooks()
         self._lock = threading.RLock()
-        # H-092: mode `unanswerable` (prompt v2, skema ProposalU, pemeriksaan ketiadaan jawaban lokal)
-        self.prompt_provider_u = prompt_provider_u or (lambda: promptmod.load_prompt(mode=MODE_U))
+        # H-092, H-099 V3: prompt per (keluarga, mode) lewat `promptmod.prompt_for` (satu fungsi lookup). `prompt_provider` /
+        # `prompt_provider_u` hanya seam uji (menimpa lookup untuk mode ber-span / `unanswerable`).
+        self.prompt_provider_u = prompt_provider_u
+        self.prompt_dir = prompt_dir
         self.checker_provider = checker_provider
         self.absence_cfg = load_absence_config(config_dir, pcfg)
         self.max_per_call = self.absence_cfg.max_per_call
@@ -249,6 +253,16 @@ class ProposalService:
         from .absence import config_hash_of
         return config_hash_of(self.absence_cfg)
 
+    def prompt_for(self, family: str, mode: str) -> PromptD:
+        """Prompt D untuk (keluarga, mode). Gagal lookup -> `ConfigInvalid` (W4 503 `model_unavailable`)."""
+        if mode == MODE_U:
+            return self.prompt_provider_u() if self.prompt_provider_u is not None else promptmod.prompt_for(family, mode, self.prompt_dir)
+        return self.prompt_provider() if self.prompt_provider is not None else promptmod.prompt_for(family, mode, self.prompt_dir)
+
+    def cap_u(self, family: str) -> int:
+        """Batas `unanswerable` per panggilan (P9; H-099 Q1 a1: `max_per_call_uupt` opsional hanya untuk uupt)."""
+        return dataclasses.replace(self.absence_cfg, max_per_call=self.max_per_call).cap_for(family)
+
     def _checker(self, doc: DocInfo) -> AbsenceChecker:
         if self.checker_provider is None:
             raise ApiError(503, "model_unavailable", "The absence check is not configured.")
@@ -260,8 +274,9 @@ class ProposalService:
         if (not isinstance(modes, list) or not modes or any(not isinstance(m, str) for m in modes)
                 or any(m not in MODES for m in modes)):
             raise ApiError(400, "invalid_request", f"modes must be a non-empty list drawn from {list(MODES)}.")
-        if MODE_U in modes and family != "akta":  # P13: butir tolak UU PT milik operator (H-011); sebelum panggilan apa pun
-            raise ApiError(400, "invalid_request", "Mode 'unanswerable' is only available for family 'akta'.")
+        if MODE_U in modes and family not in FAMILIES_U:  # H-099 V1: daftar sah satu sumber; sebelum panggilan apa pun
+            raise ApiError(400, "invalid_request",
+                           f"Mode 'unanswerable' is only available for families {', '.join(repr(f) for f in FAMILIES_U)}.")
         modes = list(dict.fromkeys(modes))
         if not isinstance(doc_id, str):
             raise ApiError(400, "invalid_request", "doc_id must be a string.")
@@ -273,12 +288,16 @@ class ProposalService:
             effort = effort_for(model_config, ROLE)
         except ConfigInvalid as exc:
             raise ApiError(503, "model_unavailable", str(exc)[:300]) from None
-        # Mode ber-span: prompt v1 + ProposalD + batas max_proposals (kunci lama byte-identik). `unanswerable`: prompt v2 + ProposalU + max_per_call.
-        prms = {m: (self.prompt_provider_u() if m == MODE_U else self.prompt_provider()) for m in modes}
+        # Mode ber-span: prompt v1 + ProposalD + batas max_proposals (kunci lama byte-identik). `unanswerable`: prompt per keluarga
+        # (akta v2, uupt v3; H-099 V3) + ProposalU + max_per_call. Lookup sebelum klien dibuat: gagal -> 503, panggilan 0.
+        try:
+            prms = {m: self.prompt_for(family, m) for m in modes}
+        except ConfigInvalid as exc:
+            raise ApiError(503, "model_unavailable", str(exc)[:300]) from None
         schs = {m: promptmod.schema_hash(m) for m in modes}
         for m in modes:
             promptmod.validate_schema(m)
-        caps = {m: (self.max_per_call if m == MODE_U else self.max_proposals) for m in modes}
+        caps = {m: (self.cap_u(family) if m == MODE_U else self.max_proposals) for m in modes}
         keys = {m: sha256_hex(canonical_json([ROLE, prof.get("provider"), prof.get("model"), effort, prms[m].prompt_hash, schs[m],
                                               doc.clean_sha256, doc.doc_id, m, caps[m]])) for m in modes}
         hits = {m: self._index(keys[m]) for m in modes}
@@ -340,7 +359,7 @@ class ProposalService:
     def _store_run(self, family: str, doc: DocInfo, mode: str, d_key: str, run: dict[str, Any],
                    out: Mapping[str, Any], checker: AbsenceChecker | None = None) -> dict[str, Any]:
         if mode == MODE_U:
-            kept = self._keep_u(doc, out)
+            kept = self._keep_u(doc, out, self.cap_u(family))
         else:
             kept = [u for u in out.get("usulan", []) if u.get("doc_id") == doc.doc_id and u.get("mode") == mode]  # A5
             kept = kept[: self.max_proposals]  # A6: sesudah pembuangan
@@ -372,7 +391,7 @@ class ProposalService:
             raise ApiError(500, "storage_error", "Could not save the proposals.") from None
         return run
 
-    def _keep_u(self, doc: DocInfo, out: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+    def _keep_u(self, doc: DocInfo, out: Mapping[str, Any], cap: int) -> list[Mapping[str, Any]]:
         """Pembuangan semantik `unanswerable`: doc_id lain (A5), query atau alasan_teks kosong, duplikat dalam satu panggilan
         (SU21); lalu batas `max_per_call` (P9), sesudah pembuangan, urutan dipertahankan."""
         kept, seen = [], set()
@@ -384,7 +403,7 @@ class ProposalService:
                 continue
             seen.add(key)
             kept.append(u)
-        return kept[: self.max_per_call]
+        return kept[:cap]
 
     # ---------------------------------------------------------------------- W5
     def decide(self, proposal_id: str, body: Any) -> dict[str, Any]:

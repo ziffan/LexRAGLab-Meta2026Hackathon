@@ -1,6 +1,6 @@
 """Pemeriksaan ketiadaan jawaban lokal untuk usulan `unanswerable` (H-087, H-092; scenarios/M2.1-unanswerable P2, P3, P5, P15).
 
-Deterministik, tanpa Model API, tanpa jaringan. Unit cari = potongan chunker `structure_schema` skema A akta aktif (H-088).
+Deterministik, tanpa Model API, tanpa jaringan. Unit cari = potongan chunker `structure_schema` skema A aktif keluarga dokumen (akta H-088; uupt H-099 V2).
 Satu fungsi tokenisasi dipakai pemeriksa DAN BM25 produksi (`backend.retrieval.bm25.tokenize`); ranker BM25/dense disuntik.
 
 - `T(q)` = token isi query berbeda-beda (stopword dibuang oleh tokenizer). Token generik = muncul di unit dengan
@@ -59,6 +59,14 @@ class AbsenceConfig:
     device: str
     max_per_call: int
     projection_expected_output_tokens: int
+    max_per_call_uupt: int | None = None  # H-099 Q1 (a1): kunci opsional; None = ikut `max_per_call`
+
+    def cap_for(self, family: str) -> int:
+        """Batas usulan `unanswerable` per panggilan untuk keluarga: `max_per_call_uupt` (bila ada) hanya untuk `uupt`;
+        selain itu `max_per_call`. Batas ikut kunci cache D, jadi kunci akta tidak pernah berubah karena kunci uupt."""
+        if family == "uupt" and self.max_per_call_uupt is not None:
+            return self.max_per_call_uupt
+        return self.max_per_call
 
     def hash_basis(self) -> dict[str, Any]:
         return {"check_top_k": self.check_top_k, "lexical_coverage_threshold": str(self.lexical_coverage_threshold),
@@ -84,8 +92,12 @@ def load_absence_config(config_dir: Path | None = None, cfg: Mapping[str, Any] |
     dev = t.get("device")
     if not isinstance(dev, str) or not dev.strip():
         raise ConfigInvalid('config/proposals [unanswerable]: device must be a non-empty string (e.g. "cpu")')
+    mxu = t.get("max_per_call_uupt")  # opsional (H-099 Q1 a1)
+    if mxu is not None and (not _is_int(mxu) or mxu <= 0):
+        raise ConfigInvalid("config/proposals [unanswerable]: max_per_call_uupt must be an integer > 0 when present")
     return AbsenceConfig(int(k), _frac(t.get("lexical_coverage_threshold"), "lexical_coverage_threshold"),
-                         _frac(t.get("generic_df_ratio"), "generic_df_ratio"), float(cos), dev.strip(), int(mx), int(ex))
+                         _frac(t.get("generic_df_ratio"), "generic_df_ratio"), float(cos), dev.strip(), int(mx), int(ex),
+                         int(mxu) if mxu is not None else None)
 
 
 def normalize_query(q: str) -> str:
@@ -208,8 +220,8 @@ def encoder_dense_ranker(units: Sequence[Unit], retrieval_cfg: Mapping[str, Any]
 
 def service_checker_provider(base: Any, *, device: str | None = None, encoder: Any = None,
                              cache_dir: Path | None = None) -> Callable[[Any], AbsenceChecker]:
-    """Penyedia pemeriksa produksi untuk `ProposalService`: unit cari = potongan `structure_schema` skema A akta AKTIF (H-075,
-    H-088) lewat `base` (`backend.api.service.Service`); BM25 dan tokenisasi dari `config/retrieval [bm25]`; dense bge-m3 lokal
+    """Penyedia pemeriksa produksi untuk `ProposalService`: unit cari = potongan `structure_schema` skema A AKTIF keluarga
+    `doc.family` (akta H-075, H-088; uupt H-099 V2) lewat `base` (`backend.api.service.Service`); BM25 dan tokenisasi dari `config/retrieval [bm25]`; dense bge-m3 lokal
     di `device` (CLI `--device cpu`), dibangun malas dan gagal -> `dense_unavailable`. Pemeriksa di-cache per
     (doc_id, clean_sha256, identitas skema)."""
     from backend.api.errors import ApiError

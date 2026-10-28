@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-MODE_TOLAK = "tolak"  # butir wajib tolak akta: gold_spans = []
+MODE_TOLAK = "tolak"  # butir wajib tolak (akta, uupt; H-092, H-099 V4): gold_spans = []
 ITEM_MODES = ("literal", "parafrase", MODE_TOLAK)
 
 
@@ -15,8 +15,6 @@ def item_mode_problem(item: Mapping[str, Any]) -> str | None:
     mode = item.get("mode")
     if mode not in ITEM_MODES:
         return f"mode must be one of {list(ITEM_MODES)}"
-    if mode == MODE_TOLAK and item.get("family") != "akta":
-        return "mode 'tolak' is only valid for family 'akta' (I-66)"
     if mode == MODE_TOLAK and item.get("gold_spans") != []:
         return "mode 'tolak' requires gold_spans = []"
     return None
