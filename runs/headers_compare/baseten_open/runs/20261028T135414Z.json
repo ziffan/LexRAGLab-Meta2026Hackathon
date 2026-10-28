@@ -1,0 +1,131 @@
+{
+ "attempts": {
+  "uupt-40-2007/pasal": 6
+ },
+ "batches": [
+  {
+   "batas_atas": 745271,
+   "called": 20,
+   "expected": 249935,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 17,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 147018,
+   "stopped": null,
+   "units": 20,
+   "upper_cached": 745271
+  },
+  {
+   "batas_atas": 184083,
+   "called": 3,
+   "expected": 89734,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 393256,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 184083
+  },
+  {
+   "batas_atas": 150827,
+   "called": 2,
+   "expected": 80065,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 481446,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 150827
+  },
+  {
+   "batas_atas": 117582,
+   "called": 1,
+   "expected": 70407,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 508200,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 117582
+  },
+  {
+   "batas_atas": 117582,
+   "called": 1,
+   "expected": 70407,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 525340,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 117582
+  },
+  {
+   "batas_atas": 117582,
+   "called": 1,
+   "expected": 70407,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 6,
+   "spent_pool": 542545,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 117582
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "uupt-40-2007/pasal": {
+   "stored": 20,
+   "units": 343
+  }
+ },
+ "failed": {},
+ "family": "uupt",
+ "finished_at": "2026-10-28T13:54:14Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "low",
+  "max_header_tokens": 40,
+  "model": "meta-models/muse-spark-open-1026",
+  "profile": "baseten_open",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "baseten",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  3912,
+  3482,
+  3616,
+  3767,
+  3035
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "baseten_open",
+ "sources": [
+  "pasal"
+ ],
+ "started_at": "2026-10-28T13:52:02Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 20,
+ "warm": true
+}

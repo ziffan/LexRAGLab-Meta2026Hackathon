@@ -1,0 +1,10 @@
+{
+ "effort": "low",
+ "max_header_tokens": 40,
+ "model": "meta-models/muse-spark-open-1026",
+ "profile": "baseten_open",
+ "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+ "provider": "baseten",
+ "quantization": null,
+ "schema_max_length_chars": 190
+}
