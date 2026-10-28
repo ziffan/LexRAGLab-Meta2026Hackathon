@@ -39,6 +39,8 @@ class ProfileDeps:
     schema: Callable[[str, int], "Mapping[str, Any] | None"]  # SchemaRecord (punya `body`)
     clock: Callable[[], str]
     profiles_dir: Path
+    # W66: identitas konfigurasi per keluarga (akta memuat config keluarga + peta unit); None = `config_hash` untuk semua keluarga
+    config_hash_for: "Callable[[str], str] | None" = None
 
 
 @dataclass(frozen=True)
@@ -120,7 +122,8 @@ def export_profile(deps: ProfileDeps, family: str, setting_id: str | None, *, re
 
     profile = {
         "profile_version": PROFILE_VERSION, "family": family, "setting": {"setting_id": setting_id, **content},
-        "schema": schema_body, "corpus_hash": corpus_hash(docs), "config_hash": deps.config_hash,
+        "schema": schema_body, "corpus_hash": corpus_hash(docs),
+        "config_hash": deps.config_hash_for(family) if deps.config_hash_for is not None else deps.config_hash,
         "chunk_set_hash": _rebuild_hash(deps, docs, content, schema_record),
         "tokenizer": {"name": deps.tokenizer.info.name, "version": deps.tokenizer.info.version},
         "clean_sha256": clean_text_hash(docs), "loader_rules_version": loader_rules(docs), "packing": deps.packing,

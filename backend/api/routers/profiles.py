@@ -17,7 +17,7 @@ from backend.api.errors import ApiError
 from backend.grid.expand import expand_grid
 from backend.grid.schemas import bind_schema_versions
 from backend.grid.types import metrics_from_cache, setting_content
-from backend.pipeline.grid_run import CONFIGS, pipeline_config_hash
+from backend.pipeline.grid_run import CONFIGS, FAMILY_CONFIGS, UNIT_MAP_FAMILY, pipeline_config_hash, unit_map_identity
 from backend.profile import ProfileDeps, ProfileError, export_profile, import_profile, make_default_chunker
 from backend.schema_a import SchemaStore, SchemaStoreError
 
@@ -56,13 +56,21 @@ def build_deps(request: Request) -> ProfileDeps:
         except SchemaStoreError:
             return None
 
+    def config_hash_for(family: str) -> str:
+        # UU PT: hash umum (byte-identik dengan profil tersimpan). Akta (W66): sama dengan komponen kunci grid akta tanpa
+        # header/skema per setting, yaitu config keluarga (`corpus_akta`, `akta_unitmap`) dan identitas skema aktif (H-090 P2).
+        extra = FAMILY_CONFIGS.get(family, ())
+        cfgs = {n: svc.cfg(n) for n in (*CONFIGS, *extra)}
+        um = unit_map_identity(cfgs, svc.schema_binding(family)) if family == UNIT_MAP_FAMILY else None
+        return pipeline_config_hash(cfgs, tok.info, unit_map=um)
+
     dense = retrieval["dense"]
     embedder = {"name": dense["model"], "revision": dense["revision"], "max_seq_length": int(dense["max_seq_length"])}
     profiles_dir = getattr(st, "profiles_dir", None) or Path(svc.runs_dir).parent / "profiles"
     return ProfileDeps(
         docs=docs, settings=settings, chunker=make_default_chunker(retrieval, grid), tokenizer=tok,
         config_hash=pipeline_config_hash({n: svc.cfg(n) for n in CONFIGS}, tok.info), packing=grid["packing"]["rule"],
-        embedder=embedder, grid_metrics=grid_metrics, schema=schema, clock=_utc_now, profiles_dir=Path(profiles_dir))
+        embedder=embedder, grid_metrics=grid_metrics, schema=schema, clock=_utc_now, config_hash_for=config_hash_for, profiles_dir=Path(profiles_dir))
 
 
 def _deps(request: Request) -> ProfileDeps:

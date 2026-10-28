@@ -516,7 +516,7 @@ Pembilang dan penyebut disimpan sebagai integer supaya UI bisa menampilkan hitun
 | `setting` | `Setting` | |
 | `schema` | `SchemaRecord.body` \| null | disertakan utuh bila chunker skema |
 | `corpus_hash` | string | hash kanonik atas pasangan `(doc_id, sha256)` semua dokumen keluarga profil itu, urut menurut `doc_id`; dokumen keluarga lain tidak ikut (H-068, M4.3 A1) |
-| `config_hash` | string | |
+| `config_hash` | string | hash konfigurasi pipeline untuk setting profil itu (informatif; impor W8 tidak memeriksanya). UU PT: hash pipeline umum. Akta: hash pipeline + `corpus_akta`, `akta_unitmap`, identitas skema A aktif (W66). Tidak sama dengan `config_hash` amplop grid, yang juga memuat identitas store header B dan skema semua setting grid (W67) |
 | `chunk_set_hash` | string | untuk uji round-trip. Hash kanonik atas daftar pasangan `(chunk_id, teks)` terurut menurut (`doc_id`, `start`), tanpa data encoder (H-068, M4.3 A2-X) |
 | `tokenizer` | `{name: string, version: string}` | |
 | `clean_sha256`, `loader_rules_version` | string | teks bersih yang dipakai (H-046) |
