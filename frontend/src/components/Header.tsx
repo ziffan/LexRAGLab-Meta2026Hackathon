@@ -15,14 +15,19 @@ export const FAMILY_LABELS: Record<string, string> = { uupt: "Company Law (UU 40
 
 export interface BuildInfo { model: string | null; costMicros: number | null }
 
-/** Health -> BuildInfo. Biaya hanya dari field server `ledger_spent_usd_micros` (buku belanja `Ledger.spent`, putusan operator 12,
- * UX-02; integer); selain itu null ("n/a"). `run_cost_usd_micros` (jumlah mentah) tidak dipakai di layar. */
+/** Tooltip angka biaya U0 (H-104 butir 3). DRAF teks: ditunjukkan ke L1 sebelum final (brief L2#11 K1). */
+export const RUN_COST_TITLE =
+  "Main results only: budget ledger of the Contributor runs (default pool), cost from model usage plus projected cost of failed attempts. Comparator and effort-sweep spend is shown per pool in the run log.";
+
+/** Health -> BuildInfo. Biaya hanya dari field server `main_results_spent_usd_micros` (buku belanja pool default = hasil utama
+ * Contributor, H-104 butir 3; integer); selain itu null ("n/a"). `ledger_spent_usd_micros` (semua pool) dan `run_cost_usd_micros`
+ * (jumlah mentah) tidak dipakai di header. */
 export function buildInfoFromHealth(h: Health | null | undefined): BuildInfo {
-  const c = h?.ledger_spent_usd_micros;
+  const c = h?.main_results_spent_usd_micros;
   return { model: h?.model ?? null, costMicros: typeof c === "number" && Number.isInteger(c) ? c : null };
 }
 
-/** Model ID dan total biaya run tersimpan, keduanya dari satu fetch /api/health (`model`, `ledger_spent_usd_micros`). null = belum ada / tidak terbaca. Panggil sekali (App), oper ke Header lewat prop. */
+/** Model ID dan biaya hasil utama, keduanya dari satu fetch /api/health (`model`, `main_results_spent_usd_micros`). null = belum ada / tidak terbaca. Panggil sekali (App), oper ke Header lewat prop. */
 export function useBuildInfo(): BuildInfo {
   const [info, setInfo] = useState<BuildInfo>({ model: null, costMicros: null });
   useEffect(() => {
@@ -89,7 +94,7 @@ export function Header({ build = { model: null, costMicros: null } }: { build?: 
         Selected setting: <strong>{sel ? settingShort(sel) : state.snapshot.status === "error" ? "n/a" : "…"}</strong>
       </span>
       <span className="hdr-item">Model: <strong className="mono hdr-value">{build.model ?? "n/a"}</strong></span>
-      <span className="hdr-item" title="Budget ledger over all stored runs: cost from model usage, plus projected cost of failed attempts">Run cost: <strong className="mono hdr-value">{build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
+      <span className="hdr-item" title={RUN_COST_TITLE}>Run cost (main results): <strong className="mono hdr-value">{build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
       {snap?.replay && <span className="hdr-group"><span className="tag replay">REPLAY</span><Hint id="app.replay" /></span>}
       <AboutPanel />
     </header>

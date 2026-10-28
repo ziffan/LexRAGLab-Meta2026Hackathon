@@ -6,7 +6,7 @@ non-kosong tidak valid = config_invalid (O-12 alt. 2); peran tanpa cap = config_
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -201,3 +201,22 @@ def pool_limits(ledger: Ledger, caps: Caps, provider: str, role: str) -> tuple[i
         return spent, pc[provider], spent, pc[provider]
     return (ledger.spent_pool(provider, pc, role), caps.per_role_micros[role],
             ledger.spent_pool(provider, pc), caps.total_micros)
+
+
+def pool_spend(records: Iterable[Any], provider_caps: Mapping[str, int],
+               off_pin: Callable[[Any], bool] | None = None) -> dict[str, int]:
+    """Belanja per pool dari rekaman yang SUDAH dibaca (satu pembacaan untuk R1; H-104 butir 3). Aturan pool sama dengan
+    `Ledger.spent_pool`: provider tercantum di `provider_caps` -> pool bernama provider itu; selain itu -> pool `"default"`
+    (hasil utama Contributor). `off_pin` diberikan (H-102, pool sapuan) -> rekaman off-pin masuk pool `"sweep"` dan tidak
+    dihitung di pool lain. Urutan kunci: `default`, provider sesuai urutan `provider_caps`, lalu `sweep` (bila `off_pin`).
+    Integer micro-USD; pool tanpa rekaman = 0."""
+    out: dict[str, int] = {"default": 0, **{str(p): 0 for p in provider_caps}}
+    if off_pin is not None:
+        out["sweep"] = 0
+    for r in records:
+        if off_pin is not None and off_pin(r):
+            key = "sweep"
+        else:
+            key = r.provider if r.provider in provider_caps else "default"
+        out[key] += r.spend_micros()
+    return out

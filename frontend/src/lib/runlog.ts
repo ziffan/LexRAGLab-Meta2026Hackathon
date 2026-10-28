@@ -1,4 +1,4 @@
-import type { HeaderBView, HeaderSample, RunKind, RunRecord, RunTotal } from "../types";
+import type { HeaderBView, HeaderSample, PoolSpend, RunKind, RunRecord, RunTotal } from "../types";
 import { formatUsd } from "./evidence";
 
 // U8 Run log & cost (docs/UI-SPEC.md U8): logika murni. Uang integer micro-USD, waktu UTC.
@@ -45,6 +45,23 @@ export function totalsToAggregates(totals: RunTotal[], role: RoleFilter = "all")
     .filter((t) => role === "all" || t.kind === role)
     .map((t) => ({ kind: t.kind, runs: t.runs, inputTokens: t.usage_input_tokens, cachedTokens: t.usage_cached_tokens,
       outputTokens: t.usage_output_tokens, costMicros: t.spend_usd_micros, unknownRuns: t.unknown_runs }));
+}
+
+// H-104 butir 3: label pool belanja (R1 `pool_spend`). Pool `default` = hasil utama (angka header U0).
+const POOL_LABEL: Record<string, string> = {
+  default: "Main results (Contributor, default pool)",
+  baseten: "Spark Open comparators (Baseten pool)",
+  sweep: "Effort sweep (sweep pool)",
+};
+
+export interface PoolRow { pool: string; label: string; costMicros: number; main: boolean }
+
+/** R1 `pool_spend` -> baris tabel belanja per pool, urutan server; pool tak dikenal diberi label "<nama> pool". */
+export function poolRows(pools: PoolSpend[] | null | undefined): PoolRow[] {
+  if (!Array.isArray(pools)) return [];
+  return pools
+    .filter((p) => typeof p.spend_usd_micros === "number" && Number.isInteger(p.spend_usd_micros))
+    .map((p) => ({ pool: p.pool, label: POOL_LABEL[p.pool] ?? `${p.pool} pool`, costMicros: p.spend_usd_micros, main: p.pool === "default" }));
 }
 
 /** Waktu UTC ringkas "2026-10-27 06:24:03Z" dari ISO. */

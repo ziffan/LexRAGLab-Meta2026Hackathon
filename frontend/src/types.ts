@@ -336,11 +336,21 @@ export interface Health {
   config_hash: string;
   /** Jumlah `cost_usd_micros` seluruh RunRecord tersimpan (integer micro-USD); null/tidak ada = tidak terbaca. */
   run_cost_usd_micros?: number | null;
-  /** Buku belanja `Ledger.spent` (`spend_micros` = cost + projected per record, H-063): satu angka biaya U0/README/video (putusan operator 12). */
+  /** Buku belanja `Ledger.spent` (`spend_micros` = cost + projected per record, H-063) atas SEMUA pool; jumlah U8. Bukan angka U0 sejak H-104. */
   ledger_spent_usd_micros?: number | null;
+  /** H-104 butir 3: buku belanja pool default (hasil utama Contributor) = angka `Run cost (main results)` U0 dan README. */
+  main_results_spent_usd_micros?: number | null;
+  /** H-104 butir 3: belanja per pool (`default`, provider berplafon mis. `baseten`, `sweep`), urutan server. */
+  pool_spend?: PoolSpend[] | null;
   /** Agregat per jenis run atas SEMUA RunRecord (server, tanpa limit R6); tabel per peran U8. */
   run_totals_by_kind?: RunTotal[] | null;
   model_profiles: ModelProfileInfo[];
+}
+
+/** R1 `pool_spend` (docs/API.md): integer micro-USD per pool. */
+export interface PoolSpend {
+  pool: string;
+  spend_usd_micros: number;
 }
 
 /** R1 `run_totals_by_kind` (docs/API.md): integer; `spend_usd_micros` = buku belanja per jenis run. */
