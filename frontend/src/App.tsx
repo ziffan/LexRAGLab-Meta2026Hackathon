@@ -1,6 +1,6 @@
 import { ChunksVsGold } from "./components/ChunksVsGold";
 import { EvidencePanel } from "./components/Evidence";
-import { Header, useBuildInfo } from "./components/Header";
+import { Header, Tagline, useBuildInfo } from "./components/Header";
 import { Hint } from "./components/Hint";
 import { ProfilePanel } from "./components/ProfileExport";
 import { PerItem } from "./components/PerItem";
@@ -23,6 +23,7 @@ export function App() {
   return (
     <div className="app">
       <Header build={build} />
+      <Tagline />
       <nav className="app-nav"><a href={reviewHref(state.family, isStatic())}>Review proposals</a><Hint id="role.d" /></nav>
       <main className="layout">
         <ChunksVsGold />

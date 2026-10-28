@@ -10,6 +10,12 @@ export type OriginFilter = "all" | Item["origin"];
 export type ModeFilter = "all" | Item["mode"];
 export type SplitFilter = "all" | SplitName;
 
+/** Butir yang dipilih saat URL tanpa `item` (UX-01, putusan operator 12 Q-UX-5): halaman pembuka tidak kosong. Hanya bila butir ada. */
+export const DEFAULT_ITEM: Readonly<Record<string, string>> = { uupt: "kontrol-K-09" };
+
+/** Filter Split U4 bawaan (UX-16): UU PT = held-out, sama dengan cakupan U2 (angka laporan dari held-out); keluarga lain = all. */
+export const defaultFilterSplit = (family: string): SplitFilter => (family === "uupt" ? "held_out" : "all");
+
 export interface Filters {
   origin: OriginFilter;
   mode: ModeFilter;
@@ -29,6 +35,7 @@ export interface State {
   docs: Record<string, Load<DocResponse>>; // kunci: setting_id
   retrievals: Record<string, Load<Retrieval>>; // kunci: setting_id|item_id
   paramSetting: string | null; // ?setting= dari URL, diselesaikan saat snapshot siap
+  wantDefaultItem: boolean; // URL awal tanpa ?item=: pilih DEFAULT_ITEM saat snapshot pertama siap
 }
 
 export type Action =
@@ -63,10 +70,13 @@ export function reducer(s: State, a: Action): State {
       const prev = s.snapshot.status === "ready" ? s.snapshot.data.settings.find((x) => x.setting_id === s.selectedSettingId) : undefined;
       const fromParam = s.paramSetting ? resolveSettingParam(avail, s.paramSetting) : undefined;
       const sel = fromParam ?? matchSetting(avail, prev) ?? avail.find((x) => x.setting_id === (a.data.grid?.selected?.setting_id ?? a.data.grid?.transfer?.setting_id)) ?? avail[0];
-      return { ...s, snapshot: { status: "ready", data: a.data }, selectedSettingId: sel?.setting_id ?? null, paramSetting: null, docs: {}, retrievals: {} };
+      const defItem = s.wantDefaultItem && !s.selectedItemId ? DEFAULT_ITEM[a.data.family] : undefined;
+      const item = defItem && a.data.items.some((i) => i.id === defItem) ? defItem : s.selectedItemId;
+      return { ...s, snapshot: { status: "ready", data: a.data }, selectedSettingId: sel?.setting_id ?? null, paramSetting: null, docs: {}, retrievals: {},
+        selectedItemId: item, wantDefaultItem: false };
     }
     case "set_family":
-      return a.value === s.family ? s : { ...blankState(), family: a.value };
+      return a.value === s.family ? s : blankState(a.value);
     case "select_item":
       return { ...s, selectedItemId: a.id, selectedChunkId: null };
     case "select_setting":
@@ -96,20 +106,21 @@ export function reducer(s: State, a: Action): State {
   }
 }
 
-export function blankState(): State {
+export function blankState(family = "uupt"): State {
   return {
-    family: "uupt",
+    family,
     budget: null,
     snapshot: { status: "idle" },
     selectedItemId: null,
     selectedSettingId: null,
     split: "held_out",
-    filters: { origin: "all", mode: "all", split: "all" },
+    filters: { origin: "all", mode: "all", split: defaultFilterSplit(family) },
     compare: false,
     selectedChunkId: null,
     docs: {},
     retrievals: {},
     paramSetting: null,
+    wantDefaultItem: false,
   };
 }
 
@@ -124,13 +135,14 @@ function initialState(): State {
     ...blankState(),
     budget: Number.isInteger(b) && b > 0 ? b : null,
     selectedItemId: q.get("item"),
+    wantDefaultItem: !q.has("item"),
     paramSetting: q.get("setting"),
     split: oneOf(q.get("split"), ["tune", "held_out"] as const, "held_out"),
     compare: q.get("compare") === "1",
     filters: {
       origin: oneOf(q.get("origin"), ["all", "operator", "spark_disetujui"] as const, "all"),
       mode: oneOf(q.get("mode"), ["all", "literal", "parafrase", "tolak"] as const, "all"),
-      split: oneOf(q.get("fsplit"), ["all", "tune", "held_out"] as const, "all"),
+      split: oneOf(q.get("fsplit"), ["all", "tune", "held_out"] as const, defaultFilterSplit("uupt")),
     },
   };
 }
@@ -231,7 +243,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (state.split !== "held_out") q.set("split", state.split);
     if (state.filters.origin !== "all") q.set("origin", state.filters.origin);
     if (state.filters.mode !== "all") q.set("mode", state.filters.mode);
-    if (state.filters.split !== "all") q.set("fsplit", state.filters.split);
+    if (state.filters.split !== defaultFilterSplit(state.family)) q.set("fsplit", state.filters.split);
     if (primary) q.set("setting", settingParam(primary));
     else if (state.paramSetting) q.set("setting", state.paramSetting);
     const qs = q.toString();

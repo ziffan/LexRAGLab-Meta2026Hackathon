@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiFailure, fetchProfileExport, postProfileImport } from "../api";
-import { fixed3, orNa, xOfY } from "../lib/format";
+import { fixed3, mean2, orNa, xOfY } from "../lib/format";
 import { modeLabel, retrievalModeLabel } from "../lib/labels";
 import { DEGENERATE_NOTE, TRANSFER_LABEL, hasDegenerate } from "../lib/settings";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
@@ -160,7 +160,7 @@ function HeldOutSummary({ profile }: { profile: Profile }) {
     <dl className="kv">
       <dt>Items</dt><dd>{h.n_items}</dd>
       <dt>Fully covered</dt><dd>{xOfY(h.fully_covered.covered, h.fully_covered.total, "items with gold")}</dd>
-      <dt>Mean span recall</dt><dd>{orNa(h.mean_span_recall, fixed3)}</dd>
+      <dt>Mean span recall</dt><dd>{mean2(h.mean_span_recall)}</dd>
       <dt>Mean token precision</dt><dd>{orNa(h.mean_token_precision, fixed3)}</dd>
       <dt>By origin</dt><dd>{Object.entries(h.by_origin).map(([k, v]) => `${k}: ${v}`).join(", ") || "n/a"}</dd>
     </dl>

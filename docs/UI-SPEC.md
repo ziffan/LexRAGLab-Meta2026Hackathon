@@ -369,3 +369,18 @@ Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi pers
 | 6 | Header memuat "Profile" dan "Review proposals ({n} pending)" (UI-SPEC U0) | tidak ditambah (di luar tema); tautan "Review proposals" tetap di bawah header |
 | 7 | Kontrol 44 px | tombol hint (24 px, H-073) dan `.addr` dikecualikan agar tidak merusak alur teks |
 | 8 | Border panel `#D3D7DC` terlalu terang untuk kontrol (kontras non-teks < 3:1) | kontrol memakai `--line-strong` `#8A929B` (nilai mockup, bukan dari H-083) |
+
+### 10.5 Perbaikan UX review M5.1 (putusan operator 12, 28 Okt)
+
+Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Keputusan tampilan tanpa nomor H (preseden putusan 8, 10).
+
+| UX | Perilaku |
+|---|---|
+| 01 | URL tanpa `item`: butir `kontrol-K-09` dipilih sekali bila ada di snapshot (UU PT). Tagline di bawah header dari `frontend/src/content/tagline.json`, tampil hanya bila `status = final` (teks disetujui operator) |
+| 02 | `Run cost` U0 = buku belanja (R1 `ledger_spent_usd_micros`), sama dengan README; U8 agregat per peran atas semua run, tabel baris "Latest {N} runs (UTC)" |
+| 03 | U3 jawaban dari cache: biaya/token panggilan asal (W6 `origin_runs`) + "served from cache; original call {UTC}" |
+| 05 | U2 Selected setting: "Chosen on tune; held-out shown for reporting." untuk setting terpilih grid |
+| 11 | Legenda U2: "Structure (schema A)" (segitiga, bila ada titiknya) dan "Selected setting (ring)" |
+| 16 | Filter Split U4 bawaan UU PT = Held-out (cakupan sama dengan U2); akta = all; `fsplit` di URL hanya bila beda dari bawaan |
+| 18 | Rata-rata (span recall mean, MRR) desimal dua angka, pecahan eksak sebagai `title`; hitungan tetap "x of y" |
+| 22 | Header: ikon hint dikelompokkan dengan label pemiliknya (`.hdr-group`) |

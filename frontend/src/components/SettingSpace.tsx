@@ -1,7 +1,7 @@
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import { useState } from "react";
 import { useStore } from "../state";
-import { exactStr, fixed3, intStr, orNa, xOfY } from "../lib/format";
+import { exactStr, intStr, mean2, orNa, xOfY } from "../lib/format";
 import { chunkerLabel, settingShort, splitLabel } from "../lib/labels";
 import { NONE_HIDDEN, SERIES, isHidden, seriesGroups, toggleSeries, visibleGroups } from "../lib/series";
 import { DEGENERATE_NOTE, TRANSFER_LABEL, availableSettings, frontierIds, gridKey, hasDegenerate, isTransferGrid, pointOf } from "../lib/settings";
@@ -85,9 +85,9 @@ function Tip({ active, payload }: TipProps) {
     <div className="tip">
       <strong>{settingShort(d.setting)}</strong>
       <div>{chunkerLabel(d.setting)}</div>
-      <div>Span recall (mean): {exactStr(p.exact, "mean_span_recall")} = {orNa(p.mean_span_recall, fixed3)}</div>
+      <div>Span recall (mean): {mean2(p.mean_span_recall)} (exact {exactStr(p.exact, "mean_span_recall")})</div>
       <div>Token precision (mean): {orNa(p.mean_token_precision, (v) => v.toFixed(4))}</div>
-      <div>MRR: {exactStr(p.exact, "mrr")}</div>
+      <div>MRR: {mean2(p.mrr)} (exact {exactStr(p.exact, "mrr")})</div>
       <div>Tokens (local tokenizer), mean: {orNa(p.mean_retrieved_tokens, intStr)}</div>
       <div>{xOfY(p.fully_covered_count.covered, p.fully_covered_count.total, "items fully covered")}</div>
       <div>{d.headerOn ? "Header B on" : "Header B off"}</div>
@@ -250,9 +250,13 @@ function Body({ snap }: { snap: Snapshot }) {
       )}
       <ul className="legend-list" aria-label="Legend">
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Structure (handwritten parser)</li>
+        {dots.some((d) => d.setting.chunker === "structure_schema") && (
+          <li data-testid="legend-schema"><svg width="16" height="16" aria-hidden="true"><polygon points="8,1 15,15 1,15" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Structure (schema A)</li>
+        )}
         <li><svg width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" fill={COLOR_OFF} stroke={COLOR_OFF} strokeWidth="2" /></svg> Fixed-size</li>
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="var(--dominated)" stroke="var(--dominated)" strokeWidth="2" /></svg> Frontier (filled), joined by a line</li>
         <li><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="var(--surface)" stroke="var(--dominated)" strokeWidth="2" /></svg> Dominated (hollow)</li>
+        <li data-testid="legend-selected"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="var(--err-text)" strokeWidth="2.5" /></svg> Selected setting (ring)</li>
         <li data-testid="legend-off"><span className="swatch" style={{ background: COLOR_OFF }} aria-hidden="true" /> Header B off</li>
         {onDots > 0 ? (
           <li data-testid="legend-on"><span className="swatch" style={{ background: COLOR_ON }} aria-hidden="true" /> Header B on</li>
@@ -282,6 +286,9 @@ function Body({ snap }: { snap: Snapshot }) {
       {hidden > 0 && <p className="note">{hidden} point{hidden > 1 ? "s" : ""} not plotted: {transfer ? "no gold items" : "no gold items in this split"} (n/a).</p>}
 
       <h3 className="detail-title">Selected setting</h3>
+      {sel && !transfer && sel.setting_id === grid.selected?.setting_id && (
+        <p className="note" data-testid="chosen-on-tune">Chosen on tune; held-out shown for reporting.</p>
+      )}
       {sel ? (
         <dl className="detail">
           <div>
@@ -300,9 +307,9 @@ function Body({ snap }: { snap: Snapshot }) {
                     <>
                       {xOfY(p.fully_covered_count.covered, p.fully_covered_count.total, "items fully covered")}
                       <br />
-                      Span recall (mean): {exactStr(p.exact, "mean_span_recall")}
+                      Span recall (mean): <span title={`exact ${exactStr(p.exact, "mean_span_recall")}`}>{mean2(p.mean_span_recall)}</span>
                       <br />
-                      MRR: {exactStr(p.exact, "mrr")}
+                      MRR: <span title={`exact ${exactStr(p.exact, "mrr")}`}>{mean2(p.mrr)}</span>
                       <br />
                       {frontierIds(snap, sp).has(sel.setting_id) ? "On the frontier" : "Dominated"}
                       {p.label && <><br /><span data-testid="degenerate-selected">{p.label}</span></>}

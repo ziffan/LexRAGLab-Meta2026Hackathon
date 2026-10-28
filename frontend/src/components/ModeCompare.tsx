@@ -1,5 +1,5 @@
 import { useStore } from "../state";
-import { exactStr, xOfY } from "../lib/format";
+import { exactStr, mean2, xOfY } from "../lib/format";
 import { chunkerLabel, retrievalModeLabel } from "../lib/labels";
 import { toRow } from "../lib/rows";
 import { gridKey, isTransferGrid, pointOf, siblingModes } from "../lib/settings";
@@ -79,8 +79,8 @@ export function ModeCompare({ snap, setting, metricsFor }: { snap: Snapshot; set
                 <tr key={s.setting_id} className={s.setting_id === setting.setting_id ? "sel" : ""}>
                   <th scope="row">{retrievalModeLabel(s.retrieval_mode)}</th>
                   <td>{p ? xOfY(p.fully_covered_count.covered, p.fully_covered_count.total, "items") : "n/a"}</td>
-                  <td>{p ? exactStr(p.exact, "mean_span_recall") : "n/a"}</td>
-                  <td>{p ? exactStr(p.exact, "mrr") : "n/a"}</td>
+                  <td title={p ? `exact ${exactStr(p.exact, "mean_span_recall")}` : undefined}>{p ? mean2(p.mean_span_recall) : "n/a"}</td>
+                  <td title={p ? `exact ${exactStr(p.exact, "mrr")}` : undefined}>{p ? mean2(p.mrr) : "n/a"}</td>
                 </tr>
               );
             })}
