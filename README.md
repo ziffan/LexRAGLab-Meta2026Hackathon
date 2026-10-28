@@ -69,11 +69,11 @@ Role C comparators (secondary, role C only): the same answer step can be re-run 
 
 ## Evaluation items
 
-Current count, from `data/butir/` (`uupt.v13.jsonl`, `akta.v85.jsonl`):
+Current count, from `data/butir/` (`uupt.v16.jsonl`, `akta.v85.jsonl`):
 
 | Family | Items | Origin | Notes |
 |---|---|---|---|
-| Company Law | **20** | 9 operator-written control items (`origin: operator`); 11 Spark-proposed items approved by the operator (`origin: spark_disetujui`; 5 approved as proposed, 6 edited by the operator) | 1 must-refuse item with no gold span. Tune / held-out split: 11 / 9 |
+| Company Law | **23** | 9 operator-written control items (`origin: operator`); 14 Spark-proposed items approved by the operator (`origin: spark_disetujui`; 8 approved as proposed, 6 edited by the operator) | 3 must-refuse items (`mode: tolak`, answer not in the statute) plus 1 operator control item with no gold span. Tune / held-out split: 13 / 10 (1 must-refuse item held out) |
 | Notarial deeds (synthetic) | **84** | all Spark-proposed, approved by the operator (82 as proposed, 2 edited); none operator-written | 43 literal, 26 paraphrase, 15 must-refuse (3 per deed, no gold span); the 69 gold items are spread over the five deeds (12 to 16 each). No tune / held-out split; transfer test only |
 
 Operator-written control items detect circularity between Spark-proposed queries and their spans. There are none for deeds, so that check does not apply to the deed numbers. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`). The Company Law count may still change after the operator's final review.

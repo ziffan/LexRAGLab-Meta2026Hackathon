@@ -7,12 +7,12 @@ diperbarui: 2026-10-28 UTC (session-end L1), sesi orkestrasi berlapis (L2#6 sele
 
 ## Status
 
-- M0, M1 **selesai**. M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v13 = 20; akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
+- M0, M1 **selesai**. M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai (Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
 - M4 selesai: skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
 - M5.1: uji visual Chrome statis + live (375/768/1440) lolos setelah fix proxy keep-alive (`b79e37b`, G-39); bukti `_kerja/orkestrasi/bukti/M51-*`. Status MILESTONES masih "berjalan": kriteria selesai (sisa lama "adegan 4 / screenshot semua adegan") belum dicocokkan ulang; L2#7 mencocokkan lalu menandai.
 - M5.2 persiapan: LICENSE + NOTICE Apache-2.0 (H-097, copyright Ziffany Firdinal), README tema Build for Your World / Indie (H-098) + kalimat anti-RAG dan new-work-only, motivasi PRD = korpus aturan (angka LO dari laporan operator, anonim), hint 1.4.0 final, dist-static dibangun ulang dari `83c370b` (`--check` 0). Rencana rewrite histori `_kerja/orkestrasi/M52-rewrite-histori-rencana.md` (H-096, belum dijalankan). Repo masih private.
-- Skenario `tolak` UU PT disetujui (H-099); kode belum ditulis.
+- `tolak` UU PT selesai (H-099): prompt D v3 268dd67, kode Tier 1 f2b5417, run D b709ac3 (4.992 micro-USD), 3 butir disetujui operator, split v3, grid ulang tanpa Spark (pilihan profil tidak berubah), profil + ekspor statis ulang (faa343d).
 - Belanja Model API kumulatif 554.785 micro-USD (plafon 20.000.000). Baseten 30.591. Glimmer 0.
 - HEAD `8d04e18` (di-push): pytest 1345 (worktree bersih L1), vitest 283, tsc bersih, secret scan 0.
 
