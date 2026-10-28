@@ -163,6 +163,10 @@ def _validate_pool(model_profiles: Mapping[str, Any], sweep_cfg: Mapping[str, An
     cap = pool["cap_micros"]
     if not _is_int(cap) or cap < 0:
         raise ConfigInvalid("config/sweep: sweep_pool.cap_micros must be a non-negative integer")
+    if "cumulative_pct" in pool:
+        pct = pool["cumulative_pct"]
+        if not _is_int(pct) or not 1 <= pct <= 100:
+            raise ConfigInvalid("config/sweep: sweep_pool.cumulative_pct must be an integer between 1 and 100")
     names = pool["profiles"]
     if not isinstance(names, list) or not names:
         raise ConfigInvalid("config/sweep: sweep_pool.profiles must be a non-empty list")
@@ -188,6 +192,17 @@ def sweep_pool_cap(sweep_cfg: Mapping[str, Any]) -> int:
     if not isinstance(pool, Mapping) or not _is_int(pool.get("cap_micros")) or pool["cap_micros"] < 0:
         raise ConfigInvalid("config/sweep: sweep_pool.cap_micros is missing or invalid")
     return pool["cap_micros"]
+
+
+def sweep_pool_cumulative_pct(sweep_cfg: Mapping[str, Any]) -> int | None:
+    """`[sweep_pool].cumulative_pct` (H-105): integer 1..100, atau None bila kunci hilang (pakai `[batch_gate]`)."""
+    pool = sweep_cfg.get("sweep_pool") if isinstance(sweep_cfg, Mapping) else None
+    if not isinstance(pool, Mapping) or "cumulative_pct" not in pool:
+        return None
+    pct = pool["cumulative_pct"]
+    if not _is_int(pct) or not 1 <= pct <= 100:
+        raise ConfigInvalid("config/sweep: sweep_pool.cumulative_pct must be an integer between 1 and 100")
+    return pct
 
 
 def merge_sweep(model_cfg: Mapping[str, Any], sweep_cfg: Mapping[str, Any]) -> dict[str, Any]:

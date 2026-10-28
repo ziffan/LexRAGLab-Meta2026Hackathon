@@ -7,7 +7,8 @@ from pathlib import Path
 import pytest
 
 from backend.header_b import compare as cmp
-from backend.proposal.gate import evaluate_gate, load_gate_config, sweep_threshold_micros
+from backend.proposal.gate import cumulative_threshold_for, evaluate_gate, load_gate_config, sweep_threshold_micros
+from backend.spark.sweep import validate_sweep
 from backend.spark import (BudgetExceeded, ConfigInvalid, Ledger, NotReportable, budget as budget_mod, effective_caps,
                            pool_limits, require_reportable)
 from backend.spark.budget import is_off_pin
@@ -325,17 +326,36 @@ def test_s6_e_contributor_sweep_floor_and_low_control():
 def test_s6_c_cumulative_gate_on_sweep_pool(world):
     m, b, s, tmp = world
     runs = tmp / "runs"
-    assert sweep_threshold_micros(b, s) == 40_000_000
+    assert sweep_threshold_micros(b, s) == 50_000_000  # H-105: sweep.toml nyata cumulative_pct = 100
     gate = cmp.make_gate("baseten", b, m, None, runs, sweep_cfg=s)
-    v = gate([0], 1_994_750)
-    assert v.ok and v.spent == 38_005_250 and v.spent + v.batas_atas == 40_000_000
+    syn(runs, "b", "baseten", OPEN, "xhigh", 10_000_000, rid="fill10m")  # pool sapuan 48.005.250 (batas atas <= batch cap 2.000.000)
+    ub = 1_994_750
+    v = gate([0], ub)
+    assert v.ok and v.spent == 48_005_250 and v.spent + v.batas_atas == 50_000_000
     syn(runs, "b", "baseten", OPEN, "xhigh", 1, rid="plus1")
-    v = gate([0], 1_994_750)
+    v = gate([0], ub)
     assert not v.ok and "cumulative_over_threshold" in v.reasons
-    # kontrol Q-S2: ambang 100% = 50.000.000 meloloskan
-    b100 = dict(b)
-    b100["batch_gate"] = dict(b["batch_gate"], cumulative_pct=100)
-    assert cmp.make_gate("baseten", b100, m, None, runs, sweep_cfg=s)([0], 1_994_750).ok
+    # gerbang utama tidak berubah: [batch_gate].cumulative_pct tetap 80
+    assert b["batch_gate"]["cumulative_pct"] == 80
+    assert cumulative_threshold_for("baseten", b, effective_caps(b, None, m).provider_micros) == 16_000_000
+
+
+def test_h105_sweep_pct_missing_falls_back_to_batch_gate_40m(world):
+    m, b, s, tmp = world
+    s2 = dict(s)
+    s2["sweep_pool"] = {k: v for k, v in s["sweep_pool"].items() if k != "cumulative_pct"}
+    assert sweep_threshold_micros(b, s2) == 40_000_000
+
+
+@pytest.mark.parametrize("bad", [0, 101, -1, True, False, 80.0, "100", None])
+def test_h105_sweep_pct_invalid_is_config_invalid(world, bad):
+    m, b, s, tmp = world
+    s2 = dict(s)
+    s2["sweep_pool"] = dict(s["sweep_pool"], cumulative_pct=bad)
+    with pytest.raises(ConfigInvalid):
+        validate_sweep(m, s2)
+    with pytest.raises(ConfigInvalid):
+        sweep_threshold_micros(b, s2)
 
 
 def test_s6_d_pools_not_mixed_in_gate(world):

@@ -10,8 +10,11 @@ version = 1
 
 [sweep_pool]
 # Pool belanja TERPISAH khusus sapuan (D2): jumlah rekaman off-pin (aturan atas config/model). Ambang gerbang kumulatif
-# = cap_micros x [batch_gate].cumulative_pct // 100 = 40.000.000 (P4). Semua profil di berkas ini WAJIB terdaftar.
+# = cap_micros x cumulative_pct // 100 (P4). Semua profil di berkas ini WAJIB terdaftar.
+# H-105: ambang kumulatif POOL SAPUAN saja naik 80 -> 100% (= 50.000.000); `[batch_gate].cumulative_pct` utama tetap 80.
+# Kunci ini integer 1..100; hilang = pakai [batch_gate].cumulative_pct (perilaku lama, 40.000.000).
 cap_micros = 50000000
+cumulative_pct = 100
 profiles = [
     "sweep_meta_medium", "sweep_meta_high", "sweep_meta_xhigh",
     "sweep_baseten_medium", "sweep_baseten_high", "sweep_baseten_xhigh",

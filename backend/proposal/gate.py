@@ -78,9 +78,12 @@ def cumulative_threshold_for(provider: str, budget_cfg: Mapping[str, Any], caps:
 
 def sweep_threshold_micros(budget_cfg: Mapping[str, Any], sweep_cfg: Mapping[str, Any]) -> int:
     """Ambang kumulatif pool sapuan (H-102 P4/Q-S2): `[sweep_pool].cap_micros x cumulative_pct // 100`
-    (50.000.000 x 80 // 100 = 40.000.000). Satu sumber angka dengan pola P9 H-101; `[batch_gate]` tidak punya pool sendiri."""
-    from backend.spark.sweep import sweep_pool_cap
-    return sweep_pool_cap(sweep_cfg) * load_gate_config(budget_cfg).cumulative_pct // 100
+    (kunci hilang: 50.000.000 x 80 // 100 = 40.000.000; H-105 `[sweep_pool].cumulative_pct` = 100 -> 50.000.000). Satu sumber angka dengan pola P9 H-101; `[batch_gate]` tidak punya pool sendiri."""
+    from backend.spark.sweep import sweep_pool_cap, sweep_pool_cumulative_pct
+    pct = sweep_pool_cumulative_pct(sweep_cfg)  # H-105: nilai khusus sapuan; hilang = [batch_gate].cumulative_pct
+    if pct is None:
+        pct = load_gate_config(budget_cfg).cumulative_pct
+    return sweep_pool_cap(sweep_cfg) * pct // 100
 
 
 def evaluate_gate(expected_per_call: Sequence[int], spent: int, cfg: GateConfig, *, upper_floor: int = 0,
