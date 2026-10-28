@@ -1,13 +1,21 @@
 <!-- Tujuan: README publik repo app (bahasa Inggris, H-018): apa, kenapa, cara jalan, batas, disclaimer. -->
-<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054, H-060, H-078, H-086, H-089, H-090, H-091, H-093. -->
+<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054, H-060, H-078, H-086, H-089, H-090, H-091, H-093, H-098. -->
 
 # LexRAGLab
 
 Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed.
 
-Built for the Meta Global AI Developer Hackathon (Indie track) with `muse-spark-1.3`.
+Built for the Meta Global AI Developer Hackathon (Indie track, theme "Build for Your World") with Muse Spark (`muse-spark-1.3-contributor` through the Meta Model API).
 
 > Research demo. Not legal advice.
+
+## Theme: Build for Your World
+
+The hackathon theme is "Bring Meta's models into your domain. Solve a problem you know firsthand, free up time and mental space, and make something possible that wasn't before." The domain here is Indonesian law.
+
+- **A problem known firsthand.** The operator does agentic legal work (legal opinions, legal due diligence, contract drafting) in which the agent must consult a body of regulation that does not fit one context window (see [Why](#why)).
+- **Time and mental space.** LexRAGLab aims to replace guessing a chunk size with a measured choice, and to keep the context an agent needs small. This is the hypothesis the evaluation tests, not a measured saving.
+- **Something that wasn't possible before.** There is no public, standard benchmark for Indonesian legal RAG, so a retrieval setting for Indonesian legal text could not be chosen by measurement. Muse Spark reads a new document family, proposes its structure and evaluation items for operator review, and LexRAGLab scores every setting against the approved gold spans.
 
 ## What it is
 
@@ -19,17 +27,15 @@ The output is a **versioned setting profile** you can export and reuse in your o
 
 Legal RAG teams usually pick a chunk size by guess. In Indonesian regulation, a guess can cut an *ayat* (paragraph of an article) in half, and the model then cites half a rule. There is no public, standard benchmark for Indonesian legal RAG. LexRAGLab makes chunking a measurable design decision.
 
-The motivation comes from practice, not from RAG as a trend. Agentic legal work (legal opinions, legal due diligence, contract drafting) does not fit in one agent context window. LexRAGLab aims to find settings that keep the context an agent needs small; that is a hypothesis the evaluation tests, not a measured saving.
+The motivation comes from practice, not from RAG as a trend. Agentic legal work (legal opinions, legal due diligence, contract drafting) has to consult a body of regulation (statutes and their implementing regulations) that does not fit in one agent context window. LexRAGLab aims to find settings that keep the context an agent needs small; that is a hypothesis the evaluation tests, not a measured saving.
 
-The corpus figures below are the operator's measurements of prior engagements (not included in this repository). They are not outputs of this app, and nothing in LexRAGLab's results is derived from them.
+The regulation and material figures below are the operator's measurements of prior engagements (not included in this repository). They are not outputs of this app, and nothing in LexRAGLab's results is derived from them.
 
-- For one due diligence, nearly 600 client documents came to about 14 million tokens of Markdown text, of which roughly 3% was actually anchored as facts.
-- One transaction's legal opinion material came to about 1.2 million tokens and a full due diligence file to about 5.8 million, which is 1.2 to 5.8 times a 1-million-token window.
-- Contract drafting material was about 2.2 million tokens, or about 2.8 million with the clause library included.
-- A single statute was about 320 thousand tokens.
-- Across these jobs, only about 3% to 10% of the material was actually used.
+- A single statute consulted for one legal opinion was about 320 thousand tokens, more than a 200-thousand-token window on its own.
+- Of the regulation text, only about 10% was actually used.
+- Whole material per job, composition not broken down into regulation versus other documents: about 1.2 million tokens for one transaction's legal opinion and about 5.8 million for a full due diligence file (1.2 to 5.8 times a 1-million-token window); about 2.2 million for contract drafting, or about 2.8 million with the clause library included.
 
-Supporting, secondary: agent usage. These are the operator's measurements of prior engagements, from local agent transcripts at list API rates (computed from tokens, not billed amounts; not included in this repository). Legal due diligence (two engagements): about 15 billion cached input tokens re-read across about 120 agent sessions, roughly $8k. Legal opinion: about 270 million tokens, roughly $180. Contract drafting was not recorded; the operator estimates it to be similar to the legal opinion (an estimate, not a measurement). These describe the scale of agent usage, not an effect of this app.
+Supporting, secondary: agent usage. These are the operator's measurements of prior engagements, from local agent transcripts at list API rates (computed from tokens, not billed amounts; not included in this repository). Legal due diligence (two engagements): about 15 billion cached input tokens re-read across about 120 agent sessions, roughly $8k. Legal opinion: about 800 million cached input tokens re-read across about 40 agent sessions, roughly $500. Contract drafting was not recorded; the operator estimates it to be similar to the legal opinion (an estimate, not a measurement). These describe the scale of agent usage, not an effect of this app.
 
 ## How "best" is defined
 
@@ -40,7 +46,7 @@ Supporting, secondary: agent usage. These are the operator's measurements of pri
 
 ## What Muse Spark does
 
-| Role | What `muse-spark-1.3` does |
+| Role | What `muse-spark-1.3-contributor` does |
 |---|---|
 | A. Structure induction | Reads sample documents of a new family and proposes a flat hierarchy schema that drives a deterministic chunker. The operator corrects it; both versions are kept |
 | B. Contextual chunking | Writes a context header for each chunk with the source document cached. Header on/off is a grid axis, and header tokens count against the budget |

@@ -1,12 +1,12 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "status": "final",
   "locale": "en",
   "entries": [
     {
       "id": "app.purpose",
       "title": "What LexRAGLab is for",
-      "body": "LexRAGLab finds, for one family of Indonesian legal documents, the chunking and retrieval settings that give a language model relevant, low-noise context. The trigger is agentic legal work (opinions, due diligence, contracts), which does not fit one context window: in the operator's measurements of prior engagements (not included in this repository), nearly 600 client documents came to about 14 million tokens, of which roughly 3% was actually anchored, and a full due diligence file was about 5.8 million tokens against a 1-million-token window. LexRAGLab aims to find settings that keep the context an agent needs small. These figures are not outputs of this app. LexRAGLab does not answer legal questions and is not a RAG product. Its output is a versioned setting profile that can be exported to another RAG system."
+      "body": "LexRAGLab finds, for one family of Indonesian legal documents, the chunking and retrieval settings that give a language model relevant, low-noise context. The trigger is agentic legal work (opinions, due diligence, contracts), which has to consult a body of regulation that does not fit one context window: in the operator's measurements of prior engagements (not included in this repository), a single statute for one legal opinion was about 320 thousand tokens, and only about 10% of regulation text was actually used. LexRAGLab aims to find settings that keep the context an agent needs small. These figures are not outputs of this app. LexRAGLab does not answer legal questions and is not a RAG product. Its output is a versioned setting profile that can be exported to another RAG system."
     },
     {
       "id": "app.audience",

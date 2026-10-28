@@ -1,13 +1,13 @@
 # PRD — LexRAGLab: penemu setting chunking dan retrieval per keluarga dokumen
 
 Tujuan: menetapkan masalah, pengguna, lingkup, dan ukuran sukses aplikasi sebelum spec teknis dan kode.
-Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-043, H-045, H-047, H-051, H-053, H-054.
+Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-043, H-045, H-047, H-051, H-053, H-054, H-098.
 
 ## 1. Masalah
 
 Tim RAG hukum memilih ukuran potongan (chunk) dengan menebak. Pada peraturan Indonesia, tebakan itu bisa membelah satu ayat di tengah. LLM lalu menerima setengah aturan dan mengutipnya seolah utuh.
 
-Pemicu: kerja agentic di bidang hukum (legal opinion, legal due diligence, penyusunan kontrak) tidak muat dalam satu context window agen. Bahan untuk satu pekerjaan melampaui jendela 1 juta token, sementara bagian yang benar-benar dipakai hanya sekitar 3% sampai 10% dari bahan utuh. Motivasi ini berasal dari pengalaman kerja operator, bukan dari tren "RAG"; tujuan aplikasi tidak berubah (H-002, H-004, H-005). Aplikasi ini bertujuan (aims to) menemukan setting yang menjaga konteks yang dibutuhkan agen tetap kecil; itu hipotesis yang diuji lewat evaluasi, bukan klaim penghematan yang sudah terbukti.
+Pemicu: kerja agentic di bidang hukum (legal opinion, legal due diligence, penyusunan kontrak) harus merujuk korpus aturan (undang-undang dan peraturan pelaksananya), dan korpus itu tidak muat dalam satu context window agen. Satu undang-undang saja bisa melewati jendela 200 ribu token, dan bahan utuh satu pekerjaan melampaui jendela 1 juta token, sementara dari naskah peraturan yang benar-benar dipakai hanya sekitar 10%. Motivasi ini berasal dari pengalaman kerja operator, bukan dari tren "RAG"; tujuan aplikasi tidak berubah (H-002, H-004, H-005). Aplikasi ini bertujuan (aims to) menemukan setting yang menjaga konteks yang dibutuhkan agen tetap kecil; itu hipotesis yang diuji lewat evaluasi, bukan klaim penghematan yang sudah terbukti.
 
 Ukuran masalah. Semua angka di bawah adalah pengukuran operator atas pekerjaan sebelumnya (operator's measurements of prior engagements, tidak disertakan dalam repo ini). Bukan keluaran aplikasi dan tidak diukur di aplikasi ini.
 
@@ -15,20 +15,20 @@ Angka korpus (penekanan utama):
 
 | Fakta | Angka | Rujukan |
 |---|---|---|
-| Lapisan teks Markdown dokumen klien pada satu due diligence | hampir 600 dokumen, sekitar 14 juta token; yang benar-benar tertambat sebagai fakta sekitar 3% | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
-| Bahan satu pekerjaan legal opinion (satu transaksi) | sekitar 1,2 juta token (1,2× jendela 1 juta) | idem |
-| Bahan satu pekerjaan legal due diligence (berkas utuh) | sekitar 5,8 juta token (5,8× jendela 1 juta) | idem |
-| Bahan penyusunan kontrak | draf kontrak sekitar 2,2 juta token; sekitar 2,8 juta bila pustaka klausul ikut dihitung | idem |
-| Satu undang-undang | sekitar 320 ribu token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | idem |
+| Satu undang-undang | sekitar 320 ribu token pada satu perkara legal opinion; sendirian melewati jendela 200 ribu | pengukuran operator atas pekerjaan sebelumnya (tidak disertakan) |
+| Porsi naskah peraturan yang benar-benar dipakai | sekitar 10% | idem |
+| Bahan satu pekerjaan legal opinion (satu transaksi), bahan utuh, komposisi tidak dirinci | sekitar 1,2 juta token (1,2× jendela 1 juta) | idem |
+| Bahan satu pekerjaan legal due diligence (berkas utuh), bahan utuh, komposisi tidak dirinci | sekitar 5,8 juta token (5,8× jendela 1 juta) | idem |
+| Bahan penyusunan kontrak, bahan utuh, komposisi tidak dirinci | draf kontrak sekitar 2,2 juta token; sekitar 2,8 juta bila pustaka klausul ikut dihitung | idem |
 | Bahan satu perkara dibanding jendela 1 juta token | 1,2× sampai 5,8× | idem |
-| Porsi bahan yang benar-benar dipakai | sekitar 3% sampai 10% dari bahan utuh (3% untuk dokumen klien; sekitar 10% untuk naskah peraturan) | idem |
-| Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan) (Magesh dkk.) |
+| Ukuran korpus aturan per jenis pekerjaan (LO, LDD, kontrak) | tidak tersedia | idem |
+| Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan); Magesh dkk., "Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools", arXiv:2405.20362, 2024 |
 | Benchmark RAG hukum Indonesia publik dan standar | tidak ada | idem |
 
 Laju pemakaian agen (pendukung, sekunder), agregat. Dihitung dari transkrip agen lokal operator dengan tarif list API (bukan tagihan); pengukuran operator atas pekerjaan sebelumnya, tidak disertakan dalam repo ini:
 
 - Legal due diligence (dua engagement): sekitar 15 miliar token input ter-cache dibaca ulang dalam sekitar 120 sesi agen, sekitar US$8 ribu.
-- Legal opinion: sekitar 270 juta token, sekitar US$180.
+- Legal opinion: sekitar 800 juta token input ter-cache dibaca ulang dalam sekitar 40 sesi agen, sekitar US$500.
 - Penyusunan kontrak: tidak tercatat; estimasi operator serupa legal opinion (estimasi, bukan ukuran).
 
 Angka laju ini menggambarkan skala pemakaian agen pada pekerjaan sebelumnya, bukan hasil aplikasi ini dan bukan bukti bahwa aplikasi menurunkannya.

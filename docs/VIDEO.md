@@ -1,7 +1,7 @@
 # VIDEO — rencana video demo
 
 Tujuan: storyboard, aturan isi, daftar run wajib per adegan, jadwal produksi, dan gate unggah untuk video demo.
-Sumber keputusan: H-006, H-011, H-017, H-018, H-021, H-028, H-029, H-031, H-039, H-041, H-043, H-045, H-047, H-050, H-053, H-054.
+Sumber keputusan: H-006, H-011, H-017, H-018, H-021, H-028, H-029, H-031, H-039, H-041, H-043, H-045, H-047, H-050, H-053, H-054, H-098.
 
 Kalau Official Rules menetapkan durasi atau format lain, rules yang menang, dan dokumen ini disesuaikan. Komponen layar per adegan: `docs/UI-SPEC.md` §7.
 
@@ -15,6 +15,7 @@ Kalau Official Rules menetapkan durasi atau format lain, rules yang menang, dan 
 | Ringkasan tertulis | 100–200 kata, bahasa Inggris | Asumsi; field form belum terlihat |
 | Repo | Publik, Apache-2.0 | Panduan: "Repositories must be public"; H-029 |
 | Isi | Hanya fitur yang dibangun selama acara; yang dibuat selama acara harus bisa diidentifikasi ("Judges must be able to clearly identify what was created during the Hackathon") | Panduan, aturan "Demo requirements"; gagal menandai = diskualifikasi |
+| Tema dan domain | Tema "Build for Your World" (track Indie) dan domain hukum Indonesia harus jelas bagi juri di video, misalnya disebut di narasi pembuka atau ditampilkan di layar | H-098; video dan narasi milik operator (putusan 8), tanpa storyboard dari agen |
 
 4 November disisihkan untuk video, dan kode dibekukan 3 November malam.
 
