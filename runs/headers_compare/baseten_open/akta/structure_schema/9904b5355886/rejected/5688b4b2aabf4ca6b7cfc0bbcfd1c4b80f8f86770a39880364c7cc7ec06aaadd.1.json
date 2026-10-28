@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5688b4b2aabf4ca6b7cfc0bbcfd1c4b80f8f86770a39880364c7cc7ec06aaadd",
+ "chunk_id_returned": "5688b4b2aabf4ca6b7cfc0bbcfd1c4b80f8f86770a39880364c7cc7ec06aaadd",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6009b193dcb64f73a716cae9e5d4f60d",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No.41 (Anggaran Dasar), Pasal 10: penambahan modal dan hak didahulukan pemegang saham atas saham baru.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "863aa064c76ea05a9901c26388eb4860b15379290e7d153a7d5f8ed3c92f424d",
+ "chunk_id_returned": "863aa064c76ea05a9901c26388eb4860b15379290e7d153a7d5f8ed3c92f424d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8cdc1183a0f242f3a7f54fbfb9206915",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II Bagian Kedua Paragraf 1 (Anggaran Dasar): kewajiban pencantuman maksud-tujuan dan kegiatan usaha dalam anggaran dasar.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "36cadb23fa273d43c49a8a0745e99adfe9fdfa4d711ec317a4f0200b729bcfe4",
+ "chunk_id_returned": "36cadb23fa273d43c49a8a0745e99adfe9fdfa4d711ec317a4f0200b729bcfe4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "5b61f61077f0422d8b87cf2e68e296e8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 153B Bab XI (Biaya): ketentuan pernyataan pendirian Perseroan perorangan untuk usaha mikro dan kecil.",
+ "tokens_local": 41
+}

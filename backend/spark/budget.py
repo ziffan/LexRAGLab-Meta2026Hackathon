@@ -27,9 +27,41 @@ class Caps:
     total_micros: int
     total_source: str  # "config" | "env"
     per_role_micros: dict[str, int]
+    provider_micros: dict[str, int] = field(default_factory=dict)  # plafon pool per provider (H-101 P6)
 
 
-def effective_caps(budget_cfg: Mapping[str, Any], env: Mapping[str, str] | None) -> Caps:
+def provider_caps(budget_cfg: Mapping[str, Any], model_cfg: Mapping[str, Any] | None = None) -> dict[str, int]:
+    """Tabel `[provider_cap_micros]` (H-101 P6): provider -> plafon pool (integer micro-USD >= 0; 0 sah = nol, bukan
+    tanpa batas). Tabel tidak ada -> `{}` (satu pool, perilaku lama). `version` < 2 dengan tabel = config_invalid (P16).
+    `model_cfg` diberikan -> kunci harus provider yang ada di `profiles.*.provider` (typo tidak jatuh diam ke pool default)."""
+    if not isinstance(budget_cfg, Mapping) or "provider_cap_micros" not in budget_cfg:
+        return {}
+    table = budget_cfg["provider_cap_micros"]
+    if not isinstance(table, Mapping):
+        raise ConfigInvalid("config/budget: provider_cap_micros must be a table")
+    version = budget_cfg.get("version")
+    if not _is_int(version) or version < 2:
+        raise ConfigInvalid("config/budget: provider_cap_micros requires version >= 2")
+    known: set[str] | None = None
+    if model_cfg is not None:
+        profiles = model_cfg.get("profiles") if isinstance(model_cfg, Mapping) else None
+        known = ({str(p["provider"]) for p in profiles.values()
+                  if isinstance(p, Mapping) and isinstance(p.get("provider"), str)}
+                 if isinstance(profiles, Mapping) else set())
+    out: dict[str, int] = {}
+    for k, v in table.items():
+        if not isinstance(k, str) or not k.strip():
+            raise ConfigInvalid("config/budget: provider_cap_micros has an empty provider key")
+        if not _is_int(v) or v < 0:
+            raise ConfigInvalid(f"config/budget: provider_cap_micros.{k} must be a non-negative integer")
+        if known is not None and k not in known:
+            raise ConfigInvalid(f"config/budget: provider_cap_micros.{k} is not a provider in config/model profiles")
+        out[k] = v
+    return out
+
+
+def effective_caps(budget_cfg: Mapping[str, Any], env: Mapping[str, str] | None,
+                   model_cfg: Mapping[str, Any] | None = None) -> Caps:
     total = budget_cfg.get("dev_total_cap_micros") if isinstance(budget_cfg, Mapping) else None
     if not _is_int(total) or total < 0:
         raise ConfigInvalid("config/budget: dev_total_cap_micros must be a non-negative integer")
@@ -50,7 +82,8 @@ def effective_caps(budget_cfg: Mapping[str, Any], env: Mapping[str, str] | None)
         env_cap = int(s)
         if env_cap < total:
             cap, source = env_cap, "env"
-    return Caps(total_micros=cap, total_source=source, per_role_micros=per_role)
+    return Caps(total_micros=cap, total_source=source, per_role_micros=per_role,
+                provider_micros=provider_caps(budget_cfg, model_cfg))
 
 
 class Ledger:
@@ -73,6 +106,23 @@ class Ledger:
             total += r.spend_micros()
         return total
 
+    def spent_pool(self, provider: str, caps: Mapping[str, int], role: str | None = None) -> int:
+        """Belanja pool tempat `provider` berada (H-101 P6). Provider tercantum di `caps` -> belanja provider itu saja
+        (semua peran, atau satu peran). Selain itu -> pool default = semua rekaman yang provider-nya TIDAK tercantum
+        di `caps` (= total dikurangi semua provider tercantum), dengan filter peran bila diberikan."""
+        try:
+            records = store.load_records(self.runs_dir)
+        except ValueError as exc:
+            raise ConfigInvalid(str(exc)) from None
+        listed = provider in caps
+        total = 0
+        for r in records:
+            if role is not None and r.role() != role:
+                continue
+            if (r.provider == provider) if listed else (r.provider not in caps):
+                total += r.spend_micros()
+        return total
+
 
 @dataclass
 class Projection:
@@ -86,13 +136,35 @@ class Projection:
     spent_role_micros: int
     verdict: str  # "ok" | "budget_exceeded"
     reason: str | None = field(default=None)
+    pool: str = "default"  # "default" atau nama provider berplafon (H-101 S10 (g))
+    pool_cap_micros: int = 0
+    pool_spent_micros: int = 0
 
 
-def evaluate(role: str, caps: Caps, projected: list[int], spent_total: int, spent_role: int) -> Projection:
+def evaluate(role: str, caps: Caps, projected: list[int], spent_total: int, spent_role: int, *,
+             provider: str | None = None, spent_provider: int | None = None) -> Projection:
+    """Pool default (provider tak tercantum di `caps.provider_micros`): `spent_total`/`spent_role` = belanja pool default,
+    dibanding cap total dan cap peran. Pool provider: `spent_provider` dibanding plafon provider; cap total dan cap peran
+    tidak berlaku (H-101 P6, S10)."""
     if role not in caps.per_role_micros:
         raise ConfigInvalid(f"config/budget: no per_role_cap_micros entry for role '{role}'")
     role_cap = caps.per_role_micros[role]
     total_proj = sum(projected)
+    if provider is not None and provider in caps.provider_micros:
+        if spent_provider is None:
+            raise ConfigInvalid("provider pool spend is required for a provider with a cap")
+        pcap = caps.provider_micros[provider]
+        reason = None
+        if spent_provider + total_proj > pcap:
+            reason = (f"spent {spent_provider} + projected {total_proj} = {spent_provider + total_proj} micro-USD "
+                      f"exceeds provider {provider} cap {pcap} micro-USD")
+        return Projection(
+            per_call_micros=list(projected), total_micros=total_proj,
+            effective_total_cap_micros=caps.total_micros, total_cap_source=caps.total_source,
+            role=role, role_cap_micros=role_cap, spent_micros=spent_provider, spent_role_micros=spent_role,
+            verdict="ok" if reason is None else "budget_exceeded", reason=reason,
+            pool=provider, pool_cap_micros=pcap, pool_spent_micros=spent_provider,
+        )
     parts = []
     if spent_role + total_proj > role_cap:
         parts.append(f"spent {spent_role} + projected {total_proj} = {spent_role + total_proj} micro-USD "
@@ -106,4 +178,26 @@ def evaluate(role: str, caps: Caps, projected: list[int], spent_total: int, spen
         effective_total_cap_micros=caps.total_micros, total_cap_source=caps.total_source,
         role=role, role_cap_micros=role_cap, spent_micros=spent_total, spent_role_micros=spent_role,
         verdict="ok" if reason is None else "budget_exceeded", reason=reason,
+        pool="default", pool_cap_micros=caps.total_micros, pool_spent_micros=spent_total,
     )
+
+
+def profile_provider(model_cfg: Mapping[str, Any], profile: str | None) -> str:
+    """Provider profil (`profile` None = `default_profile`). Tak terselesaikan -> "" (pool default)."""
+    name = profile or (model_cfg.get("default_profile") if isinstance(model_cfg, Mapping) else None)
+    profiles = model_cfg.get("profiles") if isinstance(model_cfg, Mapping) else None
+    p = profiles.get(name) if isinstance(profiles, Mapping) else None
+    # Profil tak terselesaikan -> "" (pool default, perilaku lama); SparkClient yang menolak profil tak sah.
+    return p["provider"] if isinstance(p, Mapping) and isinstance(p.get("provider"), str) else ""
+
+
+def pool_limits(ledger: Ledger, caps: Caps, provider: str, role: str) -> tuple[int, int, int, int]:
+    """(belanja peran, batas peran, belanja total, batas total) untuk pemeriksaan pra-run CLI/API (H-101 S9 (e)).
+    Pool default: belanja atas rekaman provider tak berplafon vs cap peran dan cap total (tanpa tabel = `Ledger.spent()`
+    persis). Provider berplafon: belanja provider vs plafon provider (cap peran dan total tidak berlaku)."""
+    pc = getattr(caps, "provider_micros", None) or {}
+    if provider in pc:
+        spent = ledger.spent_pool(provider, pc)
+        return spent, pc[provider], spent, pc[provider]
+    return (ledger.spent_pool(provider, pc, role), caps.per_role_micros[role],
+            ledger.spent_pool(provider, pc), caps.total_micros)

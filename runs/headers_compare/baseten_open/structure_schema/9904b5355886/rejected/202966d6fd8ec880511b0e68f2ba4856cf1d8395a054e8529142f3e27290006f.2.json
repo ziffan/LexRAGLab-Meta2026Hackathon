@@ -1,0 +1,11 @@
+{
+ "chunk_id": "202966d6fd8ec880511b0e68f2ba4856cf1d8395a054e8529142f3e27290006f",
+ "chunk_id_returned": "202966d6fd8ec880511b0e68f2ba4856cf1d8395a054e8529142f3e27290006f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "00d3dc7e394845ab9bd5d509025a386e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): pengagunan saham dengan gadai/jaminan fidusia dan hak suara.",
+ "tokens_local": 43
+}

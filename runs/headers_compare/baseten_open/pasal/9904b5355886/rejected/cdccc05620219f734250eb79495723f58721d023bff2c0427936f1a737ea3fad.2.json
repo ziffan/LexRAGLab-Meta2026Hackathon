@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cdccc05620219f734250eb79495723f58721d023bff2c0427936f1a737ea3fad",
+ "chunk_id_returned": "cdccc05620219f734250eb79495723f58721d023bff2c0427936f1a737ea3fad",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "603ae8d12ceb4e6ea283d6c78ce4a29c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): muatan akta pendirian yang mencakup anggaran dasar dan identitas pendiri.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ecfaab5e22ba263d05cc38ba9a6c04398e87a5e9f56244f1664d5ed3b3f6eae1",
+ "chunk_id_returned": "ecfaab5e22ba263d05cc38ba9a6c04398e87a5e9f56244f1664d5ed3b3f6eae1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "e754e2e151df4e6e8e9c2d94b969e450",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No. 63, Pasal 18: pengaturan tahun buku, penyusunan laporan tahunan dan audit, serta akibat pengesahannya.",
+ "tokens_local": 42
+}

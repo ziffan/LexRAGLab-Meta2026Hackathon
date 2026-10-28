@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b3b07371735ab3db7001cdcf257e61836551747b1d834778b5f78a99bc5ec531",
+ "chunk_id_returned": "b3b07371735ab3db7001cdcf257e61836551747b1d834778b5f78a99bc5ec531",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "d131b1612d84462c86a4f27239d0d266",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB II Bagian Kedua Paragraf 2 (Perubahan Anggaran Dasar): Penjelasan Pasal 21 tentang persetujuan Menteri dan pemberitahuan perubahan anggaran dasar.",
+ "tokens_local": 46
+}

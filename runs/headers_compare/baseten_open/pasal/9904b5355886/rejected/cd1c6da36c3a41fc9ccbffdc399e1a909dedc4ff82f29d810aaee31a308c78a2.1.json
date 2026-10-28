@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cd1c6da36c3a41fc9ccbffdc399e1a909dedc4ff82f29d810aaee31a308c78a2",
+ "chunk_id_returned": "cd1c6da36c3a41fc9ccbffdc399e1a909dedc4ff82f29d810aaee31a308c78a2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "34a2d44ec7ef4e09b4a51f0030c67b6a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Penjelasan Pasal 28: ketentuan pemberlakuan mutatis mutandis tata cara persetujuan perubahan anggaran dasar.",
+ "tokens_local": 44
+}

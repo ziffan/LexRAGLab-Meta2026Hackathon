@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b3e0338ecd49270985344c286ff5f2686e018583dcb34bf572332e6c04ba9cdf",
+ "chunk_id_returned": "b3e0338ecd49270985344c286ff5f2686e018583dcb34bf572332e6c04ba9cdf",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "c92ff120c76c4de79700bb2bbd4d3802",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XII-XIII (Ketentuan Lain-Lain dkk.): tim ahli pemantauan hukum perseroan dan penyesuaian anggaran dasar masa peralihan.",
+ "tokens_local": 46
+}

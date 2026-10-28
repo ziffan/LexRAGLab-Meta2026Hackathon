@@ -1,0 +1,11 @@
+{
+ "chunk_id": "28e98d16afd6063296daae57e0d61b901232067e62842503e2ce7ef94d88415e",
+ "chunk_id_returned": "28e98d16afd6063296daae57e0d61b901232067e62842503e2ce7ef94d88415e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "03f08efee9b04dd484385f442d4d4a83",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.): larangan kepemilikan saham sendiri dan syarat pembelian kembali saham.",
+ "tokens_local": 43
+}

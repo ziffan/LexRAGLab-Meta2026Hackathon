@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0808ce60e2e345d1eda2ea013513ca42425457400c31eb305b1c107975c32fa2",
+ "chunk_id_returned": "0808ce60e2e345d1eda2ea013513ca42425457400c31eb305b1c107975c32fa2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "2667fc4e786a41e590bd8393c7352f03",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No.27 (Notaris Rahadyan Tumewu Siregar), Pasal 5: ketentuan saham atas nama, pemindahan hak dan penawaran kepada pemegang saham lain.",
+ "tokens_local": 48
+}

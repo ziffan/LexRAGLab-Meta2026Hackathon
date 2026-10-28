@@ -1,0 +1,11 @@
+{
+ "chunk_id": "655f80a5f3011da4d07fdffa055aa4400de7fd8557f18ec991ef81bd43e6c2a5",
+ "chunk_id_returned": "655f80a5f3011da4d07fdffa055aa4400de7fd8557f18ec991ef81bd43e6c2a5",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "aaba2024f0014b9f81526d85c253884e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): pengambilalihan perbuatan hukum calon pendiri oleh Perseroan melalui RUPS pertama.",
+ "tokens_local": 46
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8d332d61c50a695733d5b3a6636ce01639de13016a3f68ce5f114c7aa2d77e15",
+ "chunk_id_returned": "8d332d61c50a695733d5b3a6636ce01639de13016a3f68ce5f114c7aa2d77e15",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "828db3c0300d448293854900185a058b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu Direksi: kewenangan pengajuan pailit dan pemberhentian anggota Direksi.",
+ "tokens_local": 43
+}

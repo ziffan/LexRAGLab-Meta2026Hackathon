@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cd485cd9cfd364b5f09712cfef57038f8432a95ad5aebe716952682a9c8be95c",
+ "chunk_id_returned": "cd485cd9cfd364b5f09712cfef57038f8432a95ad5aebe716952682a9c8be95c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1db7c2cd3385464f87ad7412506b2711",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II Bagian Kedua Paragraf 2 (Perubahan Anggaran Dasar), Penjelasan Pasal 19: penetapan perubahan anggaran dasar oleh RUPS.",
+ "tokens_local": 43
+}

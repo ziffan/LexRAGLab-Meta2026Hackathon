@@ -120,6 +120,9 @@ def _check(value: Any, schema: Any, root: dict, path: str) -> str | None:
         types = t if isinstance(t, list) else [t]
         if not any(_TYPES.get(x, lambda _v: False)(value) for x in types):
             return f"{path}: wrong type"
+    ml = schema.get("maxLength")
+    if isinstance(value, str) and isinstance(ml, int) and not isinstance(ml, bool) and len(value) > ml:
+        return f"{path}: string longer than maxLength {ml}"
     if "enum" in schema and value not in schema["enum"]:
         return f"{path}: value not in enum"
     if "const" in schema and value != schema["const"]:

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5f68ed0fba5dbc6b82e81ea229014c908ed0cf9f2b2e16395ac22b202032ce2a",
+ "chunk_id_returned": "5f68ed0fba5dbc6b82e81ea229014c908ed0cf9f2b2e16395ac22b202032ce2a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5c66a60dc75f4ca797bf4dce7b1215c2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): gugatan kreditor yang ditolak likuidator dan pengembalian sisa hasil likuidasi.",
+ "tokens_local": 43
+}

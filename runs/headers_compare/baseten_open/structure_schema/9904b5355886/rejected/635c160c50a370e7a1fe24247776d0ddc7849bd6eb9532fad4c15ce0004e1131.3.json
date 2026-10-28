@@ -1,0 +1,11 @@
+{
+ "chunk_id": "635c160c50a370e7a1fe24247776d0ddc7849bd6eb9532fad4c15ce0004e1131",
+ "chunk_id_returned": "635c160c50a370e7a1fe24247776d0ddc7849bd6eb9532fad4c15ce0004e1131",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "51313c6bcdac4892ab4f65f8dc4d5134",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): penjelasan mekanisme gugatan pembuktian kesalahan atau kelalaian direksi dalam kepailitan.",
+ "tokens_local": 43
+}

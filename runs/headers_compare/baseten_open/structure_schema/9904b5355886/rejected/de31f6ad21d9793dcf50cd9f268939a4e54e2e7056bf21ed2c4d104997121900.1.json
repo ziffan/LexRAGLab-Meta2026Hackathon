@@ -1,0 +1,11 @@
+{
+ "chunk_id": "de31f6ad21d9793dcf50cd9f268939a4e54e2e7056bf21ed2c4d104997121900",
+ "chunk_id_returned": "de31f6ad21d9793dcf50cd9f268939a4e54e2e7056bf21ed2c4d104997121900",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "746adb12c55a4d6f8a88752f8e9be2e0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab I (Ketentuan Umum), Penjelasan Pasal 6: pencantuman tegas jangka waktu berdirinya Perseroan dalam anggaran dasar.",
+ "tokens_local": 42
+}

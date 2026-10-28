@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8b8956cd0cecf30617d470d0f6b1504a82f9fb29cdfdf7640f36397fe957e746",
+ "chunk_id_returned": "8b8956cd0cecf30617d470d0f6b1504a82f9fb29cdfdf7640f36397fe957e746",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "94d635ed36ee4861b5086452b84dfd3a",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarrra No. 112, Batang Tubuh (Anggaran Dasar): pendirian perseroan, anggaran dasar dan struktur organ perseroan.",
+ "tokens_local": 43
+}

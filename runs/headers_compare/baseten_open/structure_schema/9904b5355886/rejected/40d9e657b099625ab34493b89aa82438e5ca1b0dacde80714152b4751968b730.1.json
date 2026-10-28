@@ -1,0 +1,11 @@
+{
+ "chunk_id": "40d9e657b099625ab34493b89aa82438e5ca1b0dacde80714152b4751968b730",
+ "chunk_id_returned": "40d9e657b099625ab34493b89aa82438e5ca1b0dacde80714152b4751968b730",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "87bc60c6d0f7454c8f1432f7d58084c2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): penetapan gaji dan tunjangan anggota Direksi.",
+ "tokens_local": 41
+}

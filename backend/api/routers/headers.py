@@ -16,7 +16,7 @@ from backend.api.errors import ApiError
 from backend.api.routers.corpus import check_family
 from backend.header_b.caller import run_headers
 from backend.header_b.run import HeaderConfigError, load_header_cfg, prepare, project
-from backend.spark import BudgetExceeded, ConfigInvalid, Ledger, SparkClient, effective_caps
+from backend.spark import BudgetExceeded, ConfigInvalid, Ledger, SparkClient, effective_caps, pool_limits, profile_provider
 
 router = APIRouter()
 
@@ -59,8 +59,8 @@ def post_headers_run(request: Request, family: str, body: HeadersBody) -> dict[s
     cost = proj["cost_usd_micros"]["upper_cached"]
     caps = effective_caps(st.budget_config, st.env)
     ledger = Ledger(svc.runs_dir)
-    if not st.replay and (ledger.spent(role="b") + cost > caps.per_role_micros["b"]
-                          or ledger.spent() + cost > caps.total_micros):
+    sr, rc, stt, tc = pool_limits(ledger, caps, profile_provider(st.model_config, None), "b")
+    if not st.replay and (sr + cost > rc or stt + cost > tc):
         raise ApiError(402, "budget_exceeded", "Projected cost exceeds config/budget; nothing was sent.")
     units = p.units if body.sample is None else p.units[:body.sample]
     meta = {"corpus_hash": config.config_hash({"docs": [doc.sha256]}), "clean_sha256": doc.clean_sha256,

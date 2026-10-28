@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5ab3c5cd4367cd0427e832fffabd356f0c593dd1385355b031ccf16b9848ef2f",
+ "chunk_id_returned": "5ab3c5cd4367cd0427e832fffabd356f0c593dd1385355b031ccf16b9848ef2f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "173aeb7a8abf4f06abd2592e41f81872",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): kepentingan yang wajib diperhatikan dalam penggabungan, peleburan, pengambilalihan atau pemisahan.",
+ "tokens_local": 44
+}

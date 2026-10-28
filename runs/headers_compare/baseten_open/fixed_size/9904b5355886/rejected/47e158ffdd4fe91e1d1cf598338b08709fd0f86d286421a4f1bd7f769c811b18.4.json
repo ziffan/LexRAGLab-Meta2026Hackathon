@@ -1,0 +1,11 @@
+{
+ "chunk_id": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "chunk_id_returned": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "9f0f38f1bd054d12b2c5a6ea0901b6c4",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab V (Tanggung Jawab Sosial dkk.) dan Bab VI (RUPS): kewajiban TJSL terkait sumber daya alam serta kewenangan dan tempat penyelenggaraan RUPS.",
+ "tokens_local": 47
+}

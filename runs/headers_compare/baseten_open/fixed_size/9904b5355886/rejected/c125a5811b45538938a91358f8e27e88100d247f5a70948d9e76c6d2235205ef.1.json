@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c125a5811b45538938a91358f8e27e88100d247f5a70948d9e76c6d2235205ef",
+ "chunk_id_returned": "c125a5811b45538938a91358f8e27e88100d247f5a70948d9e76c6d2235205ef",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "4b9b8bf7b2bc4324bb1faacff07bc4ff",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris) Bagian Kesatu (Direksi): tanggung jawab Direksi atas pengurusan Perseroan dan gugatan pemegang saham.",
+ "tokens_local": 48
+}

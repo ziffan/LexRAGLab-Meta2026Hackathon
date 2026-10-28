@@ -12,7 +12,9 @@ from datetime import UTC, datetime
 
 from backend import config
 from backend.grid.headers import header_store_dir
-from backend.spark import BudgetExceeded, Ledger, SparkClient, effective_caps, format_usd_micros
+from backend.spark import (BudgetExceeded, Ledger, SparkClient, effective_caps, format_usd_micros, pool_limits,
+                           profile_provider)
+from backend.proposal.gate import cumulative_threshold_for
 from backend.tokenizer import get_tokenizer
 
 from .caller import run_headers
@@ -72,9 +74,11 @@ def _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw) -> int:
     print(f"  smoke: 1 call, no warm-up request (cost above includes one warm-up that is NOT sent), "
           f"prompt {p.prompt.version} {p.prompt.prompt_hash[:12]}, schema maxLength={hc.get('schema_max_length_chars')}")
     caps = effective_caps(budget_cfg, None)
+    prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = sm["cost_usd_micros"]["upper_no_cache"]
-    if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
     client = _client(a, model_cfg, budget_cfg)
@@ -103,9 +107,11 @@ def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw) -> int:
         print("error: --sample N (N >= 1) is required for a live run", file=sys.stderr)
         return 2
     caps = effective_caps(budget_cfg, None)
+    prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = res["projection"]["cost_usd_micros"]["upper_cached"]
-    if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
     if not plan.call:
@@ -171,8 +177,11 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
     hdir = header_store_dir(config.REPO_ROOT / "runs", a.family)  # W63: store per keluarga; proyeksi tetap di hbase
     ledger = Ledger(config.REPO_ROOT / "runs")
     limit = a.sample or None
-    res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent(), profile=a.profile, rpm=a.rpm,
-                         limit=limit)
+    prov = profile_provider(model_cfg, a.profile)
+    pcaps = effective_caps(budget_cfg, None).provider_micros
+    res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent_pool(prov, pcaps),
+                         profile=a.profile, rpm=a.rpm, limit=limit,
+                         threshold=cumulative_threshold_for(prov, budget_cfg, pcaps))
     print(_fmt_family(res))
     if a.project_only:
         stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -190,8 +199,8 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
         print("error: live run needs --sample N (units per akta per source) or --full", file=sys.stderr)
         return 2
     caps = effective_caps(budget_cfg, None)
-    err = precheck(res, spent_b=ledger.spent(role="b"), spent_total=ledger.spent(),
-                   per_role_b_cap=caps.per_role_micros["b"], total_cap=caps.total_micros)
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    err = precheck(res, spent_b=sr, spent_total=st, per_role_b_cap=rc, total_cap=tc)
     if err:
         print(f"error: {err}; nothing was sent", file=sys.stderr)
         return 3
@@ -277,9 +286,11 @@ def main(argv: list[str] | None = None) -> int:
     sm = project(p, tok, hc, model_cfg, profile=a.profile, rpm=a.rpm, limit=a.sample)
     print(_fmt(sm))
     caps = effective_caps(budget_cfg, None)
+    prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = sm["cost_usd_micros"]["upper_cached"]
-    if ledger.spent(role="b") + cost > caps.per_role_micros["b"] or ledger.spent() + cost > caps.total_micros:
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
     client = _client(a, model_cfg, budget_cfg)

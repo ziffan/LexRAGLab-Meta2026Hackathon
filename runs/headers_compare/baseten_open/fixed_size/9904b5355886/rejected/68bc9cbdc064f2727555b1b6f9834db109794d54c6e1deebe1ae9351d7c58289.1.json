@@ -1,0 +1,11 @@
+{
+ "chunk_id": "68bc9cbdc064f2727555b1b6f9834db109794d54c6e1deebe1ae9351d7c58289",
+ "chunk_id_returned": "68bc9cbdc064f2727555b1b6f9834db109794d54c6e1deebe1ae9351d7c58289",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "4384ea81132f43b690c878f3248668b3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Ketiga (Penggunaan Laba): pengesahan laporan tahunan dan kewajiban penyisihan cadangan wajib.",
+ "tokens_local": 45
+}

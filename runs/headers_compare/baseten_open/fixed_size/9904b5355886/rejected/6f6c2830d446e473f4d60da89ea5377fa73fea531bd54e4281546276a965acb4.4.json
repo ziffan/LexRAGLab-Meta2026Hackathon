@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6f6c2830d446e473f4d60da89ea5377fa73fea531bd54e4281546276a965acb4",
+ "chunk_id_returned": "6f6c2830d446e473f4d60da89ea5377fa73fea531bd54e4281546276a965acb4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "bc3c0fe3ac5e4992935285af03154b22",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya) s.d. Bab XII (Ketentuan Lain-lain): tanggung jawab pemegang saham UMK dan ketentuan Perseroan Terbuka.",
+ "tokens_local": 45
+}

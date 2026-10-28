@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3b907964e2a43e113db303f72baf0ed44f41478d8f256ef4ff47c81d73d9d08f",
+ "chunk_id_returned": "3b907964e2a43e113db303f72baf0ed44f41478d8f256ef4ff47c81d73d9d08f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1a561eb9f4974912abd3484cbb50ec63",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 7 Bab II (Pendirian dkk.): syarat pendirian Perseroan dan kedudukan pendiri serta pemegang saham.",
+ "tokens_local": 42
+}

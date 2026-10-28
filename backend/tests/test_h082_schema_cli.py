@@ -26,6 +26,9 @@ class _Ledger:
     def spent(self, role=None):
         return self.r if role == "b" else self.t
 
+    def spent_pool(self, provider, caps, role=None):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
+        return self.spent(role=role)
+
 
 def _env(monkeypatch, tmp_path, *, expected=100, upper=100, role_cap=10_000, total_cap=10_000, role_spent=0, total_spent=0, stored=()):
     log = {"run_headers": [], "client": 0, "project_plans": []}

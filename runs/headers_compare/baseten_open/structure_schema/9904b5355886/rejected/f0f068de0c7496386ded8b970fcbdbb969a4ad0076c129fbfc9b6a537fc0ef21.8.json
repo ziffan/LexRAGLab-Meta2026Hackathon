@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f0f068de0c7496386ded8b970fcbdbb969a4ad0076c129fbfc9b6a537fc0ef21",
+ "chunk_id_returned": "f0f068de0c7496386ded8b970fcbdbb969a4ad0076c129fbfc9b6a537fc0ef21",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "739028b84c064fa1ba10da8d9db684ca",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Pengumuman: pengumuman akta pendirian dan perubahan anggaran dasar dalam Tambahan Berita Negara.",
+ "tokens_local": 42
+}

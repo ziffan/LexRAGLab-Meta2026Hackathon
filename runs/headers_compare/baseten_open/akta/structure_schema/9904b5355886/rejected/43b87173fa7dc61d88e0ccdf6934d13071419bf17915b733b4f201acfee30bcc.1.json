@@ -1,0 +1,11 @@
+{
+ "chunk_id": "43b87173fa7dc61d88e0ccdf6934d13071419bf17915b733b4f201acfee30bcc",
+ "chunk_id_returned": "43b87173fa7dc61d88e0ccdf6934d13071419bf17915b733b4f201acfee30bcc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "48a3e2303bdd4f29aa313e7b27713414",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima (Akta 04), Penutup Akta: formalitas pembacaan, penandatanganan, saksi, dan penyimpanan minuta.",
+ "tokens_local": 43
+}

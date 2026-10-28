@@ -1,5 +1,5 @@
 # config/budget — cost guard (SECURITY-COMPLIANCE T6). Uang integer micro-USD.
-version = 1
+version = 2   # H-101 P16: tabel [provider_cap_micros] mensyaratkan version >= 2
 # Cap dev semalam 27 Okt (mandat operator, brief L2): Meta + OpenRouter digabung.
 dev_total_cap_micros = 2000000
 
@@ -11,6 +11,12 @@ a = 500000
 b = 1000000
 c = 500000
 d = 250000
+
+[provider_cap_micros]
+# H-100/H-101 P6: plafon pool per provider (integer micro-USD >= 0; 0 = nol, bukan tanpa batas). Provider tercantum punya pool
+# sendiri: dev_total_cap_micros dan per_role_cap_micros TIDAK berlaku untuk pool itu; provider lain (meta, openrouter,
+# lmstudio_local) = pool default. Baseten naik 10M -> 20M micro-USD (nilai diputus operator, H-100).
+baseten = 20000000
 
 [batch_gate]
 # H-092 P10 / G-36: gerbang proyeksi batch Spark (fungsi murni backend/proposal/gate.py). Ditolak bila

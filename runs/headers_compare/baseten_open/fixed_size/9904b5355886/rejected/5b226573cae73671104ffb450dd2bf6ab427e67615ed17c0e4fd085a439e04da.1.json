@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5b226573cae73671104ffb450dd2bf6ab427e67615ed17c0e4fd085a439e04da",
+ "chunk_id_returned": "5b226573cae73671104ffb450dd2bf6ab427e67615ed17c0e4fd085a439e04da",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "8673b19eaf5e4299a5530d8eca9b2232",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.) Bagian Kesatu (Pendirian): penjelasan muatan akta pendirian dan keterangan pendiri Perseroan.",
+ "tokens_local": 43
+}

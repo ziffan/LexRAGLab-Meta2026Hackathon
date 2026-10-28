@@ -1,0 +1,11 @@
+{
+ "chunk_id": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "chunk_id_returned": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "c3d2a1497658467dac7aac9a92875899",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab V (Tanggung Jawab dkk.) dan Bab VI (Rapat Umum Pemegang Saham): penjelasan kewajiban terkait sumber daya alam dan ketentuan umum penyelenggaraan RUPS.",
+ "tokens_local": 48
+}

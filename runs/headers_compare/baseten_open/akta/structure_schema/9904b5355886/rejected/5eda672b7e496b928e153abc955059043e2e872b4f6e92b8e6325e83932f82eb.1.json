@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5eda672b7e496b928e153abc955059043e2e872b4f6e92b8e6325e83932f82eb",
+ "chunk_id_returned": "5eda672b7e496b928e153abc955059043e2e872b4f6e92b8e6325e83932f82eb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c95bb3a1dc15441295650f07c3bf3fa8",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No.27, Penutup Akta: peresmian, pembacaan, penandatanganan dan penyimpanan minuta oleh Notaris.",
+ "tokens_local": 41
+}

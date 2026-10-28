@@ -1,0 +1,11 @@
+{
+ "chunk_id": "31faf0848bb2f21f846b15b6f7d7f2715b5258edd97c1c9522113b2f1f41f070",
+ "chunk_id_returned": "31faf0848bb2f21f846b15b6f7d7f2715b5258edd97c1c9522113b2f1f41f070",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "764fc1f8643645aba2ffdc7d42da859d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): syarat pendirian Perseroan, jumlah pendiri, akta notaris, dan pengecualian tertentu.",
+ "tokens_local": 44
+}

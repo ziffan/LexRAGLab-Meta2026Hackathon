@@ -1,0 +1,11 @@
+{
+ "chunk_id": "30536f629b5104144f6cf71b7b994731c0d5699da660f84df5cefc1d69dfdf6f",
+ "chunk_id_returned": "30536f629b5104144f6cf71b7b994731c0d5699da660f84df5cefc1d69dfdf6f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "70df33ad13c74169b2c71e909d8ef64f",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra, Bagian Keterangan Pendiri dan Pengangkatan Pengurus: pembagian saham disetor pendiri dan penetapan pengurus pertama Perseroan.",
+ "tokens_local": 43
+}

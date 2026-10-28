@@ -1,0 +1,11 @@
+{
+ "chunk_id": "38da100175f5d3ffc15615a460e2a99224215355ce642abc5c6edd902903a81c",
+ "chunk_id_returned": "38da100175f5d3ffc15615a460e2a99224215355ce642abc5c6edd902903a81c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "aa8564b323d1490faf91e3ea84c77013",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 62 Bab III (Modal dkk.): hak pemegang saham minta sahamnya dibeli Perseroan dengan harga wajar.",
+ "tokens_local": 42
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9d21cc6d9f4c925cca8ce43f7a842013bf9b64f6dce8be31e7e125416e9f6aca",
+ "chunk_id_returned": "9d21cc6d9f4c925cca8ce43f7a842013bf9b64f6dce8be31e7e125416e9f6aca",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "3f4d36de7ff642668ea3fe96ad1a0dbc",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham) Bagian Kelima (Saham): kewajiban penawaran terlebih dahulu sebelum pemindahan hak atas saham kepada pihak ketiga.",
+ "tokens_local": 43
+}

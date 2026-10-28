@@ -1,0 +1,11 @@
+{
+ "chunk_id": "62406afea035e47e94de5b2d42de5095738645635cf5f2749b09169aa1afdd8d",
+ "chunk_id_returned": "62406afea035e47e94de5b2d42de5095738645635cf5f2749b09169aa1afdd8d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "005d4ee786df48e0b481997255eef997",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No 63/2026 (Anggaran Dasar), Pasal 20: perubahan anggaran dasar serta kuorum dan keperluan persetujuan Menteri.",
+ "tokens_local": 43
+}

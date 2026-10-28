@@ -1,0 +1,11 @@
+{
+ "chunk_id": "eb619c9e4bb2fc3e5e8400268e88ea9ce26cd6656e2916b7ac4c13e2caf82f4a",
+ "chunk_id_returned": "eb619c9e4bb2fc3e5e8400268e88ea9ce26cd6656e2916b7ac4c13e2caf82f4a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "e7b867963a6c487c866a124273bea0ee",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.) dan Bab IX (Pemeriksaan): ketentuan tentang pemisahan dan pemeriksaan terhadap Perseroan.",
+ "tokens_local": 42
+}

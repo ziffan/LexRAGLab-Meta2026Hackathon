@@ -90,6 +90,9 @@ class _Ledger:
         self.log.append("ledger")
         return self.r if role == "b" else self.t
 
+    def spent_pool(self, provider, caps, role=None):  # S9 (e): tanpa tabel plafon = belanja total/peran seperti `spent`
+        return self.spent(role=role)
+
 
 def _env(monkeypatch, *, cost=1000, role_cap=10_000, total_cap=10_000, role_spent=0, total_spent=0, status="accepted",
          error_code=None, unit_ok=True):

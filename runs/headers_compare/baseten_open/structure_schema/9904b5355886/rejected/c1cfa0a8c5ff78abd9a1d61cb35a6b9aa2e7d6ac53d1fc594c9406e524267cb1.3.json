@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c1cfa0a8c5ff78abd9a1d61cb35a6b9aa2e7d6ac53d1fc594c9406e524267cb1",
+ "chunk_id_returned": "c1cfa0a8c5ff78abd9a1d61cb35a6b9aa2e7d6ac53d1fc594c9406e524267cb1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "45f6e07e48064d0882f40ab664b7174c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kesatu (Direksi): akibat hukum pengangkatan Direksi yang tidak memenuhi syarat dan tanggung jawab atas perbuatan hukumnya.",
+ "tokens_local": 41
+}

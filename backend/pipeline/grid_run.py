@@ -19,7 +19,7 @@ from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable
 
-from backend import config
+from backend import config, gpulock
 from backend.chunking import boundary_diff, chunk_document, schema_identity
 from backend.grid.expand import expand_grid
 from backend.grid.headers import SCOPES, DirHeaderStore, HeaderBinding, header_store_dir
@@ -380,10 +380,13 @@ def run_family_grid(family: str, *, doc: Any = None, tokenizer: Any, runs_dir: P
                     encoder: Encoder | None = None, encoder_factory: Callable[[], Encoder] | None = None,
                     embed_cache_dir: Path | None = None, pipeline_out: list | None = None,
                     log: Callable[[str], None] = lambda _m: None, headers: HeaderBinding | None = None,
-                    schemas: SchemaBinding | None = None, docs: Any = None) -> GridResult:
+                    schemas: SchemaBinding | None = None, docs: Any = None,
+                    gpu_lock: bool = False, gpu_pid_alive: Callable[[int], bool] | None = None) -> GridResult:
     """Jalankan (atau baca dari cache) grid satu keluarga. Tanpa Model API.
     Keluarga multi-dokumen (akta, H-086): `docs` = semua dokumen keluarga; retrieval per dokumen butir; tanpa split dan tanpa
-    pemilihan profil (H-054)."""
+    pemilihan profil (H-054).
+    `gpu_lock=True` (CLI `main`): ambil kunci GPU eksklusif `runs/locks/gpu.lock` (holder `embedding`) bila ada setting dense/hybrid
+    yang akan menjalankan encoder (H-101 S16). Proses berumur panjang (backend API) memakai bawaan False dan tidak memegang kunci."""
     t0 = time.perf_counter()
     if family not in GRID_FAMILIES:
         raise GridRunError(f"grid for family {family!r} is not available")
@@ -403,78 +406,85 @@ def run_family_grid(family: str, *, doc: Any = None, tokenizer: Any, runs_dir: P
         log(f"cache hit {plan.key[:16]}")
         return GridResult(plan.key, True, rec, existing, store.path(plan.key))
 
-    g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
-    pkw = dict(tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
-               encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers, schemas=schemas)
-    pipe: Any = MultiDocPipeline(docs, **pkw) if multi else Pipeline(doc, **pkw)
-    if pipeline_out is not None:
-        pipeline_out.append(pipe)
-    log(f"run {len(plan.runnable)} settings, skipped {len(plan.skipped)}, items {len(plan.items)}")
-    for sid in schema_identities(plan.runnable, schemas):
-        log(f"schema A: v{sid['schema_version']} {sid['schema_hash'][:12]} source={sid['source']} "
-            f"approved={is_approved(schemas.resolve(sid['schema_version']))}")  # type: ignore[union-attr]
-    if headers is not None:
-        log(f"header B: scope={headers.scope} granularity={headers.granularity}")
-    res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=plan.corpus_key,
-                   config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family,
-                   header_scope=headers.scope if headers is not None else "all")
-    assert res.grid_run_id == plan.key
-    by_id = {s.setting_id: s for s in plan.runnable}
-    per_setting: dict[str, list[Any]] = {}
-    for m in res.metrics:
-        per_setting.setdefault(m.setting_id, []).append(m)
-    executed = [s for s in plan.runnable if s.setting_id in per_setting]  # tanpa kembaran di luar scope dan setting gagal
-    ucfg = plan.cfgs.get(UNIT_MAP_CONFIG) if family == UNIT_MAP_FAMILY else None
-    quality = [quality_for(pipe, s, per_setting[s.setting_id], ucfg) for s in executed]
-    q_by_id = {q["setting_id"]: q for q in quality}
-    comparison = []
-    for budget, sel in sorted(res.selections.items()):
-        chosen = by_id[sel.setting_id]
-        base = baseline_for(plan.runnable, chosen, g["baseline"])
-        comparison.append({"budget_tokens": budget, "selected_setting_id": chosen.setting_id,
-                           "baseline_setting_id": base.setting_id if base else None,
-                           "selected": q_by_id[chosen.setting_id], "baseline": q_by_id[base.setting_id] if base else None})
+    lock = None
+    if gpu_lock and any(s.retrieval_mode != "bm25" for s in plan.runnable):  # H-101 S16 (g): encoder bge-m3 dimuat -> kunci GPU eksklusif
+        lock = gpulock.acquire(runs_dir, "embedding", **({"pid_alive": gpu_pid_alive} if gpu_pid_alive is not None else {}))
+    try:
+        g, r = plan.cfgs["grid"], plan.cfgs["retrieval"]
+        pkw = dict(tokenizer=tokenizer, retrieval_cfg=r, grid_cfg=g, encoder=encoder, cache_dir=embed_cache_dir,
+                   encoder_factory=encoder_factory or (lambda: encoder_from_config(r)), headers=headers, schemas=schemas)
+        pipe: Any = MultiDocPipeline(docs, **pkw) if multi else Pipeline(doc, **pkw)
+        if pipeline_out is not None:
+            pipeline_out.append(pipe)
+        log(f"run {len(plan.runnable)} settings, skipped {len(plan.skipped)}, items {len(plan.items)}")
+        for sid in schema_identities(plan.runnable, schemas):
+            log(f"schema A: v{sid['schema_version']} {sid['schema_hash'][:12]} source={sid['source']} "
+                f"approved={is_approved(schemas.resolve(sid['schema_version']))}")  # type: ignore[union-attr]
+        if headers is not None:
+            log(f"header B: scope={headers.scope} granularity={headers.granularity}")
+        res = run_grid(settings=plan.runnable, items=plan.items, pipeline=pipe, cache=store, clean_sha256=plan.corpus_key,
+                       config_hash=plan.config_hash, split_record=plan.split, simplicity=g["simplicity"], family=family,
+                       header_scope=headers.scope if headers is not None else "all")
+        assert res.grid_run_id == plan.key
+        by_id = {s.setting_id: s for s in plan.runnable}
+        per_setting: dict[str, list[Any]] = {}
+        for m in res.metrics:
+            per_setting.setdefault(m.setting_id, []).append(m)
+        executed = [s for s in plan.runnable if s.setting_id in per_setting]  # tanpa kembaran di luar scope dan setting gagal
+        ucfg = plan.cfgs.get(UNIT_MAP_CONFIG) if family == UNIT_MAP_FAMILY else None
+        quality = [quality_for(pipe, s, per_setting[s.setting_id], ucfg) for s in executed]
+        q_by_id = {q["setting_id"]: q for q in quality}
+        comparison = []
+        for budget, sel in sorted(res.selections.items()):
+            chosen = by_id[sel.setting_id]
+            base = baseline_for(plan.runnable, chosen, g["baseline"])
+            comparison.append({"budget_tokens": budget, "selected_setting_id": chosen.setting_id,
+                               "baseline_setting_id": base.setting_id if base else None,
+                               "selected": q_by_id[chosen.setting_id], "baseline": q_by_id[base.setting_id] if base else None})
 
-    enc = pipe.encoder if pipe.encoder_used else None
-    trunc = pipe.n_truncated()
-    emb = embedder_info(enc, sum(trunc.values())) if enc is not None else None
-    host = config.load("model", config_dir)["host"]
-    device = ("cuda:0" if enc.device == "cuda" else enc.device) if enc is not None else "cpu"
-    parts = run_record_parts(tokenizer.info, g["packing"]["rule"])
-    if multi:  # H-086: hash korpus keluarga (doc_id + clean_sha256 terurut) menggantikan teks bersih tunggal
-        corpus_hash, clean, rules = plan.corpus_key, plan.corpus_key, ",".join(sorted({d.loader_rules_version for d in docs}))
-    else:
-        corpus_hash, clean, rules = config.config_hash({"docs": [doc.sha256]}), doc.clean_sha256, doc.loader_rules_version
-    record = RunRecord(
-        run_id=f"grid-{plan.key[:16]}", kind="grid", created_at=utc_now(), cache_key=plan.key,
-        corpus_hash=corpus_hash, config_hash=plan.config_hash,
-        clean_sha256=clean, loader_rules_version=rules, prompt_version=None, prompt_hash=None,
-        model=None, effort=None, tokenizer=parts["tokenizer"], embedder=emb, packing=parts["packing"],
-        usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None, cost_usd_micros=0,
-        projected_cost_usd_micros=None, latency_ms=int((time.perf_counter() - t0) * 1000), host=host, device=device,
-        provider=None, quantization=None, status="ok", error=None,
-        failed_settings=[f.to_dict() for f in res.failed_settings]).to_dict()  # DATA-CONTRACTS §12, H-069
-    envelope = {
-        "key": plan.key, "family": family, "record": record,
-        "item_file": plan.item_file, "n_items": len(plan.items),
-        "split": plan.split.to_dict() if plan.split is not None else None,  # akta: tanpa split (H-054)
-        **({"docs": [{"doc_id": d.doc_id, "clean_sha256": d.clean_sha256, "loader_rules_version": d.loader_rules_version,
-                      "n_items": sum(1 for i in plan.items if i.doc_id == d.doc_id)} for d in sorted(docs, key=lambda d: d.doc_id)]}
-           if multi else {}),
-        "settings_run": [asdict(s) for s in executed], "skipped": plan.skipped,
-        "n_truncated_by_chunker": trunc,
-        "metrics": [metrics_to_cache(m) for m in res.metrics],
-        "points": [{**point_dict(p), "header_b": by_id[p.setting_id].header_b} for p in res.points],  # deret on/off (U2)
-        "frontiers": [{"family": f.family, "split": f.split, "budget_tokens": f.budget_tokens, "point_ids": list(f.point_ids),
-                       "grid_run_id": f.grid_run_id} for f in res.frontiers],
-        "selections": {str(b): selection_dict(s) for b, s in sorted(res.selections.items())},
-        "quality": quality, "quality_comparison": comparison,
-        **schema_report(pipe, executed, schemas),
-        **({"unit_map": unit_map_report(pipe, schemas, ucfg, per_setting[executed[0].setting_id] if executed else []),
-            "recall_unit": ucfg["recall"]["unit"]} if ucfg is not None else {}),
-    }
-    store.write(plan.key, envelope)
-    return GridResult(plan.key, False, record, envelope, store.path(plan.key))
+        enc = pipe.encoder if pipe.encoder_used else None
+        trunc = pipe.n_truncated()
+        emb = embedder_info(enc, sum(trunc.values())) if enc is not None else None
+        host = config.load("model", config_dir)["host"]
+        device = ("cuda:0" if enc.device == "cuda" else enc.device) if enc is not None else "cpu"
+        parts = run_record_parts(tokenizer.info, g["packing"]["rule"])
+        if multi:  # H-086: hash korpus keluarga (doc_id + clean_sha256 terurut) menggantikan teks bersih tunggal
+            corpus_hash, clean, rules = plan.corpus_key, plan.corpus_key, ",".join(sorted({d.loader_rules_version for d in docs}))
+        else:
+            corpus_hash, clean, rules = config.config_hash({"docs": [doc.sha256]}), doc.clean_sha256, doc.loader_rules_version
+        record = RunRecord(
+            run_id=f"grid-{plan.key[:16]}", kind="grid", created_at=utc_now(), cache_key=plan.key,
+            corpus_hash=corpus_hash, config_hash=plan.config_hash,
+            clean_sha256=clean, loader_rules_version=rules, prompt_version=None, prompt_hash=None,
+            model=None, effort=None, tokenizer=parts["tokenizer"], embedder=emb, packing=parts["packing"],
+            usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None, cost_usd_micros=0,
+            projected_cost_usd_micros=None, latency_ms=int((time.perf_counter() - t0) * 1000), host=host, device=device,
+            provider=None, quantization=None, status="ok", error=None,
+            failed_settings=[f.to_dict() for f in res.failed_settings]).to_dict()  # DATA-CONTRACTS §12, H-069
+        envelope = {
+            "key": plan.key, "family": family, "record": record,
+            "item_file": plan.item_file, "n_items": len(plan.items),
+            "split": plan.split.to_dict() if plan.split is not None else None,  # akta: tanpa split (H-054)
+            **({"docs": [{"doc_id": d.doc_id, "clean_sha256": d.clean_sha256, "loader_rules_version": d.loader_rules_version,
+                          "n_items": sum(1 for i in plan.items if i.doc_id == d.doc_id)} for d in sorted(docs, key=lambda d: d.doc_id)]}
+               if multi else {}),
+            "settings_run": [asdict(s) for s in executed], "skipped": plan.skipped,
+            "n_truncated_by_chunker": trunc,
+            "metrics": [metrics_to_cache(m) for m in res.metrics],
+            "points": [{**point_dict(p), "header_b": by_id[p.setting_id].header_b} for p in res.points],  # deret on/off (U2)
+            "frontiers": [{"family": f.family, "split": f.split, "budget_tokens": f.budget_tokens, "point_ids": list(f.point_ids),
+                           "grid_run_id": f.grid_run_id} for f in res.frontiers],
+            "selections": {str(b): selection_dict(s) for b, s in sorted(res.selections.items())},
+            "quality": quality, "quality_comparison": comparison,
+            **schema_report(pipe, executed, schemas),
+            **({"unit_map": unit_map_report(pipe, schemas, ucfg, per_setting[executed[0].setting_id] if executed else []),
+                "recall_unit": ucfg["recall"]["unit"]} if ucfg is not None else {}),
+        }
+        store.write(plan.key, envelope)
+        return GridResult(plan.key, False, record, envelope, store.path(plan.key))
+    finally:
+        if lock is not None:
+            lock.release()
 
 
 # ---------- CLI ----------
@@ -551,8 +561,9 @@ def main(argv: list[str] | None = None) -> int:
         res = run_family_grid(args.family, **dkw, tokenizer=get_tokenizer(), runs_dir=args.runs_dir,
                               butir_dir=args.butir_dir, embed_cache_dir=CACHE_DIR, log=lambda m: print(m, flush=True),
                               headers=load_header_binding(runs_dir=args.runs_dir, family=args.family) if args.with_headers else None,
-                              schemas=SchemaBinding.from_store(args.runs_dir, args.family) if args.with_schema else None)
-    except (GridRunError, GridError) as exc:
+                              schemas=SchemaBinding.from_store(args.runs_dir, args.family) if args.with_schema else None,
+                              gpu_lock=True)
+    except (GridRunError, GridError, gpulock.GpuLockError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     for line in summarize(res):

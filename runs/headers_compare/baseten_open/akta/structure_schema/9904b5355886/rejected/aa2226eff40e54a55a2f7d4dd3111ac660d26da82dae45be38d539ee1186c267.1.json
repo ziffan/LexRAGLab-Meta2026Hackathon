@@ -1,0 +1,11 @@
+{
+ "chunk_id": "aa2226eff40e54a55a2f7d4dd3111ac660d26da82dae45be38d539ee1186c267",
+ "chunk_id_returned": "aa2226eff40e54a55a2f7d4dd3111ac660d26da82dae45be38d539ee1186c267",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1a8d1c693ee1480e9fbcf165e7a55a40",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima (Anggaran Dasar), Pasal 11: kewenangan Direksi, batas persetujuan Komisaris, dan kewajiban pengelolaan dokumen.",
+ "tokens_local": 41
+}
