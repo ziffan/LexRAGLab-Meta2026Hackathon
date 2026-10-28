@@ -100,6 +100,7 @@ def test_s7e_inheritance_of_attempts_time_params_and_factor():
     assert sweep_run.factor_bp(hc, sw, "sweep_baseten_high", 15700) == 19312
     sw["factor_bp"]["sweep_baseten_high"] = 20438
     assert sweep_run.factor_bp(hc, sw, "sweep_baseten_high", 15700) == 20438
+    sw["factor_bp"].pop("sweep_meta_medium", None)  # pin pilot S15 (c) di berkas nyata; di sini menguji pewarisan tanpa entri
     assert sweep_run.factor_bp(hc, sw, "sweep_meta_medium", 15700) == 15700
     assert sweep_run.factor_bp(hc, sw, "sweep_glimmer_medium", 15700) == 15700
     hc2 = hc_b(factor_bp={"baseten_open": 16553})
