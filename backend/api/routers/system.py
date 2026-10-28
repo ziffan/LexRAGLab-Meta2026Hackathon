@@ -11,6 +11,7 @@ from fastapi import APIRouter, Request
 
 from backend.api.errors import ApiError
 from backend.spark import ConfigInvalid, Ledger, local_server, store
+from backend.spark.budget import is_off_pin, pool_spend, provider_caps
 from backend.spark.runrecord import KINDS, RunRecord
 from backend.spark.settings import API_CHAT, clean_env_value, profile_api
 
@@ -75,8 +76,9 @@ def run_cost_micros(runs_dir: Path) -> int | None:
 
 
 def ledger_spent_micros(runs_dir: Path) -> int | None:
-    """Buku belanja `Ledger.spent()` (`spend_micros` = cost + projected per record; disebut `cost ?? projected` di H-063): angka biaya tunggal yang dikutip header, README, video
-    (putusan operator 12 butir 2). Integer micro-USD. None bila record tidak terbaca."""
+    """Buku belanja `Ledger.spent()` (`spend_micros` = cost + projected per record; disebut `cost ?? projected` di H-063) atas
+    SEMUA pool. Sejak H-104 butir 3 bukan lagi angka header/README (itu `main_results_spent_usd_micros` = pool default);
+    tetap di R1 untuk kompatibilitas dan jumlah U8 semua pool. Integer micro-USD. None bila record tidak terbaca."""
     try:
         return Ledger(runs_dir).spent()
     except (ConfigInvalid, ValueError):
@@ -109,17 +111,29 @@ def _totals(records: list[RunRecord]) -> list[dict[str, Any]]:
     return [acc[k] for k in KINDS if k in acc]
 
 
-def cost_fields(runs_dir: Path) -> dict[str, Any]:
-    """Tiga bidang biaya R1 dari SATU pembacaan record (5.000+ berkas; tiga pembacaan terpisah membuat R1 > 4 detik).
-    Nilai identik dengan `run_cost_micros`, `ledger_spent_micros` (= `Ledger.spent()`: hanya `records/`), `run_totals_by_kind`."""
+def cost_fields(runs_dir: Path, budget_cfg: Mapping[str, Any] | None = None, *, model_cfg: Mapping[str, Any]) -> dict[str, Any]:
+    """Bidang biaya R1 dari SATU pembacaan record (5.000+ berkas; pembacaan terpisah membuat R1 > 4 detik).
+    Nilai identik dengan `run_cost_micros`, `ledger_spent_micros` (= `Ledger.spent()`: hanya `records/`), `run_totals_by_kind`.
+    H-104 butir 3: `pool_spend` = belanja per pool (aturan `Ledger.spent_pool`, `config/budget` `[provider_cap_micros]`) atas
+    `records/`; `main_results_spent_usd_micros` = pool `default` (hasil utama Contributor) = angka header U0 dan README.
+    Config budget tak sah -> kedua bidang pool None (bidang lain tetap). H-102 P3: rekaman off-pin (sapuan effort) masuk pool
+    `sweep` lewat `is_off_pin` atas `config/model` (`model_cfg` keyword WAJIB), tidak ke pool default/Baseten."""
     try:
         recs = store.load_records(runs_dir)
     except ValueError:
-        return {"run_cost_usd_micros": None, "ledger_spent_usd_micros": None, "run_totals_by_kind": None}
+        return {"run_cost_usd_micros": None, "ledger_spent_usd_micros": None, "main_results_spent_usd_micros": None,
+                "pool_spend": None, "run_totals_by_kind": None}
     grid = grid_records(runs_dir)
     allr = recs + grid
+    try:
+        pools: dict[str, int] | None = pool_spend(recs, provider_caps(budget_cfg or {}),
+                                                  off_pin=lambda r: is_off_pin(r, model_cfg))
+    except ConfigInvalid:
+        pools = None
     return {"run_cost_usd_micros": sum(int(r.cost_usd_micros or 0) for r in allr),
             "ledger_spent_usd_micros": sum(r.spend_micros() for r in recs),
+            "main_results_spent_usd_micros": None if pools is None else pools["default"],
+            "pool_spend": None if pools is None else [{"pool": k, "spend_usd_micros": v} for k, v in pools.items()],
             "run_totals_by_kind": _totals(allr)}
 
 
@@ -143,7 +157,7 @@ def health(request: Request) -> dict[str, Any]:
         "replay": st.replay,
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
-        **cost_fields(st.service.runs_dir),
+        **cost_fields(st.service.runs_dir, getattr(st, "budget_config", None), model_cfg=st.model_config),
         "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 

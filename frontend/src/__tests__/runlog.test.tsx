@@ -2,8 +2,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { HeaderBPanel, RunLogView } from "../components/RunLog";
-import { aggregateByRole, filterRuns, projectionRows, sampleRows, totalsToAggregates } from "../lib/runlog";
-import type { HeaderBView, RunTotal } from "../types";
+import { aggregateByRole, filterRuns, poolRows, projectionRows, sampleRows, totalsToAggregates } from "../lib/runlog";
+import type { HeaderBView, PoolSpend, RunTotal } from "../types";
 import { mkRun } from "./fixtures";
 
 const RUNS = [
@@ -82,7 +82,7 @@ describe("agregat server (UX-02)", () => {
     expect(h).toContain("Per role (all 5180 stored runs; cost = budget ledger");
     expect(h).toContain("81729292");
     expect(h).toContain("$0.526265");
-    expect(h).toContain("All roles (run cost)");
+    expect(h).toContain("All roles (all pools)");
     expect(h).toContain("$0.585496"); // 526265 + 59231 + 0
     expect(h).toContain("Latest 4 runs (UTC)");
     expect(h).not.toContain("$0.000300"); // agregat klien atas 4 baris tidak dipakai
@@ -91,7 +91,7 @@ describe("agregat server (UX-02)", () => {
     const h = viewT("spark_b");
     expect(h).toContain("$0.526265");
     expect(h).not.toContain("$0.059231");
-    expect(h).not.toContain("All roles (run cost)");
+    expect(h).not.toContain("All roles (all pools)");
   });
   it("tanpa totals server: agregat klien diberi label latest N runs only", () => {
     expect(view()).toContain("Per role (latest 4 runs only");
@@ -138,5 +138,31 @@ describe("header B (M3.1)", () => {
   it("tanpa data header B = empty", () => {
     expect(renderToStaticMarkup(<HeaderBPanel header={undefined} addresses={{}} />)).toContain("No header B projection or samples recorded");
     expect(renderToStaticMarkup(<HeaderBPanel header={{ projection: null, samples: [], stored_counts: {} }} addresses={{}} />)).toContain("No header B projection");
+  });
+});
+
+// H-104 butir 3: belanja eksperimen per pool, terpisah dari angka header (pool default = hasil utama).
+const POOLS: PoolSpend[] = [
+  { pool: "default", spend_usd_micros: 561741 },
+  { pool: "baseten", spend_usd_micros: 15513750 },
+  { pool: "sweep", spend_usd_micros: 0 },
+];
+
+describe("belanja per pool (H-104)", () => {
+  it("poolRows: urutan server, label per pool, pool default ditandai hasil utama; data rusak dilewati", () => {
+    const r = poolRows(POOLS);
+    expect(r.map((x) => x.pool)).toEqual(["default", "baseten", "sweep"]);
+    expect(r[0]).toMatchObject({ label: "Main results (Contributor, default pool)", costMicros: 561741, main: true });
+    expect(r[1]).toMatchObject({ label: "Spark Open comparators (Baseten pool)", main: false });
+    expect(poolRows([{ pool: "other", spend_usd_micros: 5 }])[0].label).toBe("other pool");
+    expect(poolRows([{ pool: "x", spend_usd_micros: 1.5 }])).toEqual([]);
+    expect(poolRows(null)).toEqual([]);
+  });
+  it("RunLogView menampilkan tabel pool bila ada, tidak tampil tanpa data pool", () => {
+    const h = renderToStaticMarkup(<RunLogView runs={RUNS} totals={TOTALS} pools={POOLS} role="all" onRole={() => undefined} selected={null} onSelect={() => undefined} />);
+    expect(h).toContain("Spend by budget pool");
+    expect(h).toContain("$0.561741");
+    expect(h).toContain("$15.513750");
+    expect(viewT()).not.toContain("Spend by budget pool");
   });
 });

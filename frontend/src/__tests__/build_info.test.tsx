@@ -16,26 +16,29 @@ import { Header, buildInfoFromHealth } from "../components/Header";
 const H = { status: "ok", replay: true, model: "muse-x", config_hash: "h", model_profiles: [] };
 
 describe("Run cost di header", () => {
-  it("buildInfoFromHealth memakai ledger_spent_usd_micros server apa adanya (integer), bukan jumlah mentah (UX-02)", () => {
-    expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: 1_234_567, run_cost_usd_micros: 1_000_000 })).toEqual({ model: "muse-x", costMicros: 1_234_567 });
-    expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: 0 }).costMicros).toBe(0);
+  it("buildInfoFromHealth memakai main_results_spent_usd_micros (pool default, H-104), bukan total semua pool atau jumlah mentah", () => {
+    expect(buildInfoFromHealth({ ...H, main_results_spent_usd_micros: 561_741, ledger_spent_usd_micros: 16_075_491, run_cost_usd_micros: 1_000_000 }))
+      .toEqual({ model: "muse-x", costMicros: 561_741 });
+    expect(buildInfoFromHealth({ ...H, main_results_spent_usd_micros: 0 }).costMicros).toBe(0);
+    expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: 16_075_491 }).costMicros).toBeNull(); // total semua pool tidak dipakai
     expect(buildInfoFromHealth({ ...H, run_cost_usd_micros: 1_000_000 }).costMicros).toBeNull(); // jumlah mentah tidak pernah dipakai
   });
   it("field tidak ada, null, atau bukan integer -> null", () => {
     for (const v of [undefined, null, 1.5, "7" as unknown as number]) {
-      expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: v }).costMicros).toBeNull();
+      expect(buildInfoFromHealth({ ...H, main_results_spent_usd_micros: v }).costMicros).toBeNull();
     }
     expect(buildInfoFromHealth(null)).toEqual({ model: null, costMicros: null });
   });
   it("Header menampilkan biaya dari prop, n/a bila tak ada", () => {
     mock.state = blankState();
     const ok = renderToStaticMarkup(<Header build={{ model: "muse-x", costMicros: 1_234_567 }} />);
-    expect(ok).toContain("Run cost:");
+    expect(ok).toContain("Run cost (main results):");
+    expect(ok).toContain("Main results only");
     expect(ok).toContain("$1.234567");
     expect(ok).toContain("muse-x");
     const na = renderToStaticMarkup(<Header build={{ model: null, costMicros: null }} />);
-    expect(na).toMatch(/Run cost: <strong[^>]*>n\/a</);
-    expect(renderToStaticMarkup(<Header />)).toMatch(/Run cost: <strong[^>]*>n\/a</);
+    expect(na).toMatch(/Run cost \(main results\): <strong[^>]*>n\/a</);
+    expect(renderToStaticMarkup(<Header />)).toMatch(/Run cost \(main results\): <strong[^>]*>n\/a</);
   });
   it("satu fetch: useBuildInfo dipanggil sekali di App, tidak di Header; tanpa fetchRuns / penjumlahan di frontend", () => {
     expect(appSrc.match(/useBuildInfo\(\)/g)).toHaveLength(1);

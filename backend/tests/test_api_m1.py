@@ -112,8 +112,10 @@ def test_r1_ledger_spent_and_totals_by_kind_cover_all_runs(tmp_path):
     assert all(type(r["spend_usd_micros"]) is int for r in h["run_totals_by_kind"])
     from backend.api.routers.system import cost_fields, ledger_spent_micros, run_cost_micros, run_totals_by_kind
 
-    assert cost_fields(runs) == {"run_cost_usd_micros": run_cost_micros(runs), "ledger_spent_usd_micros": ledger_spent_micros(runs),
-                                 "run_totals_by_kind": run_totals_by_kind(runs)}  # satu pembacaan, nilai sama dengan fungsi terpisah
+    cf = cost_fields(runs, model_cfg={})
+    assert {k: cf[k] for k in ("run_cost_usd_micros", "ledger_spent_usd_micros", "run_totals_by_kind")} == {
+        "run_cost_usd_micros": run_cost_micros(runs), "ledger_spent_usd_micros": ledger_spent_micros(runs),
+        "run_totals_by_kind": run_totals_by_kind(runs)}  # satu pembacaan, nilai sama dengan fungsi terpisah
 
 
 def test_r1_ledger_fields_null_when_unreadable(tmp_path):
