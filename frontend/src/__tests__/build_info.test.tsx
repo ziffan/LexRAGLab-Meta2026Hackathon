@@ -49,7 +49,7 @@ describe("Tagline (UX-01) dan header berkelompok (UX-22)", () => {
   it("draf tidak tampil; final tampil apa adanya", async () => {
     const { Tagline } = await import("../components/Header");
     expect(renderToStaticMarkup(<Tagline content={{ status: "draft", text: "x" }} />)).toBe("");
-    expect(renderToStaticMarkup(<Tagline />)).toBe(""); // berkas repo masih draf sampai operator menyetujui
+    expect(renderToStaticMarkup(<Tagline />)).toContain("Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed."); // disetujui operator 28 Okt (final)
     expect(renderToStaticMarkup(<Tagline content={{ status: "final", text: "Find it." }} />)).toContain("Find it.");
   });
   it("ikon hint app.purpose berada satu kelompok dengan nama app", () => {

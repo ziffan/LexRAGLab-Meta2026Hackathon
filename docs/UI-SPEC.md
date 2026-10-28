@@ -376,7 +376,7 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 
 | UX | Perilaku |
 |---|---|
-| 01 | URL tanpa `item`: butir `kontrol-K-09` dipilih sekali bila ada di snapshot (UU PT). Tagline di bawah header dari `frontend/src/content/tagline.json`, tampil hanya bila `status = final` (teks disetujui operator) |
+| 01 | URL tanpa `item`: butir `kontrol-K-09` dipilih sekali bila ada di snapshot (UU PT). Tagline di bawah header dari `frontend/src/content/tagline.json`, tampil hanya bila `status = final`; teks disetujui operator 28 Okt (final) |
 | 02 | `Run cost` U0 = buku belanja (R1 `ledger_spent_usd_micros`), sama dengan README; U8 agregat per peran atas semua run, tabel baris "Latest {N} runs (UTC)" |
 | 03 | U3 jawaban dari cache: biaya/token panggilan asal (W6 `origin_runs`) + "served from cache; original call {UTC}" |
 | 05 | U2 Selected setting: "Chosen on tune; held-out shown for reporting." untuk setting terpilih grid |
@@ -389,7 +389,7 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 | 09 | Ekspor statis memuat profil tersimpan setting terpilih (UU PT) dan setting transfer (akta), `data/profiles/<fam>/<sid16>.json`, byte-identik dengan `profiles/` bila masih sama dengan W7 selain `created_at`. U7 statis: pratinjau baca-saja + Download JSON; Export/Load tetap nonaktif (H-051) |
 | 17 | U9 baris provenance dari `items_summary` |
 | 07 | 502/503/504 tanpa badan galat API (proxy dev, backend mati) = `unreachable`: "Backend unreachable. Showing replay data if available."; U5 saat snapshot gagal: "Could not load schema: the family snapshot did not load." (bukan galat validasi) |
-| 10 | Sublabel sel "Abstained, correctly": "(no gold, or gold not in its context)" (EVAL-SPEC 2×2). Hint `verifier.matrix_2x2` 1.5.0: draf menunggu operator, belum di `hints.json` |
+| 10 | Sublabel sel "Abstained, correctly": "(no gold, or gold not in its context)" (EVAL-SPEC 2×2). Hint `verifier.matrix_2x2` 1.5.0 final (disetujui operator 28 Okt) menjelaskan arti "Abstained, correctly" |
 | 12 | Isi popover hint tidak mewarisi `text-transform: uppercase` dari `.field`/kepala tabel |
 | 13 | Titik degenerate berlabel (H-093) tetap digambar dan tetap anggota frontier backend, tetapi tidak disambung garis frontier |
 | 14 | U8 menampilkan 20 baris + "Show more" (+100); baris terpilih tetap terlihat |
@@ -397,4 +397,4 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 | 19 | Opsi butir U1: "id · mode · query terpotong" |
 | 20 | `family` dicerminkan ke URL (`?family=akta`; uupt tanpa parameter) |
 | 21 | U7: enum asal dan split dipetakan ke label; alasan gagal header-on ringkas (kode + chunk di `title`); catatan skema operator tidak diubah |
-| 23 | Entri glosarium pemetaan "Must refuse / No gold / Unanswerable / Abstained": draf menunggu operator; label UI-SPEC tidak diubah |
+| 23 | Entri glosarium `term.abstain_labels` (hint 1.5.0 final) memetakan "Must refuse / No gold / Unanswerable / Abstained"; label UI-SPEC tidak diubah |

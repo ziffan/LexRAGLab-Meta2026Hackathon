@@ -47,3 +47,14 @@ describe("UX-14: U8 menampilkan 20 baris + Show more", () => {
     expect((html(20, "r30").match(/aria-expanded=/g) ?? []).length).toBe(31);
   });
 });
+
+describe("hint 1.5.0 final (UX-10, UX-23; disetujui operator 28 Okt)", () => {
+  it("matrix_2x2 menjelaskan Abstained, correctly; entri glosarium label tolak ada", async () => {
+    const { HINT_FILE, getHint } = await import("../lib/hints");
+    expect(HINT_FILE.version).toBe("1.5.0");
+    expect(HINT_FILE.status).toBe("final");
+    expect(getHint("verifier.matrix_2x2")?.body).toContain("Abstained, correctly means the model declined");
+    expect(getHint("verifier.matrix_2x2")?.status).toBeUndefined();
+    expect(getHint("term.abstain_labels")?.title).toBe("Must refuse, No gold, Unanswerable, Abstained");
+  });
+});

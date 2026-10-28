@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "status": "final",
   "locale": "en",
   "entries": [
@@ -42,6 +42,11 @@
       "id": "term.gold_span",
       "title": "Gold span",
       "body": "The gold span is the exact passage of the source text that answers an evaluation question, marked by the operator or proposed by Muse Spark and approved by the operator. Every metric that mentions gold is measured against this span. An item with no gold span is one where the system should abstain."
+    },
+    {
+      "id": "term.abstain_labels",
+      "title": "Must refuse, No gold, Unanswerable, Abstained",
+      "body": "Four labels describe related things. Must refuse (the Mode filter) and No gold (must abstain) (Per-item results) mark items without a gold span, where the system should decline to answer. Unanswerable (Review) is the kind of Spark proposal that becomes such an item after operator approval. Abstained (End-to-end evidence) is what the model did: it declined or reported insufficient evidence. A paraphrase item can also lack gold and then appears under No gold (must abstain)."
     },
     {
       "id": "ui.pending_review",
@@ -155,7 +160,7 @@
     {
       "id": "verifier.matrix_2x2",
       "title": "Answer 2x2 summary",
-      "body": "Raw counts per profile and model of four outcomes: Answered, supported; Answered, unsupported; Abstained, correctly; Abstained, should have answered. Supported means every citation passed Exists and Faithful and at least one cited chunk overlaps the gold span. Limitation (the V10-any reading): a citation whose own text lies outside the gold but shares a chunk with it still counts as supported, so this cell can overstate how well the quoted text itself covers the gold. Answers from different models are never added together."
+      "body": "Raw counts per profile and model of four outcomes: Answered, supported; Answered, unsupported; Abstained, correctly; Abstained, should have answered. Supported means every citation passed Exists and Faithful and at least one cited chunk overlaps the gold span. Limitation (the V10-any reading): a citation whose own text lies outside the gold but shares a chunk with it still counts as supported, so this cell can overstate how well the quoted text itself covers the gold. Answers from different models are never added together. Abstained, correctly means the model declined (must refuse or insufficient evidence) and its context held no gold text: either the item has no gold span, or retrieval for that profile did not bring the gold into the context. For a baseline column this says the abstention was right given what it was shown, not that the baseline found the answer."
     },
     {
       "id": "status.valid",
