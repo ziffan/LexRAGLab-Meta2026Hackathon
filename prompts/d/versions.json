@@ -15,9 +15,23 @@
         "unanswerable"
       ],
       "note": "H-087/H-092: instruksi peran D hanya untuk mode unanswerable (butir wajib tolak akta), skema ProposalU. v1 tetap untuk literal dan parafrase (kunci cache lama tidak berubah)."
+    },
+    "v3": {
+      "file": "v3.md",
+      "role": "d",
+      "max_output_tokens": 8000,
+      "modes": [
+        "unanswerable"
+      ],
+      "note": "H-095/H-099 (V3, Q4): instruksi peran D khusus keluarga uupt mode unanswerable (butir wajib tolak UU PT), skema ProposalU tidak berubah. Dipilih lewat by_family_mode; v2 tetap untuk akta, v1 tetap untuk literal dan parafrase."
     }
   },
   "by_mode": {
     "unanswerable": "v2"
+  },
+  "by_family_mode": {
+    "uupt": {
+      "unanswerable": "v3"
+    }
   }
 }
