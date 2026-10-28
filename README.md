@@ -1,5 +1,5 @@
 <!-- Tujuan: README publik repo app (bahasa Inggris, H-018): apa, kenapa, cara jalan, batas, disclaimer. -->
-<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054. -->
+<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054, H-060, H-078, H-086, H-089, H-090, H-091, H-093. -->
 
 # LexRAGLab
 
@@ -56,19 +56,40 @@ Role C comparators (secondary, role C only): the same answer step can be re-run 
 | Family | Scope |
 |---|---|
 | Indonesian Company Law (UU 40/2007), an unofficial consolidation prepared by the operator from the regulation texts and Constitutional Court decisions, consolidated as of 30 December 2022, with notes on which later law or decision changed each provision | Full: grid and roles A, B, C, D; settings chosen on tune, reported on held-out |
-| Notarial deeds | Transfer: **five synthetic deeds of establishment**, written by an AI agent and reviewed by the operator, with fictitious identities. Shows role A on a family with no existing parser. The deed items are not split into tune and held-out; the best Company Law profile is tested on them and reported per item as a transfer test. **Status: pending operator review.** The deed structure schema (version 2), the must-refuse items for deeds, and the deed grid are not final, so deed results are not reported here |
+| Notarial deeds | Transfer: **five synthetic deeds of establishment**, written by an AI agent and reviewed by the operator, with fictitious identities. Shows role A on a family with no existing parser: the deed structure schema is version 2, corrected by the operator from the Spark proposal (version 1). The deed items are not split into tune and held-out; the best Company Law setting (dense retrieval, header off, 2,000-token budget) is applied to the deed schema and reported per item as a transfer test, with no profile selection. Results: see "Deed results (transfer test)" below |
 | Internal policies | Mentioned as the next family; no documents included |
 
 ## Evaluation items
 
-Current count, from `data/butir/` (`uupt.v13.jsonl`, `akta.v70.jsonl`):
+Current count, from `data/butir/` (`uupt.v13.jsonl`, `akta.v85.jsonl`):
 
 | Family | Items | Origin | Notes |
 |---|---|---|---|
 | Company Law | **20** | 9 operator-written control items (`origin: operator`); 11 Spark-proposed items approved by the operator (`origin: spark_disetujui`; 5 approved as proposed, 6 edited by the operator) | 1 must-refuse item with no gold span. Tune / held-out split: 11 / 9 |
-| Notarial deeds (synthetic) | **69** | all Spark-proposed, approved by the operator (67 as proposed, 2 edited); none operator-written | Spread over the five deeds (12 to 16 items each). No must-refuse item yet. Pending operator review of the deed schema and grid; transfer test only |
+| Notarial deeds (synthetic) | **84** | all Spark-proposed, approved by the operator (82 as proposed, 2 edited); none operator-written | 43 literal, 26 paraphrase, 15 must-refuse (3 per deed, no gold span); the 69 gold items are spread over the five deeds (12 to 16 each). No tune / held-out split; transfer test only |
 
-Operator-written control items detect circularity between Spark-proposed queries and their spans. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`). The Company Law count may still change after the operator's final review.
+Operator-written control items detect circularity between Spark-proposed queries and their spans. There are none for deeds, so that check does not apply to the deed numbers. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`). The Company Law count may still change after the operator's final review.
+
+## Deed results (transfer test)
+
+Source: the stored deed grid run (`runs/grid/86e701f5…`, key `86e701f5…`), item file `data/butir/akta.v85.jsonl`, deed structure schema version 2 (`runs/schemas/akta/v2.json`, `source: operator`). The grid has 36 settings: 3 chunkers (unstructured, fixed-size 512 tokens with 64 overlap, deed structure schema) x 3 retrieval modes (dense, BM25, hybrid) x context header on / off x 2 token budgets (1,000 and 2,000); 29 of them were evaluated, because the header-on twin is run only for settings on the frontier (`frontier_only` scope). All 84 items are scored together; there is no split and no setting is selected on them (marked "transfer test, no profile selection"). The 15 must-refuse items have no gold span, so they have no recall and are left out of the means below. The numbers are the 69 gold items at the 2,000-token budget:
+
+| Chunker | Retrieval | Header | Items fully covered | Mean span recall | MRR |
+|---|---|---|---|---|---|
+| unstructured, `structure_handwritten` (one chunk per deed) | any of the three | on / off | 0 of 69 | 0.000 | 0.000 |
+| fixed-size 512 / 64 | dense | off | 64 of 69 | 0.937 | 0.773 |
+| fixed-size 512 / 64 | hybrid | off | 62 of 69 | 0.899 | 0.731 |
+| fixed-size 512 / 64 | BM25 | off | 57 of 69 | 0.826 | 0.655 |
+| deed structure schema v2 | dense | off | 69 of 69 | 1.000 | 0.955 |
+| deed structure schema v2 | dense | on | 69 of 69 | 1.000 | 0.949 |
+| deed structure schema v2 | hybrid | off | 68 of 69 | 0.986 | 0.801 |
+| deed structure schema v2 | hybrid | on | 67 of 69 | 0.971 | 0.814 |
+| deed structure schema v2 | BM25 | off | 62 of 69 | 0.899 | 0.675 |
+
+- The **transfer setting** is the best Company Law setting applied to the deeds: structure-schema chunker, dense retrieval, header off. It fully covers 69 of 69 gold items with a mean token precision of 0.0252 (2.5%); the stored grid marks it dominated by the header-on dense point, which covers the same items with fewer retrieved tokens (1,889 vs 1,904 on average). Header-on variants exist only for some points (header scope: frontier only), so the table has no BM25 header-on row and no fixed-size header-on row.
+- The **unstructured** point is labelled "no structure recognized": the Company Law parser finds no structure in a deed and returns one chunk per deed, larger than the budget, so it scores zero under the token budget. Its Recall@5 nevertheless reads 1.000 (one chunk per deed), so Recall@K alone says nothing about token-budget coverage and cannot be compared across chunkers.
+- Deed **Recall@K is not comparable with Company Law Recall@K**. It is computed at the default chunk level of the deed schema (`recall_unit: default_chunk_level`). Compare chunkers within the deed family only.
+- Small n: 69 gold items from five documents, all proposed by Spark and approved by the operator. The table gives raw counts. It claims no significance, and it does not show that the structure schema beats the baselines in general.
 
 ## Run it
 
@@ -106,7 +127,8 @@ Live version: TODO(operator): GitHub Pages link, added after the repository is p
 - Small item sets (n is small; see the count above); results are per item with raw counts, without significance claims.
 - The pre-event consolidation covers one statute only, as of 30 December 2022; later amendments are not reflected.
 - Comparators (Muse Spark Open on Baseten, Muse Glimmer locally) cover role C only, and only three demo items (`kontrol-K-09`, `kontrol-K-01`, `kontrol-K-08`), each with the best and the baseline profile: 6 stored runs per comparator (`runs/spark/records/`). That is a smoke-level check, not a quality comparison, and no comparator quality figure is claimed. The Spark Open runs cost 30,591 micro-USD in total; the local Glimmer runs cost 0. Any open-weight bonus claim waits for the organizers' confirmation of how own-hardware use is verified.
-- Notarial deed results are pending operator review (schema version 2, must-refuse items, deed grid) and are not reported.
+- Deed results rest on five synthetic documents and 69 gold items (plus 15 must-refuse items with no retrieval score). Deeds have no operator-written control items and no held-out split, and the transfer test selects nothing.
+- Model API spend recorded in the stored runs (`runs/spark/records/`, summed by the budget ledger): 585,376 micro-USD in total (about 0.59 USD): 554,785 on `muse-spark-1.3-contributor` (Meta API), 30,591 on Muse Spark Open (Baseten), 0 on local Muse Glimmer. Cost comes from the `usage` of each call.
 - Token counts use a local tokenizer calibrated once against the API token-count endpoint; billed tokens may differ.
 - The "valid on date" citation check is a stretch goal and may be absent.
 - Indonesian legal text is shown in Indonesian, with short English glosses where needed.
