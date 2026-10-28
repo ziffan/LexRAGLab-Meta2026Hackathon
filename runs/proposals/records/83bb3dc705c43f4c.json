@@ -52,12 +52,12 @@
  },
  "edited": null,
  "family": "uupt",
- "item_id": null,
+ "item_id": "usulan-83bb3dc705c43f4c",
  "operator_note": null,
  "proposal_id": "83bb3dc705c43f4c",
  "resolved_span": null,
- "review_status": "usulan",
- "reviewed_at": null,
+ "review_status": "disetujui",
+ "reviewed_at": "2026-10-28T03:49:04Z",
  "run_id": "5433ad0a525b466eab8c9e542caf0bf9",
  "validation": null
 }

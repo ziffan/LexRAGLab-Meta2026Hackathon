@@ -1,0 +1,128 @@
+{
+  "assignments": [
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-01",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-02",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-03",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-04",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-05",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-06",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-07",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-08",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 1,
+      "item_id": "kontrol-K-09",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-02a8ef44809c15d8",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-168b869c5e50a400",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-21da759bbeb64a31",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-391b2f911ee7fd7a",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-39b491484033b2f4",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-7105659537cdd373",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-750b2b3a029cf8d0",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-825a42724835aa9e",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 3,
+      "item_id": "usulan-83bb3dc705c43f4c",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-953f6f8b6202a3f6",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-af36d3c9437c2a9b",
+      "split": "tune"
+    },
+    {
+      "added_in_version": 3,
+      "item_id": "usulan-d3f8a86a00f2beb1",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 2,
+      "item_id": "usulan-dbd56534fe41df4e",
+      "split": "held_out"
+    },
+    {
+      "added_in_version": 3,
+      "item_id": "usulan-e73a0488fa17bf4a",
+      "split": "tune"
+    }
+  ],
+  "control_in_held_out": 4,
+  "family": "uupt",
+  "held_out_ratio": 0.4,
+  "seed": 20261026,
+  "split_version": 3,
+  "strata": [
+    "origin",
+    "mode"
+  ]
+}

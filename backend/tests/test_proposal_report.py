@@ -110,6 +110,22 @@ def test_s22_items_summary_counts_items_not_proposals():
 
 
 # ---------------------------------------------------------------- pemasangan di produksi (snapshot)
+def _expected_spark_held():
+    import json
+    import re
+    from collections import Counter
+    from fractions import Fraction
+    from pathlib import Path
+
+    from backend import config
+    d = Path(__file__).resolve().parents[2] / "data" / "butir"
+    best = max(d.glob("uupt.v*.jsonl"), key=lambda p: int(re.search(r"v(\d+)", p.name).group(1)))
+    items = [json.loads(x) for x in best.read_text(encoding="utf-8").splitlines() if x.strip()]
+    strata = Counter((i["origin"], i["mode"]) for i in items)
+    ratio = Fraction(str(config.load("grid")["split"]["held_out_ratio"]))
+    return sum(round(ratio * n) for (o, _), n in strata.items() if o == "spark_disetujui")
+
+
 def test_snapshot_serves_summary_and_origin_report(tmp_path):
     from fastapi.testclient import TestClient
 
@@ -130,6 +146,6 @@ def test_snapshot_serves_summary_and_origin_report(tmp_path):
     assert set(rep) == {"operator", "spark_disetujui"}
     held_ops = [i for i in d["items"] if i["origin"] == "operator" and i["split"] == "held_out"]
     assert rep["operator"]["n_items"] == len(held_ops) == d["items_summary"]["control_in_held_out"]
-    # data v12: strata spark literal 4 -> round(1.6) = 2 held-out; spark parafrase 7 -> round(2.8) = 3; total 5 (split v1 dari nol, runs_dir kosong)
+    # split v1 dari nol (runs_dir kosong): held-out spark = jumlah round(rasio*n) per stratum (origin, mode) spark, dihitung dari berkas data terbaru
     held_sp = [i for i in d["items"] if i["origin"] == "spark_disetujui" and i["split"] == "held_out"]
-    assert rep["spark_disetujui"]["n_items"] == len(held_sp) == 5
+    assert rep["spark_disetujui"]["n_items"] == len(held_sp) == _expected_spark_held()

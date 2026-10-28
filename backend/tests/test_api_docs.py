@@ -75,8 +75,17 @@ def setting(snap, chunker):
     return next(s for s in m11_settings(snap) if s["chunker"] == chunker)
 
 
-# data/butir/uupt.v12.jsonl (operator, H-011): 9 kontrol (operator) + 11 spark_disetujui = 20 butir. Naik bila operator menambah butir.
-N_ITEMS_V12 = 20
+# Jumlah butir dihitung dari berkas data/butir/uupt.v<terbaru>.jsonl (v16: 23 butir).
+def _latest_uupt_items():
+    """Butir dari berkas data/butir/uupt.v<N>.jsonl versi tertinggi (sumber yang sama dengan snapshot)."""
+    import json as _json
+    import re as _re
+    d = Path(__file__).resolve().parents[2] / "data" / "butir"
+    best = max(d.glob("uupt.v*.jsonl"), key=lambda p: int(_re.search(r"v(\d+)", p.name).group(1)))
+    return [_json.loads(x) for x in best.read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+N_ITEMS_V12 = len(_latest_uupt_items())  # naik otomatis bila operator menambah butir
 
 
 def test_snapshot_exposes_items_and_the_two_m11_settings(snap):

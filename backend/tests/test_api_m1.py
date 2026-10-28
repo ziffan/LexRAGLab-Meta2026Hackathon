@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -135,15 +136,33 @@ def test_w1_runs_grid_then_cached(client, world):
 
 
 # ---- R3 sesudah run ----
-# Asal angka (data/butir/uupt.v12.jsonl, 20 butir; runs_dir sementara kosong -> split v1 dibuat dari nol, bukan perluasan; rasio 0.4 config/grid):
+# Asal angka (berkas data/butir/uupt.v<terbaru>.jsonl; runs_dir sementara kosong -> split v1 dibuat dari nol, bukan perluasan; rasio config/grid):
 # strata (origin, mode): operator-literal 4, operator-parafrase 5, spark-literal 4, spark-parafrase 7.
 # held_out = round(0.4*n): 2 + 2 + 2 + 3 = 9; tune = 20 - 9 = 11; kontrol di held_out = 2 + 2 = 4 (>= 3, tanpa pemindahan).
-S_V12_BY_SPLIT = {"tune": 11, "held_out": 9}
+def _expected_split_v1():
+    """Split v1 dari nol atas data/butir/uupt.v<terbaru>.jsonl, dihitung independen dari kode produksi:
+    per stratum (origin, mode) held_out = round(rasio*n); bila kontrol di held_out < minimum, tune-kontrol dipindah."""
+    import json as _json
+    import re as _re
+    from collections import Counter
+    from fractions import Fraction
+    d = Path(__file__).resolve().parents[2] / "data" / "butir"
+    best = max(d.glob("uupt.v*.jsonl"), key=lambda p: int(_re.search(r"v(\d+)", p.name).group(1)))
+    items = [_json.loads(x) for x in best.read_text(encoding="utf-8").splitlines() if x.strip()]
+    cfg = config.load("grid")["split"]
+    strata = Counter((i["origin"], i["mode"]) for i in items)
+    held = {k: round(Fraction(str(cfg["held_out_ratio"])) * n) for k, n in strata.items()}
+    control_held = sum(v for (o, _), v in held.items() if o == "operator")
+    n_held = sum(held.values()) + max(0, cfg["min_control_in_held_out"] - control_held)
+    return {"tune": len(items) - n_held, "held_out": n_held}, held, len(items)
+
+
+S_BY_SPLIT, _, N_ITEMS = _expected_split_v1()
 
 
 def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
     d = client.get(f"{FAM}/snapshot").json()
-    assert d["split"]["split_version"] == 1 and d["items_summary"]["by_split"] == S_V12_BY_SPLIT
+    assert d["split"]["split_version"] == 1 and d["items_summary"]["by_split"] == S_BY_SPLIT
     assert d["items_summary"]["control_in_held_out"] >= 3 and {i["split"] for i in d["items"]} == {"tune", "held_out"}
     g = d["grid"]
     assert set(g["tune"]) == {"points", "frontier"} and set(g["held_out"]) == {"points", "frontier"}
@@ -152,7 +171,7 @@ def test_r3_after_run_has_split_grid_frontier_selected_quality(client, world):
     assert g["selected"]["tune_point"]["split"] == "tune" and g["selected"]["budget_tokens"] == 2000
     assert len(g["skipped"]) == 12 and all(s["reason"] for s in g["skipped"])
     assert g["quality_comparison"]["selected_setting_id"] == g["selected"]["setting_id"]
-    assert len(d["metrics"]) == 6 * 20 and {m["split"] for m in d["metrics"]} == {"tune", "held_out"}
+    assert len(d["metrics"]) == 6 * N_ITEMS and {m["split"] for m in d["metrics"]} == {"tune", "held_out"}
     assert len(d["quality"]) == 6 and {"entity_preservation", "boundary_coherence", "recall_at_k", "k"} <= set(d["quality"][0])
     d1000 = client.get(f"{FAM}/snapshot", params={"budget_tokens": 1000}).json()
     assert d1000["grid"]["selected"]["budget_tokens"] == 1000 and d1000["grid"]["tune"]["frontier"]["budget_tokens"] == 1000
