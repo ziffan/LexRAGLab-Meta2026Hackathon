@@ -92,6 +92,7 @@ sweep_baseten_medium = 19312
 sweep_baseten_high = 19312
 sweep_baseten_xhigh = 19312
 sweep_meta_medium = 18610   # Contributor sapuan: pilot 20 unit UU PT pasal 28 Okt 19:10Z, ceil(17.195 x 10000 / 9.240); dipin L2 sebelum batch penuh (hanya menaikkan; dilaporkan ke L1)
+sweep_meta_xhigh = 17257    # pilot 20 unit UU PT pasal 28 Okt 22:20Z, ceil(15.945 x 10000 / 9.240); dipin L2 sebelum batch penuh. sweep_meta_high pilot 13.654 < 15.700: tidak dipin (tidak diturunkan)
 
 [compare]
 # Kebijakan cakupan sebagian grid pembanding (P12, Q-S4): HANYA untuk profil sapuan. strict | mask_threshold | mask_ref.
