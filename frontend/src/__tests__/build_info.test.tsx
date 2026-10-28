@@ -16,13 +16,14 @@ import { Header, buildInfoFromHealth } from "../components/Header";
 const H = { status: "ok", replay: true, model: "muse-x", config_hash: "h", model_profiles: [] };
 
 describe("Run cost di header", () => {
-  it("buildInfoFromHealth memakai run_cost_usd_micros server apa adanya (integer)", () => {
-    expect(buildInfoFromHealth({ ...H, run_cost_usd_micros: 1_234_567 })).toEqual({ model: "muse-x", costMicros: 1_234_567 });
-    expect(buildInfoFromHealth({ ...H, run_cost_usd_micros: 0 }).costMicros).toBe(0);
+  it("buildInfoFromHealth memakai ledger_spent_usd_micros server apa adanya (integer), bukan jumlah mentah (UX-02)", () => {
+    expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: 1_234_567, run_cost_usd_micros: 1_000_000 })).toEqual({ model: "muse-x", costMicros: 1_234_567 });
+    expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: 0 }).costMicros).toBe(0);
+    expect(buildInfoFromHealth({ ...H, run_cost_usd_micros: 1_000_000 }).costMicros).toBeNull(); // jumlah mentah tidak pernah dipakai
   });
   it("field tidak ada, null, atau bukan integer -> null", () => {
     for (const v of [undefined, null, 1.5, "7" as unknown as number]) {
-      expect(buildInfoFromHealth({ ...H, run_cost_usd_micros: v }).costMicros).toBeNull();
+      expect(buildInfoFromHealth({ ...H, ledger_spent_usd_micros: v }).costMicros).toBeNull();
     }
     expect(buildInfoFromHealth(null)).toEqual({ model: null, costMicros: null });
   });

@@ -14,13 +14,14 @@ export const FAMILY_LABELS: Record<string, string> = { uupt: "Company Law (UU 40
 
 export interface BuildInfo { model: string | null; costMicros: number | null }
 
-/** Health -> BuildInfo. Biaya hanya dari field server `run_cost_usd_micros` (integer); selain itu null ("n/a"). */
+/** Health -> BuildInfo. Biaya hanya dari field server `ledger_spent_usd_micros` (buku belanja `Ledger.spent`, putusan operator 12,
+ * UX-02; integer); selain itu null ("n/a"). `run_cost_usd_micros` (jumlah mentah) tidak dipakai di layar. */
 export function buildInfoFromHealth(h: Health | null | undefined): BuildInfo {
-  const c = h?.run_cost_usd_micros;
+  const c = h?.ledger_spent_usd_micros;
   return { model: h?.model ?? null, costMicros: typeof c === "number" && Number.isInteger(c) ? c : null };
 }
 
-/** Model ID dan total biaya run tersimpan, keduanya dari satu fetch /api/health (`model`, `run_cost_usd_micros`). null = belum ada / tidak terbaca. Panggil sekali (App), oper ke Header lewat prop. */
+/** Model ID dan total biaya run tersimpan, keduanya dari satu fetch /api/health (`model`, `ledger_spent_usd_micros`). null = belum ada / tidak terbaca. Panggil sekali (App), oper ke Header lewat prop. */
 export function useBuildInfo(): BuildInfo {
   const [info, setInfo] = useState<BuildInfo>({ model: null, costMicros: null });
   useEffect(() => {
@@ -77,7 +78,7 @@ export function Header({ build = { model: null, costMicros: null } }: { build?: 
         Selected setting: <strong>{sel ? settingShort(sel) : state.snapshot.status === "error" ? "n/a" : "…"}</strong>
       </span>
       <span className="hdr-item">Model: <strong className="mono hdr-value">{build.model ?? "n/a"}</strong></span>
-      <span className="hdr-item">Run cost: <strong className="mono hdr-value">{build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
+      <span className="hdr-item" title="Budget ledger over all stored runs: cost from model usage, plus projected cost of failed attempts">Run cost: <strong className="mono hdr-value">{build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
       <Hint id="app.purpose" />
       {state.family === "akta" && <Hint id="metric.transfer_test" />}
       {snap?.replay && <><span className="tag replay">REPLAY</span><Hint id="app.replay" /></>}

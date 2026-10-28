@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
-import { fetchDoc, fetchRuns } from "../api";
+import { fetchDoc, fetchHealth, fetchRuns } from "../api";
 import { useStore } from "../state";
 import { formatUsd, tokenStr } from "../lib/evidence";
 import { truncate } from "../lib/format";
 import {
-  ROLES, aggregateByRole, filterRuns, granularityLabel, latencyStr, projectionRows, roleLabel, sampleRows, utcStamp, type RoleFilter,
+  ROLES, aggregateByRole, filterRuns, granularityLabel, latencyStr, projectionRows, roleLabel, sampleRows, totalsToAggregates, utcStamp,
+  type RoleFilter,
 } from "../lib/runlog";
-import type { HeaderBView, Load, RunRecord } from "../types";
+import type { HeaderBView, Load, RunRecord, RunTotal } from "../types";
 import { Hint } from "./Hint";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U8 Run log & cost (docs/UI-SPEC.md U8). `RunLogView` dan `HeaderBPanel` murni; `RunLogPanel` menyambung R6 + snapshot.
 
-export function RunLogView({ runs, role, onRole, selected, onSelect }: {
+export function RunLogView({ runs, role, onRole, selected, onSelect, totals = null }: {
   runs: RunRecord[];
+  /** R1 `run_totals_by_kind` (semua run, server). null = tidak tersedia: agregat dihitung dari baris terbaru saja dan diberi label. */
+  totals?: RunTotal[] | null;
   role: RoleFilter;
   onRole: (r: RoleFilter) => void;
   selected: string | null;
@@ -21,7 +24,13 @@ export function RunLogView({ runs, role, onRole, selected, onSelect }: {
 }) {
   if (runs.length === 0) return <EmptyBlock>No runs recorded</EmptyBlock>;
   const rows = filterRuns(runs, role);
-  const agg = aggregateByRole(rows);
+  // UX-02 (putusan operator 12): agregat per peran atas semua run dari server; biaya = buku belanja (Ledger.spent per peran).
+  const agg = totals ? totalsToAggregates(totals, role) : aggregateByRole(rows);
+  const nAll = totals ? totals.reduce((n, t) => n + t.runs, 0) : null;
+  const aggCap = totals
+    ? `Per role (all ${nAll} stored runs; cost = budget ledger: model usage, plus projected cost of failed attempts)`
+    : `Per role (latest ${runs.length} runs only; cost from model usage)`;
+  const aggTotal = totals && role === "all" ? agg.reduce((n, a) => n + a.costMicros, 0) : null;
   const detail = rows.find((r) => r.run_id === selected) ?? null;
   return (
     <>
@@ -36,7 +45,7 @@ export function RunLogView({ runs, role, onRole, selected, onSelect }: {
       </div>
       <div className="table-wrap">
         <table className="data runlog-agg">
-          <caption className="cap">Per role (stored runs; cost from model usage)</caption>
+          <caption className="cap">{aggCap}</caption>
           <thead>
             <tr><th scope="col">Role</th><th scope="col">Runs</th><th scope="col">Input tokens</th><th scope="col">Cached tokens</th><th scope="col">Output tokens</th><th scope="col">Cost (USD)</th></tr>
           </thead>
@@ -47,11 +56,16 @@ export function RunLogView({ runs, role, onRole, selected, onSelect }: {
               </tr>
             ))}
           </tbody>
+          {aggTotal !== null && (
+            <tfoot>
+              <tr><th scope="row">All roles (run cost)</th><td>{nAll}</td><td></td><td></td><td></td><td>{formatUsd(aggTotal)}</td></tr>
+            </tfoot>
+          )}
         </table>
       </div>
       <div className="table-wrap">
         <table className="data runlog">
-          <caption className="cap">Runs (UTC)</caption>
+          <caption className="cap">{`Latest ${runs.length} runs (UTC)`}</caption>
           <thead>
             <tr>
               <th scope="col">Time (UTC)</th><th scope="col">Role</th><th scope="col">Model</th><th scope="col">Effort</th><th scope="col">Prompt version</th>
@@ -130,6 +144,7 @@ export function RunLogPanel() {
   const { state } = useStore();
   const snap = state.snapshot.status === "ready" ? state.snapshot.data : null;
   const [runs, setRuns] = useState<Load<RunRecord[]>>({ status: "loading" });
+  const [totals, setTotals] = useState<RunTotal[] | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [role, setRole] = useState<RoleFilter>("all");
   const [selected, setSelected] = useState<string | null>(null);
@@ -141,6 +156,9 @@ export function RunLogPanel() {
     fetchRuns()
       .then((data) => live && setRuns({ status: "ready", data }))
       .catch((e: unknown) => live && setRuns({ status: "error", code: "runs", message: e instanceof Error ? e.message : "Unexpected error." }));
+    fetchHealth()
+      .then((h) => live && setTotals(Array.isArray(h.run_totals_by_kind) ? h.run_totals_by_kind : null))
+      .catch(() => live && setTotals(null));
     return () => {
       live = false;
     };
@@ -175,7 +193,7 @@ export function RunLogPanel() {
         <button type="button" onClick={() => { setRuns({ status: "loading" }); setAttempt((n) => n + 1); }}>Retry</button>
       </>
     );
-  else body = <RunLogView runs={runs.data} role={role} onRole={setRole} selected={selected} onSelect={setSelected} />;
+  else body = <RunLogView runs={runs.data} totals={totals} role={role} onRole={setRole} selected={selected} onSelect={setSelected} />;
   return (
     <section className="panel" aria-labelledby="runlog-title" id="runlog">
       <div className="panel-head"><h2 id="runlog-title">Run log &amp; cost</h2><Hint id="role.a" /><Hint id="role.b" /><Hint id="role.c" /><Hint id="role.d" /><Hint id="header_b.what" /><Hint id="metric.local_tokenizer" /></div>

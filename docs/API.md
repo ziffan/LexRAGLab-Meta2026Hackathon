@@ -22,7 +22,7 @@ Bentuk ini mengikuti H-020: endpoint baca dilebur menjadi snapshot per keluarga,
 
 | # | Metode dan jalur | Request | Response | Panel | Slice |
 |---|---|---|---|---|---|
-| R1 | `GET /api/health` | — | `{status, replay, model, config_hash, run_cost_usd_micros, model_profiles: [{model_profile, model, available, label, provider, quantization, effort, roles, local, live_via_cli, unavailable_reason}]}` | U0, U3 | M0.1 |
+| R1 | `GET /api/health` | — | `{status, replay, model, config_hash, run_cost_usd_micros, ledger_spent_usd_micros, run_totals_by_kind, model_profiles: [{model_profile, model, available, label, provider, quantization, effort, roles, local, live_via_cli, unavailable_reason}]}` | U0, U3 | M0.1 |
 | R2 | `GET /api/families` | — | `[{family, n_docs, n_items, has_grid, error?}]` (`error` = kode galat bila butir keluarga itu cacat; baris itu `n_items = 0`, `has_grid = false`; keluarga lain tetap 200, W64) | U0 | M0.2 |
 | R3 | `GET /api/families/{family}/snapshot` | query `budget_tokens` opsional (default dari `config/grid`) | `FamilySnapshot` (bagian 4) | U0–U9 | M0.2, diperluas tiap slice |
 | R4 | `GET /api/families/{family}/docs/{doc_id}` | query `setting_id` opsional, atau `schema_version` opsional (int, saling eksklusif dengan `setting_id` → 400 `invalid_request`; versi tak ada → 404 `not_found`; skema tak cocok → 422 `validation_failed`; H-078) | `{doc_id, text, chunks: Chunk[] \| null, headers: HeaderB[] \| null}` (§3, §7) | U1, U6 | M1.1, M3.2 |
@@ -32,6 +32,8 @@ Bentuk ini mengikuti H-020: endpoint baca dilebur menjadi snapshot per keluarga,
 `model_profiles` (R1, M2.5): `label` nama tampilan dari `config/model`; `quantization` dan `effort` dipin di profil (`effort` memakai `reasoning_effort` profil bila ada, selain itu `[effort].c`); `roles` kosong = Contributor, selain itu peran yang diizinkan; `local` true untuk server lokal (Glimmer); `live_via_cli` true bila W6 live ditolak untuk profil itu (G-26); `unavailable_reason` pesan Inggris bila `available = false`. Untuk profil lokal `available` = probe `GET <base_url>/models` memuat model ID (cache 5 detik; mode replay tidak memanggil, `available = true` karena hanya hasil tersimpan). Tanpa key atau base URL di respons.
 
 `run_cost_usd_micros` (R1): integer micro-USD, jumlah `cost_usd_micros` seluruh RunRecord yang dibaca R6 tanpa limit (record tanpa biaya = 0); `null` bila record tersimpan tidak terbaca. Ekspor statis menyalinnya ke `health.json`.
+
+`ledger_spent_usd_micros` (R1): buku belanja `Ledger.spent()` = jumlah `cost ?? projected` (`spend_micros`) seluruh RunRecord berbayar (H-063). Inilah satu angka biaya yang tampil di U0 (`Run cost`) dan dikutip README/video (putusan operator 12 butir 2); `run_cost_usd_micros` tetap ada untuk kompatibilitas. `run_totals_by_kind` (R1): `[{kind, runs, usage_input_tokens, usage_cached_tokens, usage_output_tokens, spend_usd_micros, unknown_runs}]` atas SEMUA RunRecord (tanpa limit R6), urutan `KINDS`; jumlah `spend_usd_micros` = `ledger_spent_usd_micros`. Dipakai tabel per peran U8. Keduanya `null` bila record tidak terbaca. Ekspor statis ikut menyalin keduanya.
 
 R4 dan R5 dipisah dari snapshot karena teks dokumen dan ranking per butir per setting terlalu besar untuk dikirim sekaligus.
 

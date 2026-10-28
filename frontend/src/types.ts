@@ -334,7 +334,22 @@ export interface Health {
   config_hash: string;
   /** Jumlah `cost_usd_micros` seluruh RunRecord tersimpan (integer micro-USD); null/tidak ada = tidak terbaca. */
   run_cost_usd_micros?: number | null;
+  /** Buku belanja `Ledger.spent` (`cost ?? projected`, H-063): satu angka biaya U0/README/video (putusan operator 12). */
+  ledger_spent_usd_micros?: number | null;
+  /** Agregat per jenis run atas SEMUA RunRecord (server, tanpa limit R6); tabel per peran U8. */
+  run_totals_by_kind?: RunTotal[] | null;
   model_profiles: ModelProfileInfo[];
+}
+
+/** R1 `run_totals_by_kind` (docs/API.md): integer; `spend_usd_micros` = buku belanja per jenis run. */
+export interface RunTotal {
+  kind: RunKind;
+  runs: number;
+  usage_input_tokens: number;
+  usage_cached_tokens: number;
+  usage_output_tokens: number;
+  spend_usd_micros: number;
+  unknown_runs: number;
 }
 
 // ---- U5 (DATA-CONTRACTS §6; API.md W9) ----

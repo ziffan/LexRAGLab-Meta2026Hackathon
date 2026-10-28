@@ -2,8 +2,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { HeaderBPanel, RunLogView } from "../components/RunLog";
-import { aggregateByRole, filterRuns, projectionRows, sampleRows } from "../lib/runlog";
-import type { HeaderBView } from "../types";
+import { aggregateByRole, filterRuns, projectionRows, sampleRows, totalsToAggregates } from "../lib/runlog";
+import type { HeaderBView, RunTotal } from "../types";
 import { mkRun } from "./fixtures";
 
 const RUNS = [
@@ -60,6 +60,41 @@ describe("RunLogView", () => {
   });
   it("empty", () => {
     expect(view("all", null, [])).toContain("No runs recorded");
+  });
+});
+
+// UX-02 (putusan operator 12): agregat per peran dari server atas semua run; tabel baris = "Latest N runs".
+const TOTALS: RunTotal[] = [
+  { kind: "spark_b", runs: 5125, usage_input_tokens: 83148909, usage_cached_tokens: 81729292, usage_output_tokens: 1089622, spend_usd_micros: 526265, unknown_runs: 3202 },
+  { kind: "spark_c", runs: 44, usage_input_tokens: 132682, usage_cached_tokens: 16056, usage_output_tokens: 20376, spend_usd_micros: 59231, unknown_runs: 4 },
+  { kind: "grid", runs: 11, usage_input_tokens: 0, usage_cached_tokens: 0, usage_output_tokens: 0, spend_usd_micros: 0, unknown_runs: 11 },
+];
+const viewT = (role: "all" | "spark_b" = "all") =>
+  renderToStaticMarkup(<RunLogView runs={RUNS} totals={TOTALS} role={role} onRole={() => undefined} selected={null} onSelect={() => undefined} />);
+
+describe("agregat server (UX-02)", () => {
+  it("baris per peran dari totals server, bukan dari baris terbaru; total = buku belanja", () => {
+    const a = totalsToAggregates(TOTALS);
+    expect(a.map((x) => x.kind)).toEqual(["spark_b", "spark_c", "grid"]);
+    expect(a[0]).toMatchObject({ runs: 5125, cachedTokens: 81729292, costMicros: 526265, unknownRuns: 3202 });
+    expect(totalsToAggregates(TOTALS, "spark_c").map((x) => x.kind)).toEqual(["spark_c"]);
+    const h = viewT();
+    expect(h).toContain("Per role (all 5180 stored runs; cost = budget ledger");
+    expect(h).toContain("81729292");
+    expect(h).toContain("$0.526265");
+    expect(h).toContain("All roles (run cost)");
+    expect(h).toContain("$0.585496"); // 526265 + 59231 + 0
+    expect(h).toContain("Latest 4 runs (UTC)");
+    expect(h).not.toContain("$0.000300"); // agregat klien atas 4 baris tidak dipakai
+  });
+  it("filter peran menyaring agregat server dan menyembunyikan total semua peran", () => {
+    const h = viewT("spark_b");
+    expect(h).toContain("$0.526265");
+    expect(h).not.toContain("$0.059231");
+    expect(h).not.toContain("All roles (run cost)");
+  });
+  it("tanpa totals server: agregat klien diberi label latest N runs only", () => {
+    expect(view()).toContain("Per role (latest 4 runs only");
   });
 });
 

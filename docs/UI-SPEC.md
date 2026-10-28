@@ -48,7 +48,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `Profile` aktif (§11), `RunRecord` agregat (§12), daftar keluarga dari `GET /api/families` |
-| Tampil | Nama app "LexRAGLab"; pemilih keluarga; nama setting terpilih (mis. "structure · hybrid · header on"); model ID dari `RunRecord` (`muse-spark-1.3-contributor`, H-028); total biaya run tersimpan; lencana "REPLAY" saat mode putar ulang; tautan "Review proposals ({n} pending)" |
+| Tampil | Nama app "LexRAGLab"; pemilih keluarga; nama setting terpilih (mis. "structure · hybrid · header on"); model ID dari `RunRecord` (`muse-spark-1.3-contributor`, H-028); total biaya run tersimpan (`Run cost` = buku belanja `Ledger.spent`, R1 `ledger_spent_usd_micros`, label dan angka sama dengan README; putusan operator 12); lencana "REPLAY" saat mode putar ulang; tautan "Review proposals ({n} pending)" |
 | Interaksi | Ganti keluarga → semua panel memuat ulang untuk keluarga itu. Klik lencana biaya → gulir ke U8 |
 | Loading / empty / error | Skeleton teks / "No family loaded" / "Backend unreachable. Showing replay data if available." |
 | Label | `Family`, `Company Law (UU 40/2007)` (nilai `family` = `uupt`), `Deed (synthetic)` (`akta`), `Selected setting`, `Model`, `Run cost`, `REPLAY`, `Review proposals` |
@@ -158,7 +158,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Aspek | Isi |
 |---|---|
 | Data | `RunRecord[]` (§12) |
-| Tampil | Tabel per panggilan atau run grid: waktu (UTC), peran (A/B/C/D/grid), model, effort, versi prompt, hash konfigurasi, token input / cached / output, biaya, latensi. Baris agregat per peran |
+| Tampil | Tabel per panggilan atau run grid: waktu (UTC), peran (A/B/C/D/grid), model, effort, versi prompt, hash konfigurasi, token input / cached / output, biaya, latensi. Baris agregat per peran atas semua run (R1 `run_totals_by_kind`, biaya = buku belanja) + baris total "All roles (run cost)" = angka U0; tabel baris berlabel "Latest {N} runs (UTC)" (putusan operator 12) |
 | Interaksi | Filter per peran. Klik baris → detail JSON catatan run |
 | Loading / empty / error | Skeleton / "No runs recorded" / "Run log unreadable: {message}" |
 | Label | `Run log & cost`, `Role`, `Effort`, `Prompt version`, `Input tokens`, `Cached tokens`, `Output tokens`, `Cost (USD)`, `Latency` |
