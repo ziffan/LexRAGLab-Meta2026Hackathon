@@ -51,7 +51,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md`, menjalankan ulang pytest (1345) dan npm (283) di worktree bersih (salin `_kerja/orkestrasi/skemaA-akta-v2-koreksi*.json`, `core.longpaths`), lalu melahirkan L2#7 dengan brief + addendum 1–3 + putusan-operator-2..11 dan memasang pengawas cron.
-2. L2#7: kode Tier 1 `tolak` UU PT (H-099) → prompt v3 ke operator → run D (proyeksi ±8.059) → review U6 → laporan dampak → W5 + grid ulang UU PT → ekspor statis ulang.
-3. Gate M5.2 bersama operator (rewrite histori, publik, Pages), lalu isian submit. Salin H-099 ke log operator (belum disalin).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md`, menjalankan ulang pytest (1402) dan npm (287) di worktree bersih (salin `_kerja/orkestrasi/skemaA-akta-v2-koreksi*.json`, `core.longpaths`), lalu melahirkan L2 baru dengan brief + addendum 1–3 + putusan-operator-2..11 dan memasang pengawas cron.
+2. Butir tolak UU PT selesai (H-099, `uupt.v16` 23 butir, profil terpilih tetap `d7a9dd24`). Terbuka: jawaban C untuk butir tolak UU PT (W6, proyeksi biaya dulu, keputusan operator).
+3. Gate M5.2 bersama operator (rewrite histori H-096, publik, Pages), lalu isian submit (repo catatan `docs/10-SUBMIT.md`). Pemicu 31 Okt H-017.
 4. Frontend 5173 (operator) dan 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39).
