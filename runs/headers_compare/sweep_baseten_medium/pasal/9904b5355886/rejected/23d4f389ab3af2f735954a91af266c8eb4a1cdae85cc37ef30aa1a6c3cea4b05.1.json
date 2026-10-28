@@ -1,0 +1,11 @@
+{
+ "chunk_id": "23d4f389ab3af2f735954a91af266c8eb4a1cdae85cc37ef30aa1a6c3cea4b05",
+ "chunk_id_returned": "23d4f389ab3af2f735954a91af266c8eb4a1cdae85cc37ef30aa1a6c3cea4b05",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "078264895e074795b5a0661ac371490d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Paragraf Anggaran Dasar: larangan dan syarat pemakaian nama Perseroan termasuk penulisan PT dan Tbk.",
+ "tokens_local": 44
+}

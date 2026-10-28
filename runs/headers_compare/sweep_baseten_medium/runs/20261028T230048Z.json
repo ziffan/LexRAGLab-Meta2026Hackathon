@@ -1,0 +1,170 @@
+{
+ "attempts": {
+  "uupt-40-2007/pasal": 8
+ },
+ "batches": [
+  {
+   "batas_atas": 923771,
+   "called": 20,
+   "expected": 249935,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 15,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 1208321,
+   "stopped": null,
+   "units": 20,
+   "upper_cached": 923771
+  },
+  {
+   "batas_atas": 301002,
+   "called": 5,
+   "expected": 108478,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 2,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 1491423,
+   "stopped": null,
+   "units": 5,
+   "upper_cached": 301002
+  },
+  {
+   "batas_atas": 217817,
+   "called": 3,
+   "expected": 89468,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 1559544,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 217817
+  },
+  {
+   "batas_atas": 217817,
+   "called": 3,
+   "expected": 89468,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 1602500,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 217817
+  },
+  {
+   "batas_atas": 176359,
+   "called": 2,
+   "expected": 80098,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 1643888,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 176359
+  },
+  {
+   "batas_atas": 176359,
+   "called": 2,
+   "expected": 80098,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 6,
+   "spent_pool": 1675226,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 176359
+  },
+  {
+   "batas_atas": 176359,
+   "called": 2,
+   "expected": 80098,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 7,
+   "spent_pool": 1710309,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 176359
+  },
+  {
+   "batas_atas": 176359,
+   "called": 2,
+   "expected": 80098,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 8,
+   "spent_pool": 1742252,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 176359
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "uupt-40-2007/pasal": {
+   "stored": 18,
+   "units": 343
+  }
+ },
+ "failed": {
+  "uupt-40-2007/pasal": [
+   "105c77b35424c717adbf62ea5f733ed5f6ed32a3afa8a13749029b2b85309e7d",
+   "8e480f818fcc0acb7b0ef7431d04faca13dfdf06941a1db025e29fc1ceb284f5"
+  ]
+ },
+ "family": "uupt",
+ "finished_at": "2026-10-28T23:00:48Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "medium",
+  "max_header_tokens": 40,
+  "model": "meta-models/muse-spark-open-1026",
+  "profile": "sweep_baseten_medium",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "baseten",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  3860,
+  4413,
+  5412,
+  4824,
+  5044
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_baseten_medium",
+ "sources": [
+  "pasal"
+ ],
+ "started_at": "2026-10-28T22:56:55Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 18,
+ "sweep": {
+  "effort": "medium",
+  "pool_remaining_micros": 48225719,
+  "profile": "sweep_baseten_medium",
+  "status": "partial (18/343 unit)"
+ },
+ "warm": true
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e6988b5df422bdfedb51be7fc29ad9cdc330bc9de5c1d737dfea3846e4cd2134",
+ "chunk_id_returned": "e6988b5df422bdfedb51be7fc29ad9cdc330bc9de5c1d737dfea3846e4cd2134",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "0509ad6322984d4e9d0802dedbbf635c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Penjelasan Pasal 11: ketentuan pelaksanaan pengesahan badan hukum di daerah tanpa akses jaringan elektronik.",
+ "tokens_local": 41
+}

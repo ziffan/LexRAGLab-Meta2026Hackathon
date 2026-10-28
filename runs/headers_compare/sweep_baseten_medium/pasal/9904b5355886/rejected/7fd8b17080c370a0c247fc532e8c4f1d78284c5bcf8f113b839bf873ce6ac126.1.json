@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7fd8b17080c370a0c247fc532e8c4f1d78284c5bcf8f113b839bf873ce6ac126",
+ "chunk_id_returned": "7fd8b17080c370a0c247fc532e8c4f1d78284c5bcf8f113b839bf873ce6ac126",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "917182e9104447a3aa1d8089b46c442d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Penjelasan Pasal 107: prosedur pengunduran diri anggota Direksi menurut anggaran dasar.",
+ "tokens_local": 41
+}

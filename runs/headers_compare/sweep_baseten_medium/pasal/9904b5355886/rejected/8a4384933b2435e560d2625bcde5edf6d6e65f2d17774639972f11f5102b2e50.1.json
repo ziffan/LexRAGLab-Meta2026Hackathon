@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8a4384933b2435e560d2625bcde5edf6d6e65f2d17774639972f11f5102b2e50",
+ "chunk_id_returned": "8a4384933b2435e560d2625bcde5edf6d6e65f2d17774639972f11f5102b2e50",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "80b677ee8f0b49a9a67be51b6dd8c21a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Kesatu (Rencana Kerja): kewajiban penyusunan rencana kerja dan anggaran tahunan Perseroan.",
+ "tokens_local": 43
+}

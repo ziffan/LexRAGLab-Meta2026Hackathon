@@ -1,0 +1,11 @@
+{
+ "chunk_id": "98f49b062184674725ba5068354e6b803a9330fb627b68f42d98cc77aceeae4e",
+ "chunk_id_returned": "98f49b062184674725ba5068354e6b803a9330fb627b68f42d98cc77aceeae4e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "40844149c727435a86ec840c20076b3d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.) Penjelasan Pasal 10: makna istilah dalam tata cara pengesahan badan hukum Perseroan.",
+ "tokens_local": 41
+}

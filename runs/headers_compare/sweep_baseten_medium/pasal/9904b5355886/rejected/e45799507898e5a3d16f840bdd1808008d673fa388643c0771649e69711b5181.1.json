@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e45799507898e5a3d16f840bdd1808008d673fa388643c0771649e69711b5181",
+ "chunk_id_returned": "e45799507898e5a3d16f840bdd1808008d673fa388643c0771649e69711b5181",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8c0ac4f9d6b340d6b96660e848c5248d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Ketiga (Daftar Perseroan dkk.): pengumuman akta Perseroan dalam Tambahan Berita Negara oleh Menteri.",
+ "tokens_local": 49
+}

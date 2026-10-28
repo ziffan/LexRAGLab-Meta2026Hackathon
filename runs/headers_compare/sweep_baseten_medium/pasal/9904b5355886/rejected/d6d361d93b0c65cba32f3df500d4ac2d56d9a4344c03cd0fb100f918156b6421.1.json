@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d6d361d93b0c65cba32f3df500d4ac2d56d9a4344c03cd0fb100f918156b6421",
+ "chunk_id_returned": "d6d361d93b0c65cba32f3df500d4ac2d56d9a4344c03cd0fb100f918156b6421",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "6981ff5ab76549a28d4cdbfe21b9c96e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi), Penjelasan Pasal 96: penetapan gaji dan tunjangan anggota Direksi.",
+ "tokens_local": 47
+}

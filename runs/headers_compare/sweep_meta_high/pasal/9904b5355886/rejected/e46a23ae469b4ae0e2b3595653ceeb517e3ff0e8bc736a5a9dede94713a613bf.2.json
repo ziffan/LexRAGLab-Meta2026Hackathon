@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e46a23ae469b4ae0e2b3595653ceeb517e3ff0e8bc736a5a9dede94713a613bf",
+ "chunk_id_returned": "e46a23ae469b4ae0e2b3595653ceeb517e3ff0e8bc736a5a9dede94713a613bf",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "be73699817944cfdac6994f57bbb0d61",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana dkk.), Bagian Ketiga (Penggunaan Laba): nasib dividen yang tidak diambil pemegang saham.",
+ "tokens_local": 41
+}
