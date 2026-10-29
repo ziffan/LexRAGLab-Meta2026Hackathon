@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cba2c9e64f7bb826c8b8835b6d9063669d0bcb9a12b75b2b2de28a69f29cfff9",
+ "chunk_id_returned": "cba2c9e64f7bb826c8b8835b6d9063669d0bcb9a12b75b2b2de28a69f29cfff9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9932bc9c00aa4142845acb6c2dd120ad",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham): penjelasan kedudukan saham sebagai benda bergerak, hak kebendaan, pencatatan agunan saham dan batas pengalj",
+ "tokens_local": 52
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "73f5166f88c9b4dc07cd353e85ab3ce2d5b2e820c04da48863c69afa34a62732",
+ "chunk_id_returned": "73f5166f88c9b4dc07cd353e85ab3ce2d5b2e820c04da48863c69afa34a62732",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "00b9de9e1a4f4076ab7ce76051e481b2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): tanggung renteng Dewan Komisaris atas kepailitan akibat kelalaian pengawasan dan syarat pelepasan tanggung jawab.",
+ "tokens_local": 47
+}

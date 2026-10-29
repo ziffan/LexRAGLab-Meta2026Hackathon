@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9ad69f503dfeb1a3e59c8516bfc53f9eaf2e8734e92f3b2161fb52b0576787c9",
+ "chunk_id_returned": "9ad69f503dfeb1a3e59c8516bfc53f9eaf2e8734e92f3b2161fb52b0576787c9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "10a23d43fe6843069468ad7dc171a2b5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): tata cara pengumuman rancangan, keberatan kreditor, serta persyaratan akta dan pelampiran ke Menteri.",
+ "tokens_local": 46
+}

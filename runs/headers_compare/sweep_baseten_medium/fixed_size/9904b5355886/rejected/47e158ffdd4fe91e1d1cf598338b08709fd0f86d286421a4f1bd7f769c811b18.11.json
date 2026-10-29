@@ -1,0 +1,11 @@
+{
+ "chunk_id": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "chunk_id_returned": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ffb0a0ce21c445c199fb63db931334f1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab V-VI (Tanggung Jawab dkk. dan RUPS): penjelasan kewajiban TJSL dan wewenang serta tempat penyelenggaraan RUPS.",
+ "tokens_local": 42
+}

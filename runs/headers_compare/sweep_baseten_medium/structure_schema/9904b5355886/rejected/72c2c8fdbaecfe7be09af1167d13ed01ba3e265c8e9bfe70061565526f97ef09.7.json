@@ -1,0 +1,11 @@
+{
+ "chunk_id": "72c2c8fdbaecfe7be09af1167d13ed01ba3e265c8e9bfe70061565526f97ef09",
+ "chunk_id_returned": "72c2c8fdbaecfe7be09af1167d13ed01ba3e265c8e9bfe70061565526f97ef09",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "47e6bebbf35c46adaeb09b24d3d9b532",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Ketiga (Penambahan Modal): penawaran saham baru kepada pemegang saham lama secara proporsional dan pengecualiannya.",
+ "tokens_local": 48
+}

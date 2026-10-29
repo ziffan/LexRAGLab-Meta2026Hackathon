@@ -1,0 +1,11 @@
+{
+ "chunk_id": "fdf642dbd3ac80f0320ac1b01c61f19559bfdf9a763c567b0598ff4aec5e5e91",
+ "chunk_id_returned": "fdf642dbd3ac80f0320ac1b01c61f19559bfdf9a763c567b0598ff4aec5e5e91",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "06692215ab2747e0a50cec3957e47ed0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): pencantuman perbuatan hukum pra-pendirian terkait saham dalam akta pendirian.",
+ "tokens_local": 45
+}

@@ -1,0 +1,162 @@
+{
+ "body": {
+  "default_chunk_level": 4,
+  "family": "uupt",
+  "levels": [
+   {
+    "examples": [
+     "## BAB I — KETENTUAN UMUM",
+     "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+     "## BAB III — MODAL DAN SAHAM"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^## BAB [IVXLCDM]+ —",
+    "name": "bab",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "### Bagian Kesatu — Pendirian",
+     "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+     "### Bagian Ketiga — Daftar Perseroan dan Pengumuman"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^### Bagian .+",
+    "name": "bagian",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "#### Paragraf 1 — Anggaran Dasar",
+     "#### Paragraf 2 — Perubahan Anggaran Dasar",
+     "#### Paragraf 1 — Daftar Perseroan"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^#### Paragraf \\d+ —",
+    "name": "paragraf",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "### Pasal 1",
+     "### Pasal 2",
+     "### Pasal 7"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^### Pasal \\d+",
+    "name": "pasal",
+    "order": 4,
+    "parent_order": 3
+   },
+   {
+    "examples": [
+     "#### Penjelasan Pasal 1",
+     "#### Penjelasan Pasal 2",
+     "#### Penjelasan Pasal 7"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^#### Penjelasan Pasal \\d+",
+    "name": "penjelasan pasal",
+    "order": 5,
+    "parent_order": 4
+   }
+  ],
+  "notes": "BAB I tidak memiliki Bagian sehingga Pasal berada langsung di bawah BAB; penanda ## PENJELASAN UMUM muncul sekali dan bukan penanda berulang. Paragraf hanya ada pada sebagian Bagian, sehingga Pasal kadang berada langsung di bawah Bagian."
+ },
+ "cache_key": "cad33bc5086bb9168fa15ccdebb7405c364baeec5103fd98a06cfae758ffcff8",
+ "created_at": "2026-10-29T12:36:31Z",
+ "family": "uupt",
+ "model_profile": "sweep_glimmer_medium",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "0f313b887a7d4353a4df1897977deade",
+ "sample": [
+  {
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "doc_id": "uupt-40-2007"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "## BAB I — KETENTUAN UMUM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB III — MODAL DAN SAHAM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "### Bagian Kesatu — Pendirian",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Ketiga — Daftar Perseroan dan Pengumuman",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "#### Paragraf 1 — Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 2 — Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 1 — Daftar Perseroan",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "### Pasal 1",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 2",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 7",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "#### Penjelasan Pasal 1",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 2",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 7",
+   "matched": true,
+   "order": 5
+  }
+ ]
+}

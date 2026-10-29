@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e99a92f6131f936ec676c0c71e12347fc3ce2af86d847555b7b4da0f804e4cd4",
+ "chunk_id_returned": "e99a92f6131f936ec676c0c71e12347fc3ce2af86d847555b7b4da0f804e4cd4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "8bfed43b566945968f2bedd84d8e7f3d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): kewajiban pelaporan kepemilikan saham direksi dan tanggung jawab atas kerugian akibat kelalaI",
+ "tokens_local": 48
+}

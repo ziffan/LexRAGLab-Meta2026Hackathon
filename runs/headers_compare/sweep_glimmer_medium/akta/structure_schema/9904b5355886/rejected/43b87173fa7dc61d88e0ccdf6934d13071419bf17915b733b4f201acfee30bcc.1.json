@@ -1,0 +1,11 @@
+{
+ "chunk_id": "43b87173fa7dc61d88e0ccdf6934d13071419bf17915b733b4f201acfee30bcc",
+ "chunk_id_returned": "43b87173fa7dc61d88e0ccdf6934d13071419bf17915b733b4f201acfee30bcc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "7a397d2bd6c844d09830a4aa5e73f7f7",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima Nomor 63, Penutup Akta: pernyataan pembuatan, pembacaan, penandatanganan dan penyimpanan minuta akta.",
+ "tokens_local": 41
+}

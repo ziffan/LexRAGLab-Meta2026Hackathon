@@ -93,7 +93,7 @@ label = "Glimmer (local, effort xhigh)"
 # = 19312 (belanja aktual Ledger run 876321e atas proyeksi `--project-only` sebelum run; P7, S15 (a)). Entri hilang atau < 19312
 # = config_invalid di runner. Pilot per effort boleh menaikkan (dipin oleh L1/operator sebelum batch penuh); tidak diturunkan.
 sweep_baseten_medium = 22358   # pilot 20 unit UU PT pasal semua ronde, 28 Okt 23:00Z: ceil(558.782 x 10000 / 249.935); dipin L2 sebelum batch penuh (hanya menaikkan)
-sweep_baseten_high = 22358   # = faktor terukur pilot medium (L1 29 Okt, pelajaran G-36): tanpa pilot terpisah, pakai max terukur
+sweep_baseten_high = 36741   # H-110: faktor terukur B medium akhir ceil(29505734 x 10000 / 8030878); hanya menaikkan
 sweep_baseten_xhigh = 22358  # = faktor terukur pilot medium (L1 29 Okt, pelajaran G-36): tanpa pilot terpisah, pakai max terukur
 sweep_meta_medium = 18610   # Contributor sapuan: pilot 20 unit UU PT pasal 28 Okt 19:10Z, ceil(17.195 x 10000 / 9.240); dipin L2 sebelum batch penuh (hanya menaikkan; dilaporkan ke L1)
 sweep_meta_xhigh = 17257    # pilot 20 unit UU PT pasal 28 Okt 22:20Z, ceil(15.945 x 10000 / 9.240); dipin L2 sebelum batch penuh. sweep_meta_high pilot 13.654 < 15.700: tidak dipin (tidak diturunkan)
