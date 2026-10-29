@@ -38,7 +38,7 @@ Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028,
 | Batasan prompt | Header tidak boleh menyalin isi gold atau menjawab pertanyaan; tidak boleh menyebut peraturan lain yang tidak ada di dokumen. Panjang header dibatasi konfigurasi, karena tokennya masuk anggaran (H-004) |
 | Validasi semantik | `chunk_id` sama dengan yang diminta; panjang header dalam batas |
 | Cache | Dokumen di awal pesan, tidak berubah antar-panggilan. Satu request pemanas, lalu `prompt_cache_key` per dokumen. Cached tokens dibaca dari `usage.input_tokens_details.cached_tokens`. Panggilan berurutan, bukan paralel |
-| Granularitas | Per pasal, per ayat, atau hanya setting di frontier: diputus operator dari angka M3.1 (H-038): per Pasal untuk UU PT (H-074). Klausa garis potong 31 Okt ("hanya setting di frontier") tidak terpakai: B sudah dijalankan |
+| Granularitas | Per pasal, per ayat, atau hanya setting di frontier: diputus operator dari angka M3.1 (H-038): per Pasal untuk UU PT (H-074). Catatan sisir 29 Okt (bukan teks H): klausa garis potong 31 Okt ("hanya setting di frontier") tidak terpakai karena B UU PT sudah dijalankan per Pasal sebelum 31 Okt |
 | Perkiraan biaya | Contributor: korpus per pasal < $1, per ayat sekitar $2–4 (estimasi pra-acara, batas atas). Waktu pada 150 RPM menjadi kendala. Diukur ulang di M3.1 sebelum dijalankan penuh |
 | Pemeriksa | Sistem (validasi); operator membaca sampel header di M3.1. Dampak header diukur di frontier, bukan dinilai LLM |
 | Slice | M3.1, M3.2 |
