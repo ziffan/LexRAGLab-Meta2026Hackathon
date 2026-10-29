@@ -117,6 +117,12 @@ def test_readme_cost_figures_match_stored_runs():
     led = Ledger(REPO / "runs")
     assert r and [_num(x) for x in r.groups()] == [led.spent_pool("baseten", caps, role, model_cfg=mcfg) for role in ("a", "b", "c")]
     assert "sweep" in pools
+    s = re.search(r"effort sweep pool: ([\d,]+) micro-USD \(Contributor ([\d,]+), Spark Open ([\d,]+), Glimmer ([\d,]+)\)", text)
+    assert s, "README effort sweep pool figure missing"
+    assert _num(s.group(1)) == pools["sweep"]
+    off = [r for r in store.load_records(REPO / "runs") if is_off_pin(r, mcfg)]
+    per = [sum(r.spend_micros() for r in off if r.provider == p) for p in ("meta", "baseten", "lmstudio_local")]
+    assert [_num(x) for x in s.groups()[1:]] == per and sum(per) == pools["sweep"]
 
 
 def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
