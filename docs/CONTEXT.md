@@ -3,10 +3,11 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-112.
 
-diperbarui: 2026-10-29 UTC (L2-sisir-docs: status basi disisir; sebelumnya L2-pascasapuan), sesi orkestrasi berlapis di mesin otoritatif
+diperbarui: 2026-10-30 UTC (L1 tutup sesi: sapuan + sisir docs di-push; analisis perbandingan model di repo catatan `docs/riset/2026-10-29-analisis-perbandingan-model.md`), sesi orkestrasi berlapis di mesin otoritatif
 
 ## Status
 
+- **Menunggu operator (30 Okt):** 29 usulan kelas (b) dari sisir docs di `_kerja/orkestrasi/sisir-docs-usulan.md`; tinjau teks README Limits (pembanding + sapuan); pilih bahan video dari analisis perbandingan model (repo catatan). Tidak ada agen atau proses run yang aktif; 5173/8000/5177 mati, Glimmer di-unload.
 - **Sapuan effort selesai** dalam lingkup H-111/H-112, di-merge ke `main` `42d83fc7` (29 Okt): Contributor `low`..`xhigh` (A, B, C + grid); Spark Open dan Glimmer sampai `medium` (A, B, C + grid; Spark Open `high`/`xhigh` dan Glimmer `high` hanya A dan C; B Spark Open `high`/`xhigh`, B Glimmer `high`, dan Glimmer `xhigh` tidak dijalankan, H-110/H-111). Cakupan sebagian B Spark Open `medium` (UU PT `pasal` 334/343, `fixed_size` 87/103, `structure_schema` 321/343, akta 120/123; H-112). Laporan S7 `_kerja/orkestrasi/sweep/laporan-effort.md`; README Limits dan G-42..G-46 diperbarui (L2-pascasapuan). Belanja per pool (`pool_spend`, aturan R1): default 561.741 (= header/README), Baseten H-101 15.513.750, sapuan 32.951.385 dari plafon 75M (Contributor 1.634.019, Spark Open 31.317.366, Glimmer 0); total semua pool 49.026.876; Baseten lintas pool 46.831.116. Hasil utama tetap Contributor `low`.
 - M0, M1 **selesai** (screenshot M1.1/M1.4 pada chunker v2 dan grid `e7ffa7b0…` disetor L2#9, `_kerja/orkestrasi/bukti/M1.1-v2-*`, `M1.4-v2-*`). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai, M3.1–M3.4 (status MILESTONES dicocokkan L2#8/W93; Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
