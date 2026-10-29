@@ -1,12 +1,13 @@
 # CONTEXT — keadaan terkini
 
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
-Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-099.
+Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-112.
 
-diperbarui: 2026-10-28 UTC (L2#10 perbaikan UX M5.1), sesi orkestrasi berlapis di mesin otoritatif
+diperbarui: 2026-10-29 UTC (L2-pascasapuan: README/GOTCHAS/ekspor statis setelah merge sapuan), sesi orkestrasi berlapis di mesin otoritatif
 
 ## Status
 
+- **Sapuan effort selesai** dalam lingkup H-111/H-112, di-merge ke `main` `42d83fc7` (29 Okt): Contributor `low`..`xhigh` (A, B, C + grid); Spark Open dan Glimmer sampai `medium` (A, B, C + grid; Spark Open `high`/`xhigh` dan Glimmer `high` hanya A dan C; B Spark Open `high`/`xhigh`, B Glimmer `high`, dan Glimmer `xhigh` tidak dijalankan, H-110/H-111). Cakupan sebagian B Spark Open `medium` (UU PT `pasal` 334/343, `fixed_size` 87/103, `structure_schema` 321/343, akta 120/123; H-112). Laporan S7 `_kerja/orkestrasi/sweep/laporan-effort.md`; README Limits dan G-42..G-46 diperbarui (L2-pascasapuan). Belanja per pool (`pool_spend`, aturan R1): default 561.741 (= header/README), Baseten H-101 15.513.750, sapuan 32.951.385 dari plafon 75M (Contributor 1.634.019, Spark Open 31.317.366, Glimmer 0); total semua pool 49.026.876; Baseten lintas pool 46.831.116. Hasil utama tetap Contributor `low`.
 - M0, M1 **selesai** (screenshot M1.1/M1.4 pada chunker v2 dan grid `e7ffa7b0…` disetor L2#9, `_kerja/orkestrasi/bukti/M1.1-v2-*`, `M1.4-v2-*`). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai, M3.1–M3.4 (status MILESTONES dicocokkan L2#8/W93; Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
 - M4 selesai (Tier 4 M4.1 dikonfirmasi operator 28 Okt, preseden M3.3: I-51 + koreksi v2 H-088/H-089 sebagai domain review): skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
@@ -14,7 +15,7 @@ diperbarui: 2026-10-28 UTC (L2#10 perbaikan UX M5.1), sesi orkestrasi berlapis d
 - M5.1 L2#10 (putusan operator 12): perbaikan UX review UX-01..23 selesai (tagline dan hint 1.5.0 final, disetujui operator 28 Okt); `Run cost` = buku belanja `Ledger.spent` 615.008 di header, README, U8 (direvisi H-104: lihat baris Biaya) (R1 `ledger_spent_usd_micros`, `run_totals_by_kind`); U3 biaya panggilan asal untuk jawaban cache (W6 `origin_runs`); profil UU PT/akta ikut ekspor statis. Ringkasan per UX: `docs/UI-SPEC.md` §10.5.
 - M5.2 persiapan: LICENSE + NOTICE Apache-2.0 (H-097, copyright Ziffany Firdinal), README tema Build for Your World / Indie (H-098) + kalimat anti-RAG dan new-work-only, motivasi PRD = korpus aturan (angka LO dari laporan operator, anonim), hint 1.5.0 final (L2#10), dist-static dibangun ulang dari `84c6513` (lihat baris HEAD). Rencana rewrite histori `_kerja/orkestrasi/M52-rewrite-histori-rencana.md` (H-096, belum dijalankan). Repo masih private.
 - `tolak` UU PT selesai (H-099): prompt D v3 268dd67, kode Tier 1 f2b5417, run D b709ac3 (4.992 micro-USD), 3 butir disetujui operator, split v3, grid ulang tanpa Spark (pilihan profil tidak berubah), profil + ekspor statis ulang (faa343d). Jawaban C untuk 3 butir `tolak` UU PT (`f52f6a7`, best `d7a9dd24` + baseline `ed489a1e`): Contributor 6/6 abstain (4 `tolak`, 2 `bukti_tidak_cukup`; 1.964 micro-USD), Spark Open Baseten 6/6 (5 + 1; 22.676 micro-USD), Glimmer lokal 6/6 (4 + 2; 0); sel 2×2 18/18 `abstained_correct`.
-- Biaya (H-104 butir 3, L2#11, 29 Okt): header U0 dan README = `Run cost (main results)` = buku belanja pool default (R1 `main_results_spent_usd_micros`) 561.741 micro-USD; eksperimen per pool terpisah (R1 `pool_spend`, tabel U8 "Spend by budget pool", README Limits): Baseten 15.513.750 (A 93.751, B 15.366.732, C 53.267); pool sapuan H-102 belum dirangkai di main (titik integrasi: `cost_fields` meneruskan `off_pin` ke `budget.pool_spend` saat merge sapuan). Total semua pool `Ledger.spent` 16.075.491 (R1 `ledger_spent_usd_micros`, baris U8 "All roles (all pools)").
+- Biaya (H-104 butir 3, L2#11, 29 Okt): header U0 dan README = `Run cost (main results)` = buku belanja pool default (R1 `main_results_spent_usd_micros`) 561.741 micro-USD; eksperimen per pool terpisah (R1 `pool_spend`, tabel U8 "Spend by budget pool", README Limits): Baseten 15.513.750 (A 93.751, B 15.366.732, C 53.267); pool sapuan H-102 dirangkai (`cost_fields` meneruskan `off_pin`), angka per 29 Okt di baris sapuan di atas; README memuat angka pool sapuan dan diuji `test_readme_cost_figures_match_stored_runs`.
 - HEAD `84c6513` (kode + data; commit docs session-end L2#8 sesudahnya): pytest 1402, vitest 287, secret scan (tree, histori, dist-static) 0. Ekspor statis dari working tree setelah `84c6513`: `dist-static/data` 1.095 berkas, `dist-static` 1.122 berkas, `--check` 0 temuan.
 
 ## Pin versi (M0)
@@ -31,9 +32,10 @@ diperbarui: 2026-10-28 UTC (L2#10 perbaikan UX M5.1), sesi orkestrasi berlapis d
 
 ## Menunggu operator
 
-- M5.1: kunci adegan video (putusan 8) + Tier 4 UX review; setelah itu agen menyetor screenshot per adegan.
+- M5.1: Tier 4 UX review + kunci adegan video (putusan 8); setelah itu agen menyetor screenshot per adegan.
+- README Limits teks pembanding + sapuan (L2-pascasapuan, commit `ab47ba00`): menunggu tinjauan L1/operator.
 - Pemicu 31 Okt H-017 (31 Okt malam WIB).
-- Gate M5.2: rewrite histori + force push (H-096), repo publik, Pages; butir NOTICE "unverified, pending operator" (kartu Glimmer HF, syarat keluaran Contributor, endpoint Baseten, Official Rules terpisah, versi jurnal Magesh).
+- Gate M5.2 (setelah sapuan selesai, H-108): rewrite histori + force push (H-096), repo publik, Pages; butir NOTICE "unverified, pending operator" (kartu Glimmer HF, syarat keluaran Contributor, endpoint Baseten, Official Rules terpisah, versi jurnal Magesh).
 - Isian form submit: repo catatan `docs/10-SUBMIT.md` (nama tim, feedback, Most Viral). Video milik operator.
 - Keputusan L1 yang bisa dibalik: keterangan "agen L3 (Claude)" di `docs/scenarios` dibiarkan sebagai disclosure.
 - Teks tooltip header `Run cost (main results)` (`frontend/src/components/Header.tsx` `RUN_COST_TITLE`) draf L2#11, menunggu L1.

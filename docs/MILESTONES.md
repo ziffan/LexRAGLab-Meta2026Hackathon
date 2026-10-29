@@ -304,6 +304,7 @@ Operator: putuskan granularitas B dari angka ini (H-038). Bila M2 belum selesai 
 **Tier review**: 1. Akuntansi token header menentukan keadilan perbandingan.
 **Estimasi**: 2 jam.
 **Status**: **selesai** 2026-10-28 (L2#8: kriteria selesai dicocokkan pemeriksa W93; isu yang dirujuk "Menunggu operator" di riwayat di bawah sudah ditutup) — riwayat: backend `1a9bacf`, `12528f5` (Tier 1); U2 deret + toggle `4d64878`, `294ec6c` (frontier gabungan, I-48 ditutup). Grid v2 `5a9486e` (`runs/grid/334717886e24….json`): 9 kembaran header-on frontier gagal `header_missing` (I-56 potongan skema tanpa header, I-57 satu potongan fixed_size). Screenshot dua deret setelah putusan.
+**Lanjutan pembanding (H-100..H-112)**: B open-weight (skenario H-101) dan sapuan effort (skenario delta H-103) **selesai dalam lingkup H-111/H-112**, merge `42d83fc7` 29 Okt; slice utama di atas tidak berubah (store/grid/profil utama byte-identik, hasil utama Contributor `low`). Tidak dijalankan: B Spark Open `high`/`xhigh`, B Glimmer `high`, Glimmer `xhigh` (H-110/H-111); cakupan sebagian B Spark Open `medium` (H-112). Laporan `_kerja/orkestrasi/sweep/laporan-effort.md`; README Limits + G-42..G-46 (L2-pascasapuan). Gerbang operator di luar slice ini tetap terbuka (M5.1 Tier 4 UX, kunci adegan video; gate M5.2).
 
 ### M3.3 — Induksi skema A untuk UU PT
 **Slice**: Spark membaca UU PT dan mengeluarkan skema hierarki. Layar menampilkan skema itu berdampingan dengan koreksi operator, operator mengoreksi lewat editor di layar (H-037), dan versi skema tersimpan.
