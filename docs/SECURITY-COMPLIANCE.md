@@ -1,7 +1,7 @@
 # SECURITY-COMPLIANCE — threat model, kepatuhan, dan gate pra-submit
 
 Tujuan: menetapkan ancaman yang relevan, kewajiban hukum yang menyentuh data dan lisensi, serta daftar periksa yang harus lulus sebelum submit.
-Sumber keputusan: H-003, H-007, H-013, H-016, H-028, H-029, H-030, H-031, H-039, H-040, H-041, H-043, H-044, H-045, H-047, H-051, H-056.
+Sumber keputusan: H-003, H-007, H-013, H-016, H-028, H-029, H-030, H-031, H-039, H-040, H-041, H-043, H-044, H-045, H-047, H-051, H-056, H-057, H-060, H-096, H-097, H-100.
 
 Ruang lingkup: aplikasi lokal satu operator, repo publik saat submit, tanpa layanan yang di-deploy. Penilaian hukum yang terbuka dicatat di `docs/ISSUES.md` dan diputus operator.
 
@@ -10,6 +10,7 @@ Ruang lingkup: aplikasi lokal satu operator, repo publik saat submit, tanpa laya
 | Aset | Kenapa penting |
 |---|---|
 | API key Meta Model API | Kredit terbatas ($150, Participant Guide); bocor = kredit terkuras |
+| API key Baseten (H-060) | Kredit Baseten operator terbatas; bocor = kredit terkuras |
 | Teks korpus dan akta sintetis | Masuk submission dan terlisensi luas ke Meta |
 | Butir, tabel status, koreksi skema | Kunci jawaban; integritasnya menentukan "optimal" |
 | Hasil run tersimpan | Dasar angka di layar, README, dan video |
@@ -53,6 +54,7 @@ Semua butir harus tercentang dan buktinya disimpan di repo sebelum repo dibuka d
 
 **Secret dan kebocoran**
 - [ ] Secret scan atas seluruh histori git bersih; hasilnya disimpan.
+- [ ] Rewrite histori H-096 (email pribadi di metadata commit, path lokal) hanya dengan izin eksplisit operator; verifikasi pasca-rewrite bersih.
 - [ ] `.env` tidak pernah ter-commit; `.env.example` tanpa nilai.
 - [ ] Tidak ada path lokal operator, catatan pribadi, atau header HTTP di `runs/`.
 - [ ] Rekaman video tidak menampilkan `.env`, key, atau terminal selain terminal putar ulang.
@@ -62,12 +64,12 @@ Semua butir harus tercentang dan buktinya disimpan di repo sebelum repo dibuka d
 - [ ] Setiap berkas akta sintetis diperiksa operator: identitas fiktif, tanpa NIK.
 - [ ] Daftar sumber korpus UU PT (UU pengubah, putusan MK) dan pernyataan konsolidasi tidak resmi tercantum (H-031).
 - [ ] Disclaimer identitas fiktif di setiap akta dan README (H-041).
-- [ ] Tidak ada key kedua: pembanding Glimmer berjalan di `127.0.0.1` tanpa key (H-047).
+- [ ] Tidak ada key kedua selain `BASETEN_API_KEY` (H-060, H-100; hanya di `.env` lokal, ikut secret scan); pembanding Glimmer berjalan di `127.0.0.1` tanpa key (H-047).
 - [ ] Isi snapshot ekspor statis (H-051) diperiksa: tanpa key, tanpa path lokal, tanpa header HTTP; situs dipasang di GitHub Pages hanya setelah repo publik.
 
 **Model dan biaya**
-- [ ] Model ID `muse-spark-1.3-contributor` di `config/model` dan di semua `RunRecord` kecuali run pembanding Glimmer H-047 (yang mencatat model ID, `provider`, kuantisasi, dan `reasoning_effort`); Muse Code, kalau dipakai, di mode Standard.
-- [ ] Total biaya dari `RunRecord` tercatat dan di dalam kredit.
+- [ ] Model ID `muse-spark-1.3-contributor` di `config/model` dan di semua `RunRecord` kecuali run pembanding Glimmer H-047 dan Spark Open Baseten H-060/H-100 (yang mencatat model ID, `provider`, kuantisasi, dan `reasoning_effort`); Muse Code, kalau dipakai, di mode Standard.
+- [ ] Total biaya dari `RunRecord` tercatat per pool (utama, Baseten H-101, sapuan H-102; H-104 butir 3) dan di dalam kredit masing-masing.
 
 **Penutup**
 - [ ] Disclaimer "Research demo. Not legal advice." tampil di app, README, dan video.

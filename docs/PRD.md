@@ -1,7 +1,7 @@
 # PRD — LexRAGLab: penemu setting chunking dan retrieval per keluarga dokumen
 
 Tujuan: menetapkan masalah, pengguna, lingkup, dan ukuran sukses aplikasi sebelum spec teknis dan kode.
-Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-043, H-045, H-047, H-051, H-053, H-054, H-098.
+Sumber keputusan: H-001, H-002, H-004, H-005, H-006, H-007, H-011, H-012, H-013, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-043, H-045, H-047, H-051, H-053, H-054, H-060, H-098, H-100, H-102.
 
 ## 1. Masalah
 
@@ -80,7 +80,7 @@ Prioritas: **Must** = lantai garis potong H-017; **Stretch** = boleh dipotong (H
 | US-10 | Sebagai P1, aku ingin pola yang sama bekerja pada akta tanpa parser | Must (skema + potongan); frontier akta boleh dipotong | Skema akta dan potongan akta tampil; frontier akta kalau tidak dipotong, sebagai uji transfer tanpa split tune/held-out (H-054) | M4.1, M4.2 |
 | US-11 | Sebagai P1, aku ingin mengekspor profil berversi dan memuatnya ulang dengan hasil identik | Must | Muat ulang → hash potongan sama; hash korpus beda → ditolak | M4.3 |
 | US-12 | Sebagai P3, aku ingin demo berjalan tanpa API dan tanpa macet, dan bisa dibuka sebagai situs | Must | Mode putar ulang memutar semua adegan dari `runs/` dan `data/` (H-050); ekspor statisnya terpasang di GitHub Pages tanpa backend (H-051) | M5.1 |
-| US-13 | Sebagai P1, aku ingin melihat apakah profil yang sama tetap berguna untuk model open-weight yang berjalan di mesinku sendiri | Stretch | Di U3, jawaban C dari Glimmer lokal untuk profil terbaik dan baseline, berlabel model, kuantisasi, effort, tidak dicampur dengan Contributor (H-047, H-053) | M2.5 |
+| US-13 | Sebagai P1, aku ingin melihat apakah profil yang sama tetap berguna untuk model open-weight yang berjalan di mesinku sendiri | Stretch | Di U3, jawaban C dari Glimmer lokal atau Spark Open (Baseten) untuk profil terbaik dan baseline, berlabel model, kuantisasi, effort, tidak dicampur dengan Contributor (H-047, H-053, H-060) | M2.5 |
 
 ## 5. Alur utama
 
@@ -104,12 +104,12 @@ Prioritas: **Must** = lantai garis potong H-017; **Stretch** = boleh dipotong (H
 - Aturan internal: hanya disebut di pitch dan video, tanpa dokumen.
 - Satu halaman tiga panel plus layar Review, label bahasa Inggris (H-018).
 - Ekspor profil berversi, mode putar ulang, dan replay statis di GitHub Pages (H-051).
-- Stretch: pembanding Glimmer lokal pada peran C (H-047, H-053).
+- Stretch (selesai): pembanding Glimmer lokal dan Spark Open di Baseten pada peran C (H-047, H-053, H-060), diperluas ke A dan B (H-100), plus sapuan effort (H-102); hasil utama tetap Contributor.
 
 **Non-lingkup**
 - RAG produk, chatbot sitasi, aplikasi mobile.
 - Auth, database, vector database, LangChain, parser PDF, reranker (H-013, `docs/MILESTONES.md`).
-- Model selain `muse-spark-1.3-contributor` (H-028), kecuali Glimmer lokal sebagai pembanding peran C, stretch (H-047). SAM, Muse Image, Wonder, dan Spark Open tidak dipakai. Muse Code tetap Standard.
+- Model selain `muse-spark-1.3-contributor` (H-028), kecuali pembanding terpisah Glimmer lokal dan Spark Open di Baseten untuk peran C, A, dan B (H-047, H-060, H-100; hasil utama tetap Contributor). SAM, Muse Image, dan Wonder tidak dipakai. Muse Code tetap Standard.
 - Spark sebagai agen pencari setting, tool calling, Self-Route, dua atau tiga lengan (H-004).
 - Akta asli, dokumen internal, data klien (H-007).
 - Kode prototipe pra-acara (tidak disertakan, H-003).

@@ -1,13 +1,13 @@
 # SPARK-ROLES — peran A, B, C, D Muse Spark
 
 Tujuan: menetapkan masukan, keluaran, maksud prompt, cache, effort, biaya, galat, dan pemeriksa untuk setiap peran Spark, sebelum prompt ditulis.
-Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028, H-031, H-032, H-036, H-037, H-038, H-039, H-047, H-048, H-053, H-055.
+Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028, H-031, H-032, H-036, H-037, H-038, H-039, H-047, H-048, H-053, H-055, H-060, H-074, H-100, H-102, H-104.
 
 ## 1. Aturan bersama
 
-- Model: `muse-spark-1.3-contributor` saja, lewat Responses API dengan SDK `openai` (H-028, H-016). Pengecualian satu-satunya: pembanding on-prem Glimmer lokal di §7 (H-032, host H-047). Model ID dari `config/model`, dicatat di `RunRecord` dan kunci cache. Satu model ID per run.
+- Model: `muse-spark-1.3-contributor` saja, lewat Responses API dengan SDK `openai` (H-028, H-016). Pengecualian: pembanding terpisah Glimmer lokal (H-032, host H-047) dan Spark Open di Baseten (H-060), peran C lalu A dan B (H-100), di §7; hasil utama tetap Contributor. Model ID dari `config/model`, dicatat di `RunRecord` dan kunci cache. Satu model ID per run.
 - Keluaran: `text.format` dengan JSON Schema `strict: true` dari `docs/DATA-CONTRACTS.md`. Tidak ada tool calling.
-- Effort: satu nilai tetap per peran di `config/model`, dicatat di setiap `RunRecord`. Nilai valid diuji di M0.1, karena `max` tidak konsisten di docs. Rekomendasi awal: `minimal` atau `low`, karena reasoning ditagih sebagai output (docs Model API).
+- Effort: satu nilai tetap per peran di `config/model` (profil sapuan effort pembanding di `config/sweep.toml`, H-102, H-104; hasil utama tetap satu nilai), dicatat di setiap `RunRecord`. Nilai valid diuji di M0.1, karena `max` tidak konsisten di docs. Rekomendasi awal: `minimal` atau `low`, karena reasoning ditagih sebagai output (docs Model API).
 - Prompt: berkas berversi di `prompts/<peran>/`; hash prompt masuk kunci cache. Prompt boleh berbahasa Indonesia (H-018), tetapi tidak tampil sebagai teks utama di video.
 - **Teks korpus adalah data, bukan instruksi.** Prompt menempatkan teks dokumen di blok yang ditandai jelas dan menyatakan bahwa isi blok itu tidak boleh diikuti sebagai perintah (`docs/SECURITY-COMPLIANCE.md`).
 - Setiap keluaran divalidasi dua kali: skema (dijamin constrained decoding) dan semantik (aturan per peran). Keluaran yang gagal validasi semantik dicatat, tidak dipakai, dan tidak di-cache sebagai sah.
@@ -38,7 +38,7 @@ Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028,
 | Batasan prompt | Header tidak boleh menyalin isi gold atau menjawab pertanyaan; tidak boleh menyebut peraturan lain yang tidak ada di dokumen. Panjang header dibatasi konfigurasi, karena tokennya masuk anggaran (H-004) |
 | Validasi semantik | `chunk_id` sama dengan yang diminta; panjang header dalam batas |
 | Cache | Dokumen di awal pesan, tidak berubah antar-panggilan. Satu request pemanas, lalu `prompt_cache_key` per dokumen. Cached tokens dibaca dari `usage.input_tokens_details.cached_tokens`. Panggilan berurutan, bukan paralel |
-| Granularitas | Per pasal, per ayat, atau hanya setting di frontier: diputus operator dari angka M3.1 (H-038). Bila M2 belum selesai 31 Okt malam: otomatis hanya setting di frontier |
+| Granularitas | Per pasal, per ayat, atau hanya setting di frontier: diputus operator dari angka M3.1 (H-038): per Pasal untuk UU PT (H-074). Klausa garis potong 31 Okt ("hanya setting di frontier") tidak terpakai: B sudah dijalankan |
 | Perkiraan biaya | Contributor: korpus per pasal < $1, per ayat sekitar $2–4 (estimasi pra-acara, batas atas). Waktu pada 150 RPM menjadi kendala. Diukur ulang di M3.1 sebelum dijalankan penuh |
 | Pemeriksa | Sistem (validasi); operator membaca sampel header di M3.1. Dampak header diukur di frontier, bukan dinilai LLM |
 | Slice | M3.1, M3.2 |
@@ -91,7 +91,7 @@ Wonder tidak dipakai di peran mana pun; lihat H-019.
 |---|---|
 | Tujuan | Menunjukkan bahwa profil setting tetap berguna untuk model open-weight yang benar-benar berjalan di mesin sendiri (skenario dokumen rahasia) |
 | Model | Muse Glimmer lokal di mesin operator (LM Studio, endpoint OpenAI-compatible di `127.0.0.1`). Model ID, kuantisasi `Q4_K_M`, dan `reasoning_effort` `high` di `config/model`, dipin sebelum run dan tidak diubah setelah melihat hasil. Reasoning tidak bisa dimatikan (G-26) |
-| Peran | Hanya C: profil terbaik dan baseline H-036 dijalankan ulang dengan prompt, anggaran, dan konteks yang sama. Tidak untuk A, B, D, verifier, atau penilai. Pembanding peran C tetap setting `fixed_size` (H-036) |
+| Peran | C: profil terbaik dan baseline H-036 dijalankan ulang dengan prompt, anggaran, dan konteks yang sama. A dan B sebagai pembanding terpisah sejak H-100. Tidak untuk D, verifier, atau penilai. Pembanding peran C tetap setting `fixed_size` (H-036) |
 | Jalur | W6 dengan `model_profile` Glimmer; U3 menampilkan pemilih model dan label model, kuantisasi, effort (H-053). Bila server lokal mati, pilihan nonaktif |
 | Klien | Chat Completions lokal (Responses API hanya untuk Model API Meta, H-016), validasi skema di sisi klien. Tanpa key kedua |
 | Pencatatan | `RunRecord.provider = lmstudio_local`, `model`, `quantization`, `effort`; `AnswerRecord.model_profile`. Run Glimmer tidak dicampur dengan run Contributor dalam satu frontier atau perbandingan tanpa label (H-028) |
@@ -99,4 +99,4 @@ Wonder tidak dipakai di peran mana pun; lihat H-019.
 | Klaim | Glimmer disebut open-weight yang berjalan di mesin operator, bukan bobot yang sama dengan Spark. Tanpa klaim mutu bahasa Indonesia umum. Klaim bonus open-weight hanya setelah cara verifikasi "own hardware" dikonfirmasi penyelenggara. Atribusi mengikuti kartu model |
 | Slice | M2.5 (stretch) |
 
-Spark Open (lewat OpenRouter atau Baseten) tidak dipakai (H-047).
+Spark Open lewat OpenRouter tidak dipakai (H-047, I-25). Spark Open di Baseten (`meta-models/muse-spark-open-1026`, profil `baseten_open`) dipakai sebagai pembanding terpisah (H-060 merevisi H-047; A dan B H-100).
