@@ -202,7 +202,7 @@ Prosedur (H-052): untuk setiap slice Tier 1, **agen menyusun skenario test denga
 - Setiap skenario memuat masukan, jawaban hitung tangan, dan alasan singkat.
 - Ambang fuzzy verifier M2.3 diusulkan dengan alasan tertulis dan disetujui operator.
 
-Slot di bawah sengaja kosong sampai skenario slice itu disusun.
+Semua skenario Tier 1 sudah disusun, dicek pemeriksa independen, dan disetujui operator (direvisi 29 Okt: slot yang dulu kosong kini terisi dari baris Status tiap berkas skenario).
 
 | Slice | Yang diuji | Skenario (diusulkan agen) | Jawaban hitung tangan | Dicek pemeriksa / disetujui operator / tanggal |
 |---|---|---|---|---|
@@ -210,8 +210,9 @@ Slot di bawah sengaja kosong sampai skenario slice itu disusun.
 | M1.2 | Span recall, precision token, pengemasan anggaran, pemecahan gold per ayat dan Recall@K (H-048) | `docs/scenarios/M1.2.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.2.pemeriksa.md`) / disetujui operator 2026-10-27 |
 | M1.4 | Split berstrata dan pembulatan held-out (H-049), frontier, kebocoran held-out, pemecah seri sampai `setting_id` (H-034, H-055) | `docs/scenarios/M1.4.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.4.pemeriksa.md`) / disetujui operator 2026-10-27 |
 | M1.5 | Entity preservation, boundary coherence | `docs/scenarios/M1.5.md` | di berkas skenario | dicek pemeriksa independen 2 putaran (`docs/scenarios/M1.5.pemeriksa.md`) / disetujui operator 2026-10-27 |
-| M2.1 | Transisi status usulan | | | |
-| M2.3 | Verifier uji 1 dan 2, ambang fuzzy | | | |
-| M2.4 | Uji 3 tiga nilai (stretch) | | | |
-| M3.2 | Akuntansi token header dalam anggaran | | | |
-| M4.3 | Round-trip profil | | | |
+| M2.1 | Transisi status usulan | `docs/scenarios/M2.1.md` (+ `docs/scenarios/M2.1-unanswerable.md`, `docs/scenarios/M2.1-unanswerable-uupt.md`) | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M2.1.pemeriksa.md`, `M2.1-unanswerable.pemeriksa.md`, `M2.1-unanswerable-uupt.pemeriksa.md`) / disetujui operator 2026-10-27 (H-052); unanswerable akta 28 Okt (H-092), unanswerable UU PT 28 Okt (H-099) |
+| M2.3 | Verifier uji 1 dan 2, ambang fuzzy | `docs/scenarios/M2.3.md` | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M2.3.pemeriksa.md`) / disetujui operator 2026-10-27 (H-052) |
+| M2.4 | Uji 3 tiga nilai (stretch) | `docs/scenarios/M2.4.md` | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M2.4.pemeriksa.md`) / disetujui operator 2026-10-27 (H-052) |
+| M3.2 | Akuntansi token header dalam anggaran | `docs/scenarios/M3.2.md` (+ `docs/scenarios/M3.2-open-weight-B.md`, disetujui 28 Okt, H-101; `docs/scenarios/M3.2-effort-sweep.md`, disetujui L1 atas delegasi operator, H-102, H-103) | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M3.2.pemeriksa.md`, `M3.2-open-weight-B.pemeriksa.md`, `M3.2-effort-sweep.pemeriksa.md`) / disetujui operator 2026-10-27 (H-052; H-069) |
+| M4.3 | Round-trip profil | `docs/scenarios/M4.3.md` | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M4.3.pemeriksa.md`) / disetujui operator 2026-10-27 (H-052; H-068) |
+| M4.1 (peta unit akta) | Peta unit akta, Recall@K akta transfer | `docs/scenarios/M4.1-akta-unitmap.md` | di berkas skenario | dicek pemeriksa independen (`docs/scenarios/M4.1-akta-unitmap.pemeriksa.md`) / disetujui operator 28 Okt (H-090) |

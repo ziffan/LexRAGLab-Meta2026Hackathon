@@ -1,7 +1,7 @@
 # ARCHITECTURE — LexRAGLab
 
 Tujuan: menetapkan bentuk sistem (C4 konteks, kontainer, komponen), struktur repo, konfigurasi, cache, NFR, dan failure mode sebelum kode.
-Sumber keputusan: H-003, H-004, H-005, H-009, H-012, H-013, H-014, H-015, H-016, H-017, H-020, H-025, H-027, H-028, H-031, H-032, H-034, H-042, H-045, H-046, H-047, H-049, H-050, H-051, H-053, H-054, H-055.
+Sumber keputusan: H-003, H-004, H-005, H-009, H-012, H-013, H-014, H-015, H-016, H-017, H-020, H-025, H-027, H-028, H-031, H-032, H-034, H-042, H-045, H-046, H-047, H-049, H-050, H-051, H-053, H-054, H-055, H-057, H-060, H-100 (ditambah 29 Okt, sisir A3).
 
 ## 1. Prinsip
 
@@ -22,11 +22,12 @@ flowchart LR
   P3[Penonton demo] -->|menonton video, membuka repo| SYS
   SYS -->|Responses API, structured output strict| META[Meta Model API<br/>muse-spark-1.3-contributor]
   SYS -.->|stretch H-047, Chat Completions, localhost| GL[Muse Glimmer lokal<br/>LM Studio, mesin operator]
+  SYS -.->|stretch H-060/H-100, HTTPS, pembanding terpisah| BT[Spark Open di Baseten<br/>meta-models/muse-spark-open-1026]
   SRC[Berkas konsolidasi operator<br/>UU 40/2007 + anotasi] -->|disalin sekali dengan hash| SYS
   HF[Tokenizer lokal<br/>Muse Spark Open HF atau o200k] -->|diunduh di M0| SYS
 ```
 
-Batas sistem: satu mesin operator. Tidak ada backend publik yang di-deploy; versi live hanya ekspor statis mode putar ulang di GitHub Pages, tanpa backend, key, atau panggilan model (H-051). Egress runtime: Meta Model API saja. Glimmer pembanding (stretch, H-047) berjalan di `127.0.0.1`, tanpa egress dan tanpa key.
+Batas sistem: satu mesin operator. Tidak ada backend publik yang di-deploy; versi live hanya ekspor statis mode putar ulang di GitHub Pages, tanpa backend, key, atau panggilan model (H-051). Egress runtime: Meta Model API; pembanding stretch: Baseten (H-060, H-100, key `BASETEN_API_KEY`); dev/uji: OpenRouter (H-057, bukan untuk angka yang dilaporkan). (Direvisi 29 Okt, sisir A3: semula "Meta Model API saja", sebelum H-060.) Glimmer pembanding (stretch, H-047) berjalan di `127.0.0.1`, tanpa egress dan tanpa key.
 
 ## 3. C4 tingkat 2 — kontainer
 
@@ -40,6 +41,7 @@ flowchart LR
   BE -->|tulis/baca| PROF[(profiles/)]
   BE -->|HTTPS, SDK openai| META[Meta Model API]
   BE -.->|HTTP localhost, stretch H-047| GL[Glimmer lokal<br/>LM Studio]
+  BE -.->|HTTPS, stretch H-060/H-100| BT[Spark Open di Baseten]
   RUNS -->|ekspor statis M5.1, H-051| PAGES[GitHub Pages<br/>replay statis]
 ```
 
@@ -49,7 +51,8 @@ flowchart LR
 | Backend | Semua logika: korpus, chunker, retrieval, metrik, grid, klien Spark, verifier, profil, replay | FastAPI, `docs/API.md` |
 | Berkas | Data, konfigurasi, prompt, run, profil. Sumber kebenaran tunggal | Sistem berkas |
 | Meta Model API | Peran A, B, C, D | HTTPS, Responses API (H-016) |
-| Glimmer lokal (stretch) | Pembanding on-prem peran C saja (H-047, H-053): profil terbaik dan baseline dijalankan ulang. Tidak untuk A, B, D, verifier. Tidak dijalankan bersamaan dengan embedding (VRAM) | HTTP `127.0.0.1`, Chat Completions OpenAI-compatible; model ID, kuantisasi, `reasoning_effort` dari `config/model` |
+| Spark Open di Baseten (stretch) | Pembanding terpisah peran C, A, B (H-060, H-100; semula peran C saja); tidak untuk D, verifier, penilai; run terpisah, tidak dicampur dengan Contributor | HTTPS, Responses API + `strict: true` (smoke 27 Okt, G-33); model `meta-models/muse-spark-open-1026`, key `BASETEN_API_KEY` |
+| Glimmer lokal (stretch) | Pembanding on-prem peran C (H-047, H-053), diperluas ke A dan B sebagai pembanding terpisah (H-100): profil terbaik dan baseline dijalankan ulang. Tidak untuk D, verifier, penilai. Tidak dijalankan bersamaan dengan embedding (VRAM) | HTTP `127.0.0.1`, Chat Completions OpenAI-compatible; model ID, kuantisasi, `reasoning_effort` dari `config/model` |
 | Replay statis (H-051) | Frontend + snapshot JSON dari `runs/` dan bagian `data/` yang dibutuhkan (H-050); dipasang setelah repo publik di gate M5.2 | Berkas statis, GitHub Pages |
 
 ## 4. C4 tingkat 3 — komponen backend
@@ -82,19 +85,21 @@ flowchart LR
 
 ## 5. Komponen frontend
 
-| Komponen | Panel UI-SPEC |
+| Komponen (berkas di `frontend/src/components/`) | Panel UI-SPEC |
 |---|---|
-| App shell, pemilih keluarga, lencana replay | U0, U9 |
-| ChunkView | U1 |
-| FrontierChart (Recharts, H-026) | U2 |
-| EvidencePanel | U3 |
-| ItemTable + QualityMetrics | U4 |
-| SchemaDiff | U5 |
-| ReviewQueue (route `/review`) | U6 |
-| ProfileExport | U7 |
-| RunLog | U8 |
+| `Shell.tsx`, `Header.tsx` (pemilih keluarga, lencana replay), `AboutPanel.tsx`, `Hint.tsx` | U0, U9 |
+| `ChunksVsGold.tsx` + `ChunkColumn.tsx` (+ `ChunkDetail.tsx`) | U1 |
+| `SettingSpace.tsx` (Recharts, H-026) | U2 |
+| `Evidence.tsx` (`EvidencePanel`), `ModeCompare.tsx` | U3 |
+| `PerItem.tsx` + `QualityPanel.tsx` | U4 |
+| `SchemaPanel.tsx` (`SchemaDiff` hanya nama tipe di `types.ts`) | U5 |
+| `Review.tsx` (route `/review`) | U6 |
+| `ProfileExport.tsx` (`ProfilePanel`) | U7 |
+| `RunLog.tsx` (`RunLogPanel`) | U8 |
 
-State bersama (snapshot H-020 dan pilihan pengguna) dipegang satu store `useReducer` + context (H-023).
+(Direvisi 29 Okt, sisir A3: kolom komponen semula memuat nama konseptual `ChunkView`, `FrontierChart`, `ItemTable + QualityMetrics`, `SchemaDiff`, `ReviewQueue`, `ProfileExport`, `RunLog` yang tidak ada sebagai berkas; diganti nama berkas nyata.)
+
+State bersama (snapshot H-020 dan pilihan pengguna) dipegang satu store `useReducer` + context (H-023), di `frontend/src/state.tsx`.
 
 ## 6. Struktur direktori repo app
 
@@ -104,7 +109,8 @@ data/
   akta/            lima akta sintetis (H-039), M4
   butir/           butir per keluarga, dengan asal, split, status periksa
   status/          tabel status berlaku berversi (H-009)
-config/            model, tokenizer, corpus, grid, retrieval, verifier, budget, header_b (berversi)
+config/            model, tokenizer, corpus, grid, retrieval, verifier, budget, header_b, sweep, proposals, corpus_akta, akta_unitmap, akta_grid_final (berversi)
+cache/             embedding per hash (.npy + .json), H-025
 prompts/           prompt A, B, C, D (berversi)
 runs/              hasil run tersimpan, dikunci per hash
 profiles/          profil setting yang diekspor
@@ -119,7 +125,7 @@ docs/              suite ini
 
 | Berkas (TOML, H-022) | Isi | Pemilik nilai |
 |---|---|---|
-| `config/model` | daftar profil model. Profil utama: model ID `muse-spark-1.3-contributor` (H-028), effort per peran, harga input/cached/output, `max_output_tokens`, timeout, retry, batas RPM. Profil pembanding (stretch, H-047, H-053): model ID Glimmer, kuantisasi `Q4_K_M`, `reasoning_effort` `high` (dipin sebelum run, tidak diubah setelah melihat hasil), base URL `127.0.0.1`, hanya peran C | Operator; harga dari halaman pricing Model API, dicek 26 Okt (Contributor: input $0,10 / cached $0,002 / output $0,20 per 1M), dicek ulang di M0 |
+| `config/model` | daftar profil model. Profil utama: model ID `muse-spark-1.3-contributor` (H-028), effort per peran, harga input/cached/output, `max_output_tokens`, timeout, retry, batas RPM. Profil pembanding (stretch, H-047, H-053): model ID Glimmer, kuantisasi `Q4_K_M`, `reasoning_effort` `high` (dipin sebelum run, tidak diubah setelah melihat hasil), base URL `127.0.0.1`, hanya peran C (diperluas ke A dan B, H-100; profil Spark Open Baseten `baseten_open`, H-060; effort profil sapuan di `config/sweep`, H-104) | Operator; harga dari halaman pricing Model API, dicek 26 Okt (Contributor: input $0,10 / cached $0,002 / output $0,20 per 1M), dicek ulang di M0 |
 | `config/tokenizer` | nama dan versi tokenizer, rasio kalibrasi per dokumen (UU PT juga per `section`) dan rata-rata | Diukur di M0.2 |
 | `config/corpus` | hash berkas yang diterima (UU PT: `a6b38ee5…`, H-045), `loader_rules_version`, aturan status default (`berlaku` sejak tanggal pengundangan di blok PENGESAHAN, H-046) | Operator; aturan default disetujui operator |
 | `config/grid` | sumbu H-012: chunker, ukuran/overlap, mode retrieval, header B on/off; anggaran default 2.000 dan pembanding; `packing` (default `stop`); `baseline` (H-036); urutan "sederhana" (H-034); seed split; `held_out_ratio = 0.4` (H-049) | Operator; nilai ukuran/overlap dan anggaran pembanding dipilih di M1. Grid sempit sejak hari pertama: satu ukuran pembanding, satu anggaran pembanding (H-017) |
@@ -127,6 +133,11 @@ docs/              suite ini
 | `config/verifier` | ambang fuzzy uji 2, versi tabel status | Operator |
 | `config/budget` | batas biaya per peran dan total | Operator |
 | `config/header_b` | granularitas (H-038), cakupan (semua setting atau hanya frontier, H-017) | Operator, setelah M3.1 |
+| `config/sweep` | sapuan `reasoning_effort` peran A/B/C untuk Contributor, Spark Open, Glimmer (H-102, H-104); pool belanja terpisah; dibaca hanya runner sapuan, jalur utama tidak membacanya | Operator |
+| `config/proposals` | peran D: batas usulan per panggilan, aturan pemeriksaan unanswerable (H-092) | Operator |
+| `config/corpus_akta` | korpus akta sintetis (H-039, H-041, H-054); berkas terpisah dari `config/corpus` agar kunci run UU PT tidak bergeser | Operator |
+| `config/akta_unitmap` | peta unit keluarga akta (H-090); ikut `config_hash` grid akta saja | Operator |
+| `config/akta_grid_final` | penanda "angka grid akta final" (H-091); tidak masuk `config_hash` grid | Operator |
 
 Setiap berkas punya field `version`. Hash konfigurasi = hash isi kanonik semua berkas yang dibaca run.
 
@@ -135,7 +146,7 @@ Setiap berkas punya field `version`. Hash konfigurasi = hash isi kanonik semua b
 | Kunci | Isi | Lokasi |
 |---|---|---|
 | `hash(clean_sha256, loader_rules_version, chunker_key)`; `chunker_key` memuat chunker, parameter, nama + versi tokenizer, versi implementasi, dan untuk `structure_schema` versi + hash isi skema (I-42) | `Chunk[]` | `runs/chunks/` (belum dipakai kode; potongan dibangun ulang deterministik) |
-| `hash(embedding_set_hash, embedder_name, embedder_revision, max_seq_length)` | embedding | `runs/embeddings/` (`.npy`, H-025, H-042) |
+| `hash(embedding_set_hash, embedder_name, embedder_revision, max_seq_length)` | embedding | `cache/embeddings/` (`.npy` + `.json`, H-025, H-042; direvisi 29 Okt, sisir A3: semula `runs/embeddings/`, kode menulis ke `cache/embeddings/`) |
 | `hash(clean_sha256, config_hash, item_set_hash, split_version)` | hasil grid | `runs/grid/` |
 | `hash(provider, model, quantization, effort, prompt_hash, schema_hash, input_hash)` | keluaran model + `RunRecord` | `runs/spark/<peran>/`; run Glimmer di jalur terpisah (H-047) |
 

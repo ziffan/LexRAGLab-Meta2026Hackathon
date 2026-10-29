@@ -234,7 +234,7 @@ Aturan isi mockup:
 
 ## 9. Hints and glossary (H-073)
 
-Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menutup kontrol lain. Status teks: draf sampai operator menyetujui (`_kerja/orkestrasi/hint-draf-review.md`); komponen boleh jalan paralel dengan teks bertanda draf.
+Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menutup kontrol lain. Status teks: `final` (hints 1.5.0, disetujui operator 28 Okt; `frontend/src/content/hints.json`). Perubahan teks ke depan lewat review operator; panel menampilkan "Hint text: draft" hanya bila `status` berkas bukan `final` (entri `ui.pending_review` masih bertanda `draft` per entri). (Direvisi 29 Okt, sisir A3: semula "draf sampai operator menyetujui".)
 
 ### 9.1 Pola
 
@@ -350,7 +350,7 @@ Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi pers
 
 ### 10.3 Pola komponen
 
-- Header gelap U0 (`--head-bg`): nama app, Family, Selected setting, `Model` (dari `/api/health`), `Run cost` (`run_cost_usd_micros` dari `/api/health`: jumlah `cost_usd_micros` seluruh RunRecord tersimpan, dihitung server tanpa limit; frontend tidak menjumlah, satu fetch health di `App`), badge `REPLAY` (`.tag.replay`). Nilai tidak terbaca ditampilkan "n/a".
+- Header gelap U0 (`--head-bg`): nama app, Family, Selected setting, `Model` (dari `/api/health`), `Run cost (main results)` (`main_results_spent_usd_micros` dari `/api/health`, buku belanja pool default; H-104 butir 3; frontend tidak menjumlah, satu fetch health di `App`; direvisi 29 Okt, sisir A3: semula `Run cost` dari `run_cost_usd_micros`), badge `REPLAY` (`.tag.replay`). Nilai tidak terbaca ditampilkan "n/a".
 - Panel putih (`.panel`): border `--line`, radius 6, padding 16.
 - Label uppercase kecil: `.field`, `dt` detail, kepala tabel (0,75rem, letter-spacing 0,04em).
 - Chip: pass, fail, not-run (token di atas), bulat, 0,75rem, teks tebal 600.
@@ -363,7 +363,7 @@ Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi pers
 |---|---|---|
 | 1 | Tata letak artboard per layar | `docs/UI-SPEC.md` §2 tetap; hanya tema yang diambil |
 | 2 | Isi basi: keluarga POJK, `muse-spark-1.3`, angka `[n]` | tidak dibawa; Model dan Run cost dari data aplikasi |
-| 3 | Footer menyebut model literal | "Built with {model}" dari `/api/health`; baris provenance U9 (`items_summary`) belum diimplementasi dan di luar tugas tema |
+| 3 | Footer menyebut model literal | "Built with {model}" dari `/api/health`; baris provenance U9 (`items_summary`) diimplementasi di UX-17 (§10.5) (direvisi 29 Okt, sisir A3: semula "belum diimplementasi") |
 | 4 | Warna deret header B on (`#A8500C`, ada di mockup, tidak di daftar H-083) | dipakai sebagai `--series-on` (kontras 5,50 di atas putih); perlu konfirmasi operator |
 | 5 | Abu titik dominated `#6B737C` (mockup) | `--dominated`; tidak di daftar H-083, perlu konfirmasi operator |
 | 6 | Header memuat "Profile" dan "Review proposals ({n} pending)" (UI-SPEC U0) | tidak ditambah (di luar tema); tautan "Review proposals" tetap di bawah header |
@@ -377,7 +377,7 @@ Temuan: `_kerja/orkestrasi/ux-review/usulan-UX-M51.md` (di luar repo publik). Ke
 | UX | Perilaku |
 |---|---|
 | 01 | URL tanpa `item`: butir `kontrol-K-09` dipilih sekali bila ada di snapshot (UU PT). Tagline di bawah header dari `frontend/src/content/tagline.json`, tampil hanya bila `status = final`; teks disetujui operator 28 Okt (final) |
-| 02 | `Run cost` U0 = buku belanja (R1 `ledger_spent_usd_micros`), sama dengan README; U8 agregat per peran atas semua run, tabel baris "Latest {N} runs (UTC)" |
+| 02 | `Run cost` U0 = buku belanja (R1 `ledger_spent_usd_micros`), sama dengan README; U8 agregat per peran atas semua run, tabel baris "Latest {N} runs (UTC)" (direvisi H-104 butir 3, 29 Okt: U0 memakai `main_results_spent_usd_micros`; `ledger_spent_usd_micros` jadi baris total U8) |
 | 03 | U3 jawaban dari cache: biaya/token panggilan asal (W6 `origin_runs`) + "served from cache; original call {UTC}" |
 | 05 | U2 Selected setting: "Chosen on tune; held-out shown for reporting." untuk setting terpilih grid |
 | 11 | Legenda U2: "Structure (schema A)" (segitiga, bila ada titiknya) dan "Selected setting (ring)" |
