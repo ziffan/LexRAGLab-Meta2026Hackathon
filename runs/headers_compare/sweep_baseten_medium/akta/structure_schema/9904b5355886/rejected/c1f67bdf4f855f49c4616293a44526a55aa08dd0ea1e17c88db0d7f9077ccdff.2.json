@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c1f67bdf4f855f49c4616293a44526a55aa08dd0ea1e17c88db0d7f9077ccdff",
+ "chunk_id_returned": "c1f67bdf4f855f49c4616293a44526a55aa08dd0ea1e17c88db0d7f9077ccdff",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1d44bbf3272b46e1b6c2ec822501eacc",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8 (19 Feb 2026), Penutup: formalitas pembuatan dan penandatanganan akta dengan saksi serta pencatatan perubahan.",
+ "tokens_local": 45
+}

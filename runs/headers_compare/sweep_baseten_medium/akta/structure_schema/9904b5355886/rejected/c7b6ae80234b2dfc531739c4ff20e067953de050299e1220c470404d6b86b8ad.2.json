@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c7b6ae80234b2dfc531739c4ff20e067953de050299e1220c470404d6b86b8ad",
+ "chunk_id_returned": "c7b6ae80234b2dfc531739c4ff20e067953de050299e1220c470404d6b86b8ad",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "254e98ad7b3b4438a945b2ef12f4387d",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8, Pasal 11 Anggaran Dasar: batas kewenangan Direksi yang wajib mendapat persetujuan RUPS atau Komisaris.",
+ "tokens_local": 41
+}

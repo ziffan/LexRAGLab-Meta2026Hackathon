@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c1f67bdf4f855f49c4616293a44526a55aa08dd0ea1e17c88db0d7f9077ccdff",
+ "chunk_id_returned": "c1f67bdf4f855f49c4616293a44526a55aa08dd0ea1e17c88db0d7f9077ccdff",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "fa77ec40ab1d47a9b50d4dadd7b4ebaa",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8, Penutup Akta: pengesahan, penandatanganan, saksi, dan pencatatan renvoi akta.",
+ "tokens_local": 43
+}

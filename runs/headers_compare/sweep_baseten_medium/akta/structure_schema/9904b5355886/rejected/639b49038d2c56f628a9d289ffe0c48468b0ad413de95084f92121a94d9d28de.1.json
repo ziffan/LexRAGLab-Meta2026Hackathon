@@ -1,0 +1,11 @@
+{
+ "chunk_id": "639b49038d2c56f628a9d289ffe0c48468b0ad413de95084f92121a94d9d28de",
+ "chunk_id_returned": "639b49038d2c56f628a9d289ffe0c48468b0ad413de95084f92121a94d9d28de",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5c3152673c6f42bb8e7f87385d5af5fb",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41/2026, Pasal 16: jadwal berkala, kuorum kehadiran, dan mekanisme pengambilan keputusan Rapat Direksi.",
+ "tokens_local": 45
+}

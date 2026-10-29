@@ -1,0 +1,11 @@
+{
+ "chunk_id": "eceb97b2ff5475e1f982cccef046886b82ac12da1e5923ea1a5cae1752596d87",
+ "chunk_id_returned": "eceb97b2ff5475e1f982cccef046886b82ac12da1e5923ea1a5cae1752596d87",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "ed9eb152312b43f594e586a5a52cffdb",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8, Kepala Akta: pembukaan akta pendirian perseroan dan keterangan penghadap di hadapan notaris.",
+ "tokens_local": 41
+}

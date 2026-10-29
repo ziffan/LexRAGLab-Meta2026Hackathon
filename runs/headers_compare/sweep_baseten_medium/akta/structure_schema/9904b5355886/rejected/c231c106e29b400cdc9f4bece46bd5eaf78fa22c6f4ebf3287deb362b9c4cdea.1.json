@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c231c106e29b400cdc9f4bece46bd5eaf78fa22c6f4ebf3287deb362b9c4cdea",
+ "chunk_id_returned": "c231c106e29b400cdc9f4bece46bd5eaf78fa22c6f4ebf3287deb362b9c4cdea",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "d1a97ca75536487fadf108034c969ff6",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra No.112 (Anggaran Dasar), Pasal 7: pengeluaran saham portepel dan penawaran hak memesan efek terlebih dahulu.",
+ "tokens_local": 41
+}

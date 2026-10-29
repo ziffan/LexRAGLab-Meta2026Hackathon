@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c448c7374bee1c3372bcb5ab7d5eba2fcf28d1241acd60ca90df8289ea238dd6",
+ "chunk_id_returned": "c448c7374bee1c3372bcb5ab7d5eba2fcf28d1241acd60ca90df8289ea238dd6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "fb1af27e272d47e49468fa809911a430",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41/2026, Batang Tubuh (Anggaran Dasar Pasal 1-25): pendirian, maksud-tujuan, permodalan dan organ Perseroan.",
+ "tokens_local": 55
+}

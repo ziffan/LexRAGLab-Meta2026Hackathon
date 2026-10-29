@@ -1,0 +1,11 @@
+{
+ "chunk_id": "68b31a9bf8606543dc57090a0738eb5b6f44c7e213229f989ab281edc54581a0",
+ "chunk_id_returned": "68b31a9bf8606543dc57090a0738eb5b6f44c7e213229f989ab281edc54581a0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "18584899a1c54dd3b9835643a59ea803",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41, Anggaran Dasar Pasal 7: jenis saham atas nama dan larangan kepemilikan saham oleh perseroan sendiri.",
+ "tokens_local": 43
+}

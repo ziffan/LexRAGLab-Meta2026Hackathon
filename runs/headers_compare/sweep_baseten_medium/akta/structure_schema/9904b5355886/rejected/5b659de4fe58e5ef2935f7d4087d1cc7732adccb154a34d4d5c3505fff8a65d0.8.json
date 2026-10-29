@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5b659de4fe58e5ef2935f7d4087d1cc7732adccb154a34d4d5c3505fff8a65d0",
+ "chunk_id_returned": "5b659de4fe58e5ef2935f7d4087d1cc7732adccb154a34d4d5c3505fff8a65d0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "09feb672128e4acbae5a2f12ea08585a",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41 (2026), Bagian Keterangan Pendiri dan Pengangkatan Pengurus: pembagian saham ditempatkan dan susunan direksi-komisaris pertama.",
+ "tokens_local": 51
+}

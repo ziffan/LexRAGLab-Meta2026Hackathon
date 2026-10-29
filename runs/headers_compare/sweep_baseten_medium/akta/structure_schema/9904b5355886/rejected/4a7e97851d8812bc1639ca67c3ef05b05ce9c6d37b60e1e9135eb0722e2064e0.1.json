@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4a7e97851d8812bc1639ca67c3ef05b05ce9c6d37b60e1e9135eb0722e2064e0",
+ "chunk_id_returned": "4a7e97851d8812bc1639ca67c3ef05b05ce9c6d37b60e1e9135eb0722e2064e0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9448e64740e345cdad66168aad6977ab",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No. 63 (22 April 2026), Anggaran Dasar Pasal 21 (Pembubaran): sebab bubar, likuidator dan pemberesan kekayaan.",
+ "tokens_local": 48
+}

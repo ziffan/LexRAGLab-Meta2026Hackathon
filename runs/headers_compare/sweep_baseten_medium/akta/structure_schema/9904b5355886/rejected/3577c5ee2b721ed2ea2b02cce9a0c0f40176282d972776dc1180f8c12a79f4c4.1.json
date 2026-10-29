@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3577c5ee2b721ed2ea2b02cce9a0c0f40176282d972776dc1180f8c12a79f4c4",
+ "chunk_id_returned": "3577c5ee2b721ed2ea2b02cce9a0c0f40176282d972776dc1180f8c12a79f4c4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a96c401542f84977b706afe2671a49c5",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima Nomor 63 (Akta 04), Anggaran Dasar Pasal 15: jenis RUPS dan ketentuan penyelenggaraan rapat tahunan dan luar biasa.",
+ "tokens_local": 42
+}

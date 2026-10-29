@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ddcf0e118d42e938c38d28c11db66dd3646cec786a0ccd71fcc24ef983f65056",
+ "chunk_id_returned": "ddcf0e118d42e938c38d28c11db66dd3646cec786a0ccd71fcc24ef983f65056",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "13d3b45198ee43369f291e73ccfd8058",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8/2026, Pasal 14 (Dewan Komisaris): tugas pengawasan dan pemberian nasihat kepada Direksi serta pemberhentian sementara Direksi.",
+ "tokens_local": 49
+}
