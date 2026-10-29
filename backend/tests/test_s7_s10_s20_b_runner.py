@@ -97,6 +97,7 @@ def test_s7e_inheritance_of_attempts_time_params_and_factor():
     assert sweep_run.time_params(hc, sw, "sweep_glimmer_medium") == {"prefill_tokens_per_s": 650, "base_ms": 4800,
                                                                       "output_tokens_per_10s": 237}
     assert sweep_run.time_params(hc, sw, "sweep_meta_medium") is None
+    sw["factor_bp"]["sweep_baseten_high"] = 19312  # nilai skenario S7(e); berkas nyata kini memin 22358 (terukur, L1 29 Okt)
     assert sweep_run.factor_bp(hc, sw, "sweep_baseten_high", 15700) == 19312
     sw["factor_bp"]["sweep_baseten_high"] = 20438
     assert sweep_run.factor_bp(hc, sw, "sweep_baseten_high", 15700) == 20438
@@ -105,6 +106,7 @@ def test_s7e_inheritance_of_attempts_time_params_and_factor():
     assert sweep_run.factor_bp(hc, sw, "sweep_glimmer_medium", 15700) == 15700
     hc2 = hc_b(factor_bp={"baseten_open": 16553})
     sw2 = sweep_cfg()
+    sw2["factor_bp"]["sweep_baseten_high"] = 19312  # nilai skenario; berkas nyata kini 22358
     assert sweep_run.factor_bp(hc2, sw2, "sweep_baseten_high", 15700) == 19312  # max(15.700, 16.553, 19.312)
     assert SWEEP_BASETEN_FACTOR_BP_MIN == 19312
 

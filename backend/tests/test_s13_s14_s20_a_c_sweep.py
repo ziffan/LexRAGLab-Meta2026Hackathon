@@ -240,7 +240,8 @@ def test_s20a_c_gate_edge_via_main_full_g36_factor_and_sum_not_max(svc, tmp_path
     s = _seed(svc, tmp_path)
     P = _item_projection(s)
     assert P > 0
-    U = max(-(-P * 19312 // 10000), P)
+    F = sweep_cfg()["factor_bp"]["sweep_baseten_high"]  # pin berkas nyata (19312 H-101, kini 22358 terukur; L1 29 Okt)
+    U = max(-(-P * F // 10000), P)
     assert U > P  # faktor benar-benar berlaku
     tr = _tr()
     syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 75_000_000 - U + 1, rid="fill")
@@ -253,7 +254,8 @@ def test_s20a_c_gate_edge_via_main_exact_edge_passes(svc, tmp_path):
     """Pasangan inklusif dari tes di atas: belanja = 75.000.000 - U tepat -> lolos, dua request jalan."""
     s = _seed(svc, tmp_path)
     P = _item_projection(s)
-    U = max(-(-P * 19312 // 10000), P)
+    F = sweep_cfg()["factor_bp"]["sweep_baseten_high"]  # pin berkas nyata (19312 H-101, kini 22358 terukur; L1 29 Okt)
+    U = max(-(-P * F // 10000), P)
     syn(s.runs_dir, "b", "baseten", OPEN, "xhigh", 75_000_000 - U, rid="fill")
     tr = _tr()
     rc, lines = _cli(s, ["--model-profile", "sweep_baseten_high", "--items", ITEM], tr)
