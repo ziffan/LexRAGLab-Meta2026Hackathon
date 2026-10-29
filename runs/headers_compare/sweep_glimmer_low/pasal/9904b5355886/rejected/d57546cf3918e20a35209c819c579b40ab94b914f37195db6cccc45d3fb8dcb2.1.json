@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d57546cf3918e20a35209c819c579b40ab94b914f37195db6cccc45d3fb8dcb2",
+ "chunk_id_returned": "d57546cf3918e20a35209c819c579b40ab94b914f37195db6cccc45d3fb8dcb2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f9a4065bf1404605a1269524cd10080c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran, Likuidasi dkk.): Penjelasan Pasal 143 tentang status badan hukum Perseroan yang dibubarkan dan pailit.",
+ "tokens_local": 47
+}

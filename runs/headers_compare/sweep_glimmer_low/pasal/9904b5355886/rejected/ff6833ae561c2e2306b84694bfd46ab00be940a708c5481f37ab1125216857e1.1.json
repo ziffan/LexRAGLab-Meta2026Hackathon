@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ff6833ae561c2e2306b84694bfd46ab00be940a708c5481f37ab1125216857e1",
+ "chunk_id_returned": "ff6833ae561c2e2306b84694bfd46ab00be940a708c5481f37ab1125216857e1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1ef1803a8c214b95af258882576fb8b5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): Penjelasan Pasal 117 tentang persetujuan dan bantuan Dewan Komisaris kepada Direksi.",
+ "tokens_local": 41
+}

@@ -1,0 +1,100 @@
+{
+ "attempts": {
+  "uupt-40-2007/pasal": 3
+ },
+ "batches": [
+  {
+   "called": 338,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 304,
+   "round": 1,
+   "stopped": null,
+   "units": 338,
+   "upper_cached": 0
+  },
+  {
+   "called": 34,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 23,
+   "round": 2,
+   "stopped": null,
+   "units": 34,
+   "upper_cached": 0
+  },
+  {
+   "called": 11,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 4,
+   "round": 3,
+   "stopped": null,
+   "units": 11,
+   "upper_cached": 0
+  }
+ ],
+ "cache_guard": "skipped",
+ "coverage": {
+  "uupt-40-2007/pasal": {
+   "stored": 336,
+   "units": 343
+  }
+ },
+ "failed": {
+  "uupt-40-2007/pasal": [
+   "567a88b1bfabb3d1baa6084805e4237ae8d15de8eadae376cf7a93f38fc0db26",
+   "4a970cd8da2ba00212f55eba583eaf39bcac0ca4b0d98e40cda3c0fcc9e0495b",
+   "76f35c1340b184b4de639acf2ae1e2d7d51660a9f45841647f849dc5d9634a69",
+   "3cd998976a941a3dc89d55cb1842f9d6a3048fff94e5f1770f86fd9e87e23308",
+   "8784e491ac2d6b6a34b8569214c16c8611f514f242f16e2006d2b8b3181ca5cc",
+   "3b52fd070fe8b4ce4111792a670a9d449b751d6766d86c84b03e4df2adeb94ec",
+   "6d7868919e11a9bc08fb69c1f2864f477241bed4baa6ba98a6a89f9ccfd4c9dc"
+  ]
+ },
+ "family": "uupt",
+ "finished_at": "2026-10-29T12:22:26Z",
+ "gpu_lock": {
+  "broke_stale": null,
+  "holder": "glimmer-b"
+ },
+ "identity": {
+  "effort": "low",
+  "max_header_tokens": 40,
+  "model": "meta/muse-glimmer",
+  "profile": "sweep_glimmer_low",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "lmstudio_local",
+  "quantization": "Q4_K_M",
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  9095,
+  10047,
+  8896,
+  13121,
+  10325
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_glimmer_low",
+ "reuse_confirmed": false,
+ "sources": [
+  "pasal"
+ ],
+ "started_at": "2026-10-29T11:07:36Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 331,
+ "sweep": {
+  "effort": "low",
+  "pool_remaining_micros": 50388063,
+  "profile": "sweep_glimmer_low",
+  "status": "partial (336/343 unit)"
+ },
+ "warm": false
+}
