@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3ce672fdd4dd01f0ff402f123e99f16ad23d686fb54db2569e4e97678d755330",
+ "chunk_id_returned": "3ce672fdd4dd01f0ff402f123e99f16ad23d686fb54db2569e4e97678d755330",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f4627002ce6a4bf6ac58329d8c91805e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan dkk.): pelimpahan wewenang RUPS ke Dewan Komisaris soal pembelian kembali saham.",
+ "tokens_local": 45
+}

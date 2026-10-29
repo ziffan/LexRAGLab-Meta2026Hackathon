@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f93388d1d0aceafb2c05d6e12b7abd06d27d638fe2bde5b53dafcc3be5f9cd85",
+ "chunk_id_returned": "f93388d1d0aceafb2c05d6e12b7abd06d27d638fe2bde5b53dafcc3be5f9cd85",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "126b1617bcdb4f96b3dc2b9bd9525f82",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Keempat (Pengurangan Modal): keberatan kreditor dan gugatan ke pengadilan negeri.",
+ "tokens_local": 42
+}

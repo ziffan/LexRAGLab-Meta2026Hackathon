@@ -1,0 +1,11 @@
+{
+ "chunk_id": "dd3e6b67b4b098295c5ae206c6c58e1abbe9406f66a1beca04705c1d004fedac",
+ "chunk_id_returned": "dd3e6b67b4b098295c5ae206c6c58e1abbe9406f66a1beca04705c1d004fedac",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "57c2b7bcc87349dba1d59721a7d2159b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): syarat dan pengangkatan anggota Dewan Komisaris serta Dewan Pengawas Syariah.",
+ "tokens_local": 46
+}

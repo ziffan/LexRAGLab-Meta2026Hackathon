@@ -1,0 +1,11 @@
+{
+ "chunk_id": "df4e5fffac6c85128c5be65500d23b0c1ce8bec1ba2103370d56bcfd8f71a201",
+ "chunk_id_returned": "df4e5fffac6c85128c5be65500d23b0c1ce8bec1ba2103370d56bcfd8f71a201",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b5d248930e9f4f62b550957f11c732c7",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra (Anggaran Dasar), Pasal 6: jenis saham, bukti kepemilikan, daftar pemegang, dan penggantian surat saham.",
+ "tokens_local": 41
+}

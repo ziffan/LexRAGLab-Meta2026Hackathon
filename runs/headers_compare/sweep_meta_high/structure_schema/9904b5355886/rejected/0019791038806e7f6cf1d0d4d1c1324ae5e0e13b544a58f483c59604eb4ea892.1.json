@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0019791038806e7f6cf1d0d4d1c1324ae5e0e13b544a58f483c59604eb4ea892",
+ "chunk_id_returned": "0019791038806e7f6cf1d0d4d1c1324ae5e0e13b544a58f483c59604eb4ea892",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "0d6f76a8d63d4a2bb97c333d387a381e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): pengangkatan komisaris oleh RUPS dan pemberitahuan ke Menteri.",
+ "tokens_local": 45
+}

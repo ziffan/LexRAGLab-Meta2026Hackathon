@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c41b5c95fafbc625ac9c756c19f25a57ed09575affa63a94a6da79b2091a0b69",
+ "chunk_id_returned": "c41b5c95fafbc625ac9c756c19f25a57ed09575affa63a94a6da79b2091a0b69",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "e0c290c4c07f46dc820d2e8981e72f7e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya): laporan keuangan, pembubaran, alih status, biaya, dan tanggung jawab Perseroan UMK.",
+ "tokens_local": 41
+}
