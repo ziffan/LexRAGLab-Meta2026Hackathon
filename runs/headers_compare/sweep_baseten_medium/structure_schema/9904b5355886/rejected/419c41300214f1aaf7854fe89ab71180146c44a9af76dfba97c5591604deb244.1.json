@@ -1,0 +1,11 @@
+{
+ "chunk_id": "419c41300214f1aaf7854fe89ab71180146c44a9af76dfba97c5591604deb244",
+ "chunk_id_returned": "419c41300214f1aaf7854fe89ab71180146c44a9af76dfba97c5591604deb244",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b8c888ea93e64831b2ead68eae545778",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.): kewajiban penyisihan laba bersih untuk cadangan wajib hingga 20% modal ditempatkan dan disetor.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "38da100175f5d3ffc15615a460e2a99224215355ce642abc5c6edd902903a81c",
+ "chunk_id_returned": "38da100175f5d3ffc15615a460e2a99224215355ce642abc5c6edd902903a81c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8f1207a04b104d8382322267628483d0",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III Bagian Kelima (Saham), Penjelasan Pasal 62: hak pemegang saham meminta Perseroan membeli sahamnya dengan harga wajar.",
+ "tokens_local": 44
+}

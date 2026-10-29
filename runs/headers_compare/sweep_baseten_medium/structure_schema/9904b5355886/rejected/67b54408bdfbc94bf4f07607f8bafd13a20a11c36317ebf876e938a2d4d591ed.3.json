@@ -1,0 +1,11 @@
+{
+ "chunk_id": "67b54408bdfbc94bf4f07607f8bafd13a20a11c36317ebf876e938a2d4d591ed",
+ "chunk_id_returned": "67b54408bdfbc94bf4f07607f8bafd13a20a11c36317ebf876e938a2d4d591ed",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b1ac310653f94705ad2e9f300b41da37",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): keberlakuan ketentuan pemberhentian Direksi bagi Dewan Komisaris.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b27f5388015bb0f6aa06cff1eb0cc3202894492b4d9c508a24cfea621ae227b9",
+ "chunk_id_returned": "b27f5388015bb0f6aa06cff1eb0cc3202894492b4d9c508a24cfea621ae227b9",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "6211636883fc45bf91a00c6f1ef6e3ca",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham): persetujuan RUPS untuk pembelian kembali saham dan penambahan modal serta pelimpahan wewenang ke Dewan Komisaris.",
+ "tokens_local": 45
+}

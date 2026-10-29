@@ -1,0 +1,11 @@
+{
+ "chunk_id": "12bfd25b527782560cd015e9622030514ecc326b8380d14db76aeff325631c71",
+ "chunk_id_returned": "12bfd25b527782560cd015e9622030514ecc326b8380d14db76aeff325631c71",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "2aa270f75e9b42d18a6616192488327d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): isi dan sifat penetapan pengadilan tentang izin penyelenggaraan RUPS atas permohonan pemegang saham.",
+ "tokens_local": 42
+}

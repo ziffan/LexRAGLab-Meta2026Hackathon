@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d9df482cc4a1edd8b9417d199ed07c87e29a5afa11456b1f4996666c040c77d8",
+ "chunk_id_returned": "d9df482cc4a1edd8b9417d199ed07c87e29a5afa11456b1f4996666c040c77d8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "7d0d6a54ac124a46a7a2aab217e53eba",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): pengangkatan likuidator baru dan pemberhentian likuidator lama yang tidak melaksanakan kewajiban.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d80e363df1402e5b3621676b4169b73a5777eb20d1886889352f33ac85434818",
+ "chunk_id_returned": "d80e363df1402e5b3621676b4169b73a5777eb20d1886889352f33ac85434818",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a4adf9b827644a869fc88b503c2d8ce4",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham), Penjelasan Pasal 85: aturan kehadiran dan pemungutan suara dalam RUPS.",
+ "tokens_local": 42
+}

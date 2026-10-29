@@ -1,0 +1,11 @@
+{
+ "chunk_id": "241b92f8883364fca7c15238847cad55762f5b5231686a4af168d31b5730939e",
+ "chunk_id_returned": "241b92f8883364fca7c15238847cad55762f5b5231686a4af168d31b5730939e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "860a54b920dd473a9fd7e93045c1d66e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): keputusan RUPS dan pengumuman rancangan penggabungan, peleburan, pengambilalihan atau pemisahan.",
+ "tokens_local": 48
+}

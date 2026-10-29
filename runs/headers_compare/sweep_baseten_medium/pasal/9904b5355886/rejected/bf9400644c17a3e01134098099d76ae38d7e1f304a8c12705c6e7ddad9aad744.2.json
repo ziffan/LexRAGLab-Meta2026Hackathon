@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "chunk_id_returned": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1d22dc5d30c24601bc025c31de806bb5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.), Penjelasan Pasal 131: kewajiban melampirkan salinan akta pengambilalihan pada pemberitahuan perubahan.",
+ "tokens_local": 46
+}

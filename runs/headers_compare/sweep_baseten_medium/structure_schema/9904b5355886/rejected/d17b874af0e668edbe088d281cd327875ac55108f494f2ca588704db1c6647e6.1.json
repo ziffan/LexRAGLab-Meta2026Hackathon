@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d17b874af0e668edbe088d281cd327875ac55108f494f2ca588704db1c6647e6",
+ "chunk_id_returned": "d17b874af0e668edbe088d281cd327875ac55108f494f2ca588704db1c6647e6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "241c0f4a29344f72b612a5ffcac6b763",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): kewajiban melampirkan salinan akta Penggabungan pada permohonan persetujuan atau pemberitahuan kepada Menteri.",
+ "tokens_local": 45
+}

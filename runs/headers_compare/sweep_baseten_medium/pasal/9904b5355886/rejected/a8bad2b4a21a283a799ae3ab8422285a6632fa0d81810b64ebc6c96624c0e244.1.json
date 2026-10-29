@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a8bad2b4a21a283a799ae3ab8422285a6632fa0d81810b64ebc6c96624c0e244",
+ "chunk_id_returned": "a8bad2b4a21a283a799ae3ab8422285a6632fa0d81810b64ebc6c96624c0e244",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "20d148b8b61547cfb392dc84722c3d55",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya), Penjelasan Pasal 153H: pengubahan status perseroan mikro-kecil yang tidak lagi memenuhi kriteria.",
+ "tokens_local": 41
+}

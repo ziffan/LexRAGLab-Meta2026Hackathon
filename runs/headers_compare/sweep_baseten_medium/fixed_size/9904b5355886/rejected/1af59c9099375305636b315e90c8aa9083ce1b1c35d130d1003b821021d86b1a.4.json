@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1af59c9099375305636b315e90c8aa9083ce1b1c35d130d1003b821021d86b1a",
+ "chunk_id_returned": "1af59c9099375305636b315e90c8aa9083ce1b1c35d130d1003b821021d86b1a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "5699e12dbb9f4066acf3a2db7504c93f",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): klasifikasi saham, pecahan nilai nominal, dan tata cara pemindahan hak atas saham.",
+ "tokens_local": 46
+}

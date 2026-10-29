@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8913dd694b906043178885eed9d755e66d7b4661322f20865ff1ef6a16722081",
+ "chunk_id_returned": "8913dd694b906043178885eed9d755e66d7b4661322f20865ff1ef6a16722081",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "84bee634426b4358a263f8f03843c27e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kedua (Dewan Komisaris): kewenangan Dewan Komisaris membentuk komite pengawasan.",
+ "tokens_local": 42
+}

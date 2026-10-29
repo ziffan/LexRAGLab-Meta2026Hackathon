@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2cb2634a925cc8b4d2f32e839bfad293147d10b70477605b3296c6a7ceeae10d",
+ "chunk_id_returned": "2cb2634a925cc8b4d2f32e839bfad293147d10b70477605b3296c6a7ceeae10d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "cc6492c53d80478086a1661d55e011b9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): kewajiban pengumuman hasil penggabungan, peleburan atau pengambilalihan untuk diketahui pihak ketiga.",
+ "tokens_local": 44
+}

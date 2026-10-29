@@ -1,0 +1,11 @@
+{
+ "chunk_id": "19f44a1a749cd7c566ba8f8d693025f0a8aeefb452616fa8ad149760dd52fdac",
+ "chunk_id_returned": "19f44a1a749cd7c566ba8f8d693025f0a8aeefb452616fa8ad149760dd52fdac",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "86927b80b1f340baa9f1cf15f6b4f05d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab I (Ketentuan Umum), Penjelasan Pasal 4: keberlakuan UU, anggaran dasar dan peraturan lain serta asas tata kelola Perseroan.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5380efacefc4baccf82508dfea1664b4c53297fa6b66a18708fa1d09e5e43613",
+ "chunk_id_returned": "5380efacefc4baccf82508dfea1664b4c53297fa6b66a18708fa1d09e5e43613",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "4f1e0e4b8e914258b564dc3b599b6e09",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Ketiga (Penambahan Modal): penawaran saham baru dalam penambahan modal dan hak membeli terlebih dahulu.",
+ "tokens_local": 43
+}

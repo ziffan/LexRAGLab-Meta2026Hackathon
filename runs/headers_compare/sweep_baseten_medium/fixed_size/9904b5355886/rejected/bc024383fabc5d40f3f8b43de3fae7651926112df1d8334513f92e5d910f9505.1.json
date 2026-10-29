@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bc024383fabc5d40f3f8b43de3fae7651926112df1d8334513f92e5d910f9505",
+ "chunk_id_returned": "bc024383fabc5d40f3f8b43de3fae7651926112df1d8334513f92e5d910f9505",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "f4685fc55b3d40dcbde27d4711d5de8c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.) Bagian Kesatu (Pendirian) Pasal 6-7: jangka waktu Perseroan dan syarat pendirian serta jumlah pendiri.",
+ "tokens_local": 48
+}

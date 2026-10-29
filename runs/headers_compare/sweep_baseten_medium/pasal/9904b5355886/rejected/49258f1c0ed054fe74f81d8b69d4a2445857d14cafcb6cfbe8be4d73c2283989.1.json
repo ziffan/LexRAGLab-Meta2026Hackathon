@@ -1,0 +1,11 @@
+{
+ "chunk_id": "49258f1c0ed054fe74f81d8b69d4a2445857d14cafcb6cfbe8be4d73c2283989",
+ "chunk_id_returned": "49258f1c0ed054fe74f81d8b69d4a2445857d14cafcb6cfbe8be4d73c2283989",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "5d0c58aedd4b4e5781cc9ecb48aeb485",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.) Bagian Kedua (Dewan Komisaris): tanggung jawab Dewan Komisaris atas kepailitan Perseroan.",
+ "tokens_local": 43
+}

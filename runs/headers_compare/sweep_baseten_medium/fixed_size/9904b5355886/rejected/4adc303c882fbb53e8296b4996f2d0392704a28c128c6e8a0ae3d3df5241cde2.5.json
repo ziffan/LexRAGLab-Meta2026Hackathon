@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4adc303c882fbb53e8296b4996f2d0392704a28c128c6e8a0ae3d3df5241cde2",
+ "chunk_id_returned": "4adc303c882fbb53e8296b4996f2d0392704a28c128c6e8a0ae3d3df5241cde2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "e235c7b00a62462f83c0780a44956bb9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): kewenangan Direksi atas pengalihan kekayaan, pemberian kuasa, dan pengajuan pailit dengan persetujuan RUPS.",
+ "tokens_local": 50
+}

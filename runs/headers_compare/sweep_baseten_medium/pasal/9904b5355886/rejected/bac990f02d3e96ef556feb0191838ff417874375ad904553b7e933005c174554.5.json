@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bac990f02d3e96ef556feb0191838ff417874375ad904553b7e933005c174554",
+ "chunk_id_returned": "bac990f02d3e96ef556feb0191838ff417874375ad904553b7e933005c174554",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "9f3e0528753f4bf28f1ccf033f2a2630",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham) Bagian Ketiga (Penambahan Modal): pengaturan persetujuan RUPS atas penambahan modal dan pelimpahan kewenangan kepada Dewan Komisari",
+ "tokens_local": 49
+}

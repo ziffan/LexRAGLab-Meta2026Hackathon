@@ -1,0 +1,11 @@
+{
+ "chunk_id": "97aae66e35c2e49388e361e49410beacaaa0816fbc3f4a5f0d65f079910dee62",
+ "chunk_id_returned": "97aae66e35c2e49388e361e49410beacaaa0816fbc3f4a5f0d65f079910dee62",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "7b56173083484aee924017aec6087c63",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab I (Ketentuan Umum): definisi Perseroan, organ, RUPS, Direksi, Dewan Komisaris dan istilah lain.",
+ "tokens_local": 41
+}

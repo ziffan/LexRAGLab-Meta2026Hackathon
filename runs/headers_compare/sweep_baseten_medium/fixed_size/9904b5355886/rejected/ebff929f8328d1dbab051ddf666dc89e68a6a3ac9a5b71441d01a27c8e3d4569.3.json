@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ebff929f8328d1dbab051ddf666dc89e68a6a3ac9a5b71441d01a27c8e3d4569",
+ "chunk_id_returned": "ebff929f8328d1dbab051ddf666dc89e68a6a3ac9a5b71441d01a27c8e3d4569",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "1a6f48e8c43c41b4bbf9731474b432e0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.): syarat dan batas pembelian kembali saham oleh Perseroan serta persetujuan RUPS.",
+ "tokens_local": 47
+}

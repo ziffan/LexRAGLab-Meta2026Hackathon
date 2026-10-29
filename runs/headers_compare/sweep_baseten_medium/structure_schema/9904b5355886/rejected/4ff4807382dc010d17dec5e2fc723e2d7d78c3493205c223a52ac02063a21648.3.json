@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4ff4807382dc010d17dec5e2fc723e2d7d78c3493205c223a52ac02063a21648",
+ "chunk_id_returned": "4ff4807382dc010d17dec5e2fc723e2d7d78c3493205c223a52ac02063a21648",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "7753e6607fd84196b85f2ffc79c16cc6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kesatu (Direksi): kewenangan Direksi mengajukan permohonan pailit dengan persetujuan RUPS dan tanggung jawab atas kepailitan.",
+ "tokens_local": 45
+}

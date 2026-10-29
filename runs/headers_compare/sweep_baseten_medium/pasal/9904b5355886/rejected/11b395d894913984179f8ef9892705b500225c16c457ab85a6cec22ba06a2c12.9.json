@@ -1,0 +1,11 @@
+{
+ "chunk_id": "11b395d894913984179f8ef9892705b500225c16c457ab85a6cec22ba06a2c12",
+ "chunk_id_returned": "11b395d894913984179f8ef9892705b500225c16c457ab85a6cec22ba06a2c12",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8f68340b429e4b6685bf8f56f6fa7703",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): pengangkatan, penggantian dan pemberhentian Direksi serta pemberitahuan perubahan kepada Menteri.",
+ "tokens_local": 49
+}

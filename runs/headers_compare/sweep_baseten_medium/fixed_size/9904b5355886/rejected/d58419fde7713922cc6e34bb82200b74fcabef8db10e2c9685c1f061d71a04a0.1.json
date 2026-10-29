@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d58419fde7713922cc6e34bb82200b74fcabef8db10e2c9685c1f061d71a04a0",
+ "chunk_id_returned": "d58419fde7713922cc6e34bb82200b74fcabef8db10e2c9685c1f061d71a04a0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "49919edd357f45198f29712348b15090",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): kuorum dan pemanggilan RUPS serta pengambilan keputusan secara musyawarah untuk mufakat.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "01e6d0411075ae4fffa99e465f4ccab9fc579df6c6ba96cc03d4bea39a09b82f",
+ "chunk_id_returned": "01e6d0411075ae4fffa99e465f4ccab9fc579df6c6ba96cc03d4bea39a09b82f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "bbf63a8429d444deb6bf775f05cd9c84",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham), Penjelasan Pasal 52: hak pemegang saham dan sifat tidak terbagi dari saham.",
+ "tokens_local": 46
+}

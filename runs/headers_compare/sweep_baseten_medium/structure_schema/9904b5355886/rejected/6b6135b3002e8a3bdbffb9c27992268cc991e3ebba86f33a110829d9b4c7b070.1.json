@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6b6135b3002e8a3bdbffb9c27992268cc991e3ebba86f33a110829d9b4c7b070",
+ "chunk_id_returned": "6b6135b3002e8a3bdbffb9c27992268cc991e3ebba86f33a110829d9b4c7b070",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a26368bd3bac477dab7dbabb14905faf",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham) Bagian Ketiga (Penambahan Modal): syarat kuorum RUPS untuk penambahan modal dan kewajiban pemberitahuan kepada Menteri.",
+ "tokens_local": 46
+}

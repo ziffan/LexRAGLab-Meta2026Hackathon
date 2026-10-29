@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cee29004c8267f969affc3be086c445bfe7ae82a3357f473ef9d86585e9b9505",
+ "chunk_id_returned": "cee29004c8267f969affc3be086c445bfe7ae82a3357f473ef9d86585e9b9505",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "605af740c4d048e890ec0b9436869742",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Umum: pengesahan badan hukum, daftar dan pengumuman Perseroan, Organ Perseroan, modal dan TJSL.",
+ "tokens_local": 42
+}

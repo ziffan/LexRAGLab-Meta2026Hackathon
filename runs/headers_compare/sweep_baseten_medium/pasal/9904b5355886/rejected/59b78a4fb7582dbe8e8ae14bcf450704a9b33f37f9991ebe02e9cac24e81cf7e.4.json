@@ -1,0 +1,11 @@
+{
+ "chunk_id": "59b78a4fb7582dbe8e8ae14bcf450704a9b33f37f9991ebe02e9cac24e81cf7e",
+ "chunk_id_returned": "59b78a4fb7582dbe8e8ae14bcf450704a9b33f37f9991ebe02e9cac24e81cf7e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "fe5d07cde3eb4bee80f796dd39235ba5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Ketiga (Penggunaan Laba): penggunaan laba bersih dan pembagian dividen oleh RUPS.",
+ "tokens_local": 43
+}

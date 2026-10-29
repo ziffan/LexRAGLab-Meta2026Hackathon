@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b38af91aedf7857a2f81aaded08770db61f8b9fc0c3111262971cba7820220c7",
+ "chunk_id_returned": "b38af91aedf7857a2f81aaded08770db61f8b9fc0c3111262971cba7820220c7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f9e155dbe0344579afa40102e4e28718",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): jenis pemisahan murni dan tidak murni serta akibat peralihan aktiva dan pasiva.",
+ "tokens_local": 43
+}

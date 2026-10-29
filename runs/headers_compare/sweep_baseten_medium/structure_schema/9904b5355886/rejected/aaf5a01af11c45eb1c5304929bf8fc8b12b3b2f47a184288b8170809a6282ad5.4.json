@@ -1,0 +1,11 @@
+{
+ "chunk_id": "aaf5a01af11c45eb1c5304929bf8fc8b12b3b2f47a184288b8170809a6282ad5",
+ "chunk_id_returned": "aaf5a01af11c45eb1c5304929bf8fc8b12b3b2f47a184288b8170809a6282ad5",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "cd24493e5a09402f9b79137b4cf91222",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): kewajiban pengumuman pendahuluan pemanggilan RUPS bagi Perseroan Terbuka.",
+ "tokens_local": 43
+}

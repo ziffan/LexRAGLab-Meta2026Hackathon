@@ -1,0 +1,11 @@
+{
+ "chunk_id": "49410df7040791c43a7519286b38f0b81fbdbb6d6a1cf0a0e42df640ee8ab2ec",
+ "chunk_id_returned": "49410df7040791c43a7519286b38f0b81fbdbb6d6a1cf0a0e42df640ee8ab2ec",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "d09c7e0f3f324d92ae52bcbaaad90f78",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): tugas pengawasan dan pemberian nasihat Dewan Komisaris serta kewajiban Dewan Pengawas Syariah bagi p",
+ "tokens_local": 48
+}

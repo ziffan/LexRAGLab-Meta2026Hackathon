@@ -1,0 +1,11 @@
+{
+ "chunk_id": "09c19bd735c7493b900614f85cc170133f5de865f4ef6191f7560b63b4aeb960",
+ "chunk_id_returned": "09c19bd735c7493b900614f85cc170133f5de865f4ef6191f7560b63b4aeb960",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6b9dc27bf0c446a68abb44f5a5ca6aa9",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham) Bagian Kelima (Saham): pengaturan penetapan klasifikasi saham dan saham biasa dalam anggaran dasar.",
+ "tokens_local": 41
+}

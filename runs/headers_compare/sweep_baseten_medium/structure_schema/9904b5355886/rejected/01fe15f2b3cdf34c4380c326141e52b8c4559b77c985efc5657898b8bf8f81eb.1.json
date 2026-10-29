@@ -1,0 +1,11 @@
+{
+ "chunk_id": "01fe15f2b3cdf34c4380c326141e52b8c4559b77c985efc5657898b8bf8f81eb",
+ "chunk_id_returned": "01fe15f2b3cdf34c4380c326141e52b8c4559b77c985efc5657898b8bf8f81eb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "92162eb5328947e085b171408360f97b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): ketentuan larangan pemakaian nama Perseroan dan kewajiban pencantuman sebutan PT dan Tbk.",
+ "tokens_local": 41
+}

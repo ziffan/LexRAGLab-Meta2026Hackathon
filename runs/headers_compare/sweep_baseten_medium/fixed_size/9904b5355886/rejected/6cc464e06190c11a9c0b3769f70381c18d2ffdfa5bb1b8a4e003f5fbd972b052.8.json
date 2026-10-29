@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6cc464e06190c11a9c0b3769f70381c18d2ffdfa5bb1b8a4e003f5fbd972b052",
+ "chunk_id_returned": "6cc464e06190c11a9c0b3769f70381c18d2ffdfa5bb1b8a4e003f5fbd972b052",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "cf3c3b0646bf48bf869c61a86ac42532",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): syarat penyetoran modal saham dan penggunaan tagihan sebagai kompensasi setoran.",
+ "tokens_local": 43
+}

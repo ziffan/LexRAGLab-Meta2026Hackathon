@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0db8e9dba678fe2b45018c743aee37cd870c9d563ce47d521936a7b365acd60c",
+ "chunk_id_returned": "0db8e9dba678fe2b45018c743aee37cd870c9d563ce47d521936a7b365acd60c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5687ee32cf5a4e03bec0ade92eab3a83",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XII (Ketentuan Lain-lain), Penjelasan Pasal 154: hubungan ketentuan UU dengan pengaturan pasar modal untuk Perseroan Terbuka.",
+ "tokens_local": 41
+}

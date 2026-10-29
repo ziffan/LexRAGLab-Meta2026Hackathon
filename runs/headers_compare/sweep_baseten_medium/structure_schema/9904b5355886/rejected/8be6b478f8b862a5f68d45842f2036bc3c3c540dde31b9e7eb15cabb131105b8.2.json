@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8be6b478f8b862a5f68d45842f2036bc3c3c540dde31b9e7eb15cabb131105b8",
+ "chunk_id_returned": "8be6b478f8b862a5f68d45842f2036bc3c3c540dde31b9e7eb15cabb131105b8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "8e756d9bd57e4a7f9ee9ac7ef453f854",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): penjelasan syarat penyetoran modal ditempatkan dan larangan angsuran.",
+ "tokens_local": 43
+}

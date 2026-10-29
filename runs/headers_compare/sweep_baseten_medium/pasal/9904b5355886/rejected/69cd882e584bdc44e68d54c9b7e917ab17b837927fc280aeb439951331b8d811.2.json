@@ -1,0 +1,11 @@
+{
+ "chunk_id": "69cd882e584bdc44e68d54c9b7e917ab17b837927fc280aeb439951331b8d811",
+ "chunk_id_returned": "69cd882e584bdc44e68d54c9b7e917ab17b837927fc280aeb439951331b8d811",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "3ff29353b0114b14a5e3a85c83a6c1ca",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Penjelasan Pasal 42 (Penambahan Modal): kuorum dan pengambilan keputusan RUPS untuk penambahan modal.",
+ "tokens_local": 43
+}

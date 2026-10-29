@@ -1,0 +1,11 @@
+{
+ "chunk_id": "600f4a816e9e1358d6f5f643b0f1bbf8ea5e719482409020197ce913d102daa8",
+ "chunk_id_returned": "600f4a816e9e1358d6f5f643b0f1bbf8ea5e719482409020197ce913d102daa8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "9b0503d6468f4b598980253250d37d7c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): kewajiban pengawasan, wewenang persetujuan tindakan Direksi, pengurusan sementara dan pemberhentian anggota.",
+ "tokens_local": 46
+}

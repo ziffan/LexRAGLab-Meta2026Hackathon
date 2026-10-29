@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2011c05e3c4b26658221b479b5c34479352393332f1f5f0216cb6cab6a7e9429",
+ "chunk_id_returned": "2011c05e3c4b26658221b479b5c34479352393332f1f5f0216cb6cab6a7e9429",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "ec697cd0a4cb4299a149694eb21f415c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): penjelasan kewajiban Dewan Komisaris terkait risalah rapat, pelaporan saham, dan laporan pengawasan.",
+ "tokens_local": 42
+}

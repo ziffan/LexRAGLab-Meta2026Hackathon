@@ -1,0 +1,11 @@
+{
+ "chunk_id": "68de6cb20a1e7589804e81a9c8bb2f664f8fb3c70cd8aa7c82119ad3be93d5b6",
+ "chunk_id_returned": "68de6cb20a1e7589804e81a9c8bb2f664f8fb3c70cd8aa7c82119ad3be93d5b6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "0daa12fbf8714d0487d0b9f6457e72bc",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Penjelasan Pasal 17: tempat kedudukan Perseroan dan pencantuman kota/kabupaten.",
+ "tokens_local": 42
+}

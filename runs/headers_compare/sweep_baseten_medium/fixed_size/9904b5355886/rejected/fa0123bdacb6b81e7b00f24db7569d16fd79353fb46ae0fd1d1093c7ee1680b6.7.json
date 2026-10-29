@@ -1,0 +1,11 @@
+{
+ "chunk_id": "fa0123bdacb6b81e7b00f24db7569d16fd79353fb46ae0fd1d1093c7ee1680b6",
+ "chunk_id_returned": "fa0123bdacb6b81e7b00f24db7569d16fd79353fb46ae0fd1d1093c7ee1680b6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "451e626b7b1c4de2ab877ff5617e1358",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.) hingga Bab VIII (Penggabungan dkk.): pemberhentian Dewan Komisaris, komisaris independen dan komite, serta akibat hukum penggabunganpe",
+ "tokens_local": 53
+}

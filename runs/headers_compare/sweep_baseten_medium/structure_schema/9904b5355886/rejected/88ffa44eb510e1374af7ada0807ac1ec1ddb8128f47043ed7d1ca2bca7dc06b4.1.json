@@ -1,0 +1,11 @@
+{
+ "chunk_id": "88ffa44eb510e1374af7ada0807ac1ec1ddb8128f47043ed7d1ca2bca7dc06b4",
+ "chunk_id_returned": "88ffa44eb510e1374af7ada0807ac1ec1ddb8128f47043ed7d1ca2bca7dc06b4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "e1f94d8ab18b4760bdf463ca06955ca0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab V (Tanggung Jawab dkk.), Penjelasan Pasal 74: makna perseroan bidang/berkaitan sumber daya alam dan sanksi terkait.",
+ "tokens_local": 46
+}

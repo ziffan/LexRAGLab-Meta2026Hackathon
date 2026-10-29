@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a23513fdc8cdcbe11c25bd43535f24635ee22d7be6a60c91155f698e7cdf9611",
+ "chunk_id_returned": "a23513fdc8cdcbe11c25bd43535f24635ee22d7be6a60c91155f698e7cdf9611",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "8c03ef9a1af4404cb68ed41503c37bf9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): pengaturan anggaran dasar mengenai pengunduran diri, pengisian lowongan Direksi, dan pihak pengganti pengurusan.",
+ "tokens_local": 46
+}

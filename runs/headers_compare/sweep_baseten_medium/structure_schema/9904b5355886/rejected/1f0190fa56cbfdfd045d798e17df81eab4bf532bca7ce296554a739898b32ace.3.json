@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1f0190fa56cbfdfd045d798e17df81eab4bf532bca7ce296554a739898b32ace",
+ "chunk_id_returned": "1f0190fa56cbfdfd045d798e17df81eab4bf532bca7ce296554a739898b32ace",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1ef52597e84a407f86f98c0ca1bc4e5a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Penjelasan Pasal 109: kewajiban Dewan Pengawas Syariah bagi perseroan berprinsip syariah.",
+ "tokens_local": 43
+}

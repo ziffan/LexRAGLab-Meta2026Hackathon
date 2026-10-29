@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5703d6fab71060af6a9ad1217d731744e9e9003ce954fe9e69a608f8d82385f6",
+ "chunk_id_returned": "5703d6fab71060af6a9ad1217d731744e9e9003ce954fe9e69a608f8d82385f6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "c2f99993bdd342c6b4294f5e83ae710f",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kedua Paragraf 2 (Perubahan Anggaran Dasar): alasan penolakan permohonan persetujuan perubahan anggaran dasar tertentu.",
+ "tokens_local": 47
+}

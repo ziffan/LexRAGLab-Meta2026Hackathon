@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ae230985927dfbc051e818005b379fdf473aee90da1e497dcbb9c49e0721ac61",
+ "chunk_id_returned": "ae230985927dfbc051e818005b379fdf473aee90da1e497dcbb9c49e0721ac61",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "14194abd85c3481aab24c56866a7d2b2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya): kewajiban pengubahan status Perseroan perorangan usaha mikro kecil yang tidak lagi memenuhi kriteria menjadi Perseroan biasa.",
+ "tokens_local": 43
+}

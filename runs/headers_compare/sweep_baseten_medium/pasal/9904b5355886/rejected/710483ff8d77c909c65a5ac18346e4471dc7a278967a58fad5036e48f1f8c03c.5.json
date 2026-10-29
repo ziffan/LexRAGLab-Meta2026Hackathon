@@ -1,0 +1,11 @@
+{
+ "chunk_id": "710483ff8d77c909c65a5ac18346e4471dc7a278967a58fad5036e48f1f8c03c",
+ "chunk_id_returned": "710483ff8d77c909c65a5ac18346e4471dc7a278967a58fad5036e48f1f8c03c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "e4f870d820a44b01b2b03324b2cd9603",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): kewajiban Direksi mengadakan daftar pemegang saham dan daftar khusus.",
+ "tokens_local": 41
+}

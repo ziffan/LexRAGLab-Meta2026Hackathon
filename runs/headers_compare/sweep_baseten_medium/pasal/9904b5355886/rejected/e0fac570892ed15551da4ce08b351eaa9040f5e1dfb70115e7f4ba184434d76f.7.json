@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e0fac570892ed15551da4ce08b351eaa9040f5e1dfb70115e7f4ba184434d76f",
+ "chunk_id_returned": "e0fac570892ed15551da4ce08b351eaa9040f5e1dfb70115e7f4ba184434d76f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "e44ca617affc4657a2e185fe5faee1d7",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kedua (Perlindungan Modal dkk.): pembatasan hak suara, kuorum, dan dividen untuk saham yang dikuasai Perseroan sendiri.",
+ "tokens_local": 51
+}

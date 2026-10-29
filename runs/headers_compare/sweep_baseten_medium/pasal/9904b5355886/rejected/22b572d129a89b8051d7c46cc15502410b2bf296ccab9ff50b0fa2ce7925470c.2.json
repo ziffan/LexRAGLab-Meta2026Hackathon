@@ -1,0 +1,11 @@
+{
+ "chunk_id": "22b572d129a89b8051d7c46cc15502410b2bf296ccab9ff50b0fa2ce7925470c",
+ "chunk_id_returned": "22b572d129a89b8051d7c46cc15502410b2bf296ccab9ff50b0fa2ce7925470c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "5ecdae5acc3c4d559b0749aa14d100ab",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.): penjelasan makna pelaksanaan pembelian kembali saham oleh Dewan Komisaris.",
+ "tokens_local": 41
+}

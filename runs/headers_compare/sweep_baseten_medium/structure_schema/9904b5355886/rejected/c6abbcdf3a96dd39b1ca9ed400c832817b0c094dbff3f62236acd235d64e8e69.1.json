@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c6abbcdf3a96dd39b1ca9ed400c832817b0c094dbff3f62236acd235d64e8e69",
+ "chunk_id_returned": "c6abbcdf3a96dd39b1ca9ed400c832817b0c094dbff3f62236acd235d64e8e69",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1f28407c1b1744fa85c14f4d8b8c9973",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Keempat (Pengurangan Modal): penjelasan mengenai persetujuan pengurangan modal Perseroan.",
+ "tokens_local": 41
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e14e9cd01a04e2cf622cf15274562f35a77d6782ac4e3e6cce4f39bb86a292e6",
+ "chunk_id_returned": "e14e9cd01a04e2cf622cf15274562f35a77d6782ac4e3e6cce4f39bb86a292e6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "2aa830d26d8749a39558cf0f6b4b2b88",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Ketiga (Penggunaan Laba): ketentuan dividen tidak diambil dan peralihan ke cadangan khusus Perseroan.",
+ "tokens_local": 47
+}

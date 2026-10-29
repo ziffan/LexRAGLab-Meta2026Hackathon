@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "chunk_id_returned": "bf9400644c17a3e01134098099d76ae38d7e1f304a8c12705c6e7ddad9aad744",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "ae3fd2a5eb64482da97f7e61e8e7242e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): kewajiban melampirkan salinan akta pengambilalihan pada pemberitahuan kepada Menteri.",
+ "tokens_local": 41
+}

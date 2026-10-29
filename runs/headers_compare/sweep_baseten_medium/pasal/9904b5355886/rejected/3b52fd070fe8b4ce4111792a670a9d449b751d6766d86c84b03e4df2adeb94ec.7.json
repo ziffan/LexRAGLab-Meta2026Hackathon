@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3b52fd070fe8b4ce4111792a670a9d449b751d6766d86c84b03e4df2adeb94ec",
+ "chunk_id_returned": "3b52fd070fe8b4ce4111792a670a9d449b751d6766d86c84b03e4df2adeb94ec",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "a3a9734f73a141b1b686c05d74271a3a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.), Penjelasan Pasal 133: kewajiban dan tenggat pengumuman hasil penggabungan, peleburan atau pengambilalihan.",
+ "tokens_local": 49
+}

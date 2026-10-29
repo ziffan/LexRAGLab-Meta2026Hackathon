@@ -1,0 +1,11 @@
+{
+ "chunk_id": "0e30fba6da4df5a30720b2407de4cedd0b3987380df0c22eb3919d2422ea5199",
+ "chunk_id_returned": "0e30fba6da4df5a30720b2407de4cedd0b3987380df0c22eb3919d2422ea5199",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "0a0c38aaa3724614ae588ec5d67e73bf",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): hak-hak pemilik saham dan mekanisme penggunaan hak atas saham bersama.",
+ "tokens_local": 41
+}

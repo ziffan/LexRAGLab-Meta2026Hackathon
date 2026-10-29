@@ -1,0 +1,11 @@
+{
+ "chunk_id": "687c3bf6a9feb244b838554c18b83503cbb54e3fd44ca2e268b09c497a99c4eb",
+ "chunk_id_returned": "687c3bf6a9feb244b838554c18b83503cbb54e3fd44ca2e268b09c497a99c4eb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "41dffdd0cf9b417d9ed51e4e60197dae",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Kedua (Laporan Tahunan): penjelasan mengenai pengesahan laporan keuangan dan tanggung jawab atas kebenaran laporan tahun.",
+ "tokens_local": 47
+}

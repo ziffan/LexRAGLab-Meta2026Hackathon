@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b2f9054e76bb572efc41f120d9c68d9f83d62c0c985aa346c98262cb526cf4cb",
+ "chunk_id_returned": "b2f9054e76bb572efc41f120d9c68d9f83d62c0c985aa346c98262cb526cf4cb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c74d2e1ab8084d8da072b79569ee28c6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.), Penjelasan Pasal 40: pembatasan hak atas saham hasil pembelian kembali oleh Perseroan.",
+ "tokens_local": 49
+}

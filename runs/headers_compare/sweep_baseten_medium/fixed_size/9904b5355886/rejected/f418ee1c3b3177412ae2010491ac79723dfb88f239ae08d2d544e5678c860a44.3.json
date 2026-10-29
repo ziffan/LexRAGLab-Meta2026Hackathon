@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f418ee1c3b3177412ae2010491ac79723dfb88f239ae08d2d544e5678c860a44",
+ "chunk_id_returned": "f418ee1c3b3177412ae2010491ac79723dfb88f239ae08d2d544e5678c860a44",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "eb9366d72cbc48a4ae40dbe2bbf21cf7",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): penetapan remunerasi dan tanggung jawab pengawasan Dewan Komisaris termasuk tanggung renteng atas kepailitan.",
+ "tokens_local": 44
+}

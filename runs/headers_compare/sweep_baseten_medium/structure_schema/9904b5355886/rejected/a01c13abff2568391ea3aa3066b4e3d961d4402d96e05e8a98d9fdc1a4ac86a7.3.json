@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a01c13abff2568391ea3aa3066b4e3d961d4402d96e05e8a98d9fdc1a4ac86a7",
+ "chunk_id_returned": "a01c13abff2568391ea3aa3066b4e3d961d4402d96e05e8a98d9fdc1a4ac86a7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c1a128570a2a4135b494b28773d0ea57",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Kedua (Laporan Tahunan): kewajiban dan isi laporan tahunan Direksi kepada RUPS serta penyampaian kepada Menteri.",
+ "tokens_local": 48
+}

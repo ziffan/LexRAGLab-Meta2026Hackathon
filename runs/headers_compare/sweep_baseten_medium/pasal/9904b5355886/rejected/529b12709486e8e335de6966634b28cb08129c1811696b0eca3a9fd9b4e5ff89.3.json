@@ -1,0 +1,11 @@
+{
+ "chunk_id": "529b12709486e8e335de6966634b28cb08129c1811696b0eca3a9fd9b4e5ff89",
+ "chunk_id_returned": "529b12709486e8e335de6966634b28cb08129c1811696b0eca3a9fd9b4e5ff89",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "bc119ebe800544ee9c9e7d652c5383ab",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): pembuktian kesalahan Direksi terkait kepailitan melalui gugatan di pengadilan niaga.",
+ "tokens_local": 48
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "683d42f62499b3583c83443059631eae54bb509e528904f280c26399255a8169",
+ "chunk_id_returned": "683d42f62499b3583c83443059631eae54bb509e528904f280c26399255a8169",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "a247168437b5474da59f4e4d69924ed9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): ketentuan yang wajib diatur dalam anggaran dasar terkait Direksi.",
+ "tokens_local": 41
+}

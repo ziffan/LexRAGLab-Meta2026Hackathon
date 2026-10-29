@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7b62078b4f5c87e72d61694681a843b563a48aee6c3b588810311aab45f2bbfb",
+ "chunk_id_returned": "7b62078b4f5c87e72d61694681a843b563a48aee6c3b588810311aab45f2bbfb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "4e941c0a78d9439a837f292ab04ec2c0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): pengecualian syarat jumlah pendiri minimal untuk Perseroan tertentu.",
+ "tokens_local": 43
+}
