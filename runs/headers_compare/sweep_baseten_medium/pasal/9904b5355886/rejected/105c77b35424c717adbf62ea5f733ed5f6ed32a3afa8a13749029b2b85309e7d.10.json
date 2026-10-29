@@ -1,0 +1,11 @@
+{
+ "chunk_id": "105c77b35424c717adbf62ea5f733ed5f6ed32a3afa8a13749029b2b85309e7d",
+ "chunk_id_returned": "105c77b35424c717adbf62ea5f733ed5f6ed32a3afa8a13749029b2b85309e7d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "17d5eff6f560442c9dee54cf2da4c207",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): syarat jumlah pendiri dan akibat jika pemegang saham kurang dari dua orang.",
+ "tokens_local": 43
+}
