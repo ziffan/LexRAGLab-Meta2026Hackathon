@@ -55,7 +55,7 @@ def args(profile: str, *extra: str) -> list[str]:
 
 
 def go_sweep(rig: Rig, sw: dict, prepared: Any, store_dir: Path, *, profile: str, max_attempts: int = 8, gate: Any = "auto",
-             gate_cfg: dict | None = None, hc: dict | None = None, **kw: Any) -> dict:
+             gate_cfg: dict | None = None, hc: dict | None = None, skip_cache_guard: bool = False, **kw: Any) -> dict:
     """`run_compare` atas profil sapuan (model efektif = `merge_sweep`); `gate="auto"` = gerbang pool sapuan nyata."""
     from backend.header_b.compare import make_gate, run_compare, select_pairs
     from backend.spark.sweep import merge_sweep
@@ -73,4 +73,4 @@ def go_sweep(rig: Rig, sw: dict, prepared: Any, store_dir: Path, *, profile: str
         gate = None if prof.get("api") == "chat_completions" else make_gate(prof["provider"], rig.budget, rig.model, rig.env, rig.runs,
                                                                            sweep_cfg=sw)
     return run_compare(rig.client, pairs, profile=profile, prof=prof, model_cfg=eff, hc=hc or hc_b(), gate_cfg=g, tokenizer=Tok(),
-                       store_dir=store_dir, meta_for=meta_for, max_attempts=max_attempts, gate=gate)
+                       store_dir=store_dir, meta_for=meta_for, max_attempts=max_attempts, gate=gate, skip_cache_guard=skip_cache_guard)

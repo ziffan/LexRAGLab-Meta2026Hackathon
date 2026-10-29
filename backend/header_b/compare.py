@@ -267,7 +267,8 @@ def plan_batches(pair: Pair, remaining: Sequence[Unit], pc: PairCosts, *, batch_
 def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mapping[str, Any], model_cfg: Mapping[str, Any],
                 hc: Mapping[str, Any], gate_cfg: Mapping[str, int], tokenizer: Any, store_dir: Path,
                 meta_for: Callable[[Prepared], dict], max_attempts: int,
-                gate: Callable[[Sequence[int], int], Any] | None, log: Callable[[str], None] = lambda s: None) -> dict[str, Any]:
+                gate: Callable[[Sequence[int], int], Any] | None, log: Callable[[str], None] = lambda s: None,
+                skip_cache_guard: bool = False) -> dict[str, Any]:
     """Jalankan unit terpilih per (dokumen, sumber): ronde 1..`max_attempts`; tiap ronde dipecah jadi batch <= cap, tiap batch
     dinilai `gate` (None = tanpa gerbang biaya: profil lokal) lalu `run_headers`. Berhenti seluruhnya bila `run_headers`
     berhenti atau gerbang menolak. Unit yang tetap gagal = gagal jujur (tanpa fallback ke header lain)."""
@@ -276,7 +277,8 @@ def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mappi
     pricing = pricing_for(model_cfg, profile)
     floor = floor_for(prof)
     summary: dict[str, Any] = {"stopped": None, "stopped_at": None, "attempts": {}, "failed": {}, "not_attempted": {}, "stored": 0,
-                               "batches": [], "cache_guard": "skipped" if local else "active", "warm": warm,
+                               "batches": [], "cache_guard": "skipped" if local else ("skipped_by_flag" if skip_cache_guard else "active"),
+                               "warm": warm,
                                "latency_ms_first_calls": []}
     pcs = {pr.key: PairCosts(pr, tokenizer, pricing, hc, floor, warm) for pr in pairs}
     for pr in pairs:  # seluruh run ditolak lebih awal bila ada unit yang tak muat satu batch (tanpa request)
@@ -315,7 +317,7 @@ def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mappi
                         headers_dir=store_dir, max_header_tokens=hc["max_header_tokens"],
                         max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
                         warm_max_output_tokens=hc["warm_max_output_tokens"], meta=meta_for(pr.p), warm=warm,
-                        cache_guard_calls=None if local else hc["cache_guard_calls"],
+                        cache_guard_calls=None if (local or skip_cache_guard) else hc["cache_guard_calls"],
                         cache_guard_min_ratio=hc["cache_guard_min_ratio"], max_length_chars=hc.get("schema_max_length_chars"),
                         warm_unit=warm_unit_for(uuid.uuid4().hex[:WARM_NONCE_LEN]), count_semantic_errors=False)
                 except BudgetExceeded:
@@ -411,6 +413,8 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     ap.add_argument("--smoke-reuse", action="store_true", help="Glimmer: 5 panggilan lalu cek reuse prefiks (median 2..5 <= 60 dtk)")
     ap.add_argument("--break-stale-lock", action="store_true", help="hapus kunci GPU/RPM kedaluwarsa (pid tak hidup) lalu lanjut")
     ap.add_argument("--confirm-go", action="store_true", help="B Spark Open sapuan: go eksplisit L1 setelah proyeksi disetor (P15)")
+    ap.add_argument("--skip-cache-guard", action="store_true",
+                    help="H-108: lewati guard cache H-074 untuk SATU run sapuan (bukan --project-only, bukan non-sapuan)")
     a = ap.parse_args(argv)
     for name, v in (("--sample", a.sample), ("--max-units", a.max_units)):
         if v is not None and v < 1:
@@ -433,6 +437,10 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         if sweep_cfg is not None:
             sweep_run.validate_runner_cfg(sweep_cfg)
         prof = comparison_profile(eff_model, a.model_profile)
+        if a.skip_cache_guard and (sweep_cfg is None or a.project_only):
+            print("error: --skip-cache-guard is valid only for a sweep profile run (not --project-only, not non-sweep)",
+                  file=sys.stderr)
+            return 2
         if sweep_run.go_required(prof, project_only=a.project_only, confirm_go=a.confirm_go):
             print(f"error: go_required: {a.model_profile} is held until the explicit go (--confirm-go); only --project-only "
                   f"is allowed", file=sys.stderr)
@@ -557,12 +565,14 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         started = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         summary = run_compare(client, pairs, profile=a.model_profile, prof=prof, model_cfg=eff_model, hc=hc, gate_cfg=gate_cfg,
                               tokenizer=tokenizer, store_dir=store_dir, meta_for=meta_for,
-                              max_attempts=attempts, gate=gate, log=out)
+                              max_attempts=attempts, gate=gate, log=out, skip_cache_guard=a.skip_cache_guard)
         after = snapshot_main(runs, prompt.prompt_hash, extras=main_extras)
         report = {"profile": a.model_profile, "family": a.family, "sources": list(a.sources), "started_at": started,
                   "finished_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "identity": identity,
                   "coverage": coverage_of(pairs, store_dir), "main_identity": "unchanged",
                   "gpu_lock": ({"holder": lock.holder, "broke_stale": lock.broke_stale} if lock else None), **summary}
+        if a.skip_cache_guard:
+            report["cache_guard_override"] = {"flag": "--skip-cache-guard", "reason": "H-108"}
         if local:
             if sweep_cfg is not None and tparams is not None and pairs and pairs[0].units:  # S16(d): aturan relatif
                 pr0 = pairs[0]
