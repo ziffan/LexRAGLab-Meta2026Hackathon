@@ -1,0 +1,102 @@
+{
+ "attempts": {
+  "uupt-40-2007/pasal": 3
+ },
+ "batches": [
+  {
+   "called": 338,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 293,
+   "round": 1,
+   "stopped": null,
+   "units": 338,
+   "upper_cached": 0
+  },
+  {
+   "called": 45,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 25,
+   "round": 2,
+   "stopped": null,
+   "units": 45,
+   "upper_cached": 0
+  },
+  {
+   "called": 20,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 11,
+   "round": 3,
+   "stopped": null,
+   "units": 20,
+   "upper_cached": 0
+  }
+ ],
+ "cache_guard": "skipped",
+ "coverage": {
+  "uupt-40-2007/pasal": {
+   "stored": 334,
+   "units": 343
+  }
+ },
+ "failed": {
+  "uupt-40-2007/pasal": [
+   "567a88b1bfabb3d1baa6084805e4237ae8d15de8eadae376cf7a93f38fc0db26",
+   "255bc0bb19d09f9b28467a64073bf5e93a3634d94df676760138d0c92e67e4cf",
+   "2a6a0d5071b4d164e0f18a7104a06048f58fca8c3d70b3af8f8c27a38977f1cc",
+   "4a970cd8da2ba00212f55eba583eaf39bcac0ca4b0d98e40cda3c0fcc9e0495b",
+   "529b12709486e8e335de6966634b28cb08129c1811696b0eca3a9fd9b4e5ff89",
+   "3cd998976a941a3dc89d55cb1842f9d6a3048fff94e5f1770f86fd9e87e23308",
+   "3b395c99e5aa16d29bfc5bcb843827cd6d960ddc99dfe9cbfbae9ee3d4b3961a",
+   "8784e491ac2d6b6a34b8569214c16c8611f514f242f16e2006d2b8b3181ca5cc",
+   "c8c6fa5d840bb16f54d2ea595c33512429d49b0c951ddc4c3e18b97a29b75b28"
+  ]
+ },
+ "family": "uupt",
+ "finished_at": "2026-10-29T15:56:15Z",
+ "gpu_lock": {
+  "broke_stale": null,
+  "holder": "glimmer-b"
+ },
+ "identity": {
+  "effort": "medium",
+  "max_header_tokens": 40,
+  "model": "meta/muse-glimmer",
+  "profile": "sweep_glimmer_medium",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "lmstudio_local",
+  "quantization": "Q4_K_M",
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  18163,
+  21942,
+  14535,
+  21816,
+  18022
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_glimmer_medium",
+ "reuse_confirmed": false,
+ "sources": [
+  "pasal"
+ ],
+ "started_at": "2026-10-29T13:31:17Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 329,
+ "sweep": {
+  "effort": "medium",
+  "pool_remaining_micros": 42048615,
+  "profile": "sweep_glimmer_medium",
+  "status": "partial (334/343 unit)"
+ },
+ "warm": false
+}

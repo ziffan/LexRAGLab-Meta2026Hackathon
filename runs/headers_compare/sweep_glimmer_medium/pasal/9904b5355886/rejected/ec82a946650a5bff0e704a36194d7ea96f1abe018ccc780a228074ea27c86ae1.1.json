@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ec82a946650a5bff0e704a36194d7ea96f1abe018ccc780a228074ea27c86ae1",
+ "chunk_id_returned": "ec82a946650a5bff0e704a36194d7ea96f1abe018ccc780a228074ea27c86ae1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f059268438134c608164c059532ea79a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): batalnya pengangkatan Dewan Komisaris yang tidak memenuhi syarat dan kewajiban pengumuman.",
+ "tokens_local": 41
+}

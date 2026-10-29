@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a7da90362dac5229c4f8fd75efbf01a8e32a3cf489075d133cc3d1f7a3f59b79",
+ "chunk_id_returned": "a7da90362dac5229c4f8fd75efbf01a8e32a3cf489075d133cc3d1f7a3f59b79",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f805dfc7740f443198adc738c8aba21f",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): penjelasan Pasal 126 tentang perlindungan kepentingan dan hak pemegang saham yang tidak menyetujui reorganisasi.",
+ "tokens_local": 42
+}

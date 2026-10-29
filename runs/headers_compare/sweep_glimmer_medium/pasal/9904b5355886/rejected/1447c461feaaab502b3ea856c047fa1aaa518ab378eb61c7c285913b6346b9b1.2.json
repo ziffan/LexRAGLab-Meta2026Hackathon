@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1447c461feaaab502b3ea856c047fa1aaa518ab378eb61c7c285913b6346b9b1",
+ "chunk_id_returned": "1447c461feaaab502b3ea856c047fa1aaa518ab378eb61c7c285913b6346b9b1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "cf02801e12eb43ebaf550fdea169f325",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham): Penjelasan Pasal 58 tentang batas satu kali penawaran saham kepada pemegang saham sebelum pihak ketiga.",
+ "tokens_local": 41
+}

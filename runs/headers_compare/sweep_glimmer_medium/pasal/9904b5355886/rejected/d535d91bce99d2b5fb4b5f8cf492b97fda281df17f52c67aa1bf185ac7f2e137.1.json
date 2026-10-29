@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d535d91bce99d2b5fb4b5f8cf492b97fda281df17f52c67aa1bf185ac7f2e137",
+ "chunk_id_returned": "d535d91bce99d2b5fb4b5f8cf492b97fda281df17f52c67aa1bf185ac7f2e137",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "768dd293f7d94cce9d740fd2672f77e1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran, Likuidasi dkk.): kewajiban likuidator dalam pemberesan harta kekayaan pada likuidasi.",
+ "tokens_local": 41
+}
