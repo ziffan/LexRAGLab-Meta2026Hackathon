@@ -1,0 +1,11 @@
+{
+ "chunk_id": "12296424a3658bcb0f153fb358484229b38f93fa41b7ca4d147928f7ee199d6b",
+ "chunk_id_returned": "12296424a3658bcb0f153fb358484229b38f93fa41b7ca4d147928f7ee199d6b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "69797161aa3c4223bb43a970681023c4",
+ "text": "Akta Pendirian PT GUMITIR SELARAS PERKASA No 27, Komparisi (Akta 01): identitas para penghadap pendiri dan pernyataan maksud mendirikan perseroan.",
+ "tokens_local": 44
+}

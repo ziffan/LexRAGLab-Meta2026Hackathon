@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from backend import config
 from backend.api.app import Service, create_app
 from backend.spark import Ledger, store
-from backend.spark.budget import pool_spend, provider_caps
+from backend.spark.budget import is_off_pin, pool_spend, provider_caps
 from backend.tokenizer import get_tokenizer
 
 from .pipeline_fakes import FakeEncoder
@@ -19,6 +19,7 @@ from .spark_fakes import BASE, K, budget_cfg, model_cfg, synth
 
 REPO = Path(__file__).resolve().parents[2]
 CAPS = {"baseten": 20_000_000}
+MCFG = model_cfg()
 
 
 def _seed(runs: Path) -> None:
@@ -35,7 +36,7 @@ def test_pool_spend_matches_ledger_pool_rule(tmp_path):
     _seed(runs)
     led = Ledger(runs)
     got = pool_spend(store.load_records(runs), CAPS)
-    assert got == {"default": led.spent_pool("meta", CAPS), "baseten": led.spent_pool("baseten", CAPS)}
+    assert got == {"default": led.spent_pool("meta", CAPS, model_cfg=MCFG), "baseten": led.spent_pool("baseten", CAPS, model_cfg=MCFG)}
     assert got == {"default": 147, "baseten": 5_300}
     assert sum(got.values()) == led.spent()
     assert list(got) == ["default", "baseten"] and all(type(v) is int for v in got.values())
@@ -50,6 +51,7 @@ def test_pool_spend_routes_off_pin_to_sweep_pool(tmp_path):
     synth(runs, "b", "baseten", 70_000, run_id="sw-bt-b")
     recs = store.load_records(runs)
     got = pool_spend(recs, CAPS, off_pin=lambda r: r.run_id.startswith("sw-"))
+    assert pool_spend(recs, CAPS) == {"default": 9_147, "baseten": 75_300}  # tanpa off_pin: tidak ada kunci sweep
     assert got == {"default": 147, "baseten": 5_300, "sweep": 79_000}
     assert sum(got.values()) == Ledger(runs).spent()
     assert list(got) == ["default", "baseten", "sweep"]
@@ -65,10 +67,11 @@ def test_r1_header_figure_is_default_pool_not_total(tmp_path):
     _seed(runs)
     h = _client(runs, tmp_path, {**budget_cfg(), "version": 2, "provider_cap_micros": dict(CAPS)}).get("/api/health").json()
     led = Ledger(runs)
-    assert h["main_results_spent_usd_micros"] == led.spent_pool("meta", CAPS) == 147
+    assert h["main_results_spent_usd_micros"] == led.spent_pool("meta", CAPS, model_cfg=model_cfg()) == 147
     assert type(h["main_results_spent_usd_micros"]) is int
     assert h["ledger_spent_usd_micros"] == led.spent() == 5_447  # total semua pool tetap ada, bukan angka header
-    assert h["pool_spend"] == [{"pool": "default", "spend_usd_micros": 147}, {"pool": "baseten", "spend_usd_micros": 5_300}]
+    assert h["pool_spend"] == [{"pool": "default", "spend_usd_micros": 147}, {"pool": "baseten", "spend_usd_micros": 5_300},
+                               {"pool": "sweep", "spend_usd_micros": 0}]  # R1 selalu memuat pool sweep (off_pin diteruskan)
     assert sum(p["spend_usd_micros"] for p in h["pool_spend"]) == h["ledger_spent_usd_micros"]
 
 
@@ -77,7 +80,7 @@ def test_r1_pool_fields_without_provider_table_and_on_bad_config(tmp_path):
     _seed(runs)
     h = _client(runs, tmp_path, budget_cfg()).get("/api/health").json()
     assert h["main_results_spent_usd_micros"] == h["ledger_spent_usd_micros"] == 5_447
-    assert h["pool_spend"] == [{"pool": "default", "spend_usd_micros": 5_447}]
+    assert h["pool_spend"] == [{"pool": "default", "spend_usd_micros": 5_447}, {"pool": "sweep", "spend_usd_micros": 0}]
     bad = {**budget_cfg(), "version": 1, "provider_cap_micros": dict(CAPS)}  # tabel butuh version >= 2 (H-101 P16)
     h = _client(runs, tmp_path, bad).get("/api/health").json()
     assert h["main_results_spent_usd_micros"] is None and h["pool_spend"] is None
@@ -102,7 +105,8 @@ def test_readme_cost_figures_match_stored_runs():
     text = (REPO / "README.md").read_text(encoding="utf-8")
     assert "615,008" not in text and "615.008" not in text and "0.615008" not in text
     caps = provider_caps(config.load("budget"), config.load("model"))
-    pools = pool_spend(store.load_records(REPO / "runs"), caps)
+    mcfg = config.load("model")
+    pools = pool_spend(store.load_records(REPO / "runs"), caps, off_pin=lambda r: is_off_pin(r, mcfg))  # aturan sama dengan R1
     m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as \$(\d+\.\d{6})\)", text)
     assert m, "README run cost line (main results) missing"
     assert _num(m.group(1)) == pools["default"]
@@ -111,5 +115,24 @@ def test_readme_cost_figures_match_stored_runs():
     assert b and _num(b.group(1)) == pools["baseten"]
     r = re.search(r"\(role A ([\d,]+), role B ([\d,]+), role C ([\d,]+)\)", text)
     led = Ledger(REPO / "runs")
-    assert r and [_num(x) for x in r.groups()] == [led.spent_pool("baseten", caps, role) for role in ("a", "b", "c")]
-    assert "sweep" not in pools  # main: pool sapuan belum dirangkai; README menyatakan belum ada run tersimpan
+    assert r and [_num(x) for x in r.groups()] == [led.spent_pool("baseten", caps, role, model_cfg=mcfg) for role in ("a", "b", "c")]
+    assert "sweep" in pools
+
+
+def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
+    """Rekaman off-pin (Contributor effort medium, pin profil = low) masuk pool sweep, tidak ke main_results; total tetap memuatnya."""
+    from backend.api.routers.system import cost_fields
+
+    runs = tmp_path / "runs"
+    _seed(runs)
+    mc = model_cfg()
+    base = cost_fields(runs, {**budget_cfg(), "version": 2, "provider_cap_micros": dict(CAPS)}, model_cfg=mc)
+    plain = pool_spend(store.load_records(runs), CAPS)
+    assert {p["pool"]: p["spend_usd_micros"] for p in base["pool_spend"]} == {**plain, "sweep": 0}
+    assert base["main_results_spent_usd_micros"] == plain["default"] == 147
+    synth(runs, "c", "meta", 4_000, run_id="off-pin-c", model="muse-spark-1.3-contributor", effort="medium")
+    synth(runs, "c", "meta", 11, run_id="on-pin-c", model="muse-spark-1.3-contributor", effort="low")
+    got = cost_fields(runs, {**budget_cfg(), "version": 2, "provider_cap_micros": dict(CAPS)}, model_cfg=mc)
+    pools = {p["pool"]: p["spend_usd_micros"] for p in got["pool_spend"]}
+    assert pools["sweep"] == 4_000 and pools["default"] == 158 and got["main_results_spent_usd_micros"] == 158
+    assert got["ledger_spent_usd_micros"] == 5_447 + 4_011

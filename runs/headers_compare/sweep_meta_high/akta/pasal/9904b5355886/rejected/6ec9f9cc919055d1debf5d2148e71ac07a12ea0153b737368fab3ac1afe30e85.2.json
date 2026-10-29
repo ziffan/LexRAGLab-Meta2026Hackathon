@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6ec9f9cc919055d1debf5d2148e71ac07a12ea0153b737368fab3ac1afe30e85",
+ "chunk_id_returned": "6ec9f9cc919055d1debf5d2148e71ac07a12ea0153b737368fab3ac1afe30e85",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "7dbb0d9bf2f74bbb89fcb337e525ce9c",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No 63, Batang Tubuh (Anggaran Dasar): identitas perseroan, modal, dan tata kelola organ perseroan.",
+ "tokens_local": 44
+}

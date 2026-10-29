@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2ce2e59ff44cdfc4885b7b9288e90be6df063c79281942b64e90a9f81c0e0201",
+ "chunk_id_returned": "2ce2e59ff44cdfc4885b7b9288e90be6df063c79281942b64e90a9f81c0e0201",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "6bd77111d65b4affa293582b78d34f6b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): perubahan anggaran dasar yang memerlukan persetujuan atau cukup pemberitahuan Menteri serta batas waktu akta dan permohonannya.",
+ "tokens_local": 45
+}

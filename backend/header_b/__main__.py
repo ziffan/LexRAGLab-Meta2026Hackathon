@@ -77,7 +77,7 @@ def _smoke(a, hc, model_cfg, budget_cfg, tok, source, kw) -> int:
     prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = sm["cost_usd_micros"]["upper_no_cache"]
-    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b", model_cfg=model_cfg)
     if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
@@ -110,7 +110,7 @@ def _schema_main(a, hc, model_cfg, budget_cfg, tok, kw) -> int:
     prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = res["projection"]["cost_usd_micros"]["upper_cached"]
-    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b", model_cfg=model_cfg)
     if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3
@@ -179,7 +179,7 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
     limit = a.sample or None
     prov = profile_provider(model_cfg, a.profile)
     pcaps = effective_caps(budget_cfg, None).provider_micros
-    res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent_pool(prov, pcaps),
+    res = project_family(prepared, hdir, tok, hc, model_cfg, budget_cfg, spent=ledger.spent_pool(prov, pcaps, model_cfg=model_cfg),
                          profile=a.profile, rpm=a.rpm, limit=limit,
                          threshold=cumulative_threshold_for(prov, budget_cfg, pcaps))
     print(_fmt_family(res))
@@ -199,7 +199,7 @@ def _family_main(a, hc, model_cfg, budget_cfg, tok, rcfg, gcfg, gran) -> int:
         print("error: live run needs --sample N (units per akta per source) or --full", file=sys.stderr)
         return 2
     caps = effective_caps(budget_cfg, None)
-    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b", model_cfg=model_cfg)
     err = precheck(res, spent_b=sr, spent_total=st, per_role_b_cap=rc, total_cap=tc)
     if err:
         print(f"error: {err}; nothing was sent", file=sys.stderr)
@@ -289,7 +289,7 @@ def main(argv: list[str] | None = None) -> int:
     prov = profile_provider(model_cfg, a.profile)
     ledger = Ledger(config.REPO_ROOT / "runs")
     cost = sm["cost_usd_micros"]["upper_cached"]
-    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b")
+    sr, rc, st, tc = pool_limits(ledger, caps, prov, "b", model_cfg=model_cfg)
     if sr + cost > rc or st + cost > tc:
         print("error: budget_exceeded (projection over config/budget); nothing was sent", file=sys.stderr)
         return 3

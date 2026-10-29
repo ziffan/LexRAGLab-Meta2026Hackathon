@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ad04a86377df8479cc6b1ba2249e3e44d7c73bdadf4c057b68cea7752c6c293b",
+ "chunk_id_returned": "ad04a86377df8479cc6b1ba2249e3e44d7c73bdadf4c057b68cea7752c6c293b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "caaf07b7ca7340a9a0d64642849f4dd9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): pengambilan keputusan mengikat di luar RUPS dengan persetujuan tertulis seluruh pemegang saham.",
+ "tokens_local": 42
+}

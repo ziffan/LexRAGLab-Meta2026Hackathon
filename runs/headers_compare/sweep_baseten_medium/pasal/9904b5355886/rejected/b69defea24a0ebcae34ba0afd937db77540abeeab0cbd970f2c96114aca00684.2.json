@@ -1,0 +1,11 @@
+{
+ "chunk_id": "b69defea24a0ebcae34ba0afd937db77540abeeab0cbd970f2c96114aca00684",
+ "chunk_id_returned": "b69defea24a0ebcae34ba0afd937db77540abeeab0cbd970f2c96114aca00684",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "59a657cfab014ebba4c74a34a9720dc9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.): syarat persetujuan RUPS untuk pembelian kembali saham.",
+ "tokens_local": 41
+}

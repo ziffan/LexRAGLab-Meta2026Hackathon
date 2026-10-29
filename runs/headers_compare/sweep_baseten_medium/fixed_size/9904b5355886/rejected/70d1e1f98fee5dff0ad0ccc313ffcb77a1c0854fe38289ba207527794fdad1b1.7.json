@@ -1,0 +1,11 @@
+{
+ "chunk_id": "70d1e1f98fee5dff0ad0ccc313ffcb77a1c0854fe38289ba207527794fdad1b1",
+ "chunk_id_returned": "70d1e1f98fee5dff0ad0ccc313ffcb77a1c0854fe38289ba207527794fdad1b1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "4bb7b427f98a4d3f8c9fe3a4f02240d8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu Direksi: pembatalan pengangkatan Direksi, penetapan gaji/tunjangan, dan tanggung jawab atas pengurusan.",
+ "tokens_local": 52
+}

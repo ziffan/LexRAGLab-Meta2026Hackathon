@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d7bbbbaa9e7e44a857d8266edb6facb7380b92387ede314540bcfb99bf7f429f",
+ "chunk_id_returned": "d7bbbbaa9e7e44a857d8266edb6facb7380b92387ede314540bcfb99bf7f429f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "b71e7c8242984f26a72c0c294fda628a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Keempat (Pengurangan Modal): hak kreditor mengajukan keberatan atas pengurangan modal dan gugatan.",
+ "tokens_local": 44
+}

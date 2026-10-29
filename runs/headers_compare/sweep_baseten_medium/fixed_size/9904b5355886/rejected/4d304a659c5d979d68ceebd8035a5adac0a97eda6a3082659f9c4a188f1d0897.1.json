@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4d304a659c5d979d68ceebd8035a5adac0a97eda6a3082659f9c4a188f1d0897",
+ "chunk_id_returned": "4d304a659c5d979d68ceebd8035a5adac0a97eda6a3082659f9c4a188f1d0897",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "725c0128e8cc4d3ca6625a1e767011e8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu Pendirian: tata cara pengesahan badan hukum dan perbuatan hukum calon pendiri sebelum Perseroan berbadan hukum.",
+ "tokens_local": 48
+}

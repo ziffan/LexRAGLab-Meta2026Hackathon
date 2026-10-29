@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3f906127e635613ff6474be7d826420d72ce8a2d371c06299152a417d2a53ab6",
+ "chunk_id_returned": "3f906127e635613ff6474be7d826420d72ce8a2d371c06299152a417d2a53ab6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6e0db269f52c4f369fecbeca4bbe3167",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): kewajiban mengubah anggaran dasar saat memenuhi kriteria Perseroan Publik dan pengajuan pernyataan pendaftaran oleh Direksi.",
+ "tokens_local": 41
+}

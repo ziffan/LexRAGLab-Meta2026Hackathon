@@ -1,0 +1,11 @@
+{
+ "chunk_id": "840b9b303dabbba50e4451cf64c21d8c10ca2fdf7d7526c18c6abdd8ba2ba4cf",
+ "chunk_id_returned": "840b9b303dabbba50e4451cf64c21d8c10ca2fdf7d7526c18c6abdd8ba2ba4cf",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "e5bdb424586a4d9bae37e954e2e1a987",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): tempat penyelenggaraan RUPS, penyelenggaraan melalui media elektronik, dan pembagian jenis RUPS.",
+ "tokens_local": 41
+}

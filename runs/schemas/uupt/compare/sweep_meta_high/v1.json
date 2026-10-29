@@ -1,0 +1,228 @@
+{
+ "body": {
+  "default_chunk_level": 4,
+  "family": "uupt",
+  "levels": [
+   {
+    "examples": [
+     "## BAB I — KETENTUAN UMUM",
+     "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+     "## BAB III — MODAL DAN SAHAM"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^## BAB [IVXLCDM]+ —",
+    "name": "bab",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "### Bagian Kesatu — Pendirian",
+     "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+     "### Bagian Kesatu — Modal"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^### Bagian [A-Za-z]+",
+    "name": "bagian",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "#### Paragraf 1 — Anggaran Dasar",
+     "#### Paragraf 2 — Perubahan Anggaran Dasar",
+     "#### Paragraf 1 — Daftar Perseroan",
+     "#### Paragraf 2 — Pengumuman"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^#### Paragraf \\d+ —",
+    "name": "paragraf",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "### Pasal 1",
+     "### Pasal 7",
+     "### Pasal 15",
+     "### Pasal 153A"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^### Pasal \\d+[A-Z]*\\b",
+    "name": "pasal",
+    "order": 4,
+    "parent_order": 3
+   },
+   {
+    "examples": [
+     "#### Penjelasan Pasal 1",
+     "#### Penjelasan Pasal 7",
+     "#### Penjelasan Pasal 153A"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^#### Penjelasan Pasal \\d+[A-Z]*\\b",
+    "name": "penjelasan pasal",
+    "order": 5,
+    "parent_order": 4
+   },
+   {
+    "examples": [
+     "(1) Perseroan mempunyai nama dan tempat kedudukan dalam wilayah negara Republik Indonesia yang ditentukan dalam anggaran dasar.",
+     "(2) Perseroan mempunyai alamat lengkap sesuai dengan tempat kedudukannya.",
+     "(3) Direksi Perseroan terdiri atas 1 (satu) orang anggota Direksi atau lebih."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^\\([0-9]+\\)",
+    "name": "ayat",
+    "order": 6,
+    "parent_order": 4
+   },
+   {
+    "examples": [
+     "a. persyaratan Perseroan sebagai badan hukum belum atau tidak terpenuhi;",
+     "b. pemegang saham yang bersangkutan baik langsung maupun tidak langsung dengan itikad buruk memanfaatkan Perseroan untuk kepentingan pribadi;",
+     "e. Perseroan yang memenuhi kriteria untuk usaha mikro dan kecil."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^[a-z]\\. ",
+    "name": "huruf",
+    "order": 7,
+    "parent_order": 6
+   }
+  ],
+  "notes": "Sebagian Pasal berada langsung di bawah BAB atau Bagian tanpa Paragraf, dan nomor Pasal 153A–153J memakai akhiran huruf. Penjelasan memakai penanda Ayat (n) dan Huruf x yang berbeda format dari penanda (n) dan a. di batang tubuh."
+ },
+ "cache_key": "95a8244a5464c8027dd431d185609ad581332dcefcdd09bb9b70c1406b20b858",
+ "created_at": "2026-10-28T18:55:49Z",
+ "family": "uupt",
+ "model_profile": "sweep_meta_high",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "90b8e5f624134c7ba166a4f843f51795",
+ "sample": [
+  {
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "doc_id": "uupt-40-2007"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "## BAB I — KETENTUAN UMUM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB III — MODAL DAN SAHAM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "### Bagian Kesatu — Pendirian",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kesatu — Modal",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "#### Paragraf 1 — Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 2 — Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 1 — Daftar Perseroan",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 2 — Pengumuman",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "### Pasal 1",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 7",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 15",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 153A",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "#### Penjelasan Pasal 1",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 7",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "#### Penjelasan Pasal 153A",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "(1) Perseroan mempunyai nama dan tempat kedudukan dalam wilayah negara Republik Indonesia yang ditentukan dalam anggaran dasar.",
+   "matched": true,
+   "order": 6
+  },
+  {
+   "example": "(2) Perseroan mempunyai alamat lengkap sesuai dengan tempat kedudukannya.",
+   "matched": true,
+   "order": 6
+  },
+  {
+   "example": "(3) Direksi Perseroan terdiri atas 1 (satu) orang anggota Direksi atau lebih.",
+   "matched": true,
+   "order": 6
+  },
+  {
+   "example": "a. persyaratan Perseroan sebagai badan hukum belum atau tidak terpenuhi;",
+   "matched": true,
+   "order": 7
+  },
+  {
+   "example": "b. pemegang saham yang bersangkutan baik langsung maupun tidak langsung dengan itikad buruk memanfaatkan Perseroan untuk kepentingan pribadi;",
+   "matched": true,
+   "order": 7
+  },
+  {
+   "example": "e. Perseroan yang memenuhi kriteria untuk usaha mikro dan kecil.",
+   "matched": true,
+   "order": 7
+  }
+ ]
+}

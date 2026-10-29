@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8b7bfdcc16781acfda50ab70be0785b635c3ad02e9dc583d8467d9ab45c37576",
+ "chunk_id_returned": "8b7bfdcc16781acfda50ab70be0785b635c3ad02e9dc583d8467d9ab45c37576",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "d14a2c2f6c024878befbb154b20f248b",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya): perubahan pernyataan pendirian Perseroan usaha mikro dan kecil oleh RUPS dan pemberitahuan elektronik kepada Menteri.",
+ "tokens_local": 41
+}

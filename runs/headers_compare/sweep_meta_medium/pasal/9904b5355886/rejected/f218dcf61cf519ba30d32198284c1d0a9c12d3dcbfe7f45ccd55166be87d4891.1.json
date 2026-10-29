@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f218dcf61cf519ba30d32198284c1d0a9c12d3dcbfe7f45ccd55166be87d4891",
+ "chunk_id_returned": "f218dcf61cf519ba30d32198284c1d0a9c12d3dcbfe7f45ccd55166be87d4891",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "e14cd65308f64f37ac9382a67b5add95",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): tanggung jawab pengawasan, tanggung renteng, dan gugatan pemegang saham.",
+ "tokens_local": 46
+}

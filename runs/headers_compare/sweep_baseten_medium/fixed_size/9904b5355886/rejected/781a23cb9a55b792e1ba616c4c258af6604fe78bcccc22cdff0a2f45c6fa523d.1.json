@@ -1,0 +1,11 @@
+{
+ "chunk_id": "781a23cb9a55b792e1ba616c4c258af6604fe78bcccc22cdff0a2f45c6fa523d",
+ "chunk_id_returned": "781a23cb9a55b792e1ba616c4c258af6604fe78bcccc22cdff0a2f45c6fa523d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "1c62a8da50874a86b18279e95a2d5a10",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): penjelasan syarat calon anggota Direksi dan pengangkatan oleh RUPS.",
+ "tokens_local": 42
+}

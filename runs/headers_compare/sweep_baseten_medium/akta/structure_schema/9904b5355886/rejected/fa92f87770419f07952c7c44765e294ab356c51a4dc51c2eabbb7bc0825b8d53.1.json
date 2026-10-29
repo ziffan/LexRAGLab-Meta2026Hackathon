@@ -1,0 +1,11 @@
+{
+ "chunk_id": "fa92f87770419f07952c7c44765e294ab356c51a4dc51c2eabbb7bc0825b8d53",
+ "chunk_id_returned": "fa92f87770419f07952c7c44765e294ab356c51a4dc51c2eabbb7bc0825b8d53",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "6b1df2e4309b42baaed8d3153f5bb85d",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No. 27 (14-10-2025), Keterangan Pendiri dan Pengangkatan Pengurus: pengambilan saham pendiri dan susunan pengurus awal.",
+ "tokens_local": 46
+}

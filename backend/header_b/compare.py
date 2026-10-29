@@ -29,6 +29,8 @@ from backend import config, gpulock
 from backend.spark import BudgetExceeded, ConfigInvalid, compute_cost_micros, format_usd_micros
 from backend.spark.settings import API_CHAT, profile_api
 
+from backend.spark import sweep_run
+
 from .caller import load_header, run_headers
 from .compare_store import (CompareError, factor_bp_for, assert_main_identity, build_identity, check_forbidden_profile_keys, check_identity,
                             comparison_profile, compare_profile_root, compare_store_dir, max_attempts_for, snapshot_main,
@@ -161,15 +163,30 @@ def reuse_confirmed(latencies_ms: Sequence[int], threshold_ms: int = REUSE_MEDIA
 
 # ---------------------------------------------------------------- gerbang per pool
 def make_gate(provider: str, budget_cfg: Mapping[str, Any], model_cfg: Mapping[str, Any], env: Mapping[str, str] | None,
-              runs_dir: Path) -> Callable[[Sequence[int], int], Any]:
+              runs_dir: Path, *, sweep_cfg: Mapping[str, Any] | None = None,
+              factor_bp: int | None = None) -> Callable[[Sequence[int], int], Any]:
     """Gerbang per batch atas belanja AKTUAL pool provider (P9): `spent_pool` + `cumulative_threshold_for` + `evaluate_gate`
-    dengan lantai batas atas (P7). Dibaca ulang dari buku belanja tiap pemanggilan."""
-    from backend.proposal.gate import cumulative_threshold_for, evaluate_gate, load_gate_config
+    dengan lantai batas atas (P7). Dibaca ulang dari buku belanja tiap pemanggilan.
+
+    `sweep_cfg` diberikan (profil sapuan, H-102 P4/D13): `spent` = belanja pool sapuan (`Ledger.spent_off_pin`) dan ambang
+    = `[sweep_pool].cap_micros x cumulative_pct // 100` (50.000.000 x 80 // 100 = 40.000.000). `model_cfg` = `config/model`
+    ASLI (tanpa profil sapuan). `factor_bp` (opsional, hanya compare_c sapuan): `factor_bp` efektif profil menggantikan
+    `[batch_gate].factor_bp` pada `ceil(expected x factor_bp / 10000)`; None = perilaku lama persis."""
+    import dataclasses
+
+    from backend.proposal.gate import cumulative_threshold_for, evaluate_gate, load_gate_config, sweep_threshold_micros
     from backend.spark.budget import Ledger, effective_caps
 
     def gate(expected_per_call: Sequence[int], upper_floor: int) -> Any:
         pc = effective_caps(budget_cfg, env, model_cfg).provider_micros
-        spent = Ledger(runs_dir).spent_pool(provider, pc)
+        if sweep_cfg is not None:
+            gcfg = load_gate_config(budget_cfg)
+            if factor_bp is not None:
+                gcfg = dataclasses.replace(gcfg, factor_bp=factor_bp)
+            return evaluate_gate(list(expected_per_call), Ledger(runs_dir).spent_off_pin(model_cfg=model_cfg),
+                                 gcfg, upper_floor=upper_floor,
+                                 threshold_micros=sweep_threshold_micros(budget_cfg, sweep_cfg))
+        spent = Ledger(runs_dir).spent_pool(provider, pc, model_cfg=model_cfg)
         return evaluate_gate(list(expected_per_call), spent, load_gate_config(budget_cfg), upper_floor=upper_floor,
                              threshold_micros=cumulative_threshold_for(provider, budget_cfg, pc))
 
@@ -250,7 +267,8 @@ def plan_batches(pair: Pair, remaining: Sequence[Unit], pc: PairCosts, *, batch_
 def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mapping[str, Any], model_cfg: Mapping[str, Any],
                 hc: Mapping[str, Any], gate_cfg: Mapping[str, int], tokenizer: Any, store_dir: Path,
                 meta_for: Callable[[Prepared], dict], max_attempts: int,
-                gate: Callable[[Sequence[int], int], Any] | None, log: Callable[[str], None] = lambda s: None) -> dict[str, Any]:
+                gate: Callable[[Sequence[int], int], Any] | None, log: Callable[[str], None] = lambda s: None,
+                skip_cache_guard: bool = False) -> dict[str, Any]:
     """Jalankan unit terpilih per (dokumen, sumber): ronde 1..`max_attempts`; tiap ronde dipecah jadi batch <= cap, tiap batch
     dinilai `gate` (None = tanpa gerbang biaya: profil lokal) lalu `run_headers`. Berhenti seluruhnya bila `run_headers`
     berhenti atau gerbang menolak. Unit yang tetap gagal = gagal jujur (tanpa fallback ke header lain)."""
@@ -259,7 +277,8 @@ def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mappi
     pricing = pricing_for(model_cfg, profile)
     floor = floor_for(prof)
     summary: dict[str, Any] = {"stopped": None, "stopped_at": None, "attempts": {}, "failed": {}, "not_attempted": {}, "stored": 0,
-                               "batches": [], "cache_guard": "skipped" if local else "active", "warm": warm,
+                               "batches": [], "cache_guard": "skipped" if local else ("skipped_by_flag" if skip_cache_guard else "active"),
+                               "warm": warm,
                                "latency_ms_first_calls": []}
     pcs = {pr.key: PairCosts(pr, tokenizer, pricing, hc, floor, warm) for pr in pairs}
     for pr in pairs:  # seluruh run ditolak lebih awal bila ada unit yang tak muat satu batch (tanpa request)
@@ -298,7 +317,7 @@ def run_compare(client: Any, pairs: Sequence[Pair], *, profile: str, prof: Mappi
                         headers_dir=store_dir, max_header_tokens=hc["max_header_tokens"],
                         max_output_tokens=hc["max_output_tokens"], max_consecutive_errors=hc["max_consecutive_errors"],
                         warm_max_output_tokens=hc["warm_max_output_tokens"], meta=meta_for(pr.p), warm=warm,
-                        cache_guard_calls=None if local else hc["cache_guard_calls"],
+                        cache_guard_calls=None if (local or skip_cache_guard) else hc["cache_guard_calls"],
                         cache_guard_min_ratio=hc["cache_guard_min_ratio"], max_length_chars=hc.get("schema_max_length_chars"),
                         warm_unit=warm_unit_for(uuid.uuid4().hex[:WARM_NONCE_LEN]), count_semantic_errors=False)
                 except BudgetExceeded:
@@ -352,6 +371,11 @@ def write_run_report(profile_root: Path, payload: Mapping[str, Any], now: dateti
 
 
 # ---------------------------------------------------------------- CLI
+def rpmlock_error() -> type[Exception]:
+    from backend.spark.rpmlock import RpmLockError
+    return RpmLockError
+
+
 def _hm(ms: int) -> str:
     return f"{ms // 3_600_000}h{ms % 3_600_000 // 60_000:02d}m"
 
@@ -376,7 +400,8 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
          probe: Callable[[str, str], tuple[bool, str]] | None = None, tokenizer: Any = None,
          prepare_fn: Callable[..., Any] | None = None, pid_alive: Callable[[int], bool] | None = None,
-         casefold: bool | None = None, main_extras: Mapping[str, Callable[[], Any]] | None = None) -> int:
+         casefold: bool | None = None, main_extras: Mapping[str, Callable[[], Any]] | None = None,
+         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.header_b.compare", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil pembanding di config/model dengan roles memuat 'b'")
     ap.add_argument("--family", choices=("uupt", "akta"), default="uupt")
@@ -386,7 +411,10 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     ap.add_argument("--sample", type=int, default=None, help="N unit pertama yang BELUM tersimpan per (dokumen, sumber)")
     ap.add_argument("--max-units", type=int, default=None, help="N unit pertama yang BELUM tersimpan di seluruh run (pilot)")
     ap.add_argument("--smoke-reuse", action="store_true", help="Glimmer: 5 panggilan lalu cek reuse prefiks (median 2..5 <= 60 dtk)")
-    ap.add_argument("--break-stale-lock", action="store_true", help="hapus kunci GPU kedaluwarsa (pid tak hidup) lalu lanjut")
+    ap.add_argument("--break-stale-lock", action="store_true", help="hapus kunci GPU/RPM kedaluwarsa (pid tak hidup) lalu lanjut")
+    ap.add_argument("--confirm-go", action="store_true", help="B Spark Open sapuan: go eksplisit L1 setelah proyeksi disetor (P15)")
+    ap.add_argument("--skip-cache-guard", action="store_true",
+                    help="H-108: lewati guard cache H-074 untuk SATU run sapuan (bukan --project-only, bukan non-sapuan)")
     a = ap.parse_args(argv)
     for name, v in (("--sample", a.sample), ("--max-units", a.max_units)):
         if v is not None and v < 1:
@@ -405,10 +433,25 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         hc = dict(header_config) if header_config is not None else load_header_cfg()
         check_forbidden_profile_keys(model_config)
         validate_compare_cfg(hc, model_config)
-        prof = comparison_profile(model_config, a.model_profile)
+        eff_model, sweep_cfg = sweep_run.resolve_profile(model_config, a.model_profile, sweep_config)  # S5(m): non-sapuan tak membaca
+        if sweep_cfg is not None:
+            sweep_run.validate_runner_cfg(sweep_cfg)
+        prof = comparison_profile(eff_model, a.model_profile)
+        if a.skip_cache_guard and (sweep_cfg is None or a.project_only):
+            print("error: --skip-cache-guard is valid only for a sweep profile run (not --project-only, not non-sweep)",
+                  file=sys.stderr)
+            return 2
+        if sweep_run.go_required(prof, project_only=a.project_only, confirm_go=a.confirm_go):
+            print(f"error: go_required: {a.model_profile} is held until the explicit go (--confirm-go); only --project-only "
+                  f"is allowed", file=sys.stderr)
+            return 2
         from backend.proposal.gate import load_gate_config
         gcfg = load_gate_config(budget_config)
-        gate_cfg = {"factor_bp": factor_bp_for(hc, a.model_profile, gcfg.factor_bp), "batch_cap_micros": gcfg.batch_cap_micros}
+        if sweep_cfg is not None:
+            fbp = sweep_run.factor_bp(hc, sweep_cfg, a.model_profile, gcfg.factor_bp)
+        else:
+            fbp = factor_bp_for(hc, a.model_profile, gcfg.factor_bp)
+        gate_cfg = {"factor_bp": fbp, "batch_cap_micros": gcfg.batch_cap_micros}
         from backend.spark.budget import effective_caps
         effective_caps(budget_config, env, model_config)  # plafon provider tidak sah = config_invalid sebelum jaringan
         store_dir = compare_store_dir(runs, a.model_profile, a.family, casefold=casefold)
@@ -445,11 +488,11 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
                               grid_cfg=_c.load("grid"), schema_record=rec)
         first = next(iter(next(iter(prepared.values())).values()))
         prompt = first.prompt
-        identity = build_identity(a.model_profile, prof, model_config, prompt_hash=prompt.prompt_hash,
+        identity = build_identity(a.model_profile, prof, eff_model, prompt_hash=prompt.prompt_hash,
                                   max_header_tokens=hc["max_header_tokens"], schema_max_length_chars=hc.get("schema_max_length_chars"))
         had_identity = check_identity(root, identity)
         pairs = select_pairs(prepared, store_dir, sample=a.sample, max_units=a.max_units)
-        pricing, floor = pricing_for(model_config, a.model_profile), floor_for(prof)
+        pricing, floor = pricing_for(eff_model, a.model_profile), floor_for(prof)
         pcs = {pr.key: PairCosts(pr, tokenizer, pricing, hc, floor, not local) for pr in pairs}
         plans = {pr.key: plan_batches(pr, pr.units, pcs[pr.key], batch_cap=gate_cfg["batch_cap_micros"],
                                       factor_bp=gate_cfg["factor_bp"]) for pr in pairs}
@@ -457,12 +500,27 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         print(f"error: {str(exc)[:300]}", file=sys.stderr)
         return 2
 
-    tparams = time_params_for(hc, a.model_profile) if local else None
+    if sweep_cfg is not None:
+        tparams = sweep_run.time_params(hc, sweep_cfg, a.model_profile) if local else None
+        attempts = sweep_run.max_attempts(hc, sweep_cfg, a.model_profile)
+        hc_time = {**hc, "max_output_tokens": sweep_run.out_tokens_for(hc, sweep_cfg, a.model_profile)}
+    else:
+        tparams = time_params_for(hc, a.model_profile) if local else None
+        attempts = max_attempts_for(hc, a.model_profile)
+        hc_time = hc
     out(f"profile={a.model_profile} provider={prof.get('provider')} model={prof.get('model')} "
         f"quantization={prof.get('quantization')} effort={identity['effort']} store={store_dir} "
-        f"identity={'ok' if had_identity else 'new'} max_attempts={max_attempts_for(hc, a.model_profile)}")
+        f"identity={'ok' if had_identity else 'new'} max_attempts={attempts}")
     for pr in pairs:
-        out("\n".join(_fmt_pair(pr, plans[pr.key], pcs[pr.key], pcs[pr.key].for_units(pr.units), local, tparams, hc)))
+        out("\n".join(_fmt_pair(pr, plans[pr.key], pcs[pr.key], pcs[pr.key].for_units(pr.units), local, tparams, hc_time)))
+        if sweep_cfg is not None:  # S15(e): proyeksi per (profil, effort, peran) sebelum belanja
+            c = pcs[pr.key].for_units(pr.units)
+            from backend.spark.budget import Ledger
+            from backend.spark.sweep import sweep_pool_cap
+            remaining = sweep_pool_cap(sweep_cfg) - Ledger(runs).spent_off_pin(model_cfg=model_config)
+            ub = batas_atas(c["expected"], c["upper_cached"], gate_cfg["factor_bp"], c["floored"])
+            out(f"    sweep projection: profile={a.model_profile} effort={identity['effort']} role={ROLE} calls={len(pr.units)} "
+                f"expected={c['expected']} upper_bound={ub} factor_bp={gate_cfg['factor_bp']} sweep_pool_remaining={remaining}")
     if a.project_only:
         return 0
     if not any(pr.units for pr in pairs):
@@ -475,13 +533,19 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     from backend.spark import SparkClient
     try:
         client = SparkClient(a.model_profile, model_config=model_config, budget_config=budget_config, env=env, runs_dir=runs,
-                             transport=transport)
-        gate = None if local else make_gate(prof["provider"], budget_config, model_config, env, runs)
+                             transport=transport, **({"sweep_config": sweep_cfg} if sweep_cfg is not None else {}))
+        gate = None if local else make_gate(prof["provider"], budget_config, model_config, env, runs,
+                                            **({"sweep_cfg": sweep_cfg} if sweep_cfg is not None else {}))
     except ConfigInvalid as exc:
         print(f"error: {str(exc)[:300]}", file=sys.stderr)
         return 2
     lock = None
+    rpm = None
     try:
+        if sweep_run.uses_model_api_lock(prof):  # P9/S18(d): runner sapuan Contributor serial, SEBELUM request apa pun
+            from backend.spark import rpmlock
+            rpm = rpmlock.acquire(runs, "sweep-b", break_stale=a.break_stale_lock,
+                                  **({"pid_alive": pid_alive_rpm} if pid_alive_rpm is not None else {}))
         if local:  # S16: kunci GPU diambil SEBELUM request apa pun ke 127.0.0.1 (juga sebelum cek ketersediaan model)
             lock = gpulock.acquire(runs, "glimmer-b", break_stale=a.break_stale_lock,
                                    **({"pid_alive": pid_alive} if pid_alive is not None else {}))
@@ -499,16 +563,33 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
                     "loader_rules_version": p.doc.loader_rules_version, "tokenizer": {"name": tok.info.name, "version": tok.info.version}}
 
         started = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-        summary = run_compare(client, pairs, profile=a.model_profile, prof=prof, model_cfg=model_config, hc=hc, gate_cfg=gate_cfg,
+        summary = run_compare(client, pairs, profile=a.model_profile, prof=prof, model_cfg=eff_model, hc=hc, gate_cfg=gate_cfg,
                               tokenizer=tokenizer, store_dir=store_dir, meta_for=meta_for,
-                              max_attempts=max_attempts_for(hc, a.model_profile), gate=gate, log=out)
+                              max_attempts=attempts, gate=gate, log=out, skip_cache_guard=a.skip_cache_guard)
         after = snapshot_main(runs, prompt.prompt_hash, extras=main_extras)
         report = {"profile": a.model_profile, "family": a.family, "sources": list(a.sources), "started_at": started,
                   "finished_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "identity": identity,
                   "coverage": coverage_of(pairs, store_dir), "main_identity": "unchanged",
                   "gpu_lock": ({"holder": lock.holder, "broke_stale": lock.broke_stale} if lock else None), **summary}
+        if a.skip_cache_guard:
+            report["cache_guard_override"] = {"flag": "--skip-cache-guard", "reason": "H-108"}
         if local:
-            report["reuse_confirmed"] = reuse_confirmed(summary["latency_ms_first_calls"])
+            if sweep_cfg is not None and tparams is not None and pairs and pairs[0].units:  # S16(d): aturan relatif
+                pr0 = pairs[0]
+                suf = pcs[pr0.key].suffix_tokens(pr0.units)[0]
+                saving = prefill_ms(pr0.p.prefix.tokens + suf, tparams) - prefill_ms(suf, tparams)
+                report["reuse_confirmed"] = sweep_run.reuse_confirmed_relative(summary["latency_ms_first_calls"], saving)
+            else:
+                report["reuse_confirmed"] = reuse_confirmed(summary["latency_ms_first_calls"])
+        if sweep_cfg is not None:  # S17(d): status per (profil, effort) + sisa pool
+            from backend.spark.budget import Ledger
+            from backend.spark.sweep import sweep_pool_cap
+            tot = sum(pr.total for pr in pairs)
+            done = sum(c["stored"] for c in report["coverage"].values())
+            rejected = summary["stopped"] == "gate_rejected"
+            report["sweep"] = {"profile": a.model_profile, "effort": identity["effort"],
+                               "status": sweep_run.sweep_status(done, tot, pool_rejected=rejected),
+                               "pool_remaining_micros": sweep_pool_cap(sweep_cfg) - Ledger(runs).spent_off_pin(model_cfg=model_config)}
         try:
             assert_main_identity(before, after)
         except CompareError as exc:
@@ -520,9 +601,14 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     except (gpulock.GpuLockError, ConfigInvalid, CompareError) as exc:
         print(f"error: {str(exc)[:300]}", file=sys.stderr)
         return 3
+    except rpmlock_error() as exc:
+        print(f"error: {str(exc)[:300]}", file=sys.stderr)
+        return 3
     finally:
         if lock is not None:
             lock.release()
+        if rpm is not None:
+            rpm.release()
     out(f"stored={summary['stored']} stopped={summary['stopped']} failed={ {k: len(v) for k, v in summary['failed'].items()} } "
         f"report={path}")
     return 0 if summary["stopped"] is None and not summary["failed"] else 1

@@ -1,0 +1,190 @@
+{
+ "attempts": {
+  "uupt-40-2007/fixed_size": 6,
+  "uupt-40-2007/structure_schema": 3
+ },
+ "batches": [
+  {
+   "batas_atas": 135613,
+   "called": 38,
+   "expected": 14323,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 25,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4274637,
+   "stopped": null,
+   "units": 38,
+   "upper_cached": 135613
+  },
+  {
+   "batas_atas": 51601,
+   "called": 13,
+   "expected": 8061,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 5,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 4301484,
+   "stopped": null,
+   "units": 13,
+   "upper_cached": 51601
+  },
+  {
+   "batas_atas": 34798,
+   "called": 8,
+   "expected": 6808,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 4307076,
+   "stopped": null,
+   "units": 8,
+   "upper_cached": 34798
+  },
+  {
+   "batas_atas": 34798,
+   "called": 8,
+   "expected": 6808,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 1,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 4315121,
+   "stopped": null,
+   "units": 8,
+   "upper_cached": 34798
+  },
+  {
+   "batas_atas": 31453,
+   "called": 7,
+   "expected": 6573,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 1,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 4320188,
+   "stopped": null,
+   "units": 7,
+   "upper_cached": 31453
+  },
+  {
+   "batas_atas": 28092,
+   "called": 6,
+   "expected": 6322,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 6,
+   "reasons": [],
+   "round": 6,
+   "spent_pool": 4323198,
+   "stopped": null,
+   "units": 6,
+   "upper_cached": 28092
+  },
+  {
+   "batas_atas": 1147394,
+   "called": 343,
+   "expected": 77554,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 325,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4325731,
+   "stopped": null,
+   "units": 343,
+   "upper_cached": 1147394
+  },
+  {
+   "batas_atas": 67811,
+   "called": 18,
+   "expected": 8721,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 13,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 4490299,
+   "stopped": null,
+   "units": 18,
+   "upper_cached": 67811
+  },
+  {
+   "batas_atas": 24549,
+   "called": 5,
+   "expected": 5889,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 5,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 4497518,
+   "stopped": null,
+   "units": 5,
+   "upper_cached": 24549
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "uupt-40-2007/fixed_size": {
+   "stored": 103,
+   "units": 103
+  },
+  "uupt-40-2007/pasal": {
+   "stored": 343,
+   "units": 343
+  },
+  "uupt-40-2007/structure_schema": {
+   "stored": 343,
+   "units": 343
+  }
+ },
+ "failed": {},
+ "family": "uupt",
+ "finished_at": "2026-10-29T03:49:24Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "high",
+  "max_header_tokens": 40,
+  "model": "muse-spark-1.3-contributor",
+  "profile": "sweep_meta_high",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "meta",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  10904,
+  19890,
+  16642,
+  14440,
+  9166
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_meta_high",
+ "sources": [
+  "pasal",
+  "fixed_size",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-29T02:09:41Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 381,
+ "sweep": {
+  "effort": "high",
+  "pool_remaining_micros": 70500640,
+  "profile": "sweep_meta_high",
+  "status": "complete"
+ },
+ "warm": true
+}

@@ -74,11 +74,11 @@ def test_spent_pool_partitions_the_ledger(tmp_path):
     f1(tmp_path)
     led, caps = Ledger(tmp_path), {"baseten": 20_000_000}
     assert led.spent() == 5_615_008
-    assert led.spent_pool("baseten", caps) == 5_053_267 and led.spent_pool("baseten", caps, "b") == 5_000_000
-    assert led.spent_pool("meta", caps) == 561_741 and led.spent_pool("openrouter", caps) == 561_741  # pool default
-    assert led.spent_pool("meta", caps, "b") == 526_265 and led.spent_pool("lmstudio_local", caps, "c") == 5_964
-    assert led.spent_pool("meta", {}) == led.spent() == 5_615_008  # tanpa tabel = satu pool
-    assert led.spent_pool("baseten", caps) + led.spent_pool("meta", caps) == led.spent()
+    assert led.spent_pool("baseten", caps, model_cfg=mcfg()) == 5_053_267 and led.spent_pool("baseten", caps, "b", model_cfg=mcfg()) == 5_000_000
+    assert led.spent_pool("meta", caps, model_cfg=mcfg()) == 561_741 and led.spent_pool("openrouter", caps, model_cfg=mcfg()) == 561_741  # pool default
+    assert led.spent_pool("meta", caps, "b", model_cfg=mcfg()) == 526_265 and led.spent_pool("lmstudio_local", caps, "c", model_cfg=mcfg()) == 5_964
+    assert led.spent_pool("meta", {}, model_cfg=mcfg()) == led.spent() == 5_615_008  # tanpa tabel = satu pool
+    assert led.spent_pool("baseten", caps, model_cfg=mcfg()) + led.spent_pool("meta", caps, model_cfg=mcfg()) == led.spent()
 
 
 # ---------------------------------------------------------------- S7 fungsi gerbang (P7)
@@ -132,7 +132,7 @@ def test_S9_pool_control_and_contributor_change(tmp_path):
     da0b0bf(tmp_path)
     led = Ledger(tmp_path)
     # (c) gerbang Baseten tidak menambahkan pool default (561.741)
-    assert led.spent_pool("baseten", caps) == 147_018
+    assert led.spent_pool("baseten", caps, model_cfg=mcfg()) == 147_018
     thr = cumulative_threshold_for("baseten", b, caps)
     assert evaluate_gate([0], 14_011_625, gcfg, upper_floor=1_988_375, threshold_micros=thr).ok
     assert 14_011_625 + 561_741 + 1_988_375 > thr  # jumlah salah akan menolak
@@ -142,8 +142,8 @@ def test_S9_pool_control_and_contributor_change(tmp_path):
     assert not r.ok and r.reasons == ("cumulative_over_threshold",)
     # (e) Contributor: ambang cumulative_cap x pct = 16M atas pool default 561.741; tanpa tabel kembali ke total 708.759
     assert cumulative_threshold_for("meta", b, caps) == 16_000_000
-    assert led.spent_pool("meta", caps) == 561_741
-    assert led.spent_pool("meta", {}) == led.spent() == 708_759
+    assert led.spent_pool("meta", caps, model_cfg=mcfg()) == 561_741
+    assert led.spent_pool("meta", {}, model_cfg=mcfg()) == led.spent() == 708_759
     assert 708_759 - 561_741 == 147_018
     # batas atas Contributor 37.869 pada pool default lolos; selisih 147.018 terukur pada spent yang dipakai
     assert evaluate_gate([200] * 100 + [4_120], 561_741, gcfg, threshold_micros=16_000_000).spent == 561_741
@@ -183,7 +183,7 @@ def test_S10b_contributor_role_cap_excludes_baseten(tmp_path):
 def test_S10c_baseten_spend_does_not_eat_contributor_total(tmp_path):
     r = rig(tmp_path, "meta_unit")
     f2(r.runs)
-    assert Ledger(r.runs).spent_pool("meta", {"baseten": 20_000_000}) == 1_990_000
+    assert Ledger(r.runs).spent_pool("meta", {"baseten": 20_000_000}, model_cfg=mcfg()) == 1_990_000
     assert proj(r, "measure", 10_000).verdict == "ok"
     p = proj(r, "measure", 10_001)
     assert p.verdict == "budget_exceeded" and "total cap 2000000" in p.reason and "(source: config)" in p.reason
@@ -193,7 +193,7 @@ def test_S10d_default_pool_full_does_not_block_baseten(tmp_path):
     r = rig(tmp_path, "bt_unit")
     f2(r.runs)
     synth(r.runs, "measure", "meta", 10_000)  # pool default penuh: 2.000.000
-    assert Ledger(r.runs).spent_pool("meta", {"baseten": 20_000_000}) == 2_000_000
+    assert Ledger(r.runs).spent_pool("meta", {"baseten": 20_000_000}, model_cfg=mcfg()) == 2_000_000
     assert proj(r, "c", 1_000_000).verdict == "ok"
     p = proj(r, "c", 1_000_001)
     assert p.verdict == "budget_exceeded" and "baseten" in p.reason
@@ -219,12 +219,12 @@ def test_S10e_env_lowers_default_pool_only(tmp_path):
 def test_S10f_chat_profile_skips_guard_and_cost_zero_changes_nothing(tmp_path):
     r = rig(tmp_path, "gl_unit")
     f1(r.runs)
-    before = Ledger(r.runs).spent_pool("lmstudio_local", {"baseten": 20_000_000})
+    before = Ledger(r.runs).spent_pool("lmstudio_local", {"baseten": 20_000_000}, model_cfg=mcfg())
     r.client._guard("b", 10**12)  # API_CHAT: dilewati, tidak melempar
     synth(r.runs, "c", "lmstudio_local", 0, run_id="syn-extra-zero")
     led = Ledger(r.runs)
-    assert led.spent_pool("lmstudio_local", {"baseten": 20_000_000}) == before == 561_741
-    assert led.spent_pool("baseten", {"baseten": 20_000_000}) == 5_053_267
+    assert led.spent_pool("lmstudio_local", {"baseten": 20_000_000}, model_cfg=mcfg()) == before == 561_741
+    assert led.spent_pool("baseten", {"baseten": 20_000_000}, model_cfg=mcfg()) == 5_053_267
 
 
 def test_S10g_projection_fields(tmp_path):
@@ -280,7 +280,7 @@ def test_S11g_no_table_is_legacy_single_pool(tmp_path):
     assert provider_caps(b) == {} and effective_caps(b, None).provider_micros == {}
     da0b0bf(tmp_path)
     led = Ledger(tmp_path)
-    assert led.spent() == 708_759 and led.spent_pool("baseten", {}) == 708_759 and 2_000_000 - 708_759 == 1_291_241
+    assert led.spent() == 708_759 and led.spent_pool("baseten", {}, model_cfg=mcfg()) == 708_759 and 2_000_000 - 708_759 == 1_291_241
     remaining = {"a": 398_079, "b": 473_735, "c": 440_769, "d": 228_658}
     for role, rem in remaining.items():
         r = rig(tmp_path / role, "bt_unit", budget=b)
@@ -349,9 +349,9 @@ def test_pool_limits_contributor_uses_default_pool_and_legacy_without_table(tmp_
     led = Ledger(tmp_path)
     with_t = effective_caps(bcfg(caps={"baseten": 20_000_000}), None)
     no_t = effective_caps(bcfg(version=1), None)
-    assert pool_limits(led, with_t, "meta", "b") == (526_265, 1_000_000, 561_741, 2_000_000)
-    assert pool_limits(led, no_t, "meta", "b") == (526_265, 1_000_000, 708_759, 2_000_000)  # tanpa tabel: total ledger
-    assert pool_limits(led, with_t, "baseten", "b") == (147_018, 20_000_000, 147_018, 20_000_000)
+    assert pool_limits(led, with_t, "meta", "b", model_cfg=mcfg()) == (526_265, 1_000_000, 561_741, 2_000_000)
+    assert pool_limits(led, no_t, "meta", "b", model_cfg=mcfg()) == (526_265, 1_000_000, 708_759, 2_000_000)  # tanpa tabel: total ledger
+    assert pool_limits(led, with_t, "baseten", "b", model_cfg=mcfg()) == (147_018, 20_000_000, 147_018, 20_000_000)
     m = mcfg()
     assert profile_provider(m, None) == "meta" and profile_provider(m, "bt_unit") == "baseten"
     assert profile_provider({}, None) == ""
@@ -372,8 +372,8 @@ def test_compare_a_gate_uses_pool_spend(tmp_path):
     da0b0bf(tmp_path)
     led = Ledger(tmp_path)
     pc = provider_caps(b)
-    assert _gate(b, [100], led.spent_pool("meta", pc)).spent == 561_741
-    assert _gate(b, [100], led.spent_pool("meta", {})).spent == 708_759
+    assert _gate(b, [100], led.spent_pool("meta", pc, model_cfg=mcfg())).spent == 561_741
+    assert _gate(b, [100], led.spent_pool("meta", {}, model_cfg=mcfg())).spent == 708_759
     assert _gate(b, [100], 0, threshold=1).ok is False
 
 

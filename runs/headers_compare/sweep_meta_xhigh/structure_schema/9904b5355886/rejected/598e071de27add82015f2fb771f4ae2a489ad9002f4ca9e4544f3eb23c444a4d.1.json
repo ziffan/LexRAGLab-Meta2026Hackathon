@@ -1,0 +1,11 @@
+{
+ "chunk_id": "598e071de27add82015f2fb771f4ae2a489ad9002f4ca9e4544f3eb23c444a4d",
+ "chunk_id_returned": "598e071de27add82015f2fb771f4ae2a489ad9002f4ca9e4544f3eb23c444a4d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b8a2bc0b68c2421a83a60a57cb10558a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Kesatu (Rencana Kerja): penyampaian dan persetujuan rencana kerja tahunan.",
+ "tokens_local": 42
+}

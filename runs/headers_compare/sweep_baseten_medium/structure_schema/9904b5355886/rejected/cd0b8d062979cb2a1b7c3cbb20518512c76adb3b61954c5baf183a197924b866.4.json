@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cd0b8d062979cb2a1b7c3cbb20518512c76adb3b61954c5baf183a197924b866",
+ "chunk_id_returned": "cd0b8d062979cb2a1b7c3cbb20518512c76adb3b61954c5baf183a197924b866",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "29546c24b64c4a69ad533baa825297d8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): pertanggungjawaban likuidator dan kurator serta pencatatan berakhirnya status badan hukum.",
+ "tokens_local": 42
+}

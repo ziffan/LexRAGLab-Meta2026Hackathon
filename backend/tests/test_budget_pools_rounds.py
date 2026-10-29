@@ -27,10 +27,10 @@ def _run(tmp_path, target_after_round1):
     def gate(expected, floor):
         calls.append(floor)
         if len(calls) == 2:  # sesudah ronde 1: genapkan belanja AKTUAL pool baseten ke target lewat RunRecord sintetis
-            cur = Ledger(rig.runs).spent_pool("baseten", {"baseten": 20_000_000})
+            cur = Ledger(rig.runs).spent_pool("baseten", {"baseten": 20_000_000}, model_cfg=rig.model)
             assert cur <= target_after_round1
             synth(rig.runs, "b", "baseten", target_after_round1 - cur, run_id=f"top-up-{target_after_round1}")
-            assert Ledger(rig.runs).spent_pool("baseten", {"baseten": 20_000_000}) == target_after_round1
+            assert Ledger(rig.runs).spent_pool("baseten", {"baseten": 20_000_000}, model_cfg=rig.model) == target_after_round1
         return real(expected, floor)
 
     s = go(rig, sized(4), d, tokenizer=SizedTok(), gate=gate, max_attempts=8)

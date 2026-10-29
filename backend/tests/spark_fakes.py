@@ -228,11 +228,11 @@ def scan_result(res: Any, with_k2: bool = False) -> list[str]:
     return scan_text(res.record.to_json() + repr(res.record) + str(res.record), with_k2)
 
 
-def synth(runs, role, provider, cost, *, status="ok", run_id=None, projected=None):
+def synth(runs, role, provider, cost, *, status="ok", run_id=None, projected=None, model="m", effort="low"):
     rid = run_id or f"syn-{role}-{provider}-{cost}-{status}"
     rec = RunRecord(run_id=rid, kind=kind_for_role(role), created_at=utc_iso(1000.0), cache_key="k", corpus_hash=None,
                     config_hash="CFG", clean_sha256=None, loader_rules_version=None, prompt_version=None,
-                    prompt_hash=None, model="m", effort="low", tokenizer=None, embedder=None, packing=None,
+                    prompt_hash=None, model=model, effort=effort, tokenizer=None, embedder=None, packing=None,
                     usage_input_tokens=None, usage_cached_tokens=None, usage_output_tokens=None,
                     cost_usd_micros=cost, projected_cost_usd_micros=projected, latency_ms=0, host="authoritative",
                     device="remote", provider=provider, quantization=None, status=status, error=None)

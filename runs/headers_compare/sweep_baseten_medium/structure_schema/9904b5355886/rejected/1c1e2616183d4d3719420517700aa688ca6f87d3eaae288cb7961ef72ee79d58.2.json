@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1c1e2616183d4d3719420517700aa688ca6f87d3eaae288cb7961ef72ee79d58",
+ "chunk_id_returned": "1c1e2616183d4d3719420517700aa688ca6f87d3eaae288cb7961ef72ee79d58",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c88044f246294abaa0949e3ec6e6ffd3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya), Penjelasan Pasal 153J: batas tanggung jawab pemegang saham Perseroan perorangan UMK.",
+ "tokens_local": 41
+}

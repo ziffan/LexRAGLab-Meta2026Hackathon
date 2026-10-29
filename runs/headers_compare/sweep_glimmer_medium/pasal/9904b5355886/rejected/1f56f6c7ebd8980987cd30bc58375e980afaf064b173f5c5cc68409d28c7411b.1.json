@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1f56f6c7ebd8980987cd30bc58375e980afaf064b173f5c5cc68409d28c7411b",
+ "chunk_id_returned": "1f56f6c7ebd8980987cd30bc58375e980afaf064b173f5c5cc68409d28c7411b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "a6443abbfba44470b27634d4651ff5f5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): berlakunya ketentuan Bab VIII bagi Perseroan Terbuka bila tidak diatur lain di pasar modal.",
+ "tokens_local": 42
+}

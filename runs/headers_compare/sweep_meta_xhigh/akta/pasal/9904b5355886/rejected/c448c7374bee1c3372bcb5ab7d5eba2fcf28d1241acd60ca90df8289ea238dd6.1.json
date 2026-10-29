@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c448c7374bee1c3372bcb5ab7d5eba2fcf28d1241acd60ca90df8289ea238dd6",
+ "chunk_id_returned": "c448c7374bee1c3372bcb5ab7d5eba2fcf28d1241acd60ca90df8289ea238dd6",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f3faf212fdb64972a2f53d56af24122d",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41, Batang Tubuh (Anggaran Dasar): identitas perseroan, modal saham, dan organ pengurus.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8bd5818c9b554bc1223273ca5d4399a6cc400a1ae37d92096f5308c8c1229097",
+ "chunk_id_returned": "8bd5818c9b554bc1223273ca5d4399a6cc400a1ae37d92096f5308c8c1229097",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "16bab42910624c4b820a5ab3dbf8ab87",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): wewenang persetujuan atau bantuan komisaris atas perbuatan direksi.",
+ "tokens_local": 44
+}

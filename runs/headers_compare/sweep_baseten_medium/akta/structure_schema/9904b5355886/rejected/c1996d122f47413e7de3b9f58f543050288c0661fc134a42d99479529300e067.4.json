@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c1996d122f47413e7de3b9f58f543050288c0661fc134a42d99479529300e067",
+ "chunk_id_returned": "c1996d122f47413e7de3b9f58f543050288c0661fc134a42d99479529300e067",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a2b58ca0f2f4437e9c456792a3d1197f",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra No.112, Pasal 11 (Dewan Komisaris): susunan, tugas pengawasan Direksi dan kewenangan pengurusan sementara.",
+ "tokens_local": 41
+}

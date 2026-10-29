@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cd1c6da36c3a41fc9ccbffdc399e1a909dedc4ff82f29d810aaee31a308c78a2",
+ "chunk_id_returned": "cd1c6da36c3a41fc9ccbffdc399e1a909dedc4ff82f29d810aaee31a308c78a2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "62b9406b35e74dd4a7ba49db0885aad6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.) Bagian Kedua Paragraf 2: keberlakuan tata cara permohonan pengesahan badan hukum untuk persetujuan perubahan anggaran dasar.",
+ "tokens_local": 47
+}

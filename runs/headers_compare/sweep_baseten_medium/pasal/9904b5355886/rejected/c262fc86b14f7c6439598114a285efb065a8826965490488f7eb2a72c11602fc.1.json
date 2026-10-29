@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c262fc86b14f7c6439598114a285efb065a8826965490488f7eb2a72c11602fc",
+ "chunk_id_returned": "c262fc86b14f7c6439598114a285efb065a8826965490488f7eb2a72c11602fc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "4fca7cbf990a4ce987aa8a4d8dad6c8e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kedua (Dewan Komisaris): Penjelasan Pasal 116 tentang kewajiban Dewan Komisaris terkait risalah dan pelaporan.",
+ "tokens_local": 49
+}

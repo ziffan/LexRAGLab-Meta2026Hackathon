@@ -1,0 +1,11 @@
+{
+ "chunk_id": "93934f720929151f67c9e90a7900bc4f1a8964c82ef06d57a84bd8cd911216c7",
+ "chunk_id_returned": "93934f720929151f67c9e90a7900bc4f1a8964c82ef06d57a84bd8cd911216c7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "3ebb1d4df5c649c18a87ba83ec86b9e3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Ketiga (Penambahan Modal): Penjelasan Pasal 43 tentang penawaran saham dalam penambahan modal.",
+ "tokens_local": 43
+}

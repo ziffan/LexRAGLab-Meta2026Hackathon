@@ -1,0 +1,322 @@
+{
+ "attempts": {
+  "uupt-40-2007/fixed_size": 8,
+  "uupt-40-2007/pasal": 4,
+  "uupt-40-2007/structure_schema": 4
+ },
+ "batches": [
+  {
+   "batas_atas": 1999778,
+   "called": 305,
+   "expected": 68918,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 287,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4544313,
+   "stopped": null,
+   "units": 305,
+   "upper_cached": 1999778
+  },
+  {
+   "batas_atas": 128376,
+   "called": 18,
+   "expected": 8486,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 18,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4727316,
+   "stopped": null,
+   "units": 18,
+   "upper_cached": 128376
+  },
+  {
+   "batas_atas": 128541,
+   "called": 18,
+   "expected": 8651,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 13,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 4736299,
+   "stopped": null,
+   "units": 18,
+   "upper_cached": 128541
+  },
+  {
+   "batas_atas": 43744,
+   "called": 5,
+   "expected": 5884,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 3,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 4746043,
+   "stopped": null,
+   "units": 5,
+   "upper_cached": 43744
+  },
+  {
+   "batas_atas": 24173,
+   "called": 2,
+   "expected": 5243,
+   "gate_ok": true,
+   "key": "uupt-40-2007/pasal",
+   "ok": 2,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 4748876,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 24173
+  },
+  {
+   "batas_atas": 686846,
+   "called": 103,
+   "expected": 30606,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 82,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4750475,
+   "stopped": null,
+   "units": 103,
+   "upper_cached": 686846
+  },
+  {
+   "batas_atas": 148899,
+   "called": 21,
+   "expected": 10079,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 12,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 4813881,
+   "stopped": null,
+   "units": 21,
+   "upper_cached": 148899
+  },
+  {
+   "batas_atas": 70173,
+   "called": 9,
+   "expected": 7073,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 3,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 4826889,
+   "stopped": null,
+   "units": 9,
+   "upper_cached": 70173
+  },
+  {
+   "batas_atas": 50492,
+   "called": 6,
+   "expected": 6322,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 3,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 4832414,
+   "stopped": null,
+   "units": 6,
+   "upper_cached": 50492
+  },
+  {
+   "batas_atas": 30810,
+   "called": 3,
+   "expected": 5570,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 1,
+   "reasons": [],
+   "round": 5,
+   "spent_pool": 4835517,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 30810
+  },
+  {
+   "batas_atas": 24250,
+   "called": 2,
+   "expected": 5320,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 6,
+   "spent_pool": 4837209,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 24250
+  },
+  {
+   "batas_atas": 24250,
+   "called": 2,
+   "expected": 5320,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 7,
+   "spent_pool": 4838742,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 24250
+  },
+  {
+   "batas_atas": 24250,
+   "called": 2,
+   "expected": 5320,
+   "gate_ok": true,
+   "key": "uupt-40-2007/fixed_size",
+   "ok": 0,
+   "reasons": [],
+   "round": 8,
+   "spent_pool": 4840200,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 24250
+  },
+  {
+   "batas_atas": 1994134,
+   "called": 304,
+   "expected": 69584,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 279,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 4841589,
+   "stopped": null,
+   "units": 304,
+   "upper_cached": 1994134
+  },
+  {
+   "batas_atas": 265190,
+   "called": 39,
+   "expected": 12790,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 39,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 5038921,
+   "stopped": null,
+   "units": 39,
+   "upper_cached": 265190
+  },
+  {
+   "batas_atas": 174260,
+   "called": 25,
+   "expected": 10200,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 17,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 5069452,
+   "stopped": null,
+   "units": 25,
+   "upper_cached": 174260
+  },
+  {
+   "batas_atas": 63331,
+   "called": 8,
+   "expected": 6541,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 5,
+   "reasons": [],
+   "round": 3,
+   "spent_pool": 5094391,
+   "stopped": null,
+   "units": 8,
+   "upper_cached": 63331
+  },
+  {
+   "batas_atas": 30717,
+   "called": 3,
+   "expected": 5477,
+   "gate_ok": true,
+   "key": "uupt-40-2007/structure_schema",
+   "ok": 3,
+   "reasons": [],
+   "round": 4,
+   "spent_pool": 5099680,
+   "stopped": null,
+   "units": 3,
+   "upper_cached": 30717
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "uupt-40-2007/fixed_size": {
+   "stored": 101,
+   "units": 103
+  },
+  "uupt-40-2007/pasal": {
+   "stored": 343,
+   "units": 343
+  },
+  "uupt-40-2007/structure_schema": {
+   "stored": 343,
+   "units": 343
+  }
+ },
+ "failed": {
+  "uupt-40-2007/fixed_size": [
+   "f210466fde565662acb36dd1b1b75d2985c06ff7aa5780db19b7e4477d972762",
+   "bdf33142089e493d1fbe1dc7cf705db02710acd9cb370a820eda8df25a7e0638"
+  ]
+ },
+ "family": "uupt",
+ "finished_at": "2026-10-29T08:47:24Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "xhigh",
+  "max_header_tokens": 40,
+  "model": "muse-spark-1.3-contributor",
+  "profile": "sweep_meta_xhigh",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "meta",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  20390,
+  28824,
+  24417,
+  16430,
+  20173
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_meta_xhigh",
+ "sources": [
+  "pasal",
+  "fixed_size",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-29T04:16:07Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 767,
+ "sweep": {
+  "effort": "xhigh",
+  "pool_remaining_micros": 69898749,
+  "profile": "sweep_meta_xhigh",
+  "status": "partial (787/789 unit)"
+ },
+ "warm": true
+}

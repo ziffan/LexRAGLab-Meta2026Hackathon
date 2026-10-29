@@ -1,0 +1,11 @@
+{
+ "chunk_id": "43f7d11fb2c057fca8c95a6e6cec46a23fdc24ffa130bd50ff76fad849055c5b",
+ "chunk_id_returned": "43f7d11fb2c057fca8c95a6e6cec46a23fdc24ffa130bd50ff76fad849055c5b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "2168268e9a4d4ae58285e9b388f0c72e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XIII-XIV (Peralihan dan Penutup), Penjelasan Pasal 157-161: penyesuaian anggaran dasar dan keberlakuan peraturan pelaksanaan serta pencabutan aturan lama",
+ "tokens_local": 49
+}

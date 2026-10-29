@@ -1,0 +1,11 @@
+{
+ "chunk_id": "15a5ea4ec08cbf6b16be5d622a220e8d307263be1071ee439ef039dbf6f82ab4",
+ "chunk_id_returned": "15a5ea4ec08cbf6b16be5d622a220e8d307263be1071ee439ef039dbf6f82ab4",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5e77a063fa3845ae81ec15a9903b03a0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): tanggung jawab Direksi atas pengurusan Perseroan dan gugatan terkait kerugian.",
+ "tokens_local": 45
+}

@@ -1,0 +1,154 @@
+{
+ "body": {
+  "default_chunk_level": 1,
+  "family": "akta",
+  "levels": [
+   {
+    "examples": [
+     "Pasal 1",
+     "Pasal 2",
+     "Pasal 3",
+     "Pasal 10",
+     "Pasal 14"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^Pasal \\d+",
+    "name": "pasal",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "(1) Maksud dan tujuan Perseroan ialah berusaha dalam bidang perdagangan, pengolahan hasil pertanian, dan jasa penunjang usaha.",
+     "(2) Untuk mencapai maksud dan tujuan tersebut, Perseroan dapat melaksanakan kegiatan usaha utama sebagai berikut:",
+     "(1) Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari seorang direktur utama dan seorang direktur.",
+     "(3) Selain kegiatan usaha utama, Perseroan dapat melaksanakan kegiatan usaha penunjang yang berhubungan langsung dengan kegiatan usaha utama, sepanjang tidak bertentangan dengan peraturan perundang-undangan yang berlaku."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^\\(\\d+\\)",
+    "name": "ayat",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "a. perdagangan besar hasil bumi, antara lain kopi, teh, kakao, rempah-rempah, dan umbi-umbian kering;",
+     "b. industri pengolahan dan pengemasan hasil pertanian menjadi produk setengah jadi maupun produk jadi;",
+     "c. pergudangan dan jasa penyimpanan barang milik pihak ketiga.",
+     "a. pelaksanaan konstruksi bangunan gedung hunian dan bangunan gedung non-hunian skala kecil dan menengah;",
+     "b. jasa konsultansi perencanaan, pengawasan, dan penilaian kelayakan teknis bangunan;"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^[a-z]\\.",
+    "name": "huruf",
+    "order": 3,
+    "parent_order": 2
+   }
+  ],
+  "notes": "Beberapa Pasal tidak menggunakan penomoran ayat dan langsung berupa paragraf, jumlah ayat dan butir huruf a-d bervariasi antar dokumen, serta bagian ANGGARAN DASAR, KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS, dan PENUTUP tidak memakai penanda Pasal tetapi memuat daftar berangka 1. dan bertanda -."
+ },
+ "cache_key": "f4a11f0a190f563b71c74f24b558da9f0f1dc8dc577f74f4115a0d93d5e307db",
+ "created_at": "2026-10-28T19:17:21Z",
+ "family": "akta",
+ "model_profile": "sweep_baseten_high",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "93659635cad34808b374eb75c55f6551",
+ "sample": [
+  {
+   "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+   "doc_id": "akta-01"
+  },
+  {
+   "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+   "doc_id": "akta-02"
+  },
+  {
+   "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+   "doc_id": "akta-03"
+  },
+  {
+   "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+   "doc_id": "akta-04"
+  },
+  {
+   "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+   "doc_id": "akta-05"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "Pasal 1",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "Pasal 2",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "Pasal 3",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "Pasal 10",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "Pasal 14",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "(1) Maksud dan tujuan Perseroan ialah berusaha dalam bidang perdagangan, pengolahan hasil pertanian, dan jasa penunjang usaha.",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "(2) Untuk mencapai maksud dan tujuan tersebut, Perseroan dapat melaksanakan kegiatan usaha utama sebagai berikut:",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "(1) Perseroan diurus dan dipimpin oleh Direksi yang terdiri dari seorang direktur utama dan seorang direktur.",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "(3) Selain kegiatan usaha utama, Perseroan dapat melaksanakan kegiatan usaha penunjang yang berhubungan langsung dengan kegiatan usaha utama, sepanjang tidak bertentangan dengan peraturan perundang-undangan yang berlaku.",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "a. perdagangan besar hasil bumi, antara lain kopi, teh, kakao, rempah-rempah, dan umbi-umbian kering;",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "b. industri pengolahan dan pengemasan hasil pertanian menjadi produk setengah jadi maupun produk jadi;",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "c. pergudangan dan jasa penyimpanan barang milik pihak ketiga.",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "a. pelaksanaan konstruksi bangunan gedung hunian dan bangunan gedung non-hunian skala kecil dan menengah;",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "b. jasa konsultansi perencanaan, pengawasan, dan penilaian kelayakan teknis bangunan;",
+   "matched": true,
+   "order": 3
+  }
+ ]
+}

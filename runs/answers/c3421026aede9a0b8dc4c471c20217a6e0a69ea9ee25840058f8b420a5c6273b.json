@@ -1,0 +1,26 @@
+{
+ "answer_id": "c3421026aede9a0b8dc4c471c20217a6e0a69ea9ee25840058f8b420a5c6273b",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "aa98aa63a13bfbb090337d57fb4c76ad69797e9a199fa8c4c7868ba65e42641b",
+  "31faf0848bb2f21f846b15b6f7d7f2715b5258edd97c1c9522113b2f1f41f070",
+  "ccb26e9a0623bedb30318eafd63d2cc010114a8c85f2af860102e3790119eb40",
+  "0c00735eab5d574838f529262f0089ee89f298ec04a5dc573b0ffa2b1c9c5d69",
+  "eaed91b7fbbd85c521dc2c5c6b36dbf024e8786717ab1b6520052712c0a3aff1",
+  "b041c369105f71632b7361284c90c801419b7e2e7f1c27d295610f53e8d427f2",
+  "6a81fcf0a9df09e2cbf5634804b5365dd696103b3c07e5b411e47020b4a8e71c",
+  "06b24998c31f73847345cfb9aeabf221c305eff4b46581da5d6b99b155fab489",
+  "5e5e5c3c5d2fa007cafc9b319d87d70a53db7012e67ba2b3475a1dc0036aee00"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-08",
+ "model_profile": "sweep_baseten_high",
+ "output": {
+  "jawaban": null,
+  "kutipan": [],
+  "status": "tolak"
+ },
+ "run_id": "0e97fb9884e543119443a1e09f65330a",
+ "setting_id": "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf",
+ "slot": "best"
+}

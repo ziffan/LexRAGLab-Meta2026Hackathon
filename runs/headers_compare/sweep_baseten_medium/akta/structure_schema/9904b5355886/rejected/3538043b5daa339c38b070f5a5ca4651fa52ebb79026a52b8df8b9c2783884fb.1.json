@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3538043b5daa339c38b070f5a5ca4651fa52ebb79026a52b8df8b9c2783884fb",
+ "chunk_id_returned": "3538043b5daa339c38b070f5a5ca4651fa52ebb79026a52b8df8b9c2783884fb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "4507ed05b10b46d7af759deb00f91256",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No. 63, Anggaran Dasar Pasal 2: kedudukan Perseroan di Medan dan pembukaan kantor cabang atau perwakilan.",
+ "tokens_local": 41
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a11f71f47081ce2549a9a9159266e4a3b09d12f75dcba30b7c1c0d9a70a28509",
+ "chunk_id_returned": "a11f71f47081ce2549a9a9159266e4a3b09d12f75dcba30b7c1c0d9a70a28509",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "aec8b32189d7447081b04555649303f3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): syarat modal ditempatkan dan disetor minimal 25% dari modal dasar.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "f2ee284c5f07867c442af333b76f1e3ea3c72c485bd8ca0dd63ad8bd806d7d6c",
+ "chunk_id_returned": "f2ee284c5f07867c442af333b76f1e3ea3c72c485bd8ca0dd63ad8bd806d7d6c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "dee3428415e94a5c8dcdc63fe9ae18c8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): penjelasan Pasal 142 tentang alasan pembubaran, kewajiban likuidasi, dan kedudukan likuidator.",
+ "tokens_local": 44
+}

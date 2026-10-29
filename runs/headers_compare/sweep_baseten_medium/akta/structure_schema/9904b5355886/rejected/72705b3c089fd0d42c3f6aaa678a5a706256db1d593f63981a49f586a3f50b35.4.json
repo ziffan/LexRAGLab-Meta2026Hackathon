@@ -1,0 +1,11 @@
+{
+ "chunk_id": "72705b3c089fd0d42c3f6aaa678a5a706256db1d593f63981a49f586a3f50b35",
+ "chunk_id_returned": "72705b3c089fd0d42c3f6aaa678a5a706256db1d593f63981a49f586a3f50b35",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c29226b9c8f846b399f040b79f775f37",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarr a No. 112, Anggaran Dasar Pasal 13: tahun buku, laporan tahunan, dan kewajiban pembukuan serta penyimpanan dokumen keuangan.",
+ "tokens_local": 42
+}

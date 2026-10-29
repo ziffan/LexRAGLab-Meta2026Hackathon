@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ff08286f53ede8aaafd21e2e7800568f9cb302ff3a8d853e10d16be098d2960a",
+ "chunk_id_returned": "ff08286f53ede8aaafd21e2e7800568f9cb302ff3a8d853e10d16be098d2960a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "af4fdbf5856548f3a246b098e8ae7866",
+ "text": "Akta Pendirian PT Sinar Wiyata Benttarra (Akta No. 112), Anggaran Dasar Pasal 9: kewenangan Direksi dalam pengurusan dan perwakilan Perseroan serta tindakan yang memerlukan persetujuan Dewan",
+ "tokens_local": 48
+}

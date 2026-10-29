@@ -1,0 +1,11 @@
+{
+ "chunk_id": "79bd4b8744ccc742e9e68caff6c1e1b3ddf307b8e72a6d95237dfa34bcd95c79",
+ "chunk_id_returned": "79bd4b8744ccc742e9e68caff6c1e1b3ddf307b8e72a6d95237dfa34bcd95c79",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "202de52c4c0a4b2fa3ead9516ba53b94",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): hak pemegang saham menggugat Perseroan di pengadilan negeri atas tindakan yang tidak adil.",
+ "tokens_local": 47
+}

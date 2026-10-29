@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7b62078b4f5c87e72d61694681a843b563a48aee6c3b588810311aab45f2bbfb",
+ "chunk_id_returned": "7b62078b4f5c87e72d61694681a843b563a48aee6c3b588810311aab45f2bbfb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "919225d8f2984bada10c7ce271038feb",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): pengecualian syarat minimal dua pendiri untuk Perseroan tertentu termasuk usaha mikro dan kecil.",
+ "tokens_local": 41
+}

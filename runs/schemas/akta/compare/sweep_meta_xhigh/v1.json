@@ -1,0 +1,151 @@
+{
+ "body": {
+  "default_chunk_level": 2,
+  "family": "akta",
+  "levels": [
+   {
+    "examples": [
+     "ANGGARAN DASAR",
+     "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS",
+     "PENUTUP"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^(ANGGARAN DASAR|KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS|PENUTUP)\\s*$",
+    "name": "bagian",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "Pasal 1",
+     "Pasal 10",
+     "Pasal 22"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^Pasal \\d+\\s*$",
+    "name": "pasal",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "(1) Maksud dan tujuan Perseroan ialah berusaha dalam bidang perdagangan, pengolahan hasil pertanian, dan jasa penunjang usaha.",
+     "(3) Anggota Direksi diangkat oleh Rapat Umum Pemegang Saham untuk masa jabatan 5 (lima) tahun, dengan tidak mengurangi hak Rapat Umum Pemegang Saham untuk memberhentikannya sewaktu-waktu, dan dapat diangkat kembali.",
+     "(2) Daftar pemegang saham memuat nama dan alamat pemegang saham, jumlah, nomor, dan tanggal perolehan saham, jumlah yang disetor, serta keterangan penyetoran dalam bentuk lain selain uang."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^\\(\\d+\\)\\s",
+    "name": "ayat",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "a. perdagangan besar hasil bumi, antara lain kopi, teh, kakao, rempah-rempah, dan umbi-umbian kering;",
+     "c. pengembangan dan pengelolaan unit properti yang disewakan;",
+     "d. jasa angkutan dan penyimpanan berpendingin."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^[a-z]\\.\\s",
+    "name": "huruf",
+    "order": 4,
+    "parent_order": 3
+   }
+  ],
+  "notes": "Daftar penghadap, saham, saksi, dan rincian perubahan memakai penomoran 1. di luar hierarki Pasal sehingga tidak dijadikan level. Jumlah Pasal bervariasi antar dokumen (14 sampai 25) dan tidak setiap Pasal memiliki ayat bernomor maupun rincian huruf."
+ },
+ "cache_key": "d535b287f1fd71dddaaa696360e88bc1e993d43ab07d6c13457c03cb6f1696b2",
+ "created_at": "2026-10-28T19:07:09Z",
+ "family": "akta",
+ "model_profile": "sweep_meta_xhigh",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "4627e2cf59e147d9adce7b0c3c1b9685",
+ "sample": [
+  {
+   "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+   "doc_id": "akta-01"
+  },
+  {
+   "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+   "doc_id": "akta-02"
+  },
+  {
+   "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+   "doc_id": "akta-03"
+  },
+  {
+   "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+   "doc_id": "akta-04"
+  },
+  {
+   "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+   "doc_id": "akta-05"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "ANGGARAN DASAR",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "PENUTUP",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "Pasal 1",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "Pasal 10",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "Pasal 22",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "(1) Maksud dan tujuan Perseroan ialah berusaha dalam bidang perdagangan, pengolahan hasil pertanian, dan jasa penunjang usaha.",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "(3) Anggota Direksi diangkat oleh Rapat Umum Pemegang Saham untuk masa jabatan 5 (lima) tahun, dengan tidak mengurangi hak Rapat Umum Pemegang Saham untuk memberhentikannya sewaktu-waktu, dan dapat diangkat kembali.",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "(2) Daftar pemegang saham memuat nama dan alamat pemegang saham, jumlah, nomor, dan tanggal perolehan saham, jumlah yang disetor, serta keterangan penyetoran dalam bentuk lain selain uang.",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "a. perdagangan besar hasil bumi, antara lain kopi, teh, kakao, rempah-rempah, dan umbi-umbian kering;",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "c. pengembangan dan pengelolaan unit properti yang disewakan;",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "d. jasa angkutan dan penyimpanan berpendingin.",
+   "matched": true,
+   "order": 4
+  }
+ ]
+}

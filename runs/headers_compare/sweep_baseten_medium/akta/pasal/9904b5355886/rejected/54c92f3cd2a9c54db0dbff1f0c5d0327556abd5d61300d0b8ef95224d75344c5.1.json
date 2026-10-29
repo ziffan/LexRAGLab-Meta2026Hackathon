@@ -1,0 +1,11 @@
+{
+ "chunk_id": "54c92f3cd2a9c54db0dbff1f0c5d0327556abd5d61300d0b8ef95224d75344c5",
+ "chunk_id_returned": "54c92f3cd2a9c54db0dbff1f0c5d0327556abd5d61300d0b8ef95224d75344c5",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "adcfce2bbeec438b93219784779c45ea",
+ "text": "Akta Pendirian PT Gumitir Selaras Perkasa No. 27, Batang Tubuh (Anggaran Dasar Pasal 1-14): pokok pengaturan nama, tujuan, modal, saham dan organ perseroan.",
+ "tokens_local": 47
+}

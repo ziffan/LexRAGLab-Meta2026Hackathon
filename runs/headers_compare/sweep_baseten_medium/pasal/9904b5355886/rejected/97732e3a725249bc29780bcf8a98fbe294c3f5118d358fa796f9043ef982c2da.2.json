@@ -1,0 +1,11 @@
+{
+ "chunk_id": "97732e3a725249bc29780bcf8a98fbe294c3f5118d358fa796f9043ef982c2da",
+ "chunk_id_returned": "97732e3a725249bc29780bcf8a98fbe294c3f5118d358fa796f9043ef982c2da",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "33ef1b71100b45dc94a4e612b3b22a21",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham): penyelenggaraan RUPS atas permintaan pemegang saham atau Dewan Komisaris dan tata cara pemanggilannya.",
+ "tokens_local": 43
+}

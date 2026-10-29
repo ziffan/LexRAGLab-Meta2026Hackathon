@@ -1,0 +1,79 @@
+{
+ "attempts": {
+  "uupt-40-2007/pasal": 2
+ },
+ "batches": [
+  {
+   "called": 5,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 4,
+   "round": 1,
+   "stopped": null,
+   "units": 5,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "uupt-40-2007/pasal",
+   "ok": 1,
+   "round": 2,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  }
+ ],
+ "cache_guard": "skipped",
+ "coverage": {
+  "uupt-40-2007/pasal": {
+   "stored": 5,
+   "units": 343
+  }
+ },
+ "failed": {},
+ "family": "uupt",
+ "finished_at": "2026-10-29T11:07:33Z",
+ "gpu_lock": {
+  "broke_stale": null,
+  "holder": "glimmer-b"
+ },
+ "identity": {
+  "effort": "low",
+  "max_header_tokens": 40,
+  "model": "meta/muse-glimmer",
+  "profile": "sweep_glimmer_low",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "lmstudio_local",
+  "quantization": "Q4_K_M",
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  36215,
+  13845,
+  10795,
+  10545,
+  12556
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_glimmer_low",
+ "reuse_confirmed": false,
+ "sources": [
+  "pasal"
+ ],
+ "started_at": "2026-10-29T11:05:58Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 5,
+ "sweep": {
+  "effort": "low",
+  "pool_remaining_micros": 56048895,
+  "profile": "sweep_glimmer_low",
+  "status": "partial (5/343 unit)"
+ },
+ "warm": false
+}

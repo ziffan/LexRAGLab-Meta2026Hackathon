@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3d9739ce5738737168cb3af4e1637b56e6e54c409b8ec18103732d2561eafc84",
+ "chunk_id_returned": "3d9739ce5738737168cb3af4e1637b56e6e54c409b8ec18103732d2561eafc84",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9ca9a546579f4f129c9df22ae8ece7cc",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Penjelasan Pasal 20: persyaratan persetujuan kurator untuk perubahan anggaran dasar pada Perseroan pailit.",
+ "tokens_local": 45
+}

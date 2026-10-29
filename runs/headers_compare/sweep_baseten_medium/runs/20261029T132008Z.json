@@ -1,0 +1,152 @@
+{
+ "attempts": {
+  "akta-01/pasal": 2,
+  "akta-01/structure_schema": 1
+ },
+ "batches": [
+  {
+   "batas_atas": 78449,
+   "called": 1,
+   "expected": 14274,
+   "gate_ok": true,
+   "key": "akta-01/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 31669170,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 78449
+  },
+  {
+   "batas_atas": 78449,
+   "called": 1,
+   "expected": 14274,
+   "gate_ok": true,
+   "key": "akta-01/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 31690187,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 78449
+  },
+  {
+   "batas_atas": 669416,
+   "called": 11,
+   "expected": 59751,
+   "gate_ok": true,
+   "key": "akta-01/structure_schema",
+   "ok": 10,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 31703226,
+   "stopped": "cache_ratio_low",
+   "units": 18,
+   "upper_cached": 669416
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "akta-01/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-01/structure_schema": {
+   "stored": 10,
+   "units": 18
+  },
+  "akta-02/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-02/structure_schema": {
+   "stored": 0,
+   "units": 21
+  },
+  "akta-03/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-03/structure_schema": {
+   "stored": 0,
+   "units": 24
+  },
+  "akta-04/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-04/structure_schema": {
+   "stored": 0,
+   "units": 26
+  },
+  "akta-05/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-05/structure_schema": {
+   "stored": 0,
+   "units": 29
+  }
+ },
+ "failed": {
+  "akta-01/structure_schema": [
+   "12296424a3658bcb0f153fb358484229b38f93fa41b7ca4d147928f7ee199d6b"
+  ]
+ },
+ "family": "akta",
+ "finished_at": "2026-10-29T13:20:07Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "medium",
+  "max_header_tokens": 40,
+  "model": "meta-models/muse-spark-open-1026",
+  "profile": "sweep_baseten_medium",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "baseten",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  4502
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {
+  "akta-01/structure_schema": [
+   "3233aca6c9c335b40df9e923d38b06733b6ac8cde66985956fad23b01f8c5977",
+   "04dd8bd1cbab9bfe919bc381179c7d37fb7094060ac15dec0a9a3e31982cb323",
+   "e5c646731882cb0d9059460ff5479785ea976bacc61e83b503ce6dab8ee52df6",
+   "6d14b5176b97f5c52c308730ed6f810d22efe6ae3757aad0aeee35f950063916",
+   "c4551e9e1742a9d24636d51dc92cc13b6baf79a49ffa0ffd83cd1c64c2b2417a",
+   "fa92f87770419f07952c7c44765e294ab356c51a4dc51c2eabbb7bc0825b8d53",
+   "5eda672b7e496b928e153abc955059043e2e872b4f6e92b8e6325e83932f82eb"
+  ]
+ },
+ "pairs_not_started": [
+  "akta-02/pasal",
+  "akta-02/structure_schema",
+  "akta-03/pasal",
+  "akta-03/structure_schema",
+  "akta-04/pasal",
+  "akta-04/structure_schema",
+  "akta-05/pasal",
+  "akta-05/structure_schema"
+ ],
+ "profile": "sweep_baseten_medium",
+ "sources": [
+  "pasal",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-29T13:18:44Z",
+ "stopped": "cache_ratio_low",
+ "stopped_at": "akta-01/structure_schema",
+ "stored": 11,
+ "sweep": {
+  "effort": "medium",
+  "pool_remaining_micros": 43231645,
+  "profile": "sweep_baseten_medium",
+  "status": "partial (11/123 unit)"
+ },
+ "warm": true
+}

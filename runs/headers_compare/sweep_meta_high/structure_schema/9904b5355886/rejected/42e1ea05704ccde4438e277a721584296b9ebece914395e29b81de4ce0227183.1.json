@@ -1,0 +1,11 @@
+{
+ "chunk_id": "42e1ea05704ccde4438e277a721584296b9ebece914395e29b81de4ce0227183",
+ "chunk_id_returned": "42e1ea05704ccde4438e277a721584296b9ebece914395e29b81de4ce0227183",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f2d848d2738b452794060d78566f2888",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): Penjelasan Pasal 10 tentang permohonan pengesahan badan hukum.",
+ "tokens_local": 41
+}

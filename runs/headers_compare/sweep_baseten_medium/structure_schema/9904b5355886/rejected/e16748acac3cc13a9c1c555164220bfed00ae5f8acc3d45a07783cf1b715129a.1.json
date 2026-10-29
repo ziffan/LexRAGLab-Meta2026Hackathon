@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e16748acac3cc13a9c1c555164220bfed00ae5f8acc3d45a07783cf1b715129a",
+ "chunk_id_returned": "e16748acac3cc13a9c1c555164220bfed00ae5f8acc3d45a07783cf1b715129a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "eeeb54cdde484a9b831146e99c27d2bd",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Ketiga (Daftar Perseroan): penyelenggaraan dan isi Daftar Perseroan oleh Menteri.",
+ "tokens_local": 41
+}

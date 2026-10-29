@@ -1,0 +1,11 @@
+{
+ "chunk_id": "12eccc37ea5ef2f6399392bb3d5cf641bd603745941982e93d88b8912163de4b",
+ "chunk_id_returned": "12eccc37ea5ef2f6399392bb3d5cf641bd603745941982e93d88b8912163de4b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "1e30fb6e95d9448ab4edc9cd2a3f7948",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): penanganan tagihan kreditor setelah likuidasi dan pertanggungjawaban likuidator/kurator.",
+ "tokens_local": 42
+}

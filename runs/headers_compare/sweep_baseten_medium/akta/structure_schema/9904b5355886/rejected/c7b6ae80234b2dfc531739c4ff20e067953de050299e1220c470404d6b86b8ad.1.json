@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c7b6ae80234b2dfc531739c4ff20e067953de050299e1220c470404d6b86b8ad",
+ "chunk_id_returned": "c7b6ae80234b2dfc531739c4ff20e067953de050299e1220c470404d6b86b8ad",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "2b748a87cef5434492ab475178e6de98",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8 (19 Feb 2026), Pasal 11: batas kewenangan Direksi terkait pengalihan aset dan pinjaman.",
+ "tokens_local": 41
+}

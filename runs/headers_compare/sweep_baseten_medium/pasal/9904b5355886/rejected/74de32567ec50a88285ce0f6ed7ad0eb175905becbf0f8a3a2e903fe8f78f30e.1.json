@@ -1,0 +1,11 @@
+{
+ "chunk_id": "74de32567ec50a88285ce0f6ed7ad0eb175905becbf0f8a3a2e903fe8f78f30e",
+ "chunk_id_returned": "74de32567ec50a88285ce0f6ed7ad0eb175905becbf0f8a3a2e903fe8f78f30e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "eb4fe8427686478fb83fe3025c7dcb4c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Laporan Tahunan: persetujuan RUPS atas laporan tahunan dan pertanggungjawaban terkait.",
+ "tokens_local": 43
+}

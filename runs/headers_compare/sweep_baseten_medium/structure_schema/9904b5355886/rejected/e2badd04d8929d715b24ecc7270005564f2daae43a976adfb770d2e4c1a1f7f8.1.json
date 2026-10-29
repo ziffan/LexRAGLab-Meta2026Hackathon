@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e2badd04d8929d715b24ecc7270005564f2daae43a976adfb770d2e4c1a1f7f8",
+ "chunk_id_returned": "e2badd04d8929d715b24ecc7270005564f2daae43a976adfb770d2e4c1a1f7f8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "fe31393b7a844f7c99b1a9080e915ad8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): kewajiban memperhatikan kepentingan perseroan, pemegang saham minoritas, karyawan, kreditor, dan persaingan sehat.",
+ "tokens_local": 44
+}

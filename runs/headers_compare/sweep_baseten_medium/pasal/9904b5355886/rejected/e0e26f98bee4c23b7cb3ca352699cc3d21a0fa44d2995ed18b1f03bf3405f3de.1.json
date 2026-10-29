@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e0e26f98bee4c23b7cb3ca352699cc3d21a0fa44d2995ed18b1f03bf3405f3de",
+ "chunk_id_returned": "e0e26f98bee4c23b7cb3ca352699cc3d21a0fa44d2995ed18b1f03bf3405f3de",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "2db62c8e31f24534a7b39c3ca583e3c9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Penjelasan Pasal 35: kompensasi tagihan sebagai setoran saham dan peran persetujuan RUPS.",
+ "tokens_local": 43
+}

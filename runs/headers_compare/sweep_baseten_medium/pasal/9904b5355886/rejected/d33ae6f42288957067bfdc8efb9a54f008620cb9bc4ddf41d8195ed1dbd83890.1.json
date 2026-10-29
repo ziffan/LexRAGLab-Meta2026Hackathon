@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d33ae6f42288957067bfdc8efb9a54f008620cb9bc4ddf41d8195ed1dbd83890",
+ "chunk_id_returned": "d33ae6f42288957067bfdc8efb9a54f008620cb9bc4ddf41d8195ed1dbd83890",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "b2ec440f829140758ec282446678461c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IX (Pemeriksaan Terhadap Perseroan): tujuan, pihak pemohon, dan syarat pengajuan pemeriksaan Perseroan ke pengadilan.",
+ "tokens_local": 42
+}

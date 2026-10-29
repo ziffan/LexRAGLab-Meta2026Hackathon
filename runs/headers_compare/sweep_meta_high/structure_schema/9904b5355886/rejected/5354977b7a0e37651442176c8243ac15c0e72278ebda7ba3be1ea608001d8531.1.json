@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5354977b7a0e37651442176c8243ac15c0e72278ebda7ba3be1ea608001d8531",
+ "chunk_id_returned": "5354977b7a0e37651442176c8243ac15c0e72278ebda7ba3be1ea608001d8531",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9c03455d960f4d3d84fb6d00fe953c0d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (RUPS): kuorum dan persetujuan RUPS untuk penggabungan, peleburan, dan pembubaran.",
+ "tokens_local": 41
+}

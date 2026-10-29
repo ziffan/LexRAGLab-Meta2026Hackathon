@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6ec9f9cc919055d1debf5d2148e71ac07a12ea0153b737368fab3ac1afe30e85",
+ "chunk_id_returned": "6ec9f9cc919055d1debf5d2148e71ac07a12ea0153b737368fab3ac1afe30e85",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "9e25b5c9ed754224bdcb2b1559963b3e",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima, Batang Tubuh (Anggaran Dasar): nama, kedudukan, modal, saham, dan pengurusan perseroan.",
+ "tokens_local": 41
+}

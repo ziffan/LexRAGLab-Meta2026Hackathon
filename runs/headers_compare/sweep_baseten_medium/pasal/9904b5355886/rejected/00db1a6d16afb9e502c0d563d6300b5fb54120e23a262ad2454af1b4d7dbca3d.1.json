@@ -1,0 +1,11 @@
+{
+ "chunk_id": "00db1a6d16afb9e502c0d563d6300b5fb54120e23a262ad2454af1b4d7dbca3d",
+ "chunk_id_returned": "00db1a6d16afb9e502c0d563d6300b5fb54120e23a262ad2454af1b4d7dbca3d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "551497075aa1465b8163f29d60ab9382",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): pembatasan wewenang Direksi mewakili Perseroan saat berbenturan kepentingan dan pihak penggg.",
+ "tokens_local": 50
+}

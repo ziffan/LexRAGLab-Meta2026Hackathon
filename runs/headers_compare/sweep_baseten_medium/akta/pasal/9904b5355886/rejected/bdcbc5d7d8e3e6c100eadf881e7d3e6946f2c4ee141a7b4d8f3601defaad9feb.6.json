@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bdcbc5d7d8e3e6c100eadf881e7d3e6946f2c4ee141a7b4d8f3601defaad9feb",
+ "chunk_id_returned": "bdcbc5d7d8e3e6c100eadf881e7d3e6946f2c4ee141a7b4d8f3601defaad9feb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "30061622dc4048d1abc930d9b9feb7f4",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada, Anggaran Dasar (Batang Tubuh): ketentuan dasar perseroan mengenai identitas, kegiatan usaha, permodalan dan organ perseroan.",
+ "tokens_local": 42
+}

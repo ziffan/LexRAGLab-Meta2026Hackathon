@@ -1,0 +1,11 @@
+{
+ "chunk_id": "06b24998c31f73847345cfb9aeabf221c305eff4b46581da5d6b99b155fab489",
+ "chunk_id_returned": "06b24998c31f73847345cfb9aeabf221c305eff4b46581da5d6b99b155fab489",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "3090c02a4c4142fe838eaaa7e6124a4c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kesatu (Modal): kewajiban modal dasar, penetapan oleh pendiri, dan pengaturan lanjutan dengan PP.",
+ "tokens_local": 44
+}

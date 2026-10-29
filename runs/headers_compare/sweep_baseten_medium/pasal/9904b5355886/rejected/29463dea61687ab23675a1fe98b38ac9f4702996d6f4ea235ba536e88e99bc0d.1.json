@@ -1,0 +1,11 @@
+{
+ "chunk_id": "29463dea61687ab23675a1fe98b38ac9f4702996d6f4ea235ba536e88e99bc0d",
+ "chunk_id_returned": "29463dea61687ab23675a1fe98b38ac9f4702996d6f4ea235ba536e88e99bc0d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "f9aca988710b493180f6f3ab56eb9750",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi) Penjelasan Pasal 99: kewenangan mewakili Perseroan saat Direksi berbenturan kepentingan.",
+ "tokens_local": 50
+}

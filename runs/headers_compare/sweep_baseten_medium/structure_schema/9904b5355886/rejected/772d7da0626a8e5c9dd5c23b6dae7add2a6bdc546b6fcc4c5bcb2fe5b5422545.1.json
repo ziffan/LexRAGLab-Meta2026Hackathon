@@ -1,0 +1,11 @@
+{
+ "chunk_id": "772d7da0626a8e5c9dd5c23b6dae7add2a6bdc546b6fcc4c5bcb2fe5b5422545",
+ "chunk_id_returned": "772d7da0626a8e5c9dd5c23b6dae7add2a6bdc546b6fcc4c5bcb2fe5b5422545",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f0ec3815b60b4c5f9600006a8d03552c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kedua (Perlindungan Modal dkk.): penyerahan wewenang RUPS kepada Dewan Komisaris untuk pelaksanaan keputusan pembelian kemb",
+ "tokens_local": 46
+}

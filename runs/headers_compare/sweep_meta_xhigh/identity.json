@@ -1,0 +1,10 @@
+{
+ "effort": "xhigh",
+ "max_header_tokens": 40,
+ "model": "muse-spark-1.3-contributor",
+ "profile": "sweep_meta_xhigh",
+ "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+ "provider": "meta",
+ "quantization": null,
+ "schema_max_length_chars": 190
+}

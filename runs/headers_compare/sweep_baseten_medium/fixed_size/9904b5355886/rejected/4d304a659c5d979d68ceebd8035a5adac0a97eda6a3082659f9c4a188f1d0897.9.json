@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4d304a659c5d979d68ceebd8035a5adac0a97eda6a3082659f9c4a188f1d0897",
+ "chunk_id_returned": "4d304a659c5d979d68ceebd8035a5adac0a97eda6a3082659f9c4a188f1d0897",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "4f6a806470684057b4109afeb31cb625",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): tata cara pengesahan badan hukum dan pengikatan perbuatan hukum pendiri pra-pendirian.",
+ "tokens_local": 41
+}

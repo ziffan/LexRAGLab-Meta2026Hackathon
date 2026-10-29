@@ -1,0 +1,11 @@
+{
+ "chunk_id": "eebd873a21e33c3648e0b936684d8beb9490784fab5ae36a0769e6158b564636",
+ "chunk_id_returned": "eebd873a21e33c3648e0b936684d8beb9490784fab5ae36a0769e6158b564636",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "d4da82d4795548728bdacc1ed917b483",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): kewajiban persetujuan RUPS untuk pengalihan atau penjaminan kekayaan melebihi 50% kekayaan.",
+ "tokens_local": 54
+}

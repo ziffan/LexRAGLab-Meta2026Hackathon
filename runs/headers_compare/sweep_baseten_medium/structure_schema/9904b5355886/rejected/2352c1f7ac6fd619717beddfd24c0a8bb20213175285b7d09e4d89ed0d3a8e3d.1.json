@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2352c1f7ac6fd619717beddfd24c0a8bb20213175285b7d09e4d89ed0d3a8e3d",
+ "chunk_id_returned": "2352c1f7ac6fd619717beddfd24c0a8bb20213175285b7d09e4d89ed0d3a8e3d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a0528f7fbfe04766a4a12cf23be0aaf4",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): pengusulan pembubaran Perseroan kepada RUPS dan saat mulai berlakunya pembubaran.",
+ "tokens_local": 44
+}

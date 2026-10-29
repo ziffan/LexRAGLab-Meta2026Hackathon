@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bcec5f2e7b036ca3f261e7afec42ce131c5b31896058a2696eafd7148252364f",
+ "chunk_id_returned": "bcec5f2e7b036ca3f261e7afec42ce131c5b31896058a2696eafd7148252364f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "03c6ed4bb2c544c4ac84d394abb55ee2",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): penjelasan istilah terkait pembatalan pengangkatan anggota Dewan Komisaris.",
+ "tokens_local": 44
+}

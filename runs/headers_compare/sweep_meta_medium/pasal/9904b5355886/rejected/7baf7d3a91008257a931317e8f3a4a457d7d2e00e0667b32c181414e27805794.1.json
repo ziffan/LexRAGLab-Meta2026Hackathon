@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7baf7d3a91008257a931317e8f3a4a457d7d2e00e0667b32c181414e27805794",
+ "chunk_id_returned": "7baf7d3a91008257a931317e8f3a4a457d7d2e00e0667b32c181414e27805794",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "cf878e6152cb4aa393ba7076e9401cea",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham): hak pemilik saham dalam RUPS, dividen, dan likuidasi.",
+ "tokens_local": 43
+}

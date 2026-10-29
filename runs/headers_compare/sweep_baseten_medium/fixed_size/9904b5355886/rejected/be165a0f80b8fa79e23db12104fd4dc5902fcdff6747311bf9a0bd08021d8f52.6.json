@@ -1,0 +1,11 @@
+{
+ "chunk_id": "be165a0f80b8fa79e23db12104fd4dc5902fcdff6747311bf9a0bd08021d8f52",
+ "chunk_id_returned": "be165a0f80b8fa79e23db12104fd4dc5902fcdff6747311bf9a0bd08021d8f52",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "d3d138e893494361b055a85be5a1687f",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kesatu (Direksi): kewenangan mewakili Perseroan, benturan kepentingan, dan kewajiban pencatatan Direksi.",
+ "tokens_local": 41
+}

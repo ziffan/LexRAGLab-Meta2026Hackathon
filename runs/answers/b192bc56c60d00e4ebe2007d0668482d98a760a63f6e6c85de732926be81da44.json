@@ -1,0 +1,20 @@
+{
+ "answer_id": "b192bc56c60d00e4ebe2007d0668482d98a760a63f6e6c85de732926be81da44",
+ "budget_tokens": 2000,
+ "context_chunk_ids": [
+  "9858d2b37c3484b50a328b54614dd3fd44140bfdd18f57a9e69861f0cb9845e3",
+  "e5ed661f9f14095047e6d40f9ee75bfb2711ea88e1418b639e7fff630ed34fc9",
+  "d2ad883d64daafaa4050caaa79c661fa424b43a845ebc9cee07ca1d4892ed666"
+ ],
+ "flags": [],
+ "item_id": "kontrol-K-09",
+ "model_profile": "sweep_baseten_xhigh",
+ "output": {
+  "jawaban": "Konteks yang diberikan tidak memuat ketentuan mengenai kepada siapa Direksi dapat memberikan kuasa tertulis.",
+  "kutipan": [],
+  "status": "bukti_tidak_cukup"
+ },
+ "run_id": "8457f36a43a24e4eaf45aaa9cbeaada0",
+ "setting_id": "ed489a1ecd8390a091ee91a721945211980eecee2b362e236a486a615c6e7c7d",
+ "slot": "baseline"
+}

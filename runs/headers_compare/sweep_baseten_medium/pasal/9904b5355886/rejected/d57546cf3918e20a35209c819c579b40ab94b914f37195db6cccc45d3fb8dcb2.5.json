@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d57546cf3918e20a35209c819c579b40ab94b914f37195db6cccc45d3fb8dcb2",
+ "chunk_id_returned": "d57546cf3918e20a35209c819c579b40ab94b914f37195db6cccc45d3fb8dcb2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "0a448d5dc9a74c4a8e269f82e238e5df",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.), Penjelasan Pasal 143: keberlangsungan status badan hukum Perseroan dalam likuidasi dan kaitan dengan kepailitan.",
+ "tokens_local": 49
+}

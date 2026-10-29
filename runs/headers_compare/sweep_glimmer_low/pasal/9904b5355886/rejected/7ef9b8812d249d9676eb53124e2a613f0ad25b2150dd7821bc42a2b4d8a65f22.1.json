@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7ef9b8812d249d9676eb53124e2a613f0ad25b2150dd7821bc42a2b4d8a65f22",
+ "chunk_id_returned": "7ef9b8812d249d9676eb53124e2a613f0ad25b2150dd7821bc42a2b4d8a65f22",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "96a0c39b30ef40418c7895752e7d87d6",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya): Penjelasan Pasal 153C tentang pemberitahuan perubahan pernyataan pendirian Perseroan usaha mikro dan kecil.",
+ "tokens_local": 41
+}

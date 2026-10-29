@@ -1,0 +1,11 @@
+{
+ "chunk_id": "5e206ed6f709e782f8e37dd7627c9df520de54dd6a88c6cfef680978ea91abcd",
+ "chunk_id_returned": "5e206ed6f709e782f8e37dd7627c9df520de54dd6a88c6cfef680978ea91abcd",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "9a1fe82d33fb42fda7278dfbe5a210ad",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): tata cara pengangkatan, penggantian, dan pemberhentian anggota Dewan Komisaris.",
+ "tokens_local": 43
+}

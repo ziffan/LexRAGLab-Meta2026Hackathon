@@ -1,0 +1,11 @@
+{
+ "chunk_id": "394f5b1a82e0ba30eb07aedd245265881029976d3cbb12acfbc3e604f7c62014",
+ "chunk_id_returned": "394f5b1a82e0ba30eb07aedd245265881029976d3cbb12acfbc3e604f7c62014",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "282ea60aa0d94ce5aeae9c96cff08937",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): ketentuan proporsi modal ditempatkan dan disetor serta kewajiban penyetoran penuh saham baru.",
+ "tokens_local": 46
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7500997ddc8f5b4d62d4d14c8c5b333dde1867929221e75fb6c14ff6dc8c19ca",
+ "chunk_id_returned": "7500997ddc8f5b4d62d4d14c8c5b333dde1867929221e75fb6c14ff6dc8c19ca",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "52d69ba689d64554a60dea2b2506bd55",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): keberlakuan pembubaran terhadap pihak ketiga terkait pemberitahuan dan tanggung jawab likuidator.",
+ "tokens_local": 41
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "438d9d0c1a5346f8406f040d27cec75c22406436fa2e941303e530262a6a1343",
+ "chunk_id_returned": "438d9d0c1a5346f8406f040d27cec75c22406436fa2e941303e530262a6a1343",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f3427b881ad24e5c892cf74eb61e1942",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): penjelasan persyaratan lampiran akta peleburan untuk pengesahan badan hukum hasil peleburan.",
+ "tokens_local": 42
+}

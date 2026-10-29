@@ -1,0 +1,11 @@
+{
+ "chunk_id": "3cbba0443737d003dceb5c1fc9412b4060f555db693e3c1d49187472de162c67",
+ "chunk_id_returned": "3cbba0443737d003dceb5c1fc9412b4060f555db693e3c1d49187472de162c67",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "dfe4d53c753f4c45897cf1f7acf4bc30",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kedua (Dewan Komisaris): tata cara pengangkatan dan pemberhentian komisaris serta penetapan honorariumnya.",
+ "tokens_local": 43
+}

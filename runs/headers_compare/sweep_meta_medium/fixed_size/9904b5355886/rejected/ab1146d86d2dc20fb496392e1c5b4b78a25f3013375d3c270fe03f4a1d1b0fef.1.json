@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ab1146d86d2dc20fb496392e1c5b4b78a25f3013375d3c270fe03f4a1d1b0fef",
+ "chunk_id_returned": "ab1146d86d2dc20fb496392e1c5b4b78a25f3013375d3c270fe03f4a1d1b0fef",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ea34e551e00e42bea26851c117de0f16",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Umum dan Bab I (Ketentuan Umum): latar TJSL, likuidasi, tim ahli, dan definisi Pasal 1.",
+ "tokens_local": 42
+}

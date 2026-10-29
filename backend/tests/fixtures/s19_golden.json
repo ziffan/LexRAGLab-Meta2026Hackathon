@@ -1,0 +1,955 @@
+{
+ "calls": {
+  "baseten_open/b": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 6000,
+    "model": "meta-models/muse-spark-open-1026",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "847c2346042e76884f764fa260a31fc48262f3b3b6343c7a3a373d1f7bb196d0",
+   "cache_key": "726d687fa94dee3d25e1923501ed23d588e8bcc86a9e4ef676443e6df8299363",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "726d687fa94dee3d25e1923501ed23d588e8bcc86a9e4ef676443e6df8299363",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 5950,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_b",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "meta-models/muse-spark-open-1026",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "baseten",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "baseten_open/c": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 6000,
+    "model": "meta-models/muse-spark-open-1026",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "847c2346042e76884f764fa260a31fc48262f3b3b6343c7a3a373d1f7bb196d0",
+   "cache_key": "726d687fa94dee3d25e1923501ed23d588e8bcc86a9e4ef676443e6df8299363",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "726d687fa94dee3d25e1923501ed23d588e8bcc86a9e4ef676443e6df8299363",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 5950,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_c",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "meta-models/muse-spark-open-1026",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "baseten",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "glimmer_local/b": {
+   "body": {
+    "max_tokens": 16000,
+    "messages": [
+     {
+      "content": "input-x",
+      "role": "user"
+     }
+    ],
+    "model": "meta/muse-glimmer",
+    "reasoning_effort": "high",
+    "response_format": {
+     "json_schema": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true
+     },
+     "type": "json_schema"
+    }
+   },
+   "body_sha256": "fbf8cb664aee4c70acf28f261991591f597e65ff3ad25192831850db0db3d005",
+   "cache_key": "8d23f4330dc3e8dc54eacf005cd4a64ba8a03c9f072ad4e1e9aadf905c339937",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/chat/completions",
+   "record": {
+    "cache_key": "8d23f4330dc3e8dc54eacf005cd4a64ba8a03c9f072ad4e1e9aadf905c339937",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 0,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "local",
+    "effort": "high",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_b",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "meta/muse-glimmer",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "lmstudio_local",
+    "quantization": "Q4_K_M",
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 900,
+    "usage_output_tokens": 1500
+   }
+  },
+  "glimmer_local/c": {
+   "body": {
+    "max_tokens": 16000,
+    "messages": [
+     {
+      "content": "input-x",
+      "role": "user"
+     }
+    ],
+    "model": "meta/muse-glimmer",
+    "reasoning_effort": "high",
+    "response_format": {
+     "json_schema": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true
+     },
+     "type": "json_schema"
+    }
+   },
+   "body_sha256": "fbf8cb664aee4c70acf28f261991591f597e65ff3ad25192831850db0db3d005",
+   "cache_key": "8d23f4330dc3e8dc54eacf005cd4a64ba8a03c9f072ad4e1e9aadf905c339937",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/chat/completions",
+   "record": {
+    "cache_key": "8d23f4330dc3e8dc54eacf005cd4a64ba8a03c9f072ad4e1e9aadf905c339937",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 0,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "local",
+    "effort": "high",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_c",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "meta/muse-glimmer",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "lmstudio_local",
+    "quantization": "Q4_K_M",
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 900,
+    "usage_output_tokens": 1500
+   }
+  },
+  "meta/a": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "67bc3478a88c8f1f348c890a11fa80fc9ce5628caa376acc6f75d4cb904c252d",
+   "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_a",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "meta",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "meta/b": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "67bc3478a88c8f1f348c890a11fa80fc9ce5628caa376acc6f75d4cb904c252d",
+   "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_b",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "meta",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "meta/c": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "67bc3478a88c8f1f348c890a11fa80fc9ce5628caa376acc6f75d4cb904c252d",
+   "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_c",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "meta",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "meta/d": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "67bc3478a88c8f1f348c890a11fa80fc9ce5628caa376acc6f75d4cb904c252d",
+   "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_d",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "meta",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "meta/measure": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "67bc3478a88c8f1f348c890a11fa80fc9ce5628caa376acc6f75d4cb904c252d",
+   "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/v1/responses",
+   "record": {
+    "cache_key": "0ccf23a7e2fb969ae86923cf8199c721cbfb0e719d1947a61b7683307ffe5fea",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "measure",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "meta",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  },
+  "openrouter_dev/b": {
+   "body": {
+    "input": "input-x",
+    "max_output_tokens": 800,
+    "model": "meta/muse-spark-1.3-contributor",
+    "prompt_cache_key": "pck-synth-1",
+    "reasoning": {
+     "effort": "low"
+    },
+    "text": {
+     "format": {
+      "name": "SchemaX",
+      "schema": {
+       "additionalProperties": false,
+       "properties": {
+        "jawaban": {
+         "type": "string"
+        },
+        "kutipan": {
+         "items": {
+          "type": "string"
+         },
+         "type": "array"
+        },
+        "status": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "jawaban",
+        "kutipan",
+        "status"
+       ],
+       "type": "object"
+      },
+      "strict": true,
+      "type": "json_schema"
+     }
+    }
+   },
+   "body_sha256": "73023775d1981cfb07d15acec69e21003e1aad4f71e32582cc5d60b70ef808ef",
+   "cache_key": "64c96d1125bc738709df45944b129787ed5f757aba573281a379fe94a5dd8696",
+   "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+   "path": "/api/v1/responses",
+   "record": {
+    "cache_key": "64c96d1125bc738709df45944b129787ed5f757aba573281a379fe94a5dd8696",
+    "clean_sha256": "CS1",
+    "config_hash": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+    "corpus_hash": "CH1",
+    "cost_usd_micros": 414,
+    "created_at": "1970-01-01T00:16:40Z",
+    "device": "remote",
+    "effort": "low",
+    "embedder": null,
+    "error": null,
+    "failed_settings": null,
+    "host": "authoritative",
+    "kind": "spark_b",
+    "latency_ms": 0,
+    "loader_rules_version": "LR1",
+    "model": "meta/muse-spark-1.3-contributor",
+    "packing": null,
+    "projected_cost_usd_micros": null,
+    "prompt_hash": "P1",
+    "prompt_version": "c-v1",
+    "provider": "openrouter",
+    "quantization": null,
+    "run_id": "RID",
+    "status": "ok",
+    "tokenizer": {
+     "name": "tok-fake",
+     "version": "0"
+    },
+    "usage_cached_tokens": 0,
+    "usage_input_tokens": 3247,
+    "usage_output_tokens": 445
+   }
+  }
+ },
+ "config_hash_main": "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a",
+ "gate": {
+  "a": {
+   "batas_atas": 2000000,
+   "expected": 0,
+   "ok": true,
+   "reasons": [],
+   "spent": 561741
+  },
+  "b": {
+   "batas_atas": 2000001,
+   "expected": 0,
+   "ok": false,
+   "reasons": [
+    "batas_atas_over_batch_cap"
+   ],
+   "spent": 561741
+  },
+  "c": {
+   "batas_atas": 2000000,
+   "expected": 0,
+   "ok": true,
+   "reasons": [],
+   "spent": 14000000
+  },
+  "d": {
+   "batas_atas": 2000000,
+   "expected": 0,
+   "ok": false,
+   "reasons": [
+    "cumulative_over_threshold"
+   ],
+   "spent": 14000001
+  }
+ },
+ "limiter_keys": [
+  [
+   "baseten_open",
+   "1fe467b5cd3a2e3bfe6f6213c7b624fc5aaf230588407a01fcc0084a6901bd42"
+  ],
+  [
+   "glimmer_local",
+   "1fe467b5cd3a2e3bfe6f6213c7b624fc5aaf230588407a01fcc0084a6901bd42"
+  ],
+  [
+   "meta",
+   "1fe467b5cd3a2e3bfe6f6213c7b624fc5aaf230588407a01fcc0084a6901bd42"
+  ],
+  [
+   "openrouter_dev",
+   "1fe467b5cd3a2e3bfe6f6213c7b624fc5aaf230588407a01fcc0084a6901bd42"
+  ]
+ ],
+ "pool_limits": {
+  "baseten": [
+   15513750,
+   20000000,
+   15513750,
+   20000000
+  ],
+  "lmstudio_local": [
+   526265,
+   1000000,
+   561741,
+   2000000
+  ],
+  "meta": [
+   526265,
+   1000000,
+   561741,
+   2000000
+  ],
+  "openrouter": [
+   526265,
+   1000000,
+   561741,
+   2000000
+  ]
+ },
+ "projection": {
+  "bt_unit/c/4486250": {
+   "effective_total_cap_micros": 2000000,
+   "per_call_micros": [
+    4486250
+   ],
+   "pool": "baseten",
+   "pool_cap_micros": 20000000,
+   "pool_spent_micros": 15513750,
+   "reason": null,
+   "role": "c",
+   "role_cap_micros": 500000,
+   "spent_micros": 15513750,
+   "spent_role_micros": 53267,
+   "total_cap_source": "config",
+   "total_micros": 4486250,
+   "verdict": "ok"
+  },
+  "bt_unit/c/4486251": {
+   "effective_total_cap_micros": 2000000,
+   "per_call_micros": [
+    4486251
+   ],
+   "pool": "baseten",
+   "pool_cap_micros": 20000000,
+   "pool_spent_micros": 15513750,
+   "reason": "spent 15513750 + projected 4486251 = 20000001 micro-USD exceeds provider baseten cap 20000000 micro-USD",
+   "role": "c",
+   "role_cap_micros": 500000,
+   "spent_micros": 15513750,
+   "spent_role_micros": 53267,
+   "total_cap_source": "config",
+   "total_micros": 4486251,
+   "verdict": "budget_exceeded"
+  },
+  "meta_unit/b/473735": {
+   "effective_total_cap_micros": 2000000,
+   "per_call_micros": [
+    473735
+   ],
+   "pool": "default",
+   "pool_cap_micros": 2000000,
+   "pool_spent_micros": 561741,
+   "reason": null,
+   "role": "b",
+   "role_cap_micros": 1000000,
+   "spent_micros": 561741,
+   "spent_role_micros": 526265,
+   "total_cap_source": "config",
+   "total_micros": 473735,
+   "verdict": "ok"
+  },
+  "meta_unit/b/473736": {
+   "effective_total_cap_micros": 2000000,
+   "per_call_micros": [
+    473736
+   ],
+   "pool": "default",
+   "pool_cap_micros": 2000000,
+   "pool_spent_micros": 561741,
+   "reason": "spent 526265 + projected 473736 = 1000001 micro-USD exceeds role b cap 1000000 micro-USD",
+   "role": "b",
+   "role_cap_micros": 1000000,
+   "spent_micros": 561741,
+   "spent_role_micros": 526265,
+   "total_cap_source": "config",
+   "total_micros": 473736,
+   "verdict": "budget_exceeded"
+  }
+ },
+ "reportable": {
+  "baseten": "NotReportable:records with provider 'baseten' are not reportable here (H-057, H-047)",
+  "lmstudio_local": "NotReportable:records with provider 'lmstudio_local' are not reportable here (H-057, H-047)",
+  "meta": "ok",
+  "openrouter": "NotReportable:records from profile openrouter_dev are dev/test only and cannot back reported numbers (H-057)"
+ },
+ "spent_pool": {
+  "baseten": 15513750,
+  "lmstudio_local": 561741,
+  "meta": 561741
+ },
+ "spent_total_display": 16075491,
+ "thresholds": {
+  "baseten": 16000000,
+  "lmstudio_local": 16000000,
+  "meta": 16000000,
+  "openrouter": 16000000
+ }
+}

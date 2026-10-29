@@ -1,0 +1,11 @@
+{
+ "chunk_id": "22b572d129a89b8051d7c46cc15502410b2bf296ccab9ff50b0fa2ce7925470c",
+ "chunk_id_returned": "22b572d129a89b8051d7c46cc15502410b2bf296ccab9ff50b0fa2ce7925470c",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "cb04da54f0e34726bbb72d897a7d66ca",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Penjelasan Pasal 39: penyerahan wewenang RUPS kepada Dewan Komisaris untuk pelaksanaan pembelian kembali saham.",
+ "tokens_local": 43
+}

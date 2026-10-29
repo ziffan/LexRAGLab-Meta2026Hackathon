@@ -1,0 +1,11 @@
+{
+ "chunk_id": "afae358dfe36bc251ed109d340e8fcaaef35282aadb2dc7b2d7be00e6662d899",
+ "chunk_id_returned": "afae358dfe36bc251ed109d340e8fcaaef35282aadb2dc7b2d7be00e6662d899",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "1025ad2990dd4992aa9de49ab2cd9c52",
+ "text": "UU 40/2007 (Perseroan Terbatas), BAB III (Modal dan Saham) Bagian Kelima (Saham): pencantuman nilai saham dalam rupiah dan larangan saham tanpa nilai nominal.",
+ "tokens_local": 43
+}

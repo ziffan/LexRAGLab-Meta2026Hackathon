@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6d7868919e11a9bc08fb69c1f2864f477241bed4baa6ba98a6a89f9ccfd4c9dc",
+ "chunk_id_returned": "6d7868919e11a9bc08fb69c1f2864f477241bed4baa6ba98a6a89f9ccfd4c9dc",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1d1e0beb9ffa4a7abfd4ce71ad7e7bb3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): hak tagih kreditor dalam likuidasi dan penarikan kembali sisa kekayaan yang telah dibagikan.",
+ "tokens_local": 44
+}

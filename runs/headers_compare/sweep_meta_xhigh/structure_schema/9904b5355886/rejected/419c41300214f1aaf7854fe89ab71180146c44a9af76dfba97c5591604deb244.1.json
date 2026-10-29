@@ -1,0 +1,11 @@
+{
+ "chunk_id": "419c41300214f1aaf7854fe89ab71180146c44a9af76dfba97c5591604deb244",
+ "chunk_id_returned": "419c41300214f1aaf7854fe89ab71180146c44a9af76dfba97c5591604deb244",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5ed39e0c8195498a81deb9c742a1ed23",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.), Bagian Ketiga (Penggunaan Laba): kewajiban penyisihan laba bersih untuk cadangan wajib.",
+ "tokens_local": 41
+}

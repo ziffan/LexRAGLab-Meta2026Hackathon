@@ -1,0 +1,11 @@
+{
+ "chunk_id": "395846543e424ac2212312136e65b0f4bd72a2bb94d3b2f392cab2e2803629b1",
+ "chunk_id_returned": "395846543e424ac2212312136e65b0f4bd72a2bb94d3b2f392cab2e2803629b1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "7fab73334c754711aa0c1c9366038b32",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8, Pasal 20 (Pembubaran dkk.): tata cara pembubaran, likuidasi, dan pemberesan perseroan.",
+ "tokens_local": 45
+}

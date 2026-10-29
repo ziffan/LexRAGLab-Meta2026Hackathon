@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e0f82ca6a7a1058538b34a1a3e7b0fe34f3b210a53c8eb1ff220db571a42b7a5",
+ "chunk_id_returned": "e0f82ca6a7a1058538b34a1a3e7b0fe34f3b210a53c8eb1ff220db571a42b7a5",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "d1eb19c6559448dab6c1564ba4eef2e1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IX (Pemeriksaan) dan Bab X (Pembubaran dkk.): biaya pemeriksaan perseroan dan sebab pembubaran perseroan.",
+ "tokens_local": 44
+}

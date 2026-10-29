@@ -1,0 +1,11 @@
+{
+ "chunk_id": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "chunk_id_returned": "47e158ffdd4fe91e1d1cf598338b08709fd0f86d286421a4f1bd7f769c811b18",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "089dd8f3ed4242e899ca5c0b5c321dad",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 74 dan Bab VI (Rapat Umum Pemegang Saham): kewajiban TJSL terkait sumber daya alam dan ketentuan wewenang serta lokasi penyelenggaraan RUPS.",
+ "tokens_local": 47
+}

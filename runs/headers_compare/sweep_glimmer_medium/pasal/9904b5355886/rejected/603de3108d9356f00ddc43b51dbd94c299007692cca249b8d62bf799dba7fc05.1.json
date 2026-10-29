@@ -1,0 +1,11 @@
+{
+ "chunk_id": "603de3108d9356f00ddc43b51dbd94c299007692cca249b8d62bf799dba7fc05",
+ "chunk_id_returned": "603de3108d9356f00ddc43b51dbd94c299007692cca249b8d62bf799dba7fc05",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "c898b2f4d2f144cebeb9496655500c12",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): penjelasan Pasal 130 tentang pelampiran akta Peleburan pada pengesahan badan hukum.",
+ "tokens_local": 42
+}

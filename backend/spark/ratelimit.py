@@ -18,11 +18,14 @@ class SlidingWindowLimiter:
     def __init__(self) -> None:
         self._starts: deque[float] = deque()
         self._lock = threading.Lock()
+        self.group_max_rpm: int | None = None  # hanya kelompok (`rate_group`): MINIMUM max_rpm anggota (S18 (e))
 
     def acquire(self, max_rpm: int, now: Callable[[], float], sleep: Callable[[float], None]) -> float:
         """Blok (lewat `sleep`) sampai satu awal-request boleh jalan; kembalikan waktu awal."""
         while True:
             with self._lock:
+                if self.group_max_rpm is not None:
+                    max_rpm = min(max_rpm, self.group_max_rpm)
                 t = now()
                 while self._starts and self._starts[0] + WINDOW_S <= t:
                     self._starts.popleft()
@@ -37,12 +40,17 @@ _registry: dict[tuple[str, str], SlidingWindowLimiter] = {}
 _registry_lock = threading.Lock()
 
 
-def get_limiter(profile: str, api_key: str) -> SlidingWindowLimiter:
+def get_limiter(profile: str, api_key: str, rate_group: str | None = None,
+                max_rpm: int | None = None) -> SlidingWindowLimiter:
+    """Kunci registri = `(rate_group ?? profil, sidik key)` (P9, S18). Tanpa `rate_group` = perilaku lama persis.
+    Dengan `rate_group` dan `max_rpm`, batas kelompok = minimum `max_rpm` anggota yang terdaftar."""
     fp = hashlib.sha256(api_key.encode("utf-8")).hexdigest()
     with _registry_lock:
-        lim = _registry.get((profile, fp))
+        lim = _registry.get((rate_group or profile, fp))
         if lim is None:
-            lim = _registry[(profile, fp)] = SlidingWindowLimiter()
+            lim = _registry[(rate_group or profile, fp)] = SlidingWindowLimiter()
+        if rate_group and max_rpm is not None:
+            lim.group_max_rpm = max_rpm if lim.group_max_rpm is None else min(lim.group_max_rpm, max_rpm)
         return lim
 
 

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d5ba8baa95c4d98dd3d9c2605cf0c9bad7a9003785f2a20b3193f81afeafea57",
+ "chunk_id_returned": "d5ba8baa95c4d98dd3d9c2605cf0c9bad7a9003785f2a20b3193f81afeafea57",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "5377af697c4341a18486a4fff19e7086",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.), Penjelasan Pasal 145: pembubaran karena jangka waktu berakhir dan tindak lanjut likuidasi.",
+ "tokens_local": 42
+}

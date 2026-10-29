@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e45799507898e5a3d16f840bdd1808008d673fa388643c0771649e69711b5181",
+ "chunk_id_returned": "e45799507898e5a3d16f840bdd1808008d673fa388643c0771649e69711b5181",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1135af54cf4e413e9eb83a303b213e6a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.) Bagian Ketiga Paragraf 2 (Pengumuman): kewajiban pengumuman oleh Menteri dalam Tambahan Berita Negara.",
+ "tokens_local": 46
+}

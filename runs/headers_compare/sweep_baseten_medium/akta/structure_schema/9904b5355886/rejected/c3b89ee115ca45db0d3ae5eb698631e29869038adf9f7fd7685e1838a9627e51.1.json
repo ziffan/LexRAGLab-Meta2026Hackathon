@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c3b89ee115ca45db0d3ae5eb698631e29869038adf9f7fd7685e1838a9627e51",
+ "chunk_id_returned": "c3b89ee115ca45db0d3ae5eb698631e29869038adf9f7fd7685e1838a9627e51",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "b6422eaba1194e24b0b5299b74aca608",
+ "text": "Akta Pendirian PT Sinar Wiyata Bentarra No. 112, Penutup Akta: formalitas peresmian, penandatanganan akta dan penyimpanan minuta oleh Notaris.",
+ "tokens_local": 43
+}

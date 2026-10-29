@@ -1,0 +1,11 @@
+{
+ "chunk_id": "6978896afbdf18a06eeec76476f1415e24dc53d51b94cd5c7905fe881a2450a7",
+ "chunk_id_returned": "6978896afbdf18a06eeec76476f1415e24dc53d51b94cd5c7905fe881a2450a7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "840736b36b9646328c4a68b86e16eb40",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Kesatu (Direksi): wewenang pengurusan Direksi dan syarat jumlah anggota.",
+ "tokens_local": 41
+}

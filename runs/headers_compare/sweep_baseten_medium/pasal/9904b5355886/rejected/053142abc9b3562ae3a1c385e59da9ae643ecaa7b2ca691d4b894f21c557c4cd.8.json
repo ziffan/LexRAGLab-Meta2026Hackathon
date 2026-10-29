@@ -1,0 +1,11 @@
+{
+ "chunk_id": "053142abc9b3562ae3a1c385e59da9ae643ecaa7b2ca691d4b894f21c557c4cd",
+ "chunk_id_returned": "053142abc9b3562ae3a1c385e59da9ae643ecaa7b2ca691d4b894f21c557c4cd",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "c7e37bc305fc43bdb1fecedaaa7d1364",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Penjelasan Pasal 36: larangan kepemilikan saham sendiri dan kepemilikan silang.",
+ "tokens_local": 41
+}

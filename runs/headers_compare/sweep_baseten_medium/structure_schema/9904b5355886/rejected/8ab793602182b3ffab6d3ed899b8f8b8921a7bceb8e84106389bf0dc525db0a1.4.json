@@ -1,0 +1,11 @@
+{
+ "chunk_id": "8ab793602182b3ffab6d3ed899b8f8b8921a7bceb8e84106389bf0dc525db0a1",
+ "chunk_id_returned": "8ab793602182b3ffab6d3ed899b8f8b8921a7bceb8e84106389bf0dc525db0a1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9316a994d8e644439ed1502966adba44",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): penjelasan mekanisme pengalihan hak dan kewajiban pra-pendirian ke Perseroan.",
+ "tokens_local": 45
+}

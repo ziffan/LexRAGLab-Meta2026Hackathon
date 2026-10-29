@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e4ef03590e594af34dbe8234943e3a027bb22da6d94a1650daac972c131ac662",
+ "chunk_id_returned": "e4ef03590e594af34dbe8234943e3a027bb22da6d94a1650daac972c131ac662",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "ffb4c81d49b14720bdc1b0f447a395ea",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Kesatu (Pendirian): tanggung jawab atas perbuatan hukum atas nama Perseroan sebelum memperoleh status badan hukum.",
+ "tokens_local": 44
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "206a2f853fecb54ccd5bdeff07e195f5af884dd6b8fba34effd2d53d67c6610a",
+ "chunk_id_returned": "206a2f853fecb54ccd5bdeff07e195f5af884dd6b8fba34effd2d53d67c6610a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "36d65e62126346869fbfcd775c3d2f3f",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IX (Pemeriksaan terhadap Perseroan): penyampaian laporan hasil pemeriksaan oleh ahli kepada ketua pengadilan dan pemberian salinannya kepada pemohon dan.",
+ "tokens_local": 46
+}

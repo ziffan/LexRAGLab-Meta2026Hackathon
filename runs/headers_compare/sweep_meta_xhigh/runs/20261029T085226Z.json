@@ -1,0 +1,152 @@
+{
+ "attempts": {
+  "akta-01/pasal": 2,
+  "akta-01/structure_schema": 1
+ },
+ "batches": [
+  {
+   "batas_atas": 13595,
+   "called": 1,
+   "expected": 975,
+   "gate_ok": true,
+   "key": "akta-01/pasal",
+   "ok": 0,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 5101251,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 13595
+  },
+  {
+   "batas_atas": 13595,
+   "called": 1,
+   "expected": 975,
+   "gate_ok": true,
+   "key": "akta-01/pasal",
+   "ok": 1,
+   "reasons": [],
+   "round": 2,
+   "spent_pool": 5103128,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 13595
+  },
+  {
+   "batas_atas": 122736,
+   "called": 12,
+   "expected": 2846,
+   "gate_ok": true,
+   "key": "akta-01/structure_schema",
+   "ok": 10,
+   "reasons": [],
+   "round": 1,
+   "spent_pool": 5103862,
+   "stopped": "cache_ratio_low",
+   "units": 18,
+   "upper_cached": 122736
+  }
+ ],
+ "cache_guard": "active",
+ "coverage": {
+  "akta-01/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-01/structure_schema": {
+   "stored": 10,
+   "units": 18
+  },
+  "akta-02/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-02/structure_schema": {
+   "stored": 0,
+   "units": 21
+  },
+  "akta-03/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-03/structure_schema": {
+   "stored": 0,
+   "units": 24
+  },
+  "akta-04/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-04/structure_schema": {
+   "stored": 0,
+   "units": 26
+  },
+  "akta-05/pasal": {
+   "stored": 0,
+   "units": 1
+  },
+  "akta-05/structure_schema": {
+   "stored": 0,
+   "units": 29
+  }
+ },
+ "failed": {
+  "akta-01/structure_schema": [
+   "12296424a3658bcb0f153fb358484229b38f93fa41b7ca4d147928f7ee199d6b",
+   "ad9021814494b293ff29f7d037e581c9b937995670da48d834ff8c014ace5d7e"
+  ]
+ },
+ "family": "akta",
+ "finished_at": "2026-10-29T08:52:25Z",
+ "gpu_lock": null,
+ "identity": {
+  "effort": "xhigh",
+  "max_header_tokens": 40,
+  "model": "muse-spark-1.3-contributor",
+  "profile": "sweep_meta_xhigh",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "meta",
+  "quantization": null,
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  26632
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {
+  "akta-01/structure_schema": [
+   "04dd8bd1cbab9bfe919bc381179c7d37fb7094060ac15dec0a9a3e31982cb323",
+   "e5c646731882cb0d9059460ff5479785ea976bacc61e83b503ce6dab8ee52df6",
+   "6d14b5176b97f5c52c308730ed6f810d22efe6ae3757aad0aeee35f950063916",
+   "c4551e9e1742a9d24636d51dc92cc13b6baf79a49ffa0ffd83cd1c64c2b2417a",
+   "fa92f87770419f07952c7c44765e294ab356c51a4dc51c2eabbb7bc0825b8d53",
+   "5eda672b7e496b928e153abc955059043e2e872b4f6e92b8e6325e83932f82eb"
+  ]
+ },
+ "pairs_not_started": [
+  "akta-02/pasal",
+  "akta-02/structure_schema",
+  "akta-03/pasal",
+  "akta-03/structure_schema",
+  "akta-04/pasal",
+  "akta-04/structure_schema",
+  "akta-05/pasal",
+  "akta-05/structure_schema"
+ ],
+ "profile": "sweep_meta_xhigh",
+ "sources": [
+  "pasal",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-29T08:47:32Z",
+ "stopped": "cache_ratio_low",
+ "stopped_at": "akta-01/structure_schema",
+ "stored": 11,
+ "sweep": {
+  "effort": "xhigh",
+  "pool_remaining_micros": 69877846,
+  "profile": "sweep_meta_xhigh",
+  "status": "partial (11/123 unit)"
+ },
+ "warm": true
+}

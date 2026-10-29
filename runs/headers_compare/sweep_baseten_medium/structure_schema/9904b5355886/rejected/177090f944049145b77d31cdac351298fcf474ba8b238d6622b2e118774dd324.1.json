@@ -1,0 +1,11 @@
+{
+ "chunk_id": "177090f944049145b77d31cdac351298fcf474ba8b238d6622b2e118774dd324",
+ "chunk_id_returned": "177090f944049145b77d31cdac351298fcf474ba8b238d6622b2e118774dd324",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "e78e3a8946e04922b1cbaf07075ccfbf",
+ "text": "UU 40/2007 (Perseroan Terbatas), Penjelasan Pasal 12 Bab II (Pendirian dkk.): makna perbuatan hukum calon pendiri terkait kepemilikan saham sebelum pendirian.",
+ "tokens_local": 41
+}

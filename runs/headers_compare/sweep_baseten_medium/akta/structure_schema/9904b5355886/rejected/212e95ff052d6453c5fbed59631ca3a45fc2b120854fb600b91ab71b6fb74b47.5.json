@@ -1,0 +1,11 @@
+{
+ "chunk_id": "212e95ff052d6453c5fbed59631ca3a45fc2b120854fb600b91ab71b6fb74b47",
+ "chunk_id_returned": "212e95ff052d6453c5fbed59631ca3a45fc2b120854fb600b91ab71b6fb74b47",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "67b2215b6e4943b4a425700b2a4f4329",
+ "text": "Akta Pendirian PT Wanawidya Cendrakirana Prima No. 63, Keterangan Pendiri dan Pengangkatan Pengurus: pembagian saham pendiri dan susunan pengurus pertama.",
+ "tokens_local": 42
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bdcbc5d7d8e3e6c100eadf881e7d3e6946f2c4ee141a7b4d8f3601defaad9feb",
+ "chunk_id_returned": "bdcbc5d7d8e3e6c100eadf881e7d3e6946f2c4ee141a7b4d8f3601defaad9feb",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "48d8cd6b6ce847e49276389c980d0d90",
+ "text": "Akta Pendirian PT Kalawarna Tirtasambada No. 8/2026, Batang Tubuh (Anggaran Dasar): ketentuan tentang pendirian, modal, saham, dan organ perseroan.",
+ "tokens_local": 46
+}

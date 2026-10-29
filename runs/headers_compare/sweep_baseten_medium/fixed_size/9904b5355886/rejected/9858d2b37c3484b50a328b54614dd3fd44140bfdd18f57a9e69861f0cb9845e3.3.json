@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9858d2b37c3484b50a328b54614dd3fd44140bfdd18f57a9e69861f0cb9845e3",
+ "chunk_id_returned": "9858d2b37c3484b50a328b54614dd3fd44140bfdd18f57a9e69861f0cb9845e3",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "136783864c8c4630bdfc6f6683ea4dd7",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu Direksi: jumlah minimal anggota Direksi, pembagian tugas, dan syarat pengangkatan.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "daf95d713abb0d41d483d8397a12004b66a06163fbe6fc94eefeddd4be0814d1",
+ "chunk_id_returned": "daf95d713abb0d41d483d8397a12004b66a06163fbe6fc94eefeddd4be0814d1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "4acee4e8528340e18a0b4c13563e1d50",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima Penjelasan Pasal 51: bentuk bukti pemilikan saham diatur dalam anggaran dasar.",
+ "tokens_local": 41
+}

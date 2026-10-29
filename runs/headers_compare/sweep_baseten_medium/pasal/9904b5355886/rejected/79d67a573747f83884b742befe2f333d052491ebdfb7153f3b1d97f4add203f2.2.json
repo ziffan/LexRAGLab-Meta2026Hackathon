@@ -1,0 +1,11 @@
+{
+ "chunk_id": "79d67a573747f83884b742befe2f333d052491ebdfb7153f3b1d97f4add203f2",
+ "chunk_id_returned": "79d67a573747f83884b742befe2f333d052491ebdfb7153f3b1d97f4add203f2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "85a8be257f3f4d2fa80a8d0b33e7ee25",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Penjelasan Pasal 16: penamaan Perseroan dan makna singkatan Tbk sebagai penanda status Terbuka.",
+ "tokens_local": 44
+}

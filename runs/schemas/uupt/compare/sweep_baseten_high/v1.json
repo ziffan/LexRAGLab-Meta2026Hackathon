@@ -1,0 +1,183 @@
+{
+ "body": {
+  "default_chunk_level": 4,
+  "family": "uupt",
+  "levels": [
+   {
+    "examples": [
+     "## BAB I — KETENTUAN UMUM",
+     "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+     "## BAB III — MODAL DAN SAHAM"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^## BAB [IVXLCDM]+ —.*",
+    "name": "bab",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "### Bagian Kesatu — Pendirian",
+     "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+     "### Bagian Ketiga — Daftar Perseroan dan Pengumuman"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^### Bagian [A-Za-z ]+ —.*",
+    "name": "bagian",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "#### Paragraf 1 — Anggaran Dasar",
+     "#### Paragraf 2 — Perubahan Anggaran Dasar"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^#### Paragraf \\d+ —.*",
+    "name": "paragraf",
+    "order": 3,
+    "parent_order": 2
+   },
+   {
+    "examples": [
+     "### Pasal 1",
+     "### Pasal 2",
+     "### Pasal 3"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^### Pasal \\d+[A-Z]*.*",
+    "name": "pasal",
+    "order": 4,
+    "parent_order": 3
+   },
+   {
+    "examples": [
+     "(1) Perseroan mempunyai nama dan tempat kedudukan dalam wilayah negara Republik Indonesia yang ditentukan dalam anggaran dasar.",
+     "(2) Perseroan mempunyai alamat lengkap sesuai dengan tempat kedudukannya.",
+     "(1) Perseroan didirikan oleh 2 (dua) orang atau lebih dengan akta notaris yang dibuat dalam bahasa Indonesia."
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^\\(\\d+\\)\\s+.*",
+    "name": "ayat",
+    "order": 5,
+    "parent_order": 4
+   },
+   {
+    "examples": [
+     "a. persyaratan Perseroan sebagai badan hukum belum atau tidak terpenuhi;",
+     "b. pemegang saham yang bersangkutan baik langsung maupun tidak langsung dengan itikad buruk memanfaatkan Perseroan untuk kepentingan pribadi;",
+     "c. pemegang saham yang bersangkutan terlibat dalam perbuatan melawan hukum yang dilakukan oleh Perseroan; atau"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^[a-z]\\.\\s+.*",
+    "name": "huruf",
+    "order": 6,
+    "parent_order": 5
+   }
+  ],
+  "notes": "BAB I tidak memiliki Bagian/Paragraf dan langsung memuat Pasal, sedangkan BAB II-III memiliki Bagian dan Paragraf sebagai wadah Pasal; variasi penanda BAB memakai angka Romawi dengan em dash. Blok Penjelasan Pasal berulang tetapi diperlakukan sebagai penjelasan bukan unit potong utama."
+ },
+ "cache_key": "674bea6ac452629deea48d990e7c97c8b2397cb73f0e45efdbc895a0ebccbab3",
+ "created_at": "2026-10-28T19:16:53Z",
+ "family": "uupt",
+ "model_profile": "sweep_baseten_high",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "5ebfab1e82974c949207206eb1b0392e",
+ "sample": [
+  {
+   "clean_sha256": "c56e4f0f38a463905384a64337557c98dcf923d35cc9f417eecc7337f3be88d2",
+   "doc_id": "uupt-40-2007"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "## BAB I — KETENTUAN UMUM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB II — PENDIRIAN, ANGGARAN DASAR DAN PERUBAHAN ANGGARAN DASAR, DAFTAR PERSEROAN DAN PENGUMUMAN",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "## BAB III — MODAL DAN SAHAM",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "### Bagian Kesatu — Pendirian",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Kedua — Anggaran Dasar dan Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "### Bagian Ketiga — Daftar Perseroan dan Pengumuman",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "#### Paragraf 1 — Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "#### Paragraf 2 — Perubahan Anggaran Dasar",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "### Pasal 1",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 2",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "### Pasal 3",
+   "matched": true,
+   "order": 4
+  },
+  {
+   "example": "(1) Perseroan mempunyai nama dan tempat kedudukan dalam wilayah negara Republik Indonesia yang ditentukan dalam anggaran dasar.",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "(2) Perseroan mempunyai alamat lengkap sesuai dengan tempat kedudukannya.",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "(1) Perseroan didirikan oleh 2 (dua) orang atau lebih dengan akta notaris yang dibuat dalam bahasa Indonesia.",
+   "matched": true,
+   "order": 5
+  },
+  {
+   "example": "a. persyaratan Perseroan sebagai badan hukum belum atau tidak terpenuhi;",
+   "matched": true,
+   "order": 6
+  },
+  {
+   "example": "b. pemegang saham yang bersangkutan baik langsung maupun tidak langsung dengan itikad buruk memanfaatkan Perseroan untuk kepentingan pribadi;",
+   "matched": true,
+   "order": 6
+  },
+  {
+   "example": "c. pemegang saham yang bersangkutan terlibat dalam perbuatan melawan hukum yang dilakukan oleh Perseroan; atau",
+   "matched": true,
+   "order": 6
+  }
+ ]
+}

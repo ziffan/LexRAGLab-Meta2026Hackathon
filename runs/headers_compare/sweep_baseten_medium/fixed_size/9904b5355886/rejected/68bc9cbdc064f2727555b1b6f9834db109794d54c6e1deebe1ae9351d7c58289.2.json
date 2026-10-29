@@ -1,0 +1,11 @@
+{
+ "chunk_id": "68bc9cbdc064f2727555b1b6f9834db109794d54c6e1deebe1ae9351d7c58289",
+ "chunk_id_returned": "68bc9cbdc064f2727555b1b6f9834db109794d54c6e1deebe1ae9351d7c58289",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "8113ed765e6c449699b22ee327ed141a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab IV (Rencana Kerja dkk.): persetujuan laporan tahunan oleh RUPS dan kewajiban penyisihan cadangan dari laba bersih.",
+ "tokens_local": 41
+}

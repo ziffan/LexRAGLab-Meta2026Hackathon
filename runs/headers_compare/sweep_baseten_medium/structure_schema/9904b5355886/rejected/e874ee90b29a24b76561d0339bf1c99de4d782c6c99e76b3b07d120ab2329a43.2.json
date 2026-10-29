@@ -1,0 +1,11 @@
+{
+ "chunk_id": "e874ee90b29a24b76561d0339bf1c99de4d782c6c99e76b3b07d120ab2329a43",
+ "chunk_id_returned": "e874ee90b29a24b76561d0339bf1c99de4d782c6c99e76b3b07d120ab2329a43",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "744328b0e4bf4500ab2a01733d822cfd",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Paragraf 2 (Perubahan Anggaran Dasar): tenggat pengajuan persetujuan perpanjangan jangka waktu Perseroan dan batas waktu persetujuan",
+ "tokens_local": 53
+}

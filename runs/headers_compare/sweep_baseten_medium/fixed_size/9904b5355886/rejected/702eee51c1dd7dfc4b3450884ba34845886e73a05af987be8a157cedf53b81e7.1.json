@@ -1,0 +1,11 @@
+{
+ "chunk_id": "702eee51c1dd7dfc4b3450884ba34845886e73a05af987be8a157cedf53b81e7",
+ "chunk_id_returned": "702eee51c1dd7dfc4b3450884ba34845886e73a05af987be8a157cedf53b81e7",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "34994edd717a4401aff95882cb129777",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.), Bagian Perubahan Anggaran Dasar: lampiran persetujuan kurator dan jenis perubahan anggaran dasar yang perlu persetujuan Menteri.",
+ "tokens_local": 45
+}

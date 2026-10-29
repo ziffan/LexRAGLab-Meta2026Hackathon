@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d067e09015fec254ff699ec69c51aaa321e1cd7e10e887e9e41de2a572208ac8",
+ "chunk_id_returned": "d067e09015fec254ff699ec69c51aaa321e1cd7e10e887e9e41de2a572208ac8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "4ddd99c0c8d5469497527f436e1271be",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41, Penutup Akta: formalitas pembacaan, penandatanganan, saksi dan penyimpanan minuta.",
+ "tokens_local": 42
+}

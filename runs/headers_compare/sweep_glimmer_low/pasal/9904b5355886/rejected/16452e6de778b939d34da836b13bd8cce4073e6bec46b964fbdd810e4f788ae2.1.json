@@ -1,0 +1,11 @@
+{
+ "chunk_id": "16452e6de778b939d34da836b13bd8cce4073e6bec46b964fbdd810e4f788ae2",
+ "chunk_id_returned": "16452e6de778b939d34da836b13bd8cce4073e6bec46b964fbdd810e4f788ae2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "a4480e8ff6dc48fc8fcd3862e7a034a5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.): Penjelasan Pasal 152 tentang pertanggungjawaban likuidator dan berakhirnya status badan hukum.",
+ "tokens_local": 42
+}

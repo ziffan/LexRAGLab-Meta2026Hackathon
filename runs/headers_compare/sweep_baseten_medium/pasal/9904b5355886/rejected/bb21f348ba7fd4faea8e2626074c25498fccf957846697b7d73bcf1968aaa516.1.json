@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bb21f348ba7fd4faea8e2626074c25498fccf957846697b7d73bcf1968aaa516",
+ "chunk_id_returned": "bb21f348ba7fd4faea8e2626074c25498fccf957846697b7d73bcf1968aaa516",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "ae4b155562244fd8a52e7f59661570ad",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris) Bagian Kedua (Dewan Komisaris): pengaturan komisaris independen dan komisaris utusan.",
+ "tokens_local": 42
+}

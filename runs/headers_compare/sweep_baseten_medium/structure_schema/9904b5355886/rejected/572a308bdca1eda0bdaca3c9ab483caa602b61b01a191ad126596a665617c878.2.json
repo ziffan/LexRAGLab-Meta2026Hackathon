@@ -1,0 +1,11 @@
+{
+ "chunk_id": "572a308bdca1eda0bdaca3c9ab483caa602b61b01a191ad126596a665617c878",
+ "chunk_id_returned": "572a308bdca1eda0bdaca3c9ab483caa602b61b01a191ad126596a665617c878",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "ccbff883e8ae42458610df8703efe784",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Bagian Dewan Komisaris: kewenangan RUPS menetapkan besaran imbalan bagi anggota Dewan Komisaris.",
+ "tokens_local": 43
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d852ab9e8fd0f7796b527967f558d8b191254e93f5133d1a873c298e5cdfc546",
+ "chunk_id_returned": "d852ab9e8fd0f7796b527967f558d8b191254e93f5133d1a873c298e5cdfc546",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "851f961fe85a4401b04c40bc34b4e747",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris), Penjelasan Pasal 114: tanggung jawab komisaris atas kelalaian pengawasan merugikan perseroan.",
+ "tokens_local": 45
+}

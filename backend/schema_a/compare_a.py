@@ -11,7 +11,11 @@ Contributor dan versi operator terbaru.
 
 Proyeksi + gerbang `[batch_gate]` (G-36) atas batas atas `MAX_ATTEMPTS` upaya sebelum panggilan apa pun; profil lokal
 (Glimmer) berbiaya 0 dan diperiksa ketersediaannya dulu. Keluaran gagal validasi tidak di-cache; diulang paling banyak
-`MAX_ATTEMPTS` kali, lalu gagal jujur. `--project-only` dan `--diff` tidak memanggil apa pun dan tidak menulis."""
+`MAX_ATTEMPTS` kali, lalu gagal jujur. `--project-only` dan `--diff` tidak memanggil apa pun dan tidak menulis.
+
+Profil sapuan (H-102): gerbang atas pool sapuan (belanja off-pin, ambang 40.000.000) dengan `factor_bp` EFEKTIF profil itu
+(`max([batch_gate].factor_bp`, entri induk `config/header_b`, entri `config/sweep.toml`), mis. 19.312 untuk Spark Open sapuan) dan kunci
+`model_api_meta.lock` untuk Contributor sapuan."""
 
 from __future__ import annotations
 
@@ -92,18 +96,26 @@ def diff_report(main: SchemaStore, cmp: SchemaStore, family: str) -> dict[str, A
             "rejected": [{"run_id": x.get("run_id"), "errors": x.get("errors", [])[:5]} for x in cmp.list_rejected(family)]}
 
 
-def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int, *, threshold: int | None = None) -> Any:
+def _gate(budget_cfg: Mapping[str, Any], expected: list[int], spent: int, *, threshold: int | None = None,
+          factor_bp: int | None = None) -> Any:
+    import dataclasses
+
     from backend.proposal.gate import evaluate_gate, load_gate_config
+    cfg = load_gate_config(budget_cfg)
+    if factor_bp is not None:  # profil sapuan: factor_bp efektif (max gerbang, entri sweep/induk), H-102 P7
+        cfg = dataclasses.replace(cfg, factor_bp=factor_bp)
     if threshold is None:
-        return evaluate_gate(expected, spent, load_gate_config(budget_cfg))
-    return evaluate_gate(expected, spent, load_gate_config(budget_cfg), threshold_micros=threshold)
+        return evaluate_gate(expected, spent, cfg)
+    return evaluate_gate(expected, spent, cfg, threshold_micros=threshold)
 
 
 def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
          model_config: Mapping[str, Any] | None = None, budget_config: Mapping[str, Any] | None = None,
          runs_dir: Path | None = None, transport: Any = None, out: Callable[[str], None] = print,
          probe: Callable[[str, str], tuple[bool, str]] | None = None, load_doc: Callable[[str], Any] | None = None,
-         tokenizer: Any = None, pid_alive: Callable[[int], bool] | None = None) -> int:
+         tokenizer: Any = None, pid_alive: Callable[[int], bool] | None = None,
+         sweep_config: Mapping[str, Any] | None = None, pid_alive_rpm: Callable[[int], bool] | None = None,
+         header_config: Mapping[str, Any] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="backend.schema_a.compare_a", description=__doc__.split("\n\n")[0])
     ap.add_argument("--model-profile", required=True, help="profil pembanding di config/model dengan roles memuat 'a'")
     ap.add_argument("--family", nargs="+", choices=FAMILIES, default=list(FAMILIES))
@@ -118,7 +130,15 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         from backend.spark.settings import load_configs
         m, b = load_configs()
         model_config, budget_config = model_config or m, budget_config or b
-    prof = model_config.get("profiles", {}).get(a.model_profile)
+    from backend.spark import sweep_run
+    try:
+        eff_model, sweep_cfg = sweep_run.resolve_profile(model_config, a.model_profile, sweep_config)  # non-sapuan: tak membaca
+        if sweep_cfg is not None:
+            sweep_run.validate_runner_cfg(sweep_cfg)
+    except ConfigInvalid as exc:
+        print(f"error: {str(exc)[:200]}", file=sys.stderr)
+        return 2
+    prof = eff_model.get("profiles", {}).get(a.model_profile)
     if prof is None or ROLE not in (prof.get("roles") or []):
         print(f"error: profile {a.model_profile!r} is unknown or has no role 'a'", file=sys.stderr)
         return 2
@@ -154,7 +174,7 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         env = {k: v for k, v in dotenv_values(config.REPO_ROOT / ".env").items() if v}
     try:
         client = SparkClient(a.model_profile, model_config=model_config, budget_config=budget_config, env=env,
-                             runs_dir=runs, transport=transport)
+                             runs_dir=runs, transport=transport, **({"sweep_config": sweep_cfg} if sweep_cfg is not None else {}))
         local = profile_api(prof) == API_CHAT
         per_attempt: list[int] = []
         for p in plans:
@@ -168,8 +188,16 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         pcaps = provider_caps(budget_config, model_config)
         prov = profile_provider(model_config, a.model_profile)
         # S9 (e): belanja pool provider profil (tanpa tabel plafon = total ledger, perilaku lama persis).
-        verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps),
-                        threshold=cumulative_threshold_for(prov, budget_config, pcaps) if prov in pcaps else None)
+        if sweep_cfg is not None:  # S13 (b), D13/P14: pool sapuan (belanja off-pin) dan ambang 40.000.000
+            from backend.header_b.run import load_header_cfg
+            from backend.proposal.gate import load_gate_config, sweep_threshold_micros
+            fbp = sweep_run.factor_bp(load_header_cfg() if header_config is None else dict(header_config), sweep_cfg,
+                                      a.model_profile, load_gate_config(budget_config).factor_bp)
+            verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_off_pin(model_cfg=model_config),
+                            threshold=sweep_threshold_micros(budget_config, sweep_cfg), factor_bp=fbp)
+        else:
+            verdict = _gate(budget_config, per_attempt * MAX_ATTEMPTS, Ledger(runs).spent_pool(prov, pcaps, model_cfg=model_config),
+                            threshold=cumulative_threshold_for(prov, budget_config, pcaps) if prov in pcaps else None)
     except ConfigInvalid as exc:
         print(f"error: {str(exc)[:200]}", file=sys.stderr)
         return 2
@@ -183,6 +211,15 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
         print("error: projection rejected by [batch_gate]; nothing was sent", file=sys.stderr)
         return 3
     lock = None
+    rpm = None
+    if sweep_run.uses_model_api_lock(prof):  # P9/S18 (d): runner sapuan Contributor serial, SEBELUM request apa pun
+        from backend.spark import rpmlock
+        try:
+            rpm = rpmlock.acquire(runs, "sweep-a", break_stale=a.break_stale_lock,
+                                  **({"pid_alive": pid_alive_rpm} if pid_alive_rpm is not None else {}))
+        except rpmlock.RpmLockError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 3
     if local:  # H-101 S16: kunci GPU eksklusif (Glimmer vs embedding), diambil SEBELUM request apa pun ke 127.0.0.1
         from backend import gpulock
         try:
@@ -190,6 +227,8 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
                                    **({"pid_alive": pid_alive} if pid_alive is not None else {}))
         except gpulock.GpuLockError as exc:
             print(f"error: {exc}", file=sys.stderr)
+            if rpm is not None:
+                rpm.release()
             return 3
     try:
         if local:
@@ -224,6 +263,8 @@ def main(argv: list[str] | None = None, *, env: Mapping[str, str] | None = None,
     finally:
         if lock is not None:
             lock.release()
+        if rpm is not None:
+            rpm.release()
 
 if __name__ == "__main__":
     raise SystemExit(main())

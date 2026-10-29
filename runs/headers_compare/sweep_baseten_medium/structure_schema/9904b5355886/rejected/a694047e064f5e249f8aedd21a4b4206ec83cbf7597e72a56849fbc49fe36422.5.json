@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a694047e064f5e249f8aedd21a4b4206ec83cbf7597e72a56849fbc49fe36422",
+ "chunk_id_returned": "a694047e064f5e249f8aedd21a4b4206ec83cbf7597e72a56849fbc49fe36422",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "31945293b1274c7e8d029e068e66bbf0",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): larangan penerbitan saham untuk dimiliki sendiri dan larangan kepemilikan silang.",
+ "tokens_local": 45
+}

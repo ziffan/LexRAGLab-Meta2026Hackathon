@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d2fbc736bf9e6a72ea489224f19b2390ff09a2e70ffa94c2751ab533b460ef40",
+ "chunk_id_returned": "d2fbc736bf9e6a72ea489224f19b2390ff09a2e70ffa94c2751ab533b460ef40",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8b47e739712c4583ba03c4a443b7d466",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham): saham sebagai benda bergerak yang dapat diagunkan dan status hak suaranya.",
+ "tokens_local": 44
+}

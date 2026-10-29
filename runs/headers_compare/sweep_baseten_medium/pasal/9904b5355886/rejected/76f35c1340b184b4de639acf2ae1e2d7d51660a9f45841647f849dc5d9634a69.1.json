@@ -1,0 +1,11 @@
+{
+ "chunk_id": "76f35c1340b184b4de639acf2ae1e2d7d51660a9f45841647f849dc5d9634a69",
+ "chunk_id_returned": "76f35c1340b184b4de639acf2ae1e2d7d51660a9f45841647f849dc5d9634a69",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "c925abc3ca4c4e1c97477d5568e24c05",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VIII (Penggabungan dkk.): persyaratan akta notaris untuk rancangan penggabungan, peleburan, pengambilalihan, dan pemisahan.",
+ "tokens_local": 48
+}

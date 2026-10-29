@@ -1,0 +1,11 @@
+{
+ "chunk_id": "99ef3aabe84b097b66398a5e84e4f4352543031ed76065cfece20c730a2f2205",
+ "chunk_id_returned": "99ef3aabe84b097b66398a5e84e4f4352543031ed76065cfece20c730a2f2205",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "922a2c82535e4a48bbdd37d2e42f4307",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Ketiga Penambahan Modal: penjelasan ketentuan penambahan modal dasar serta modal ditempatkan dan disetor.",
+ "tokens_local": 43
+}

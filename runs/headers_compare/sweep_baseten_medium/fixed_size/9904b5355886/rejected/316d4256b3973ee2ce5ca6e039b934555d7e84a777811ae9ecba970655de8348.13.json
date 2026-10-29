@@ -1,0 +1,11 @@
+{
+ "chunk_id": "316d4256b3973ee2ce5ca6e039b934555d7e84a777811ae9ecba970655de8348",
+ "chunk_id_returned": "316d4256b3973ee2ce5ca6e039b934555d7e84a777811ae9ecba970655de8348",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "2a3e73878a44440eba4386233c5fcff1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab II (Pendirian dkk.): penamaan Perseroan Terbuka, tempat kedudukan, maksud tujuan, dan perubahan anggaran dasar.",
+ "tokens_local": 42
+}

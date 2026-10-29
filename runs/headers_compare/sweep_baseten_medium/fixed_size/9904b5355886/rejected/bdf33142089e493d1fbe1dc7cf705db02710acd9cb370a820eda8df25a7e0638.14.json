@@ -1,0 +1,11 @@
+{
+ "chunk_id": "bdf33142089e493d1fbe1dc7cf705db02710acd9cb370a820eda8df25a7e0638",
+ "chunk_id_returned": "bdf33142089e493d1fbe1dc7cf705db02710acd9cb370a820eda8df25a7e0638",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "3e0ebbc4790b405c9f77d4a7656ccfe9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab X (Pembubaran dkk.) - Bab XI (Biaya): pencatatan berakhirnya badan hukum dan pendirian perseroan mikro kecil.",
+ "tokens_local": 45
+}

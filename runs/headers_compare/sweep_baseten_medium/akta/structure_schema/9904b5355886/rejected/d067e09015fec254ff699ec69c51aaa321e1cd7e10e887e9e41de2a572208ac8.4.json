@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d067e09015fec254ff699ec69c51aaa321e1cd7e10e887e9e41de2a572208ac8",
+ "chunk_id_returned": "d067e09015fec254ff699ec69c51aaa321e1cd7e10e887e9e41de2a572208ac8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "c9cb9f45bcb44ee6a300911517077678",
+ "text": "Akta Pendirian PT Pancasona Reksakarya Anugrah No. 41, Penutup Akta: pengesahan pembuatan dan penandatanganan akta serta penyimpanan minuta oleh Notaris.",
+ "tokens_local": 44
+}

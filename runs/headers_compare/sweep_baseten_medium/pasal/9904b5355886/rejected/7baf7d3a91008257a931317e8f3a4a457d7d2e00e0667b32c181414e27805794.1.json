@@ -1,0 +1,11 @@
+{
+ "chunk_id": "7baf7d3a91008257a931317e8f3a4a457d7d2e00e0667b32c181414e27805794",
+ "chunk_id_returned": "7baf7d3a91008257a931317e8f3a4a457d7d2e00e0667b32c181414e27805794",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1da7cdcc32e840479086559cf5541f10",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kelima (Saham): hak yang melekat pada saham dan syarat penggunaannya oleh pemilik.",
+ "tokens_local": 41
+}

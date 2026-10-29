@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ae7edb1bdc779e92b35cc735d6bc27989eaf3dd2b4fff2577a4ec8ce1501e82a",
+ "chunk_id_returned": "ae7edb1bdc779e92b35cc735d6bc27989eaf3dd2b4fff2577a4ec8ce1501e82a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "214e8b32c4544c45aafec92703649703",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.) Penjelasan Pasal 95: kebatalan pengangkatan anggota Direksi yang tidak memenuhi syarat.",
+ "tokens_local": 41
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "007e7cca1d0b5562d2a30540569edcc8bcde7c57a1981fb4dfc1414e79f6045f",
+ "chunk_id_returned": "007e7cca1d0b5562d2a30540569edcc8bcde7c57a1981fb4dfc1414e79f6045f",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "1a9c9e58502a401e943ab4b9727df844",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham) Bagian Kesatu (Modal): ketentuan kompensasi tagihan dengan kewajiban penyetoran saham dan persetujuan RUPS.",
+ "tokens_local": 45
+}

@@ -1,0 +1,11 @@
+{
+ "chunk_id": "c0b7e06e59adb473866ae4eb197f0b31ee2708e0761b0f0b2aaeb6721b74499d",
+ "chunk_id_returned": "c0b7e06e59adb473866ae4eb197f0b31ee2708e0761b0f0b2aaeb6721b74499d",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "8fabe2b6e95c4f6f844b4a74c1f52085",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab V (Tanggung Jawab Sosial dan Lingkungan): Penjelasan Pasal 74 tentang ruang lingkup kewajiban Tanggung Jawab Sosial dan Lingkungan.",
+ "tokens_local": 42
+}

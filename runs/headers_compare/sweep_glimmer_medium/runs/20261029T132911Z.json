@@ -1,0 +1,231 @@
+{
+ "attempts": {
+  "akta-01/pasal": 1,
+  "akta-01/structure_schema": 1,
+  "akta-02/pasal": 1,
+  "akta-02/structure_schema": 1,
+  "akta-03/pasal": 1,
+  "akta-03/structure_schema": 1,
+  "akta-04/pasal": 1,
+  "akta-04/structure_schema": 2,
+  "akta-05/pasal": 1,
+  "akta-05/structure_schema": 2
+ },
+ "batches": [
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-01/pasal",
+   "ok": 1,
+   "round": 1,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  },
+  {
+   "called": 18,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-01/structure_schema",
+   "ok": 18,
+   "round": 1,
+   "stopped": null,
+   "units": 18,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-02/pasal",
+   "ok": 1,
+   "round": 1,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  },
+  {
+   "called": 21,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-02/structure_schema",
+   "ok": 21,
+   "round": 1,
+   "stopped": null,
+   "units": 21,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-03/pasal",
+   "ok": 1,
+   "round": 1,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  },
+  {
+   "called": 24,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-03/structure_schema",
+   "ok": 24,
+   "round": 1,
+   "stopped": null,
+   "units": 24,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-04/pasal",
+   "ok": 1,
+   "round": 1,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  },
+  {
+   "called": 26,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-04/structure_schema",
+   "ok": 24,
+   "round": 1,
+   "stopped": null,
+   "units": 26,
+   "upper_cached": 0
+  },
+  {
+   "called": 2,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-04/structure_schema",
+   "ok": 2,
+   "round": 2,
+   "stopped": null,
+   "units": 2,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-05/pasal",
+   "ok": 1,
+   "round": 1,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  },
+  {
+   "called": 29,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-05/structure_schema",
+   "ok": 28,
+   "round": 1,
+   "stopped": null,
+   "units": 29,
+   "upper_cached": 0
+  },
+  {
+   "called": 1,
+   "expected": 0,
+   "gate_ok": "skipped_local",
+   "key": "akta-05/structure_schema",
+   "ok": 1,
+   "round": 2,
+   "stopped": null,
+   "units": 1,
+   "upper_cached": 0
+  }
+ ],
+ "cache_guard": "skipped",
+ "coverage": {
+  "akta-01/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-01/structure_schema": {
+   "stored": 18,
+   "units": 18
+  },
+  "akta-02/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-02/structure_schema": {
+   "stored": 21,
+   "units": 21
+  },
+  "akta-03/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-03/structure_schema": {
+   "stored": 24,
+   "units": 24
+  },
+  "akta-04/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-04/structure_schema": {
+   "stored": 26,
+   "units": 26
+  },
+  "akta-05/pasal": {
+   "stored": 1,
+   "units": 1
+  },
+  "akta-05/structure_schema": {
+   "stored": 29,
+   "units": 29
+  }
+ },
+ "failed": {},
+ "family": "akta",
+ "finished_at": "2026-10-29T13:29:10Z",
+ "gpu_lock": {
+  "broke_stale": null,
+  "holder": "glimmer-b"
+ },
+ "identity": {
+  "effort": "medium",
+  "max_header_tokens": 40,
+  "model": "meta/muse-glimmer",
+  "profile": "sweep_glimmer_medium",
+  "prompt_hash": "9904b5355886b70cc37ea8bb529b4782fcbb338a711ec3fcf5738430407b068a",
+  "provider": "lmstudio_local",
+  "quantization": "Q4_K_M",
+  "schema_max_length_chars": 190
+ },
+ "latency_ms_first_calls": [
+  26748
+ ],
+ "main_identity": "unchanged",
+ "not_attempted": {},
+ "pairs_not_started": [],
+ "profile": "sweep_glimmer_medium",
+ "reuse_confirmed": null,
+ "sources": [
+  "pasal",
+  "structure_schema"
+ ],
+ "started_at": "2026-10-29T12:38:59Z",
+ "stopped": null,
+ "stopped_at": null,
+ "stored": 123,
+ "sweep": {
+  "effort": "medium",
+  "pool_remaining_micros": 43002310,
+  "profile": "sweep_glimmer_medium",
+  "status": "complete"
+ },
+ "warm": false
+}

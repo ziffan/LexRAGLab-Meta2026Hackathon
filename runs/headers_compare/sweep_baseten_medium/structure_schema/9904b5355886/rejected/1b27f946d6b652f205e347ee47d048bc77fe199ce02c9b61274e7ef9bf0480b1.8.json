@@ -1,0 +1,11 @@
+{
+ "chunk_id": "1b27f946d6b652f205e347ee47d048bc77fe199ce02c9b61274e7ef9bf0480b1",
+ "chunk_id_returned": "1b27f946d6b652f205e347ee47d048bc77fe199ce02c9b61274e7ef9bf0480b1",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "a802dcb1a0794a659f9072c197581fc8",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): akibat hukum pengangkatan anggota Dewan Komisaris yang tidak memenuhi persyaratan dan tanggung jawabnya.",
+ "tokens_local": 41
+}

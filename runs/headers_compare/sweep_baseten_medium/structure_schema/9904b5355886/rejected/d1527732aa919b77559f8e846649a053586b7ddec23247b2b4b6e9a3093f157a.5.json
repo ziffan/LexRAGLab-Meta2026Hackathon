@@ -1,0 +1,11 @@
+{
+ "chunk_id": "d1527732aa919b77559f8e846649a053586b7ddec23247b2b4b6e9a3093f157a",
+ "chunk_id_returned": "d1527732aa919b77559f8e846649a053586b7ddec23247b2b4b6e9a3093f157a",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "f38ad2cdb36c4aec9b099dd7a6a0b545",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham): hak pemegang saham yang tidak setuju atas tindakan Perseroan tertentu untuk meminta sahamnya dibeli dengano",
+ "tokens_local": 50
+}

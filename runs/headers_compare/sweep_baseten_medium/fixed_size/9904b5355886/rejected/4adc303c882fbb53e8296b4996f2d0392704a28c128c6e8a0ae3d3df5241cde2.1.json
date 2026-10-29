@@ -1,0 +1,11 @@
+{
+ "chunk_id": "4adc303c882fbb53e8296b4996f2d0392704a28c128c6e8a0ae3d3df5241cde2",
+ "chunk_id_returned": "4adc303c882fbb53e8296b4996f2d0392704a28c128c6e8a0ae3d3df5241cde2",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "ec42f00657754e39ab3ab576a5650a8e",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kesatu (Direksi): pengecualian persetujuan RUPS untuk pengalihan kekayaan dalam usaha, kuasa Direksi, dan syarat pengajuan pA1",
+ "tokens_local": 57
+}

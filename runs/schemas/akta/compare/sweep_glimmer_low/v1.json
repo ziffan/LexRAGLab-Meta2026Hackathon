@@ -1,0 +1,124 @@
+{
+ "body": {
+  "default_chunk_level": 3,
+  "family": "akta",
+  "levels": [
+   {
+    "examples": [
+     "AKTA PENDIRIAN PERSEROAN TERBATAS",
+     "AKTA PENDIRIAN PERSEROAN TERBATAS",
+     "AKTA PENDIRIAN PERSEROAN TERBATAS"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^AKTA PENDIRIAN PERSEROAN TERBATAS",
+    "name": "akta pendirian perseroan terbatas",
+    "order": 1,
+    "parent_order": null
+   },
+   {
+    "examples": [
+     "ANGGARAN DASAR",
+     "ANGGARAN DASAR",
+     "ANGGARAN DASAR"
+    ],
+    "is_chunk_unit": false,
+    "marker_pattern": "^ANGGARAN DASAR",
+    "name": "anggaran dasar",
+    "order": 2,
+    "parent_order": 1
+   },
+   {
+    "examples": [
+     "Pasal 1",
+     "Pasal 3",
+     "Pasal 10"
+    ],
+    "is_chunk_unit": true,
+    "marker_pattern": "^Pasal \\d+",
+    "name": "pasal",
+    "order": 3,
+    "parent_order": 2
+   }
+  ],
+  "notes": "Penanda KETERANGAN PENDIRI DAN PENGANGKATAN PENGURUS dan PENUTUP berulang di semua dokumen namun berada di luar blok ANGGARAN DASAR sehingga tidak dimasukkan dalam hierarki Pasal. Variasi penulisan sub-ayat (1), (2), a., b. muncul di dalam Pasal tetapi tidak konsisten sebagai penanda awal baris di semua dokumen."
+ },
+ "cache_key": "b0fbbe2a1240322596da91166673aade0c668359a04eb349676ab9fc32b1de2a",
+ "created_at": "2026-10-28T23:37:16Z",
+ "family": "akta",
+ "model_profile": "sweep_glimmer_low",
+ "operator_note": null,
+ "parent_version": null,
+ "run_id": "b8e7c9b58aac49b29b322ac0c44ce063",
+ "sample": [
+  {
+   "clean_sha256": "b2c652932f9092fbbc53764f19768fe108e93201c29473e8b33805e467bedf81",
+   "doc_id": "akta-01"
+  },
+  {
+   "clean_sha256": "f2a9011e196fb90351139c2fdea722adeb824e8d9174f744af9dce16ddb73922",
+   "doc_id": "akta-02"
+  },
+  {
+   "clean_sha256": "2a8ce09337f82f52555d79bc4fd3b2dd5450373f9d6dc2b739c3feb470c2864e",
+   "doc_id": "akta-03"
+  },
+  {
+   "clean_sha256": "500d18570a1871555935416ec7ed6cc9f68cb39172c67dfa27b25d2ca2a30e04",
+   "doc_id": "akta-04"
+  },
+  {
+   "clean_sha256": "246299b7ababe634ec2cfa28117635e30de96594a23aa38b0264c73000ea5d8b",
+   "doc_id": "akta-05"
+  }
+ ],
+ "sample_checked": true,
+ "schema_version": 1,
+ "source": "spark",
+ "validation": [
+  {
+   "example": "AKTA PENDIRIAN PERSEROAN TERBATAS",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "AKTA PENDIRIAN PERSEROAN TERBATAS",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "AKTA PENDIRIAN PERSEROAN TERBATAS",
+   "matched": true,
+   "order": 1
+  },
+  {
+   "example": "ANGGARAN DASAR",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "ANGGARAN DASAR",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "ANGGARAN DASAR",
+   "matched": true,
+   "order": 2
+  },
+  {
+   "example": "Pasal 1",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "Pasal 3",
+   "matched": true,
+   "order": 3
+  },
+  {
+   "example": "Pasal 10",
+   "matched": true,
+   "order": 3
+  }
+ ]
+}

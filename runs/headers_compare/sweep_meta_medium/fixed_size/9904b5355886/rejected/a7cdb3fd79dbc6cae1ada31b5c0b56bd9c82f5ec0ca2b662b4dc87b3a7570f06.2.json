@@ -1,0 +1,11 @@
+{
+ "chunk_id": "a7cdb3fd79dbc6cae1ada31b5c0b56bd9c82f5ec0ca2b662b4dc87b3a7570f06",
+ "chunk_id_returned": "a7cdb3fd79dbc6cae1ada31b5c0b56bd9c82f5ec0ca2b662b4dc87b3a7570f06",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "fixed_size",
+ "prompt_version": "v2",
+ "run_id": "67a264417b2d495699b55023e381a47a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII Bagian Kesatu (Direksi): kewajiban dokumentasi, pelaporan saham, dan persetujuan RUPS untuk transaksi kekayaan.",
+ "tokens_local": 41
+}

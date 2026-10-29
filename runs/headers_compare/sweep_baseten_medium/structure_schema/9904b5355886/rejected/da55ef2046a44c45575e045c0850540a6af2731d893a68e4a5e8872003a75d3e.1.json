@@ -1,0 +1,11 @@
+{
+ "chunk_id": "da55ef2046a44c45575e045c0850540a6af2731d893a68e4a5e8872003a75d3e",
+ "chunk_id_returned": "da55ef2046a44c45575e045c0850540a6af2731d893a68e4a5e8872003a75d3e",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "8b38ce5b606d41629b7c184258bab0c3",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.) Penjelasan Pasal 101: kewajiban Direksi melaporkan kepemilikan saham pribadi dan keluarga untuk daftar khusus.",
+ "tokens_local": 42
+}

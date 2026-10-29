@@ -1,0 +1,11 @@
+{
+ "chunk_id": "daf4928b2597c142bb728870361ebbd6644c9050c3b04ebf965537404b02b8f8",
+ "chunk_id_returned": "daf4928b2597c142bb728870361ebbd6644c9050c3b04ebf965537404b02b8f8",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "597d5af427904f54b516ee1a56aced6a",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dkk.), Bagian Kedua (Dewan Komisaris): penjelasan pengangkatan dan pemberhentian komisaris.",
+ "tokens_local": 42
+}

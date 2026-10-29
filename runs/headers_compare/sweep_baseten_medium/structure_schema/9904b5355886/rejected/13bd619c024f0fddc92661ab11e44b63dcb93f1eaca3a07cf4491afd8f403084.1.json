@@ -1,0 +1,11 @@
+{
+ "chunk_id": "13bd619c024f0fddc92661ab11e44b63dcb93f1eaca3a07cf4491afd8f403084",
+ "chunk_id_returned": "13bd619c024f0fddc92661ab11e44b63dcb93f1eaca3a07cf4491afd8f403084",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "997cf61c9ca24d859df1ffac05a3c33c",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Penjelasan Pasal 61: gugatan pemegang saham terhadap Perseroan atas tindakan tidak adil.",
+ "tokens_local": 42
+}

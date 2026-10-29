@@ -1,0 +1,11 @@
+{
+ "chunk_id": "67b54408bdfbc94bf4f07607f8bafd13a20a11c36317ebf876e938a2d4d591ed",
+ "chunk_id_returned": "67b54408bdfbc94bf4f07607f8bafd13a20a11c36317ebf876e938a2d4d591ed",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "9a2013e34ed64c24b815f36be535d7e1",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): pemberhentian anggota Dewan Komisaris berlaku mutatis mutandis ketentuan pemberhentian Direksi.",
+ "tokens_local": 45
+}

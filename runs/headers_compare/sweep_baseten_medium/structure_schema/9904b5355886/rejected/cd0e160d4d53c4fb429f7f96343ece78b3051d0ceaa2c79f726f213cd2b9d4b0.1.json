@@ -1,0 +1,11 @@
+{
+ "chunk_id": "cd0e160d4d53c4fb429f7f96343ece78b3051d0ceaa2c79f726f213cd2b9d4b0",
+ "chunk_id_returned": "cd0e160d4d53c4fb429f7f96343ece78b3051d0ceaa2c79f726f213cd2b9d4b0",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "81fd7cf2373f490285b09a36debe88a5",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VI (Rapat Umum Pemegang Saham), Penjelasan Pasal 86: kuorum kehadiran RUPS dan penetapan kuorum RUPS ketiga oleh pengadilan.",
+ "tokens_local": 48
+}

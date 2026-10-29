@@ -1,0 +1,11 @@
+{
+ "chunk_id": "2f901837fe2e472f2f0a5f6d4273ecdcea249334d12f5ac6de8449bdb1df236b",
+ "chunk_id_returned": "2f901837fe2e472f2f0a5f6d4273ecdcea249334d12f5ac6de8449bdb1df236b",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "structure_schema",
+ "prompt_version": "v2",
+ "run_id": "ef4bc6d7ed784123a224fe9849557ece",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab III (Modal dan Saham), Bagian Kelima (Saham), Penjelasan Pasal 57: pengecualian persyaratan pemindahan hak atas saham untuk peralihan karena hukum.",
+ "tokens_local": 51
+}

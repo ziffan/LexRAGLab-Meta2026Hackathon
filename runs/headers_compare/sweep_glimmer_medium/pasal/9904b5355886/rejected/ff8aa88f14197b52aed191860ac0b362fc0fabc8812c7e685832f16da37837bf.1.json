@@ -1,0 +1,11 @@
+{
+ "chunk_id": "ff8aa88f14197b52aed191860ac0b362fc0fabc8812c7e685832f16da37837bf",
+ "chunk_id_returned": "ff8aa88f14197b52aed191860ac0fabc8812c7e685832f16da37837bf",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: chunk_id does not match the requested chunk",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "2a73989481874fb9a2838707422f1dd9",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab XI (Biaya): pendirian Perseroan usaha mikro dan kecil oleh satu orang.",
+ "tokens_local": 32
+}

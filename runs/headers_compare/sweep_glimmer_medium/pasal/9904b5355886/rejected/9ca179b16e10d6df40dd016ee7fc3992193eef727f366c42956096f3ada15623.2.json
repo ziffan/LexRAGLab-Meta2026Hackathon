@@ -1,0 +1,11 @@
+{
+ "chunk_id": "9ca179b16e10d6df40dd016ee7fc3992193eef727f366c42956096f3ada15623",
+ "chunk_id_returned": "9ca179b16e10d6df40dd016ee7fc3992193eef727f366c42956096f3ada15623",
+ "error_code": "semantic_invalid",
+ "error_message": "semantic validation failed: header exceeds 40 tokens",
+ "granularity": "pasal",
+ "prompt_version": "v2",
+ "run_id": "159e12224c2647e5ab3704bdedab7b9d",
+ "text": "UU 40/2007 (Perseroan Terbatas), Bab VII (Direksi dan Dewan Komisaris): pemberhentian anggota Direksi sewaktu-waktu oleh RUPS dan berlakunya pemberhentian.",
+ "tokens_local": 46
+}
