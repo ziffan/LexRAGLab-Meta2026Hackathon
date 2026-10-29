@@ -3,7 +3,7 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-112.
 
-diperbarui: 2026-10-29 UTC (L2-pascasapuan: README/GOTCHAS/ekspor statis setelah merge sapuan), sesi orkestrasi berlapis di mesin otoritatif
+diperbarui: 2026-10-29 UTC (L2-sisir-docs: status basi disisir; sebelumnya L2-pascasapuan), sesi orkestrasi berlapis di mesin otoritatif
 
 ## Status
 
@@ -13,7 +13,7 @@ diperbarui: 2026-10-29 UTC (L2-pascasapuan: README/GOTCHAS/ekspor statis setelah
 - M4 selesai (Tier 4 M4.1 dikonfirmasi operator 28 Okt, preseden M3.3: I-51 + koreksi v2 H-088/H-089 sebagai domain review): skema A akta v2 (H-089), peta unit (H-090), header B akta (`runs/headers/akta`, G-38), grid akta final 36 setting `{all}` (`014765d`), profil akta transfer (`91aa993`), README hasil akta.
 - M5.1: uji visual Chrome statis + live (375/768/1440) lolos setelah fix proxy keep-alive (`b79e37b`, G-39); bukti `_kerja/orkestrasi/bukti/M51-*`. Status tetap "berjalan" setelah dicocokkan (L2#8, W90): kriteria kode terpenuhi; sisa = adegan video dikunci operator (putusan 8) + Tier 4 UX review operator, lalu screenshot per adegan (agen).
 - M5.1 L2#10 (putusan operator 12): perbaikan UX review UX-01..23 selesai (tagline dan hint 1.5.0 final, disetujui operator 28 Okt); `Run cost` = buku belanja `Ledger.spent` 615.008 di header, README, U8 (direvisi H-104: lihat baris Biaya) (R1 `ledger_spent_usd_micros`, `run_totals_by_kind`); U3 biaya panggilan asal untuk jawaban cache (W6 `origin_runs`); profil UU PT/akta ikut ekspor statis. Ringkasan per UX: `docs/UI-SPEC.md` §10.5.
-- M5.2 persiapan: LICENSE + NOTICE Apache-2.0 (H-097, copyright Ziffany Firdinal), README tema Build for Your World / Indie (H-098) + kalimat anti-RAG dan new-work-only, motivasi PRD = korpus aturan (angka LO dari laporan operator, anonim), hint 1.5.0 final (L2#10), dist-static dibangun ulang dari `84c6513` (lihat baris HEAD). Rencana rewrite histori `_kerja/orkestrasi/M52-rewrite-histori-rencana.md` (H-096, belum dijalankan). Repo masih private.
+- M5.2 persiapan: LICENSE + NOTICE Apache-2.0 (H-097, copyright Ziffany Firdinal), README tema Build for Your World / Indie (H-098) + kalimat anti-RAG dan new-work-only, motivasi PRD = korpus aturan (angka LO dari laporan operator, anonim), hint 1.5.0 final (L2#10), dist-static dibangun ulang dari `84c6513` (kemudian dari `432dd76f`, lihat baris Ekspor statis ulang). Rencana rewrite histori `_kerja/orkestrasi/M52-rewrite-histori-rencana.md` (H-096, belum dijalankan). Repo masih private.
 - `tolak` UU PT selesai (H-099): prompt D v3 268dd67, kode Tier 1 f2b5417, run D b709ac3 (4.992 micro-USD), 3 butir disetujui operator, split v3, grid ulang tanpa Spark (pilihan profil tidak berubah), profil + ekspor statis ulang (faa343d). Jawaban C untuk 3 butir `tolak` UU PT (`f52f6a7`, best `d7a9dd24` + baseline `ed489a1e`): Contributor 6/6 abstain (4 `tolak`, 2 `bukti_tidak_cukup`; 1.964 micro-USD), Spark Open Baseten 6/6 (5 + 1; 22.676 micro-USD), Glimmer lokal 6/6 (4 + 2; 0); sel 2×2 18/18 `abstained_correct`.
 - Biaya (H-104 butir 3, L2#11, 29 Okt): header U0 dan README = `Run cost (main results)` = buku belanja pool default (R1 `main_results_spent_usd_micros`) 561.741 micro-USD; eksperimen per pool terpisah (R1 `pool_spend`, tabel U8 "Spend by budget pool", README Limits): Baseten 15.513.750 (A 93.751, B 15.366.732, C 53.267); pool sapuan H-102 dirangkai (`cost_fields` meneruskan `off_pin`), angka per 29 Okt di baris sapuan di atas; README memuat angka pool sapuan dan diuji `test_readme_cost_figures_match_stored_runs`.
 - Ekspor statis ulang bersih dari `432dd76f` (L2-pascasapuan, 29 Okt): `rm -rf dist-static`, export + `npm run build:static` + `--check` 0 temuan; `dist-static/data` 1.097 berkas, `dist-static` 1.119 berkas; scan nilai `*KEY*` `.env` di dist-static 0. pytest 1840, vitest 321. (Sebelumnya: HEAD `84c6513`, pytest 1402, vitest 287, `dist-static` 1.122 berkas.)
@@ -55,7 +55,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1402) dan npm (287) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1840) dan vitest (321) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
 2. Gerbang operator: adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
-3. Agen (tidak terblok, kecil): opsional test Glimmer di mode statis.
-4. Frontend 5173 dari HEAD repo utama (L1, log `_kerja/orkestrasi/proses/frontend-5173-L1.log`); backend 8000 dari HEAD L2#10. 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39); jawaban C butir tolak dibaca backend dari `runs/` (frontend tidak berubah sejak `b709ac3`; 5175 tailnet memakai `b709ac3`).
+3. Agen (tidak terblok, kecil): opsional test Glimmer di mode statis (belum dikerjakan; tidak ada agen aktif per 29 Okt).
+4. Proses per 29 Okt ±17Z: 5173 (frontend), 8000 (backend), 5177 (statis) dan 5175 (tailnet) mati; Glimmer di-unload. Untuk Tier 4/rekaman, nyalakan ulang dari HEAD; 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39).
