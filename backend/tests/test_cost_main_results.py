@@ -101,16 +101,19 @@ def _num(s: str) -> int:
 
 
 def test_readme_cost_figures_match_stored_runs():
-    """README: angka header = pool default; pool Baseten terpisah; angka total lama 615,008 tidak dikutip lagi."""
-    text = (REPO / "README.md").read_text(encoding="utf-8")
-    assert "615,008" not in text and "615.008" not in text and "0.615008" not in text
+    """README dan docs/LIMITS.md: angka header = pool default (keduanya); pool Baseten, role A/B/C, sweep di docs/LIMITS.md;
+    angka total lama 615,008 tidak dikutip lagi di keduanya."""
+    readme = (REPO / "README.md").read_text(encoding="utf-8")
+    text = (REPO / "docs" / "LIMITS.md").read_text(encoding="utf-8")
     caps = provider_caps(config.load("budget"), config.load("model"))
     mcfg = config.load("model")
     pools = pool_spend(store.load_records(REPO / "runs"), caps, off_pin=lambda r: is_off_pin(r, mcfg))  # aturan sama dengan R1
-    m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as \$(\d+\.\d{6})\)", text)
-    assert m, "README run cost line (main results) missing"
-    assert _num(m.group(1)) == pools["default"]
-    assert m.group(2) == f"{pools['default'] // 1_000_000}.{pools['default'] % 1_000_000:06d}"
+    for name, doc in (("README.md", readme), ("docs/LIMITS.md", text)):
+        assert "615,008" not in doc and "615.008" not in doc and "0.615008" not in doc, name
+        m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as \$(\d+\.\d{6})\)", doc)
+        assert m, f"{name} run cost line (main results) missing"
+        assert _num(m.group(1)) == pools["default"], name
+        assert m.group(2) == f"{pools['default'] // 1_000_000}.{pools['default'] % 1_000_000:06d}", name
     b = re.search(r"Muse Spark Open comparator pool \(Baseten\): ([\d,]+) micro-USD", text)
     assert b and _num(b.group(1)) == pools["baseten"]
     r = re.search(r"\(role A ([\d,]+), role B ([\d,]+), role C ([\d,]+)\)", text)
@@ -123,6 +126,26 @@ def test_readme_cost_figures_match_stored_runs():
     off = [r for r in store.load_records(REPO / "runs") if is_off_pin(r, mcfg)]
     per = [sum(r.spend_micros() for r in off if r.provider == p) for p in ("meta", "baseten", "lmstudio_local")]
     assert [_num(x) for x in s.groups()[1:]] == per and sum(per) == pools["sweep"]
+
+
+def _number_tokens(doc: str) -> set[str]:
+    return {t.rstrip(",.") for t in re.findall(r"\$?\d[\d,\.]*%?", doc)}
+
+
+def test_readme_id_numbers_match_readme():
+    """docs/README.id.md = terjemahan setia: himpunan token angka sama persis dengan README.md (nol pengecualian), dan
+    baris biaya utama (padanan Indonesia) memuat angka mikro-USD serta dolar yang sama dengan baris Inggris di README."""
+    readme = (REPO / "README.md").read_text(encoding="utf-8")
+    readme_id = (REPO / "docs" / "README.id.md").read_text(encoding="utf-8")
+    en, idn = _number_tokens(readme), _number_tokens(readme_id)
+    assert en - idn == set(), f"angka README tidak ada di versi ID: {sorted(en - idn)}"
+    assert idn - en == set(), f"angka versi ID tidak ada di README: {sorted(idn - en)}"
+    m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as (\$\d+\.\d{6})\)", readme)
+    assert m, "baris biaya utama README hilang"
+    j = re.search(r"Biaya run \(hasil utama\): ([\d,]+) micro-USD \(ditampilkan sebagai (\$\d+\.\d{6})\)", readme_id)
+    assert j, "baris biaya utama README.id hilang"
+    assert j.groups() == m.groups()
+    assert m.group(1) in readme_id and m.group(2) in readme_id
 
 
 def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
