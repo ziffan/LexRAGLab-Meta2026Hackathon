@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MG-1 Hook</title>
+<!--
+  MG-1, adegan S0 (0:00-0:25), storyboard terkunci putusan operator 19 (hook S0-A, putusan 18 O1).
+  Aset video, bukan bagian app. Statis, tanpa jaringan: CSS/JS inline, font IBM Plex lokal (video/fonts/, SIL OFL 1.1).
+  Parameter URL:
+    ?t=12.5      bekukan frame pada detik 12,5 (render per frame)
+    ?play=1      putar real-time dari 0 (juga perilaku bawaan tanpa ?t)
+    ?dur=26      regangkan timeline ke 26 detik (ikuti durasi VO)
+    ?delay=2     tahan frame 0 selama 2 detik sebelum mulai (untuk perekam layar)
+    ?hook=A|B|C|D  varian hook (bagian 4.1 dokumen analisis narasi); bawaan A
+  Semua angka di layar berasal dari objek DATA di bawah; sumber per angka ada di komentarnya dan di video/README.md.
+-->
+<style>
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; src: url("fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); }
+/* Token warna disalin dari frontend/src/theme.css (H-083). */
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --bg: #F3F4F1; --ink: #15181C; --surface: #FFFFFF; --line: #D3D7DC; --line-strong: #8A929B;
+  --muted: #4B535D; --accent: #1D5BA8; --gold: #FBE3A6; --gold-line: #D9B65A;
+  --head-bg: #15181C; --head-ink: #FFFFFF; --head-muted: #C9CED4; --series-on: #A8500C; --skeleton: #E4E7EA;
+}
+html, body { margin: 0; height: 100%; background: #0B0C0E; overflow: hidden; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg);
+  color: var(--ink); font-family: var(--font-sans); overflow: hidden; }
+.band { position: absolute; left: 0; top: 0; width: 1920px; height: 12px; background: var(--head-bg); }
+.ctx { position: absolute; left: 120px; bottom: 56px; width: 1680px; font-size: 24px; color: var(--muted); }
+.row { position: absolute; left: 120px; width: 1680px; height: 230px; }
+.row-label { font-size: 34px; font-weight: 500; margin-bottom: 22px; }
+.row-body { position: relative; height: 120px; }
+.value { position: absolute; left: 1340px; top: 0; width: 380px; font-family: var(--font-mono); font-size: 46px; font-weight: 500; line-height: 1.15; }
+.value small { display: block; font-family: var(--font-sans); font-size: 24px; font-weight: 400; color: var(--muted); }
+.track { position: absolute; left: 0; top: 20px; width: 1300px; height: 80px; background: var(--skeleton); border-radius: 6px; overflow: visible; }
+.fill { position: absolute; left: 0; top: 0; height: 80px; background: var(--accent); border-radius: 6px 0 0 6px; }
+.over { position: absolute; top: 0; height: 80px; background: var(--series-on); }
+.ref { position: absolute; top: -18px; height: 116px; border-left: 4px dashed var(--ink); }
+.ref span { position: absolute; left: 12px; top: -34px; white-space: nowrap; font-size: 24px; color: var(--ink); }
+.gold-mark { position: absolute; top: -6px; height: 92px; background: var(--gold); border: 3px solid var(--gold-line); box-sizing: border-box; }
+.win { position: absolute; top: 10px; width: 200px; height: 100px; border: 3px solid var(--line-strong); box-sizing: border-box; background: var(--surface); border-radius: 6px; overflow: hidden; }
+.win i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.win b { position: absolute; left: 0; right: 0; top: 30px; text-align: center; font-family: var(--font-mono); font-size: 28px; font-weight: 500; color: var(--muted); mix-blend-mode: normal; }
+.blk { position: absolute; top: 0; width: 112px; height: 120px; background: var(--surface); border: 3px solid var(--line); box-sizing: border-box; border-radius: 4px; }
+.blk::before, .blk::after { content: ""; position: absolute; left: 14px; right: 14px; height: 8px; background: var(--line); top: 24px; box-shadow: 0 20px 0 var(--line), 0 40px 0 var(--line); }
+.blk::after { top: 84px; right: 44px; box-shadow: none; }
+.blk.on { background: var(--gold); border-color: var(--gold-line); }
+.bignum { position: absolute; left: 0; top: 0; font-family: var(--font-mono); font-size: 96px; font-weight: 500; line-height: 1; }
+.bignum small { font-family: var(--font-sans); font-size: 32px; font-weight: 400; color: var(--muted); margin-left: 24px; }
+.text-beat { position: absolute; left: 0; top: 10px; font-size: 60px; font-weight: 600; line-height: 1.15; width: 1680px; }
+.fam { position: absolute; top: 230px; width: 460px; height: 520px; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; box-sizing: border-box; padding: 34px 40px; }
+.fam h2 { margin: 0 0 30px; font-size: 40px; font-weight: 600; }
+.fam .ln { height: 12px; background: var(--line); border-radius: 3px; margin: 0 0 18px; }
+.fam .hd { height: 16px; background: var(--line-strong); border-radius: 3px; margin: 30px 0 18px; }
+.fam .box { border: 2px dashed var(--line-strong); border-radius: 6px; padding: 16px 16px 0; margin-bottom: 18px; }
+.cut { position: absolute; left: 120px; top: 500px; height: 0; border-top: 5px dashed var(--series-on); }
+#scissors { position: absolute; top: 452px; width: 120px; height: 96px; }
+.ask { position: absolute; left: 0; width: 1920px; top: 820px; text-align: center; font-family: var(--font-mono); font-size: 84px; font-weight: 500; }
+.ask-sub { position: absolute; left: 0; width: 1920px; top: 140px; text-align: center; font-size: 44px; font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="stage"><div class="band"></div></div>
+<script>
+"use strict";
+// ---------------------------------------------------------------------------
+// DATA: satu-satunya tempat angka. Tiap angka diberi sumber (berkas + bagian/field).
+// RM = README.md repo app; MEA = runs/measure/5db7720bc1f5a121.json; GRD = runs/grid/e7ffa7b0....json.
+// ---------------------------------------------------------------------------
+const DATA = {
+  // RM "Why" butir 1: "A single statute ... was about 320 thousand tokens, more than a 200-thousand-token window on its own."
+  statute_tokens: 320000,
+  statute_window_tokens: 200000,
+  // RM "Why" butir 3: "about 5.8 million for a full due diligence file (1.2 to 5.8 times a 1-million-token window)".
+  dd_window_multiple: 5.8,
+  // RM "Why" butir 2: "Of the regulation text, only about 10% was actually used."
+  regulation_used_pct: 10,
+  // RM "Why", paragraf "Supporting, secondary": "Legal due diligence (two engagements): about 15 billion cached input
+  // tokens re-read across about 120 agent sessions". Hanya varian D.
+  dd_cached_tokens_billion: 15,
+  dd_engagements: 2,
+  dd_sessions: 120,
+  // MEA baris section "_document": tokens_local 46583 (korpus UU PT, tokenizer lokal). Hanya varian B.
+  uupt_tokens: 46583,
+  // runs/corpus/uupt-40-2007.c56e4f0f38a4.json: batang_tubuh Pasal 102 [141959-143179]; GRD metrics kontrol-K-01 gold_chars 542.
+  // Dipakai hanya sebagai posisi visual sorotan (tidak ditulis sebagai angka di layar). Hanya varian B.
+  uupt_chars: 213139,          // MEA "_document" chars
+  art102_start_char: 141959,
+  art102_end_char: 143179,
+};
+
+const WORDS = { 2: "two" };
+const VARIANTS = {
+  // S0-A (terkunci, putusan 18 O1)
+  A: {
+    ctx: "Operator's measurements of prior engagements (not included in the repository). Context, not output of this app.",
+    rows: [
+      { at: 0.4, type: "bar", label: "One statute, consulted for one legal opinion",
+        value: DATA.statute_tokens, ref: DATA.statute_window_tokens, max: 400000, grow: [1.2, 6.0] },
+      { at: 8.0, type: "windows", label: "One due diligence file (whole material)", value: DATA.dd_window_multiple, grow: [8.8, 13.0] },
+      { at: 15.0, type: "blocks", label: "Regulation text actually used", pct: DATA.regulation_used_pct, lit: 16.4 },
+    ],
+  },
+  // S0-B (alternatif 4.1): angka terukur di repo
+  B: {
+    ctx: "Measured in this repository: Company Law (UU 40/2007, unofficial consolidation), local tokenizer.",
+    rows: [
+      { at: 0.4, type: "corpus", label: "Indonesian Company Law, whole text", value: DATA.uupt_tokens, grow: [1.2, 6.0],
+        mark: [DATA.art102_start_char / DATA.uupt_chars, DATA.art102_end_char / DATA.uupt_chars], markAt: 9.0,
+        markLabel: "The answer to one question: a single article (Article 102)" },
+      { at: 15.0, type: "text", text: "Every legal RAG pipeline has to decide how to cut the law into chunks." },
+    ],
+  },
+  // S0-C (alternatif 4.1): tanpa angka
+  C: {
+    ctx: "",
+    rows: [
+      { at: 0.4, type: "text", text: "Legal work with AI agents: opinions, due diligence, contracts." },
+      { at: 8.0, type: "text", text: "The regulations they must read do not fit in one context window." },
+      { at: 14.0, type: "text", text: "So retrieval is a must." },
+    ],
+  },
+  // S0-D (alternatif 4.1): "dibayar agen"
+  D: {
+    ctx: "Operator's measurements of prior engagements, from local agent transcripts (not included in the repository). Context, not output of this app.",
+    rows: [
+      { at: 0.4, type: "bignum", label: "Cached input tokens re-read by my agents",
+        text: "≈ " + DATA.dd_cached_tokens_billion + " billion",
+        sub: (WORDS[DATA.dd_engagements] || DATA.dd_engagements) + " due diligence engagements, about " + DATA.dd_sessions + " agent sessions" },
+      { at: 8.0, type: "bar", label: "One statute, consulted for one legal opinion",
+        value: DATA.statute_tokens, ref: DATA.statute_window_tokens, max: 400000, grow: [8.8, 12.5] },
+      { at: 15.0, type: "blocks", label: "Regulation text actually used", pct: DATA.regulation_used_pct, lit: 16.4 },
+    ],
+  },
+};
+
+const DUR = 25;           // detik, slot S0 0:00-0:25
+const FAM_AT = 20.0;      // adegan keluarga dokumen + gunting
+
+// --------------------------- runtime ---------------------------------------
+const Q = new URLSearchParams(location.search);
+const V = VARIANTS[(Q.get("hook") || "A").toUpperCase()] || VARIANTS.A;
+const stage = document.getElementById("stage");
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = (x) => x * x * (3 - 2 * x);
+const k = (t, a, b) => ease(clamp((t - a) / (b - a)));
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const fmtK = (n) => Math.round(n / 1000) + "K";
+function el(tag, cls, parent, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; (parent || stage).appendChild(e); return e; }
+
+const updaters = [];
+const ROW_TOP = [150, 420, 690];
+
+V.rows.forEach((r, i) => {
+  const row = el("div", "row"); row.style.top = ROW_TOP[i] + "px";
+  if (r.label) el("div", "row-label", row, r.label);
+  const body = el("div", "row-body", row);
+  let upd = () => {};
+  if (r.type === "bar") {
+    const tr = el("div", "track", body), fill = el("div", "fill", tr), over = el("div", "over", tr);
+    const ref = el("div", "ref", tr); el("span", null, ref, fmtK(r.ref) + "-token context window");
+    const W = 1300, refX = W * r.ref / r.max; ref.style.left = refX + "px";
+    const val = el("div", "value", body); val.textContent = "≈ " + fmtK(r.value);
+    el("small", null, val, "tokens");
+    upd = (t) => {
+      const v = r.value * k(t, r.grow[0], r.grow[1]);
+      const x = W * v / r.max;
+      fill.style.width = Math.min(x, refX) + "px";
+      over.style.left = refX + "px"; over.style.width = Math.max(0, x - refX) + "px";
+      val.style.opacity = k(t, r.grow[1] - 0.4, r.grow[1] + 0.4);
+    };
+  } else if (r.type === "windows") {
+    const n = Math.ceil(r.value), boxes = [];
+    for (let j = 0; j < n; j++) { const b = el("div", "win", body); b.style.left = (j * 220) + "px"; const f = el("i", null, b); el("b", null, b, "1M"); boxes.push(f); }
+    const val = el("div", "value", body); val.textContent = "≈ " + r.value + " ×";
+    el("small", null, val, "a 1M-token context window");
+    upd = (t) => {
+      const v = r.value * k(t, r.grow[0], r.grow[1]);
+      boxes.forEach((f, j) => { f.style.width = (100 * clamp(v - j)) + "%"; f.nextSibling.style.color = clamp(v - j) > 0.5 ? "var(--head-ink)" : "var(--muted)"; });
+      val.style.opacity = k(t, r.grow[1] - 0.4, r.grow[1] + 0.4);
+    };
+  } else if (r.type === "blocks") {
+    const n = Math.round(100 / r.pct), litIdx = 3, blks = [];
+    for (let j = 0; j < n; j++) { const b = el("div", "blk", body); b.style.left = (j * 132) + "px"; blks.push(b); }
+    const val = el("div", "value", body); val.textContent = "≈ 1 in " + n;
+    el("small", null, val, "about " + r.pct + "% of the regulation text");
+    upd = (t) => {
+      blks.forEach((b, j) => { b.style.opacity = k(t, r.at + 0.05 * j, r.at + 0.05 * j + 0.5); });
+      blks[litIdx].classList.toggle("on", t >= r.lit);
+      blks.forEach((b, j) => { if (j !== litIdx) b.style.filter = t >= r.lit ? "opacity(0.55)" : "none"; });
+      val.style.opacity = k(t, r.lit, r.lit + 0.6);
+    };
+  } else if (r.type === "corpus") {
+    const tr = el("div", "track", body), fill = el("div", "fill", tr);
+    fill.style.borderRadius = "6px";
+    const mark = el("div", "gold-mark", tr);
+    const W = 1300; mark.style.left = (W * r.mark[0]) + "px"; mark.style.width = Math.max(10, W * (r.mark[1] - r.mark[0])) + "px";
+    const val = el("div", "value", body); val.textContent = fmt(r.value);
+    el("small", null, val, "tokens");
+    const ml = el("div", "row-label", row, r.markLabel); ml.style.marginTop = "40px";
+    upd = (t) => {
+      fill.style.width = (W * k(t, r.grow[0], r.grow[1])) + "px";
+      fill.style.opacity = t >= r.markAt ? 0.35 : 1;
+      mark.style.opacity = k(t, r.markAt, r.markAt + 0.6);
+      ml.style.opacity = k(t, r.markAt + 0.4, r.markAt + 1.0);
+      val.style.opacity = k(t, r.grow[1] - 0.4, r.grow[1] + 0.4);
+    };
+  } else if (r.type === "bignum") {
+    const b = el("div", "bignum", body, r.text); el("small", null, b, "tokens");
+    const s = el("div", "row-label", row, r.sub); s.style.color = "var(--muted)"; s.style.marginTop = "0";
+    upd = (t) => { b.style.opacity = k(t, r.at + 0.4, r.at + 1.2); s.style.opacity = k(t, r.at + 1.2, r.at + 2.0); };
+  } else if (r.type === "text") {
+    el("div", "text-beat", body, r.text);
+  }
+  updaters.push((t) => {
+    const a = k(t, r.at, r.at + 0.6) * (1 - k(t, FAM_AT - 0.6, FAM_AT));
+    row.style.opacity = a; row.style.transform = "translateY(" + (24 * (1 - k(t, r.at, r.at + 0.6))) + "px)";
+    upd(t);
+  });
+});
+
+// --- adegan keluarga dokumen + gunting (20-25 dtk) ---
+const fam = el("div"); fam.style.cssText = "position:absolute;inset:0";
+el("div", "ask-sub", fam, "Statutes, notarial deeds and internal policies are cut differently.");
+const FAMS = [
+  { name: "Statute", html: '<div class="hd" style="width:40%"></div><div class="ln"></div><div class="ln" style="margin-left:36px"></div><div class="ln" style="margin-left:36px;width:80%"></div><div class="hd" style="width:40%"></div><div class="ln"></div><div class="ln" style="margin-left:36px;width:70%"></div>' },
+  { name: "Notarial deed", html: '<div class="box"><div class="ln" style="width:60%"></div></div><div class="box"><div class="ln"></div><div class="ln"></div><div class="ln" style="width:75%"></div></div><div class="box"><div class="ln" style="width:50%"></div></div>' },
+  { name: "Internal policy", html: '<div class="ln" style="width:85%"></div><div class="hd" style="width:55%"></div><div class="ln" style="margin-left:48px"></div><div class="ln" style="margin-left:48px"></div><div class="ln" style="margin-left:48px;width:60%"></div><div class="hd" style="width:55%"></div><div class="ln" style="margin-left:48px"></div>' },
+];
+const famCards = FAMS.map((f, j) => { const c = el("div", "fam", fam); c.style.left = (180 + j * 540) + "px"; c.innerHTML = "<h2></h2>" + f.html; c.querySelector("h2").textContent = f.name; return c; });
+const cut = el("div", "cut", fam);
+const sc = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+sc.setAttribute("id", "scissors"); sc.setAttribute("viewBox", "0 0 120 96");
+sc.innerHTML = '<g fill="none" stroke="#15181C" stroke-width="6" stroke-linecap="round"><circle cx="22" cy="24" r="16"/><circle cx="22" cy="72" r="16"/><path d="M36 32 L112 64"/><path d="M36 64 L112 32"/></g>';
+fam.appendChild(sc);
+const ask = el("div", "ask", fam, "chunk size = ?");
+updaters.push((t) => {
+  fam.style.opacity = k(t, FAM_AT, FAM_AT + 0.6);
+  famCards.forEach((c, j) => { c.style.transform = "translateY(" + (30 * (1 - k(t, FAM_AT + 0.2 * j, FAM_AT + 0.2 * j + 0.7))) + "px)"; });
+  const p = k(t, FAM_AT + 1.0, FAM_AT + 3.4), x = 120 + p * 1560;
+  sc.style.left = (x - 20) + "px"; cut.style.width = Math.max(0, x - 120) + "px";
+  ask.style.opacity = k(t, FAM_AT + 3.0, FAM_AT + 3.6);
+});
+
+if (V.ctx) { const c = el("div", "ctx", null, V.ctx); updaters.push((t) => { c.style.opacity = k(t, 0.2, 0.8) * (1 - k(t, FAM_AT - 0.6, FAM_AT)); }); }
+
+function render(t) { updaters.forEach((u) => u(t)); }
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = "translate(" + (innerWidth - 1920 * s) / 2 + "px," + (innerHeight - 1080 * s) / 2 + "px) scale(" + s + ")";
+}
+// ?dur=26 meregangkan/memampatkan seluruh timeline secara linear ke 26 detik (menyesuaikan durasi VO); ?t= dalam detik keluaran.
+const OUT = Q.has("dur") && parseFloat(Q.get("dur")) > 0 ? parseFloat(Q.get("dur")) : DUR;
+const at = (t) => render(clamp(t, 0, OUT) * DUR / OUT);
+function start() {
+  fit(); addEventListener("resize", fit);
+  if (Q.has("t")) { at(parseFloat(Q.get("t")) || 0); document.body.dataset.ready = "1"; return; }
+  const delay = 1000 * (parseFloat(Q.get("delay")) || 0);
+  at(0); document.body.dataset.ready = "1";
+  const t0 = performance.now() + delay;
+  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); at(t); if (t < OUT) requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+window.MG = { duration: OUT, render: at };
+document.fonts.ready.then(start);
+</script>
+</body>
+</html>
