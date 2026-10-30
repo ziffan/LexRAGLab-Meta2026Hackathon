@@ -20,7 +20,7 @@ Built for the Meta Global AI Developer Hackathon (Indie track, theme "Build for 
 
 - **Problem:** legal RAG teams pick a chunk size by guess, and there is no public benchmark for Indonesian legal text ([Why](#why)).
 - **Built during the hackathon:** all code was written 26 Oct to 4 Nov 2026; before the event there were only labelled planning documents and regulation text, no code ([Built before vs during](#built-before-vs-during-the-hackathon)).
-- **Meta models used:** Muse Spark in four roles, plus comparators, a tokenizer, and a video check ([Meta models](#meta-models-and-their-roles)).
+- **Meta models used:** Muse Spark (`muse-spark-1.3-contributor`) produces the main results in four roles; two open-weight Meta models are comparators; the Muse Spark Open tokenizer counts tokens; Muse Voice Transcribe only checks the video narration. The grid search and the citation verifier use no LLM ([Meta models](#meta-models-and-their-roles)).
 - **Evidence:** every number comes from a stored run ([Results](#results), [docs/RESULTS.md](docs/RESULTS.md)).
 - **How to run:** replay needs no API key ([Run it](#run-it)).
 - **Limits:** small n, raw counts, no significance claims ([Limits](#limits), [docs/LIMITS.md](docs/LIMITS.md)).
@@ -57,7 +57,7 @@ The output is a **versioned setting profile** you can export and reuse in your o
 
 | Model | Access / host | Roles | Status | Stored runs |
 |---|---|---|---|---|
-| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API with strict structured output, Contributor mode (Meta may use the content to train future models; all documents here are public or synthetic) | A, B, C, D | Main results (reasoning effort `low`); the effort sweep (`medium`, `high`, `xhigh`) is stored separately | `runs/spark/records/`, `runs/schemas/<family>/v1.json`, `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
+| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API with strict structured output, Contributor mode (see [Data and licensing](#data-and-licensing)) | A, B, C, D | Main results (reasoning effort `low`); the effort sweep (`medium`, `high`, `xhigh`) is stored separately | `runs/spark/records/`, `runs/schemas/<family>/v1.json`, `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
 | Muse Spark Open `meta-models/muse-spark-open-1026` | hosted endpoint on Baseten, Responses API, strict structured output | A, B, C | Comparator, separate runs, never mixed with main results | `runs/schemas/<family>/compare/`, `runs/headers_compare/`, `runs/grid_compare/`, `runs/compare_report/c/` |
 | Muse Spark Open tokenizer (`meta-models/Muse-Spark-Open-816B-A42B`, revision pinned in `config/tokenizer.toml`) | local, read from the user's Hugging Face cache, not included | no role: counts tokens for every setting and the token budget (no model call) | Used for all token counts ("Built with Muse Spark Open"; `o200k_base` fallback) | `config/tokenizer.toml` |
 | Muse Glimmer `meta/muse-glimmer` (Q4_K_M) | local on the operator's machine, OpenAI-compatible loopback endpoint, client-side schema validation; weights not included; Apache-2.0 per Meta docs (model card not yet verified, see `NOTICE`) | A, B, C | Comparator, separate runs | same comparator directories |
@@ -107,7 +107,7 @@ The visual theme of the UI (colour tokens, IBM Plex typography, component patter
 | Notarial deeds | Transfer: five synthetic deeds of establishment; role A on a family with no existing parser; transfer test, no profile selection |
 | Internal policies | Mentioned as the next family; no documents included |
 
-**Evaluation items.** Company Law 23 items (tune / held-out split 13 / 10); notarial deeds (synthetic) 84 items, no split. Breakdown by origin and mode: [docs/RESULTS.md](docs/RESULTS.md).
+**Evaluation items.** Company Law 23 items (tune / held-out split 13 / 10); notarial deeds (synthetic) 84 items (69 with a gold span, 15 must-refuse), no split. Breakdown by origin and mode: [docs/RESULTS.md](docs/RESULTS.md).
 
 **Deed transfer test** (69 gold items, 2,000-token budget; the Company Law setting applied to the deeds, nothing selected on them):
 
@@ -147,14 +147,14 @@ uv run pytest
 cd frontend && npm test
 ```
 
+## Repository map
+
 ```text
 backend:   Python 3.12 + FastAPI
 frontend:  React + TypeScript + Vite
 model:     muse-spark-1.3-contributor, Responses API (model ID in config/model.toml)
 storage:   files only (no database, no vector database)
 ```
-
-## Repository map
 
 | Directory | Contents |
 |---|---|
@@ -171,9 +171,10 @@ storage:   files only (no database, no vector database)
 
 ## For AI agents and contributors
 
-- Read [`AGENTS.md`](AGENTS.md) first (rules for agents, written in Indonesian), then `docs/CONTEXT.md`, `docs/DECISIONS.md`, and `docs/MILESTONES.md` (the reading order is in `AGENTS.md`).
-- Spec documents are written in Indonesian. IDs like `H-028` refer to entries in the operator decision log, summarised in `docs/DECISIONS.md`.
-- Numbers come only from stored runs. API keys live only in the local `.env`.
+- Read [`AGENTS.md`](AGENTS.md) first (rules for agents, written in Indonesian). Its reading order: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, the spec of the slice being worked on, `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`.
+- Key rules from `AGENTS.md`: agents never write or approve evaluation items; numbers come only from stored runs and are never invented; no model other than `muse-spark-1.3-contributor` except the exceptions listed there (the comparators and the video check); no database, vector database, LangChain, PDF parser, or reranker; API keys live only in the local `.env`.
+- Spec documents are written in Indonesian. IDs like `H-028` refer to entries in the operator decision log, summarised in `docs/DECISIONS.md`. Family codes: `uupt` = Company Law, `akta` = notarial deeds.
+- Model profiles (main and comparators) are in `config/model.toml`, which `AGENTS.md` calls `config/model`.
 
 ## Limits
 
@@ -182,7 +183,7 @@ storage:   files only (no database, no vector database)
 - Comparators are separate runs; no quality claim is made about them. The main results stay on `muse-spark-1.3-contributor` at reasoning effort `low`.
 - Deed results rest on five synthetic documents; there are no operator-written control items and no held-out split for deeds.
 - Token counts use a local tokenizer calibrated once against the API token-count endpoint; billed tokens may differ.
-- The "valid on date" citation check is a stretch goal and may be absent. Indonesian legal text is shown in Indonesian, with short English glosses where needed.
+- The "valid on date" citation check (whether a cited provision was in force on a given date) is a stretch goal and may be absent. Indonesian legal text is shown in Indonesian, with short English glosses where needed.
 - Run cost (main results): 561,741 micro-USD (shown as $0.561741), the same figure and label as the app header.
 
 Experiment spend per pool (comparator, effort sweep) is reported separately in [docs/LIMITS.md](docs/LIMITS.md), together with the comparator and effort sweep details.
