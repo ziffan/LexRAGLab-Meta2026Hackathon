@@ -10,6 +10,7 @@
   Parameter URL:
     ?t=12.5      bekukan frame pada detik 12,5 (render per frame)
     ?play=1      putar real-time dari 0 (juga perilaku bawaan tanpa ?t)
+    ?dur=26      regangkan timeline ke 26 detik (ikuti durasi VO)
     ?delay=2     tahan frame 0 selama 2 detik sebelum mulai (untuk perekam layar)
     ?hook=A|B|C|D  varian hook (bagian 4.1 dokumen analisis narasi); bawaan A
   Semua angka di layar berasal dari objek DATA di bawah; sumber per angka ada di komentarnya dan di video/README.md.
@@ -255,16 +256,19 @@ function fit() {
   const s = Math.min(innerWidth / 1920, innerHeight / 1080);
   stage.style.transform = "translate(" + (innerWidth - 1920 * s) / 2 + "px," + (innerHeight - 1080 * s) / 2 + "px) scale(" + s + ")";
 }
+// ?dur=26 meregangkan/memampatkan seluruh timeline secara linear ke 26 detik (menyesuaikan durasi VO); ?t= dalam detik keluaran.
+const OUT = Q.has("dur") && parseFloat(Q.get("dur")) > 0 ? parseFloat(Q.get("dur")) : DUR;
+const at = (t) => render(clamp(t, 0, OUT) * DUR / OUT);
 function start() {
   fit(); addEventListener("resize", fit);
-  if (Q.has("t")) { render(clamp(parseFloat(Q.get("t")) || 0, 0, DUR)); document.body.dataset.ready = "1"; return; }
+  if (Q.has("t")) { at(parseFloat(Q.get("t")) || 0); document.body.dataset.ready = "1"; return; }
   const delay = 1000 * (parseFloat(Q.get("delay")) || 0);
-  render(0); document.body.dataset.ready = "1";
+  at(0); document.body.dataset.ready = "1";
   const t0 = performance.now() + delay;
-  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); render(Math.min(t, DUR)); if (t < DUR) requestAnimationFrame(loop); };
+  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); at(t); if (t < OUT) requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
 }
-window.MG = { duration: DUR, render };
+window.MG = { duration: OUT, render: at };
 document.fonts.ready.then(start);
 </script>
 </body>

@@ -97,7 +97,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 
 ## Audio
 
-- Voice over: TTS lokal lewat `<folder TTS lokal>` (putusan 19 butir 2), dikerjakan L2-tts. Syarat: lisensi bobot model dan suara mengizinkan publikasi di submission; tanpa kloning suara orang nyata; sampel dengar (S0 dan T1) disetujui operator sebelum render penuh. Nama engine diisi di `video/mg-3-end.html` `DATA.tts_engine` setelah L2-tts melapor.
+- Voice over: TTS lokal lewat `<folder TTS lokal>` (putusan 19 butir 2), dikerjakan L2-tts. Syarat: lisensi bobot model dan suara mengizinkan publikasi di submission; tanpa kloning suara orang nyata; sampel dengar (S0 dan T1) disetujui operator sebelum render penuh. Engine: VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra` (bukan tiruan orang nyata), laporan L2-tts 30 Okt; terisi di `video/mg-3-end.html`. Durasi VO terukur per adegan (total 178,01 dtk) dan parameter `?dur` MG: `video/README.md`.
 - Pengungkapan: "Narration: synthetic voice (TTS)" di kartu akhir MG-3 dan di deskripsi video.
 - Takarir Inggris dibakar ke video, dari kolom VO storyboard.
 
@@ -111,7 +111,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 6. "Comparators: Muse Spark Open (open-weight, Baseten) and Muse Glimmer (open-weight, Q4_K_M, running locally on the operator's machine; Apache-2.0 per Meta docs), labelled with model and reasoning effort, separate runs, never mixed with main results." (H-047, H-060, H-100; putusan 18 O11)
 7. "Problem-size figures: the operator's measurements of prior engagements, not output of this app." (mengikuti varian hook)
 8. "Built with Muse Spark Open." (README; `NOTICE`, Muse Model License bagian 2)
-9. "Narration: synthetic voice (TTS, run locally: <engine>)." (putusan 19 butir 2)
+9. "Narration: synthetic voice (VoxCPM2, local TTS)." (putusan 19 butir 2; laporan L2-tts)
 10. "Research demo. Not legal advice."
 
 ## Aturan isi
@@ -140,7 +140,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 | 6 | Butir K-01; setting fixed 512/64 dense untuk D1 dan profil terpilih `d7a9dd24…` untuk sisanya; split held-out; anggaran 2.000 | GRD, `data/butir/uupt.v16.jsonl` |
 | 7 | Jangan merekam lewat tailnet 5175 dengan `vite.config.ts` lebih lama dari `b79e37b` | G-39 |
 | 8 | Glimmer tidak perlu dimuat: pemilih model U3 menampilkan run tersimpan | RM Limits |
-| 9 | MG direkam dari `video/*.html` (layar penuh 1920x1080 atau render per frame `?t=`); `DATA.repo_url` dan `DATA.tts_engine` MG-3 sudah terisi (tidak ada kotak TODO di layar) | `video/README.md` |
+| 9 | MG direkam dari `video/*.html` (layar penuh 1920x1080 atau render per frame `?t=`); `DATA.repo_url` MG-3 sudah terisi (tidak ada kotak TODO di layar); `?dur` MG sesuai durasi VO | `video/README.md` |
 | 10 | Setelah rekaman: `git status` bersih (tidak ada `profiles/` berubah) | G-47 |
 | 11 | Gate sebelum unggah di bawah, lalu tonton ulang tanpa suara dan dengan suara | Bagian Gate |
 

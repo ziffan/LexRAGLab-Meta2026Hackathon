@@ -11,6 +11,7 @@
   Parameter URL:
     ?t=6        bekukan frame pada detik 6
     ?play=1     putar real-time (bawaan tanpa ?t)
+    ?dur=26      regangkan timeline ke 26 detik (ikuti durasi VO)
     ?delay=2    tahan frame 0 selama 2 detik sebelum mulai
     ?hook=A|B|C|D  samakan baris "problem-size figures" dengan varian hook MG-1 (bawaan A)
   Placeholder operator (DATA.repo_url, DATA.tts_engine) tampil sebagai kotak TODO merah sampai diisi.
@@ -50,8 +51,8 @@ const DATA = {
   tagline: "Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed.",
   // TODO operator: URL repo publik (dibuka di gate M5.2, H-029). null = tampil sebagai placeholder.
   repo_url: null,
-  // TODO operator / L2-tts: nama engine TTS lokal (putusan 19 butir 2). null = tampil sebagai placeholder.
-  tts_engine: null,
+  // Laporan L2-tts lewat L1 (30 Okt): VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra`, bukan tiruan orang nyata.
+  tts_engine: "VoxCPM2",
 };
 // Disclosure bagian 6.2 dokumen analisis narasi (repo catatan docs/riset/2026-10-30-analisis-narasi-video.md, c983b71).
 // Sumber per baris: (1) README "Built before vs during the hackathon", H-083, H-044; (2) README "Data and licensing" (H-028);
@@ -97,8 +98,8 @@ LINES.forEach((line) => {
     if (!txt) return;
     li = document.createElement("li"); li.textContent = txt;
   } else if (line === "@TTS") {
-    li = document.createElement("li"); li.textContent = "Narration: synthetic voice (TTS, run locally";
-    if (DATA.tts_engine) li.textContent += ": " + DATA.tts_engine + ")."; else { li.appendChild(document.createTextNode(": ")); todo(li, "TODO engine"); li.appendChild(document.createTextNode(").")); }
+    li = document.createElement("li");
+    if (DATA.tts_engine) li.textContent = "Narration: synthetic voice (" + DATA.tts_engine + ", local TTS)."; else { li.textContent = "Narration: synthetic voice ("; todo(li, "TODO engine"); li.appendChild(document.createTextNode(", local TTS).")); }
   } else { li = document.createElement("li"); li.textContent = line; }
   $("list").appendChild(li); items.push(li);
 });
@@ -115,16 +116,19 @@ function fit() {
   const s = Math.min(innerWidth / 1920, innerHeight / 1080);
   stage.style.transform = "translate(" + (innerWidth - 1920 * s) / 2 + "px," + (innerHeight - 1080 * s) / 2 + "px) scale(" + s + ")";
 }
+// ?dur=26 meregangkan/memampatkan seluruh timeline secara linear ke 26 detik (menyesuaikan durasi VO); ?t= dalam detik keluaran.
+const OUT = Q.has("dur") && parseFloat(Q.get("dur")) > 0 ? parseFloat(Q.get("dur")) : DUR;
+const at = (t) => render(clamp(t, 0, OUT) * DUR / OUT);
 function start() {
   fit(); addEventListener("resize", fit);
-  if (Q.has("t")) { render(clamp(parseFloat(Q.get("t")) || 0, 0, DUR)); document.body.dataset.ready = "1"; return; }
+  if (Q.has("t")) { at(parseFloat(Q.get("t")) || 0); document.body.dataset.ready = "1"; return; }
   const delay = 1000 * (parseFloat(Q.get("delay")) || 0);
-  render(0); document.body.dataset.ready = "1";
+  at(0); document.body.dataset.ready = "1";
   const t0 = performance.now() + delay;
-  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); render(Math.min(t, DUR)); if (t < DUR) requestAnimationFrame(loop); };
+  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); at(t); if (t < OUT) requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
 }
-window.MG = { duration: DUR, render };
+window.MG = { duration: OUT, render: at };
 document.fonts.ready.then(start);
 </script>
 </body>

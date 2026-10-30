@@ -17,6 +17,7 @@ Varian T1-B (sapuan effort) dan "Pembuka langsung app" tidak dibuat: T1-B memaka
 
 ## Pemutaran dan render
 
+- `?dur=26` meregangkan atau memampatkan seluruh timeline secara linear ke 26 detik, untuk menyamakan MG dengan durasi VO; `?t=` lalu dihitung dalam detik keluaran.
 - `?t=12.5` membekukan frame pada detik 12,5. Semua animasi adalah fungsi murni dari `t` (tanpa transisi CSS, tanpa acak), jadi frame yang sama selalu identik.
 - Tanpa `?t` (atau `?play=1`): putar real-time dari 0 setelah font dimuat, lalu berhenti di frame terakhir. `?delay=2` menahan frame 0 dua detik sebelum mulai (untuk perekam layar).
 - `window.MG = { duration, render(t) }` tersedia untuk render per frame.
@@ -28,9 +29,22 @@ Varian T1-B (sapuan effort) dan "Pembuka langsung app" tidak dibuat: T1-B memaka
 | Placeholder | Berkas, field | Diisi dari |
 |---|---|---|
 | URL repo publik | `mg-3-end.html` `DATA.repo_url` (null = kotak "TODO operator") | Operator, setelah gate M5.2 (H-029) |
-| Nama engine TTS | `mg-3-end.html` `DATA.tts_engine` (null = kotak "TODO engine") | Laporan L2-tts (putusan 19 butir 2) |
+| Nama engine TTS | `mg-3-end.html` `DATA.tts_engine`: **terisi "VoxCPM2"** (30 Okt) | Laporan L2-tts lewat L1: VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra`, bukan tiruan orang nyata; teks "Narration: synthetic voice (VoxCPM2, local TTS)." |
 
-Kotak TODO berwarna merah supaya tidak terlewat saat rekaman. Jangan merekam MG-3 final sebelum keduanya terisi.
+Kotak TODO berwarna merah supaya tidak terlewat saat rekaman. Jangan merekam MG-3 final sebelum URL repo terisi.
+
+## Durasi VO dan parameter `?dur`
+
+Durasi VO terukur (laporan L2-tts, tempo 1,12; detik): S0 26,09; S1 13,52; D1 13,05; D2 22,97; D3 14,70; D4 17,73; D5 17,84; T1 26,83; I1 25,28; total 178,01 (target ekspor <= 178).
+
+| MG | Bawaan (slot storyboard) | Usulan untuk VO | Catatan |
+|---|---|---|---|
+| MG-1 | 25 dtk | `?dur=26.1` | S0 seluruhnya MG-1 |
+| MG-S | 4 dtk | tetap | Kartu judul di awal S1 (13,52 dtk); sisa S1 rekaman APP |
+| MG-2 | 20 dtk | `?dur=22` atau sesuai sisa | T1 26,83 dtk = APP (a) 2–3 dtk + MG-2 + APP (c) 2 dtk; MG-2 mengisi sisanya |
+| MG-3 | 8 dtk | tetap, atau dipotong | I1 25,28 dtk = APP U7 Export + MG-3; MG-3 hanya kartu akhir |
+
+Total 178,01 dtk sudah di batas ekspor 2:58; bila edit melewati batas, MG-3 dipotong lebih dulu (storyboard).
 
 ## Angka di layar dan sumbernya
 
