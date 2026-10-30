@@ -113,7 +113,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 8. "Built with Muse Spark Open (tokenizer for local token counts)." (README; `NOTICE`, Muse Model License bagian 2)
 9. "Narration: synthetic voice (ElevenLabs text-to-speech)." (H-114, merevisi putusan 19 butir 2)
 10. "Narration checked against the script with Muse Voice Transcribe (Meta Model API); not part of the app." (H-113; `NOTICE` butir 4; ditambahkan atas permintaan operator 30 Okt malam, F9)
-11. "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." (`LICENSE`, `NOTICE`, H-097; F9)
+11. "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." (`NOTICE` "Copyright 2026 Ziffany Firdinal"; Apache-2.0 di `LICENSE`; H-097; F9)
 12. "Research demo. Not legal advice."
 
 ## Aturan isi
