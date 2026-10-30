@@ -3,9 +3,7 @@
 
 # LexRAGLab
 
-English: [README.md](../README.md) (the English version is authoritative; if the two differ, the English README prevails).
-
-Versi bahasa Inggris yang otoritatif; bila berbeda, README Inggris yang berlaku.
+English: [README.md](../README.md). Versi bahasa Inggris yang otoritatif; bila berbeda, README Inggris yang berlaku. Angka memakai notasi Inggris (koma pemisah ribuan, titik desimal), sama dengan README Inggris.
 
 Temukan setelan chunking dan retrieval yang memberi LLM klausul yang tepat dari dokumen hukum Indonesia, berdasarkan pengukuran, bukan tebakan.
 
@@ -43,7 +41,7 @@ Motivasinya berasal dari praktik: pekerjaan hukum agentic harus merujuk undang-u
 
 Angka di bawah adalah hasil pengukuran operator atas pekerjaan sebelumnya (tidak disertakan di repositori ini). Angka itu bukan keluaran aplikasi ini, dan tidak ada hasil LexRAGLab yang diturunkan dari angka tersebut.
 
-- Satu undang-undang yang dirujuk untuk satu pendapat hukum berukuran sekitar 320 ribu token, lebih besar daripada jendela 200 ribu token saja.
+- Satu undang-undang yang dirujuk untuk satu pendapat hukum berukuran sekitar 320 ribu token, dengan sendirinya sudah melampaui jendela 200 ribu token.
 - Dari teks peraturan itu, hanya sekitar 10% yang benar-benar dipakai.
 - Seluruh materi per pekerjaan, komposisinya tidak dirinci menjadi peraturan versus dokumen lain: sekitar 1.2 juta token untuk pendapat hukum satu transaksi dan sekitar 5.8 juta untuk satu berkas due diligence lengkap (1.2 sampai 5.8 kali jendela 1 juta token); sekitar 2.2 juta untuk penyusunan kontrak, atau sekitar 2.8 juta bila pustaka klausul disertakan.
 
@@ -59,7 +57,7 @@ Keluarannya adalah **versioned setting profile** yang bisa diekspor dan dipakai 
 
 | Model | Akses / host | Peran | Status | Run tersimpan |
 |---|---|---|---|---|
-| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API dengan strict structured output, mode Contributor (lihat [Data dan lisensi](#data-dan-lisensi)) | A, B, C, D | Hasil utama (reasoning effort `low`); sapuan effort (`medium`, `high`, `xhigh`) disimpan terpisah | `runs/spark/records/`, `runs/schemas/<family>/v1.json`, `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
+| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API dengan strict structured output, mode Contributor (lihat [Data dan lisensi](#data-dan-lisensi)) | A, B, C, D | Hasil utama (reasoning effort `low`); sapuan effort (`medium`, `high`, `xhigh`) disimpan terpisah | `runs/spark/records/`, `runs/schemas/<family>/` (`v1.json` = usulan Spark, `v2.json` = koreksi operator), `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
 | Muse Spark Open `meta-models/muse-spark-open-1026` | endpoint hosted di Baseten, Responses API, strict structured output | A, B, C | Comparator, run terpisah, tidak pernah dicampur dengan hasil utama | `runs/schemas/<family>/compare/`, `runs/headers_compare/`, `runs/grid_compare/`, `runs/compare_report/c/` |
 | Tokenizer Muse Spark Open (`meta-models/Muse-Spark-Open-816B-A42B`, revisi dipin di `config/tokenizer.toml`) | lokal, dibaca dari cache Hugging Face pengguna, tidak disertakan | tanpa peran: menghitung token untuk setiap setelan dan token budget (tanpa panggilan model) | Dipakai untuk semua penghitungan token ("Built with Muse Spark Open"; fallback `o200k_base`) | `config/tokenizer.toml` |
 | Muse Glimmer `meta/muse-glimmer` (Q4_K_M) | lokal di mesin operator, endpoint loopback kompatibel OpenAI, validasi skema di sisi klien; bobot tidak disertakan; Apache-2.0 menurut dokumen Meta (model card belum diverifikasi, lihat `NOTICE`) | A, B, C | Comparator, run terpisah | direktori comparator yang sama |
@@ -117,7 +115,7 @@ Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup
 - fixed-size 512 / 64, dense, header off: 64 dari 69.
 - unstructured (satu chunk per akta): 0 dari 69.
 
-Tabel lengkap, catatan (setelan transfer, unstructured, Recall@K tidak sebanding, n kecil), dan sumber: [RESULTS.md](RESULTS.md) (bahasa Inggris).
+Ini uji transfer pada lima dokumen sintetis, bukan hasil utama dan bukan klaim umum. Tabel lengkap, catatan (setelan transfer, unstructured, Recall@K tidak sebanding, n kecil), dan sumber: [RESULTS.md](RESULTS.md) (bahasa Inggris).
 
 ## Cara menjalankan
 
@@ -173,7 +171,7 @@ storage:   files only (no database, no vector database)
 
 ## Untuk agen AI dan kontributor
 
-- Baca [`AGENTS.md`](../AGENTS.md) lebih dulu (aturan untuk agen, ditulis dalam bahasa Indonesia). Urutan bacanya: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, spec slice yang dikerjakan, `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`.
+- Baca [`AGENTS.md`](../AGENTS.md) lebih dulu (aturan untuk agen, ditulis dalam bahasa Indonesia). Urutan bacanya: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, spec slice yang dikerjakan (terdaftar di bagian "Spec per slice" pada `docs/MILESTONES.md`), `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`; `docs/PRD.md` dan `docs/ARCHITECTURE.md` sebagai referensi.
 - Aturan inti dari `AGENTS.md`: agen tidak pernah menulis atau menyetujui butir evaluasi; angka hanya berasal dari run tersimpan dan tidak pernah dikarang; tidak ada model selain `muse-spark-1.3-contributor` kecuali pengecualian yang tercantum di sana (comparator dan pemeriksa video); tanpa database, vector database, LangChain, parser PDF, atau reranker; API key hanya ada di `.env` lokal.
 - Dokumen spesifikasi ditulis dalam bahasa Indonesia. ID seperti `H-028` merujuk ke entri di log keputusan operator, yang diringkas di `docs/DECISIONS.md`. Kode keluarga: `uupt` = Hukum Perseroan, `akta` = akta notaris.
 - Profil model (utama dan comparator) ada di `config/model.toml`, yang di `AGENTS.md` disebut `config/model`.
