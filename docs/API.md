@@ -74,10 +74,10 @@ Gabungan kontrak yang sudah ada di `docs/DATA-CONTRACTS.md`. Bukan skema keluara
 | `schemas_rejected` | keluaran A yang ditolak validasi semantik, disimpan sebagai berkas `rejected` (W2, DATA-CONTRACTS §6) | `SchemaRecord[]` rejected | U5 |
 | `header_b` | read-only: UU PT `{projection, samples, stored_counts}` (proyeksi biaya terbaru, sampel header tersimpan per granularitas, jumlah tersimpan); akta bentuk kosong `{projection: null, samples: [], stored_counts: {}}` (`header_b_view` di `backend/api/routers/snapshot.py`) | — | — (belum dipakai frontend) |
 | `proposals` | semua usulan D | `ProposalRecord[]` (§9) | U6, U0 |
-| `answers` | per butir dan per `model_profile` yang sudah dijawab: `{item_id, model_profile, best, baseline, verifier}` | `AnswerRecord`, `VerifierResult` (§8) | U3 |
-| `answers_summary` | per setting dan per `model_profile` yang dipakai C | `RejectionSummary` (§8) | U3 |
+| `answers` (stub kosong; sumber U3 = W6) | per butir dan per `model_profile` yang sudah dijawab: `{item_id, model_profile, best, baseline, verifier}` | `AnswerRecord`, `VerifierResult` (§8) | U3 |
+| `answers_summary` (stub kosong; sumber U3 = W6) | per setting dan per `model_profile` yang dipakai C | `RejectionSummary` (§8) | U3 |
 | `report` | laporan held-out UU PT atau laporan transfer akta per butir (tanpa label held-out untuk akta, H-054); `null` bila belum ada grid. Akta (H-091): memuat `setting` (= `grid.transfer`, berlabel "transfer test, no profile selection"), `null` bila UU PT belum punya setting terpilih pada anggaran itu; butir `tolak` (H-092) masuk dengan kolom metrik `null` | `build_report` M4.3 (H-077) | U7 |
-| `runs_summary` | agregat per `kind`: jumlah run, token input/cached/output, biaya | — | U8, U0 |
+| `runs_summary` (stub kosong; sumber U8 = R1/R6) | agregat per `kind`: jumlah run, token input/cached/output, biaya | — | U8, U0 |
 
 ## 5. Aturan per endpoint yang tidak terlihat dari tabel
 

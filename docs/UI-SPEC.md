@@ -50,7 +50,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Data | `Profile` aktif (§11), `RunRecord` agregat (§12), daftar keluarga dari `GET /api/families` |
 | Tampil | Nama app "LexRAGLab"; pemilih keluarga; nama setting terpilih (mis. "structure · hybrid · header on"); model ID dari `RunRecord` (`muse-spark-1.3-contributor`, H-028); biaya hasil utama (`Run cost (main results)` = buku belanja pool default Contributor, R1 `main_results_spent_usd_micros`, label dan angka sama dengan README; H-104 butir 3, merevisi putusan operator 12); lencana "REPLAY" saat mode putar ulang; tautan "Review proposals ({n} pending)" |
 | Interaksi | Ganti keluarga → semua panel memuat ulang untuk keluarga itu. Klik lencana biaya → gulir ke U8 |
-| Loading / empty / error | Skeleton teks / "No family loaded" / "Backend unreachable. Showing replay data if available." |
+| Loading / empty / error | Skeleton teks / "No schema for this family yet" (`ChunksVsGold.tsx`) / "Backend unreachable. Showing replay data if available." |
 | Label | `Family`, `Company Law (UU 40/2007)` (nilai `family` = `uupt`), `Deed (synthetic)` (`akta`), `Selected setting`, `Model`, `Run cost (main results)`, `REPLAY`, `Review proposals` |
 | Adegan video | Semua adegan (bingkai tetap) |
 
@@ -74,7 +74,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Interaksi | Klik titik → `selectedSettingId`. Pemilih anggaran (default 2.000, pembanding dari konfigurasi). Toggle split `Tune` / `Held-out` (default held-out untuk laporan, tune untuk pemilihan; label jelas). Toggle seri header B (tampilan saja). Frontier dihitung gabungan lintas deret header on/off (satu garis; header B adalah salah satu sumbu setting, H-058), bukan per deret (I-48). Filter asal/mode berbagi state dengan U4 |
 | Loading / empty / error | Skeleton sumbu / "No grid run for this family yet" / "Grid run failed: {message}" |
 | Akta (H-054, H-091, H-093) | Keluarga Deed tidak punya split: toggle `Tune` / `Held-out` disembunyikan; satu frontier (`grid.all`, 36 titik pada dua anggaran) diberi label "transfer test, no profile selection" dan tidak ada penanda profil terpilih. Setting transfer (`grid.transfer`) dipilih-awal dan disebut di catatan. Titik `structure_handwritten` tetap digambar dan berlabel "no structure recognized" (1 potongan per akta): di tooltip, di detail setting terpilih, dan di catatan di bawah legenda. Banner "Pending operator review" menggantikan isi U2/U4/U7 selama `grid.final` bukan `true` (tanpa angka sementara); banner hilang sendiri saat `grid_run_id` di `config/akta_grid_final.toml` = kunci amplop grid akta tersimpan (diisi operator/L2, UI tidak memutus "final") |
-| Catatan potong (H-017) | Kalau header B hanya untuk setting di frontier, deret "header on" hanya punya titik itu, dengan catatan "header B computed for frontier settings only". Kalau frontier akta dipotong, U2 untuk Deed tampil empty dengan "Deed frontier not run (scope cut)" |
+| Catatan potong (H-017) | Kalau header B hanya untuk setting di frontier, deret "header on" hanya punya titik itu, dengan catatan "header B computed for frontier settings only". Kalau frontier akta dipotong, U2 untuk Deed tampil empty dengan "Deed frontier not run (scope cut)" (tidak dipakai: H-017 tidak aktif, M4.2 selesai, H-091; teks tidak ada di kode) |
 | Label | `Setting space`, `Span recall`, `Tokens (local tokenizer)`, `Token budget`, `Tune`, `Held-out`, `Header B off`, `Header B on`, `Frontier`, `Dominated` |
 | Adegan video | 1 (frontier UU PT, dua titik disorot), 2 (deret header B on vs off, filter parafrase) |
 
@@ -88,7 +88,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Interaksi | Tombol "Run live" hanya aktif untuk butir `scene_checked`, baik di mode live maupun replay (pengecualian replay di bagian 4 dan `docs/API.md` §1). Tombol "Open evidence detail" membuka tampilan lebar (artboard Evidence) dengan ringkasan 2×2 |
 | Ringkasan 2×2 | Per profil: `Answered, supported` · `Answered, unsupported` · `Abstained, correctly` · `Abstained, should have answered`, dalam hitungan mentah |
 | Loading / empty / error | "Waiting for Muse Spark…" dengan waktu berjalan / "No end-to-end run for this item" / "Model call failed: {message}. Showing last stored run." |
-| Uji 3 dipotong | Kolom `Valid on date` tampil abu dengan "stretch — not run" |
+| Uji 3 dipotong | Kolom `Valid on date` tampil abu dengan "stretch — not run" (tidak dipakai: H-017 tidak aktif; teks tidak ada di kode) |
 | Alasan `Not run` uji 3 (H-068) | `tidak_dijalankan` tampil sebagai `Not run`, bukan `Revoked`, dengan alasan bila tersedia: stretch mati, tabel belum disetujui, `reference_date` kosong, `reference_date` sebelum `effective_from` (U3-A), uji `Exists` gagal (U5), dokumen di luar tabel atau butir akta (U6). Teks alasan Inggris, bentuk akhir ditetapkan saat implementasi M2.4 |
 | Label | `End-to-end evidence`, `Model`, `Quantization`, `Effort`, `Muse Glimmer (local, open-weight)`, `Best profile`, `Baseline`, `Answer`, `Citations`, `Exists`, `Faithful`, `Valid on date`, `Pass`, `Fail`, `Conditional`, `Abstained`, `Insufficient evidence`, `Run live` |
 | Adegan video | 4 |
@@ -188,7 +188,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Empty | Data untuk keluarga atau setting belum ada | Teks empty per komponen (bagian 3) + langkah berikutnya bila relevan |
 | Error | Endpoint gagal atau data tidak valid | Banner merah di panel terkait dengan pesan; tidak ada stack trace; data terakhir tetap tampil bila ada |
 | Replay | `X-Replay: true` | Lencana "REPLAY" di U0; tombol live nonaktif kecuali butir `scene_checked` |
-| Scope cut | Garis potong H-017 terpakai | Komponen terkait tampil abu dengan "not run (scope cut)" atau "stretch — not run" |
+| Scope cut | Garis potong H-017 terpakai | Komponen terkait tampil abu dengan "not run (scope cut)" atau "stretch — not run" (cabang tidak dipakai, H-017 tidak aktif) |
 
 ## 6. Pemetaan enum ke label
 
@@ -299,7 +299,7 @@ Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menut
 | U8 | `Cost (USD)` | `metric.local_tokenizer` |
 | U9 | disclaimer | `app.audience` |
 
-Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`. Bila operator ingin hint terpisah untuk mode, tambah entri `ui.item_mode` (belum ada; pending operator).
+Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`.
 
 ### 9.5 Aksesibilitas dan uji
 

@@ -2,6 +2,8 @@
 
 # Lembar kerja butir kontrol UU PT (untuk operator)
 
+> Lembar snapshot 27 Okt; data berlaku `data/butir/uupt.v16.jsonl` (23 butir sah). Isian kolom (termasuk "Video") milik operator.
+
 Tujuan: membantu operator menulis butir kontrol (asal `operator`, H-011) atas `data/uupt/UU_40_2007_PERSEROAN_TERBATAS.md`. Lembar ini hanya memetakan lokasi dan alasan struktural. Query, span, jawaban, dan pilihan mode semuanya ditulis operator. Tidak ada tafsir hukum di sini.
 
 Dasar: H-006, H-009, H-011, H-015, H-046, H-048, H-049; `docs/DATA-CONTRACTS.md` §2 dan §4; `docs/EVAL-SPEC.md` §4 sampai §8; G-20, G-21, G-25.
