@@ -9,7 +9,9 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | (tidak ada isu terbuka; gerbang lama: pemicu 31 Okt H-017, repo publik/Pages/rewrite histori M5.2) | | | |
+| I-69 | Ekspor statis lolos exit 0 walau berkas retrieval/chunk gagal dibangun (G-49; tanpa model HF di cache) | P2. Slice kecil Tier 3: ekspor gagal atau memperingatkan bila ada GET non-200; atau cukup cek manual jumlah berkas + `retrieval/uupt/` saat ekspor Pages | Operator | Gate M5.2 (sebelum Pages) |
+| I-70 | Temuan video v2: V2-1 T1(c) jawaban Glimmer K-01 saat VO membaca kalimat must-refuse; V2-2 panel U3 mengikuti setting U1 (setting tanpa run pembanding kosong); V2-3 kartu akhir ±5 dtk; V2-4 MINOR (MRR D4 tertutup takarir, /review statis tanpa REPLAY) | P1. V2-1 rekam ulang T1(c) pada butir tolak UU PT yang punya jawaban Glimmer; V2-2 kandidat perbaikan Tier 3 sebelum freeze atau dibiarkan; rincian `_kerja/orkestrasi/video-fix-pertanyaan.md` | Operator | Freeze 3 Nov 20:00 WIB |
+| — | Gerbang lama: pemicu 31 Okt H-017 (lapor status), repo publik/Pages/rewrite histori M5.2; 14 usulan kelas (b) sisir docs 2 di `_kerja/orkestrasi/sisir-docs-2-usulan.md` | | Operator | |
 
 ## Ditutup
 
