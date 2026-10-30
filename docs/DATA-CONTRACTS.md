@@ -534,13 +534,13 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | Field | Tipe | Isi |
 |---|---|---|
 | `run_id` | string | |
-| `kind` | enum `spark_a` / `spark_b` / `spark_c` / `spark_d` / `grid` / `measure` | |
+| `kind` | enum `spark_a` / `spark_b` / `spark_c` / `spark_d` / `grid` / `measure`; `voice_qa` hanya di store terpisah `runs/voice_qa/` (H-113, lihat paragraf Pemeriksa VO) | |
 | `created_at` | timestamp | |
 | `cache_key` | string | `docs/ARCHITECTURE.md` §8 |
 | `corpus_hash`, `config_hash` | string | |
 | `clean_sha256`, `loader_rules_version` | string | teks bersih yang dipakai run (H-046) |
 | `prompt_version`, `prompt_hash` | string \| null | |
-| `model` | string \| null | `muse-spark-1.3-contributor`, atau model ID Glimmer untuk run pembanding H-047 |
+| `model` | string \| null | `muse-spark-1.3-contributor`, model ID Glimmer untuk run pembanding H-047, `meta-models/muse-spark-open-1026` untuk run pembanding Spark Open (Baseten, H-060, H-100), atau `muse-voice-transcribe-1.0` hanya untuk pemeriksa VO (H-113) |
 | `effort` | string \| null | dari konfigurasi; untuk Glimmer = `reasoning_effort` yang dipin (H-047) |
 | `tokenizer` | `{name, version}` | |
 | `embedder` | `{name, revision, max_seq_length, n_truncated}` \| null | embedder dense dan jumlah potongan yang terpotong (H-042, G-22) |
@@ -553,7 +553,7 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `latency_ms` | int | |
 | `host` | string | label mesin dari config (`authoritative` / `secondary`), bukan hostname; angka resmi hanya dari mesin otoritatif (H-027) |
 | `device` | string | mis. `cuda:0` atau `cpu`, perangkat embedding dan model lokal |
-| `provider` | string \| null | `meta` untuk Model API; `openrouter` untuk run dev/uji lewat OpenRouter (H-057), tidak pernah dipakai untuk angka yang dilaporkan; `lmstudio_local` untuk run pembanding Glimmer (H-047); `baseten` untuk run pembanding Spark Open di Baseten (H-060), hanya peran C, tidak pernah dipakai untuk angka utama |
+| `provider` | string \| null | `meta` untuk Model API; `openrouter` untuk run dev/uji lewat OpenRouter (H-057), tidak pernah dipakai untuk angka yang dilaporkan; `lmstudio_local` untuk run pembanding Glimmer (H-047); `baseten` untuk run pembanding Spark Open di Baseten (H-060), peran C, A, dan B sejak H-100, tidak pernah dipakai untuk angka utama; `meta_voice` hanya untuk pemeriksa VO (H-113, store `runs/voice_qa/`) |
 | `quantization` | string \| null | kuantisasi Glimmer dari `config/model` (`Q4_K_M`, H-047); `null` untuk Model API |
 | `status` | enum `ok` / `error` / `cached` / `replay` | |
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |
