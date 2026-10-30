@@ -148,6 +148,24 @@ def test_readme_id_numbers_match_readme():
     assert m.group(1) in readme_id and m.group(2) in readme_id
 
 
+def test_readme_company_law_heldout_matches_profile():
+    """Putusan operator 31 Okt (R-a): baris held-out UU PT di README dan docs/RESULTS.md = field `held_out` profil terekspor
+    (hitungan mentah; token precision dibulatkan 4 desimal). Versi ID dijaga oleh test_readme_id_numbers_match_readme."""
+    import json
+    prof = json.loads((REPO / "profiles" / "uupt" / "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json")
+                      .read_text(encoding="utf-8"))
+    h = prof["held_out"]
+    pat = re.compile(r"Held-out \((\d+) items; (\d+) operator-written, (\d+) Spark-proposed and approved\): (\d+) of (\d+) items "
+                     r"with a gold span fully covered, mean span recall ([\d.]+), mean token precision ([\d.]+);")
+    for name in ("README.md", "docs/RESULTS.md"):
+        m = pat.search((REPO / name).read_text(encoding="utf-8"))
+        assert m, f"{name}: baris held-out UU PT hilang"
+        n, op, sp, cov, tot, rec, tp = m.groups()
+        assert [int(n), int(op), int(sp)] == [h["n_items"], h["by_origin"]["operator"], h["by_origin"]["spark_disetujui"]], name
+        assert [int(cov), int(tot)] == [h["fully_covered"]["covered"], h["fully_covered"]["total"]], name
+        assert float(rec) == h["mean_span_recall"] and tp == f"{h['mean_token_precision']:.4f}", name
+
+
 def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
     """Rekaman off-pin (Contributor effort medium, pin profil = low) masuk pool sweep, tidak ke main_results; total tetap memuatnya."""
     from backend.api.routers.system import cost_fields
