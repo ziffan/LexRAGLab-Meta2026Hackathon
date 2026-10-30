@@ -81,6 +81,9 @@ const DATA = {
   // RM Limits (comparators): "On the three must-refuse items every answer abstained in the base runs, for all three models
   // (6 of 6 each; Contributor 4 tolak and 2 bukti_tidak_cukup, Spark Open 5 and 1, Glimmer 4 and 2)."
   must_refuse_items: 3,
+  // Effort run dasar peran C: config/model.toml [effort] c = "low" (meta, baseten_open tanpa override);
+  // profiles.glimmer_local reasoning_effort = "high" (juga RM "What Muse Spark does": "reasoning_effort high").
+  base_c_effort: { contributor: "low", spark_open: "low", glimmer: "high" },
   abstain: {
     contributor: { abstained: 6, of: 6, refused: 4, insufficient: 2 },
     spark_open:  { abstained: 6, of: 6, refused: 5, insufficient: 1 },
@@ -89,7 +92,7 @@ const DATA = {
 };
 // Label model (RM "What Muse Spark does" dan Limits; NOTICE untuk Glimmer Apache-2.0 per Meta docs; putusan 18 O11).
 const MODELS = {
-  contributor: { id: "muse-spark-1.3-contributor", host: "Meta Model API · main results" },
+  contributor: { id: "muse-spark-1.3-contributor", host: "Meta Model API · main results", hostSweep: "Meta Model API · effort sweep pool" },
   spark_open:  { id: "Muse Spark Open", host: "open-weight · hosted on Baseten" },
   glimmer:     { id: "Muse Glimmer", host: "open-weight · local (Q4_K_M)" },
 };
@@ -100,7 +103,7 @@ const PAIR = Q.get("pair") === "medium" ? "medium" : "low";
 const FOOT = "Muse Spark Open: open-weight, hosted on Baseten. Muse Glimmer: open-weight, running locally on the operator's machine (Q4_K_M), Apache-2.0 per Meta docs. "
   + "Effort shown per bar (" + PAIR + "). Partial role B coverage for comparators. Separate runs, never mixed with main results. "
   + "Prompt tuned on muse-spark-1.3; limit counted by a local tokenizer"
-  + (PAIR === "low" ? "; muse-spark-1.3 low mixes prompt v1/v2" : "; Spark Open medium has partial role B coverage")
+  + (PAIR === "low" ? "" : "; Spark Open medium has partial role B coverage")
   + ". Header limit compliance, not answer quality. No quality comparison, no significance test.";
 
 // --------------------------- runtime ---------------------------------------
@@ -132,7 +135,7 @@ const BARS = ["spark_open", "contributor"];
 const bars = BARS.map((key, i) => {
   const [over, total] = DATA.header_over[PAIR][key];
   const b = el("div", "bar"); b.style.top = (270 + i * 150) + "px";
-  const who = el("div", "who", b, MODELS[key].id + "  "); el("span", null, who, MODELS[key].host + " · effort " + PAIR);
+  const who = el("div", "who", b, MODELS[key].id + "  "); el("span", null, who, ((PAIR === "medium" && MODELS[key].hostSweep) || MODELS[key].host) + " · effort " + PAIR);
   const tr = el("div", "track", b), ok = el("div", "ok", tr), ov = el("div", "over", tr);
   const num = el("div", "num", b, fmt(over)); el("small", null, num, "of " + fmt(total) + " calls");
   return { b, ok, ov, num, frac: over / total, at: 6.0 + i * 1.6 };
@@ -153,13 +156,13 @@ U.push((t) => {
 });
 
 // (c) abstain pada butir must-refuse, tiga model.
-const hc = el("h2", null, null, "On " + DATA.must_refuse_items + " must-refuse questions (best and baseline profile each)");
+const hc = el("h2", null, null, "On " + DATA.must_refuse_items + " must-refuse questions (base runs; best and baseline profile each)");
 hc.style.top = "636px";
 const COLS = ["contributor", "spark_open", "glimmer"];
 const cols = COLS.map((key, i) => {
   const a = DATA.abstain[key];
   const c = el("div", "col"); c.style.left = (120 + i * 580) + "px";
-  el("div", "m", c, MODELS[key].id); el("div", "h", c, MODELS[key].host);
+  el("div", "m", c, MODELS[key].id); el("div", "h", c, MODELS[key].host + " · effort " + DATA.base_c_effort[key]);
   el("div", "h", c, a.refused + " refused, " + a.insufficient + " insufficient evidence");
   const r = el("div", "r", c, a.abstained + " of " + a.of); el("small", null, r, "abstained");
   return { c, at: 13.6 + i * 0.5 };
