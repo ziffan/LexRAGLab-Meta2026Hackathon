@@ -1,0 +1,27 @@
+# config/voice_qa — pemeriksa voice over video (H-113 revisi 30 Okt; docs/scenarios/M5.3-vo-qa-transcribe.md). Bukan produk.
+# Hanya dibaca `python -m video.qa.vo_check`; jalur utama tidak membacanya (config_hash utama tetap, preseden H-104 config/sweep).
+# Model ID, endpoint, dan harga dipin di sini (H-113). Usulan agen, operator boleh ubah.
+version = 1
+
+[model]
+# Sumber: https://dev.meta.ai/docs/speech-to-text, https://dev.meta.ai/docs/api-reference/voice/transcribe (akses 30 Okt).
+provider = "meta_voice"
+model = "muse-voice-transcribe-1.0"
+endpoint_path = "/asr/transcribe"      # relatif terhadap MUSE_BASE_URL
+base_url_env = "MUSE_BASE_URL"         # key dan base URL Model API yang sama dengan Contributor; nilai hanya di .env
+api_key_env = "MUSE_API_KEY"
+
+[pricing]
+# $0.18 per jam audio, per detik utuh dibulatkan ke bawah (https://dev.meta.ai/docs/pricing-rate-limits, akses 30 Okt)
+# = 50 micro-USD/detik.
+audio_per_hour_micros = 180000
+
+[check]
+mode = "PUSH_TO_TALK"
+language_bias = ["English"]
+keywords = []                    # bawaan kosong: bias kosakata bisa menutupi salah ucap merek
+wer_review_threshold_bp = 1000   # WER > 10% (setelah normalisasi) = "review"; angka tetap wajib cocok persis
+timeout_s = 120
+limit_micros = 50000             # H-113: belanja pool + proyeksi harus < nilai ini (ketat)
+scenes = ["S0", "S1", "D1", "D2", "D3", "D4", "D5", "T1", "I1"]
+joined_terms = ["bm25"]          # "BM 25" di transkrip digabung jadi satu token, bukan angka 25
