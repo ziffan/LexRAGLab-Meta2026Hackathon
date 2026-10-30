@@ -89,20 +89,3 @@ label = "Glimmer (local)"
 input_per_mtok_micros = 0
 cached_per_mtok_micros = 0
 output_per_mtok_micros = 0
-
-[profiles.meta_voice]
-# H-113: Muse Voice Transcribe hanya sebagai pemeriksa voice over video (`python -m video.qa.vo_check`), bukan produk.
-# Key dan base URL Model API yang sama dengan Contributor. `api` ini ditolak SparkClient (build_settings) dan dilewati
-# /api/health; `roles` tanpa a/b/c sehingga W2/W6/U3/CLI pembanding menolaknya. Record di store terpisah runs/voice_qa/.
-provider = "meta_voice"
-model = "muse-voice-transcribe-1.0"
-api = "asr_transcribe"
-base_url_env = "MUSE_BASE_URL"
-api_key_env = "MUSE_API_KEY"
-roles = ["voice_qa"]
-for_reported_numbers = false
-label = "Voice Transcribe (VO check)"
-
-[pricing.meta_voice]
-# $0.18 per jam audio, per detik utuh dibulatkan ke bawah (https://dev.meta.ai/docs/pricing-rate-limits, akses 30 Okt) = 50 micro-USD/detik.
-audio_per_hour_micros = 180000

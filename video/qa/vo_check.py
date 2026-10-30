@@ -4,7 +4,8 @@
     uv run python -m video.qa.vo_check --vo-dir <direktori VO>             # run sah (hanya atas izin L1)
 
 Bukan bagian produk: record dan cache di store terpisah `runs/voice_qa/`, tidak dibaca UI/R1/R6/ekspor replay.
-Model ID dan harga dari `config/model` profil `meta_voice`; parameter alat dari `config/voice_qa`. Key hanya dari `.env`.
+Model ID, endpoint, harga, dan parameter alat dari `config/voice_qa` (H-113 revisi); `config/model` tidak memuatnya dan
+hanya dibaca untuk label `host`. Key hanya dari `.env`.
 Keluar: 0 = semua adegan tanpa `fail`/`error`; 1 = ada `fail`/`error`; 2 = galat masukan/gerbang (0 panggilan)."""
 
 from __future__ import annotations
@@ -36,7 +37,6 @@ from .normalize import SceneResult, compare
 
 ROLE = "voice_qa"
 PROMPT_VERSION = "vo_qa.r1"
-ENDPOINT_PATH = "/asr/transcribe"
 DEFAULT_STORE = cfgmod.REPO_ROOT / "runs" / "voice_qa"
 DEFAULT_REPORT_DIR = cfgmod.REPO_ROOT / "video" / "qa"
 VIDEO_MD = cfgmod.REPO_ROOT / "docs" / "VIDEO.md"
@@ -57,6 +57,7 @@ class InputError(Exception):
 class ToolConfig:
     model: str
     provider: str
+    endpoint_path: str
     audio_per_hour_micros: int
     base_url_env: str
     api_key_env: str
@@ -76,15 +77,26 @@ def _int(v: Any) -> bool:
     return isinstance(v, int) and not isinstance(v, bool)
 
 
-def load_tool_config(model_cfg: Mapping[str, Any], vq: Mapping[str, Any]) -> ToolConfig:
-    name = vq.get("profile")
-    prof = (model_cfg.get("profiles") or {}).get(name) if isinstance(name, str) else None
-    if not isinstance(prof, Mapping) or prof.get("api") != "asr_transcribe":
-        raise ConfigInvalid(f"config/voice_qa: profile '{name}' is not an asr_transcribe profile in config/model")
-    pricing = (model_cfg.get("pricing") or {}).get(prof.get("pricing", name))
-    price = pricing.get("audio_per_hour_micros") if isinstance(pricing, Mapping) else None
+def _str(tbl: Mapping[str, Any], k: str, where: str) -> str:
+    v = tbl.get(k)
+    if not isinstance(v, str) or not v.strip():
+        raise ConfigInvalid(f"config/voice_qa: [{where}] {k} must be a non-empty string")
+    return v
+
+
+def load_tool_config(cfg: Mapping[str, Any], host: str = "") -> ToolConfig:
+    """`config/voice_qa.toml` (H-113 revisi: model ID, endpoint, harga dipin di sini; `config/model` tidak memuatnya).
+    `host` = label mesin `config/model.host` (hanya dibaca; tidak masuk hash). `config_hash` record = hash berkas ini."""
+    m, pr, vq = cfg.get("model"), cfg.get("pricing"), cfg.get("check")
+    if not isinstance(m, Mapping) or not isinstance(pr, Mapping) or not isinstance(vq, Mapping):
+        raise ConfigInvalid("config/voice_qa: [model], [pricing] and [check] tables are required")
+    for k in ("provider", "model", "endpoint_path", "base_url_env", "api_key_env"):
+        _str(m, k, "model")
+    if not m["endpoint_path"].startswith("/"):
+        raise ConfigInvalid("config/voice_qa: [model] endpoint_path must start with '/'")
+    price = pr.get("audio_per_hour_micros")
     if not _int(price) or price <= 0:
-        raise ConfigInvalid(f"config/model: [pricing.{name}] audio_per_hour_micros must be a positive integer")
+        raise ConfigInvalid("config/voice_qa: [pricing] audio_per_hour_micros must be a positive integer")
     for k in ("wer_review_threshold_bp", "limit_micros"):
         if not _int(vq.get(k)) or vq[k] < 0:
             raise ConfigInvalid(f"config/voice_qa: {k} must be a non-negative integer")
@@ -99,14 +111,13 @@ def load_tool_config(model_cfg: Mapping[str, Any], vq: Mapping[str, Any]) -> Too
     t = vq.get("timeout_s")
     if not isinstance(t, (int, float)) or isinstance(t, bool) or t <= 0:
         raise ConfigInvalid("config/voice_qa: timeout_s must be > 0")
-    host = model_cfg.get("host")
     return ToolConfig(
-        model=prof["model"], provider=prof["provider"], audio_per_hour_micros=price,
-        base_url_env=prof["base_url_env"], api_key_env=prof["api_key_env"], host=host if isinstance(host, str) else "",
+        model=m["model"], provider=m["provider"], endpoint_path=m["endpoint_path"], audio_per_hour_micros=price,
+        base_url_env=m["base_url_env"], api_key_env=m["api_key_env"], host=host if isinstance(host, str) else "",
         mode=vq["mode"], language_bias=list(vq["language_bias"]), keywords=list(vq["keywords"]),
         threshold_bp=vq["wer_review_threshold_bp"], timeout_s=float(t), limit_micros=vq["limit_micros"],
         scenes=list(scenes), joined_terms=tuple(vq["joined_terms"]),
-        config_hash=cfgmod.config_hash({"model": dict(model_cfg), "voice_qa": dict(vq)}),
+        config_hash=cfgmod.config_hash({"voice_qa": dict(cfg)}),
     )
 
 
@@ -391,9 +402,9 @@ def run(argv: list[str] | None = None, *, model_cfg: Mapping[str, Any] | None = 
     a = ap.parse_args(argv)
     p = lambda s="": print(s, file=out)  # noqa: E731
     try:
-        model_cfg = model_cfg if model_cfg is not None else cfgmod.load("model")
+        model_cfg = model_cfg if model_cfg is not None else cfgmod.load("model")  # hanya label `host`
         vq_cfg = vq_cfg if vq_cfg is not None else cfgmod.load("voice_qa")
-        tc = load_tool_config(model_cfg, vq_cfg)
+        tc = load_tool_config(vq_cfg, model_cfg.get("host") or "")
     except (cfgmod.ConfigError, ConfigInvalid) as exc:
         p(f"config_invalid: {exc}")
         return 2
@@ -473,7 +484,7 @@ def run(argv: list[str] | None = None, *, model_cfg: Mapping[str, Any] | None = 
         scrub = Scrubber([api_key, base, urlsplit(base).hostname or ""])
         tr = transport or urllib_transport
         for r in uncached:
-            call_one(tc, r, wavs[r.scene], url=base + ENDPOINT_PATH, api_key=api_key, transport=tr, scrub=scrub,
+            call_one(tc, r, wavs[r.scene], url=base + tc.endpoint_path, api_key=api_key, transport=tr, scrub=scrub,
                      store_root=root, now=now)
     for r in runs:
         if r.cached:

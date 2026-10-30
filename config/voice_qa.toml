@@ -1,7 +1,22 @@
-# config/voice_qa — pemeriksa voice over video (H-113; docs/scenarios/M5.3-vo-qa-transcribe.md). Bukan produk.
-# Hanya dibaca `python -m video.qa.vo_check`. Model ID dan harga dari config/model profil di bawah. Usulan agen, operator boleh ubah.
+# config/voice_qa — pemeriksa voice over video (H-113 revisi 30 Okt; docs/scenarios/M5.3-vo-qa-transcribe.md). Bukan produk.
+# Hanya dibaca `python -m video.qa.vo_check`; jalur utama tidak membacanya (config_hash utama tetap, preseden H-104 config/sweep).
+# Model ID, endpoint, dan harga dipin di sini (H-113). Usulan agen, operator boleh ubah.
 version = 1
-profile = "meta_voice"
+
+[model]
+# Sumber: https://dev.meta.ai/docs/speech-to-text, https://dev.meta.ai/docs/api-reference/voice/transcribe (akses 30 Okt).
+provider = "meta_voice"
+model = "muse-voice-transcribe-1.0"
+endpoint_path = "/asr/transcribe"      # relatif terhadap MUSE_BASE_URL
+base_url_env = "MUSE_BASE_URL"         # key dan base URL Model API yang sama dengan Contributor; nilai hanya di .env
+api_key_env = "MUSE_API_KEY"
+
+[pricing]
+# $0.18 per jam audio, per detik utuh dibulatkan ke bawah (https://dev.meta.ai/docs/pricing-rate-limits, akses 30 Okt)
+# = 50 micro-USD/detik.
+audio_per_hour_micros = 180000
+
+[check]
 mode = "PUSH_TO_TALK"
 language_bias = ["English"]
 keywords = []                    # bawaan kosong: bias kosakata bisa menutupi salah ucap merek

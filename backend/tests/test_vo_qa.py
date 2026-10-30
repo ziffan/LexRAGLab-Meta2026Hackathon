@@ -20,7 +20,7 @@ import pytest
 from backend import config as cfgmod
 from backend.spark import store
 from backend.spark.errors import ConfigInvalid
-from backend.spark.settings import build_settings
+from backend.spark.settings import build_settings, load_configs
 from video.qa import audio as au
 from video.qa import vo_check as vc
 from video.qa.normalize import compare, normalize, numbers
@@ -67,10 +67,10 @@ def model_cfg() -> dict:
 
 
 def vq_cfg(**over) -> dict:
-    d = {"version": 1, "profile": "meta_voice", "mode": "PUSH_TO_TALK", "language_bias": ["English"], "keywords": [],
-         "wer_review_threshold_bp": 1000, "timeout_s": 5, "limit_micros": 50000, "scenes": list(SCENES),
-         "joined_terms": ["bm25"]}
-    d.update(over)
+    """Salinan `config/voice_qa.toml` nyata (model ID dan harga dari berkas) dengan [check] disesuaikan untuk test."""
+    d = cfgmod.load("voice_qa")
+    d["check"].update({"timeout_s": 5, "scenes": list(SCENES)})
+    d["check"].update(over)
     return d
 
 
@@ -275,7 +275,7 @@ def test_v7_cost_recorded_from_audio_duration(tmp_path):
 
 
 def _seed_spend(root: Path, micros: int) -> None:
-    tc = vc.load_tool_config(model_cfg(), vq_cfg())
+    tc = vc.load_tool_config(vq_cfg(), "authoritative")
     rec = vc._record(tc, "k" * 64, "a" * 64, status="ok", cost=micros, projected=None, latency_ms=1, error=None,
                      now=lambda: 0.0)
     store.save_record(root, rec)
@@ -295,7 +295,7 @@ def test_v8_gate_strict_limit(tmp_path, spent, ok):
 
 def test_v8_pool_counts_projected_of_failed_calls(tmp_path):
     rig = Rig(tmp_path)
-    tc = vc.load_tool_config(model_cfg(), vq_cfg())
+    tc = vc.load_tool_config(vq_cfg(), "authoritative")
     store.save_record(rig.store, vc._record(tc, "k" * 64, "a" * 64, status="error", cost=None, projected=50000 - 2050,
                                             latency_ms=1, error={"code": "timeout", "message": "x"}, now=lambda: 0.0))
     t = FakeTransport()
@@ -490,46 +490,51 @@ def test_v19_body_too_large_rejected(tmp_path, monkeypatch):
     assert rig.run(transport=t) == 2 and t.calls == [] and "32 MB" in rig.out.getvalue()
 
 
-# ---------- V15, V18: penjaga produk ----------
+# ---------- V15, V18: jalur utama tidak berubah (H-113 revisi, alternatif E) ----------
 
-def test_v15_spark_client_rejects_voice_profile():
-    m = model_cfg()
-    env = {"MUSE_API_KEY": KEY, "MUSE_BASE_URL": BASE}
-    with pytest.raises(ConfigInvalid, match="does not support"):
-        build_settings("meta_voice", m, env)
-    m["pricing"]["meta_voice"].update({"input_per_mtok_micros": 1, "cached_per_mtok_micros": 1, "output_per_mtok_micros": 1})
-    with pytest.raises(ConfigInvalid, match="does not support"):
-        build_settings("meta_voice", m, env)
-    build_settings("meta", m, env)  # profil utama tetap jalan
+MAIN_CONFIG_HASH = "5ae11b9f6b2fb5a64f8d477c0d0f6f1c852ee5ee0b254657bdffa8cf3431fd1a"  # = golden S19 `config_hash_main`
 
 
-def test_v15_health_hides_voice_profile(tmp_path):
-    from fastapi.testclient import TestClient
-
-    from backend.api.app import Service, create_app
-    from backend.tokenizer import get_tokenizer
-
-    from .pipeline_fakes import FakeEncoder
-    m, b = cfgmod.load("model"), cfgmod.load("budget")
-    assert "meta_voice" in m["profiles"]
-    svc = Service(tokenizer=get_tokenizer(), runs_dir=tmp_path / "runs", encoder=FakeEncoder(),
-                  embed_cache_dir=tmp_path / "emb")
-    app = create_app(svc, env={"MUSE_API_KEY": KEY, "MUSE_BASE_URL": BASE}, model_config=m, budget_config=b)
-    h = TestClient(app).get("/api/health").json()
-    assert [p["model_profile"] for p in h["model_profiles"]] == ["meta", "openrouter_dev", "baseten_open", "glimmer_local"]
-    assert KEY not in json.dumps(h)
+def test_v15_main_config_hash_unchanged():
+    m, b = load_configs()
+    assert cfgmod.config_hash({"model": dict(m), "budget": dict(b)}) == MAIN_CONFIG_HASH
+    golden = json.loads((cfgmod.REPO_ROOT / "backend" / "tests" / "fixtures" / "s19_golden.json").read_text(encoding="utf-8"))
+    assert golden["config_hash_main"] == MAIN_CONFIG_HASH
 
 
-def test_v18_narrow_h028_guard_rejects_misconfigured_voice_profile():
-    from .test_config import check_model_ids
-    m = model_cfg()
-    check_model_ids(m)
-    for bad in ({"roles": ["voice_qa", "c"]}, {"for_reported_numbers": True}, {"api": "responses"},
-                {"model": "muse-voice-transcribe-2.0"}):
-        mm = model_cfg()
-        mm["profiles"]["meta_voice"].update(bad)
-        with pytest.raises(AssertionError):
-            check_model_ids(mm)
+def test_v15_voice_model_only_in_voice_qa_config():
+    m = cfgmod.load("model")
+    vq = cfgmod.load("voice_qa")
+    assert vq["model"]["model"] == "muse-voice-transcribe-1.0"
+    assert all(p.get("model") != vq["model"]["model"] and p.get("provider") != vq["model"]["provider"]
+               for p in m["profiles"].values())
+    assert "meta_voice" not in (m.get("pricing") or {})
+    with pytest.raises(ConfigInvalid):
+        build_settings("meta_voice", m, {"MUSE_API_KEY": KEY, "MUSE_BASE_URL": BASE})
+
+
+def test_v15_backend_never_reads_voice_qa_config():
+    hits = [str(p.relative_to(cfgmod.REPO_ROOT)) for p in (cfgmod.REPO_ROOT / "backend").rglob("*.py")
+            if "tests" not in p.parts and ("voice_qa" in p.read_text(encoding="utf-8") or "video.qa" in p.read_text(encoding="utf-8"))]
+    assert hits == []
+
+
+def test_v18_record_config_hash_is_voice_qa_file_only():
+    tc = vc.load_tool_config(vq_cfg(), "authoritative")
+    assert tc.config_hash == cfgmod.config_hash({"voice_qa": vq_cfg()}) != MAIN_CONFIG_HASH
+
+
+@pytest.mark.parametrize("mut", [
+    lambda d: d.pop("model"), lambda d: d["model"].update(model=""), lambda d: d["model"].update(endpoint_path="asr"),
+    lambda d: d["pricing"].update(audio_per_hour_micros=0), lambda d: d["pricing"].update(audio_per_hour_micros=1.5),
+    lambda d: d["check"].update(limit_micros=-1), lambda d: d["check"].update(mode="X"),
+    lambda d: d["check"].update(scenes=[]),
+])
+def test_v18_loader_rejects_invalid_voice_qa_config(mut):
+    d = vq_cfg()
+    mut(d)
+    with pytest.raises(ConfigInvalid):
+        vc.load_tool_config(d, "authoritative")
 
 
 # ---------- V11 (opener nyata): tanpa redirect, tanpa proxy ----------

@@ -215,9 +215,7 @@ def health(request: Request) -> dict[str, Any]:
         "config_hash": st.config_hash,
         **cost_fields(st.service.runs_dir, getattr(st, "budget_config", None), model_cfg=st.model_config,
                       index=run_index(st, st.service.runs_dir)),
-        # H-113: profil pemeriksa VO (`api = "asr_transcribe"`) bukan produk; tidak tampil di R1.
-        "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()
-                           if not (isinstance(p, Mapping) and p.get("api") == "asr_transcribe")],
+        "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 
 
