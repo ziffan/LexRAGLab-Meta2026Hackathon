@@ -101,16 +101,19 @@ def _num(s: str) -> int:
 
 
 def test_readme_cost_figures_match_stored_runs():
-    """README: angka header = pool default; pool Baseten terpisah; angka total lama 615,008 tidak dikutip lagi."""
-    text = (REPO / "README.md").read_text(encoding="utf-8")
-    assert "615,008" not in text and "615.008" not in text and "0.615008" not in text
+    """README dan docs/LIMITS.md: angka header = pool default (keduanya); pool Baseten, role A/B/C, sweep di docs/LIMITS.md;
+    angka total lama 615,008 tidak dikutip lagi di keduanya."""
+    readme = (REPO / "README.md").read_text(encoding="utf-8")
+    text = (REPO / "docs" / "LIMITS.md").read_text(encoding="utf-8")
     caps = provider_caps(config.load("budget"), config.load("model"))
     mcfg = config.load("model")
     pools = pool_spend(store.load_records(REPO / "runs"), caps, off_pin=lambda r: is_off_pin(r, mcfg))  # aturan sama dengan R1
-    m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as \$(\d+\.\d{6})\)", text)
-    assert m, "README run cost line (main results) missing"
-    assert _num(m.group(1)) == pools["default"]
-    assert m.group(2) == f"{pools['default'] // 1_000_000}.{pools['default'] % 1_000_000:06d}"
+    for name, doc in (("README.md", readme), ("docs/LIMITS.md", text)):
+        assert "615,008" not in doc and "615.008" not in doc and "0.615008" not in doc, name
+        m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as \$(\d+\.\d{6})\)", doc)
+        assert m, f"{name} run cost line (main results) missing"
+        assert _num(m.group(1)) == pools["default"], name
+        assert m.group(2) == f"{pools['default'] // 1_000_000}.{pools['default'] % 1_000_000:06d}", name
     b = re.search(r"Muse Spark Open comparator pool \(Baseten\): ([\d,]+) micro-USD", text)
     assert b and _num(b.group(1)) == pools["baseten"]
     r = re.search(r"\(role A ([\d,]+), role B ([\d,]+), role C ([\d,]+)\)", text)
