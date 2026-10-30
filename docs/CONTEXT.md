@@ -1,16 +1,15 @@
 # CONTEXT — keadaan terkini
 
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
-Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-112.
+Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-114; putusan operator 16–21.
 
-diperbarui: 2026-10-30 UTC (L1 tutup sesi sore: putusan operator 16-19, M5.1 Tier 4 ditutup, N-1, storyboard dikunci, MG `video/`, VO TTS), sesi orkestrasi berlapis di mesin otoritatif
+diperbarui: 2026-10-31 UTC (L1 tutup sesi: video v1/v2 lewat pipeline skrip, perbaikan temuan v1, README dirombak + versi ID, sisir docs 2), sesi orkestrasi berlapis di mesin otoritatif
 
 ## Status
 
-- **30 Okt (H-113 revisi, L2-vo-qa, cabang worktree, belum merge):** pemeriksa VO `python -m video.qa.vo_check` (spec `docs/scenarios/M5.3-vo-qa-transcribe.md` rev 5): Muse Voice Transcribe `muse-voice-transcribe-1.0` ($0.18/jam = 50 micro-USD/detik), model ID/endpoint/harga dipin di `config/voice_qa.toml` (bukan `config/model`; jalur utama dan `config_hash` utama `5ae11b9f…` tidak berubah), store terpisah `runs/voice_qa/`, gerbang < 50.000 micro-USD. Dry-run VO tempo-1.12: 9 berkas, 178,01 s, proyeksi 9.100 micro-USD. Belum ada panggilan berbayar (menunggu VO final + izin L1).
-- **30 Okt (putusan operator 18/19):** storyboard video dikunci (hook S0-A; alternatif 4.1 terbuka sampai sunting); `docs/VIDEO.md` diperbarui; motion graphic di `video/` (MG-1 25 dtk, MG-S 4 dtk, MG-2 20 dtk, MG-3 8 dtk; tabel angka -> sumber `video/README.md`); VO = TTS lokal (L2-tts). Menunggu operator: URL repo + engine TTS di MG-3.
-- **30 Okt:** putusan operator 16 (sisir docs kelas b diterapkan, `app-docs` catatan diarsip) dan 17 (Tier 4 M5.1 ditutup; N-1 diperbaiki, merge `0f544b74`, pytest 1855, vitest 330; health hangat ±0,1 s). Backend 8000 dan frontend 5173 menyala dari HEAD tanpa key. Berikutnya: operator memilih/mengunci adegan video; gate M5.2.
-- **Menunggu operator (tutup sesi 30 Okt malam):** VO final = ElevenLabs `brian` (H-114), lolos pemeriksa Muse Voice Transcribe (H-113; `video/qa/vo-report.md`, 8.250 micro-USD; S0 angka ganda = artefak transkripsi, dikonfirmasi dengar operator). Berikutnya: (1) rekaman layar sesuai checklist `docs/VIDEO.md` (G-47, G-48) + penyuntingan dengan MG `video/`; (2) gate M5.2: rewrite histori H-096, repo publik, URL repo di MG-3 (TODO), Pages + cek statis UX-09, NOTICE (ElevenLabs/VO), rujukan `_kerja/` di scenarios (butir 25), form submit; (3) 31 Okt pemicu H-017 = lapor status. Rekaman ±2 Nov, freeze 3 Nov, submit 4 Nov.
+- **31 Okt (sesi ini, `main` = origin setelah push):** (1) **Video** (putusan 20/21): pipeline skrip `_kerja/video-prod/` (Playwright + ffmpeg, git-ignored); v2 `_kerja/video-prod/out/lexraglab-demo-v2.mp4` 177,08 dtk, takarir Inggris dibakar satu baris, tanpa track subtitle, sidecar `out/captions/captions-en.srt`, kartu akhir 12 baris; v1 disimpan. Render final setelah freeze: `for s in S0 S1 D1 D2 D3 D4 D5 T1 I1; do node build.mjs $s; done; node build.mjs final v2` dari `_kerja/video-prod/` dengan statis dari HEAD beku. (2) **Perbaikan app** merge `8a0f212f`: `--replay`, pemilih U3, panel Context header (B) di U1. (3) **NOTICE** butir 4 Voice Transcribe + butir 8 narasi; URL repo di MG-3 (`f5154061`). (4) **README** dirombak (`ca33dadd`, `d8f2a6dc`): peran model Meta, `docs/LIMITS.md`/`RESULTS.md`/`DATA.md`, `docs/README.id.md`, angka held-out UU PT, "Local models for replay" (diverifikasi di clone bersih). (5) **Sisir docs 2**: 31 temuan kelas (a) diterapkan di app (merge), 17 di repo catatan (`796ee07`, `c658fb1`, belum push), 14 usulan kelas (b) di `_kerja/orkestrasi/sisir-docs-2-usulan.md`; G-49 baru. pytest 1962, vitest 335. Nol panggilan Model API sesi ini.
+- **30 Okt:** H-113 pemeriksa VO (merge `c0533bd3`, run `b8acea6c` 8.250 micro-USD) dan H-114 VO ElevenLabs `brian`; putusan 16–19 (sisir docs 1, Tier 4 M5.1 ditutup, N-1 `0f544b74`, storyboard dikunci, MG `video/`).
+- **Menunggu operator:** tonton v2 + I-70 (V2-1 T1(c), V2-2 UX U3) sebelum freeze 3 Nov 20:00 WIB; I-69 (ekspor statis gagal-keras atau cek manual); 14 usulan sisir docs 2 (teratas: tabel Produksi `docs/VIDEO.md` sesuai putusan 20, AGENTS.md catatan + SPARK-ROLES §1 pengecualian Voice Transcribe, I-69); gate M5.2 (rewrite histori H-096, publik, Pages + UX-09 statis, tautan README Demo video/Live replay, form); pemicu H-017 31 Okt = lapor status; push repo catatan; `LAPORAN-render.md` audiobook-maker masih "BELUM BOLEH diunggah" sampai hak pakai suara dipastikan operator. Restart backend 8000 dengan `--replay` bila merekam dari live (izin operator terakhir hanya untuk perintah tanpa flag itu).
 - **Sapuan effort selesai** dalam lingkup H-111/H-112, di-merge ke `main` `42d83fc7` (29 Okt): Contributor `low`..`xhigh` (A, B, C + grid); Spark Open dan Glimmer sampai `medium` (A, B, C + grid; Spark Open `high`/`xhigh` dan Glimmer `high` hanya A dan C; B Spark Open `high`/`xhigh`, B Glimmer `high`, dan Glimmer `xhigh` tidak dijalankan, H-110/H-111). Cakupan sebagian B Spark Open `medium` (UU PT `pasal` 334/343, `fixed_size` 87/103, `structure_schema` 321/343, akta 120/123; H-112). Laporan S7 `_kerja/orkestrasi/sweep/laporan-effort.md`; README Limits dan G-42..G-46 diperbarui (L2-pascasapuan). Belanja per pool (`pool_spend`, aturan R1): default 561.741 (= header/README), Baseten H-101 15.513.750, sapuan 32.951.385 dari plafon 75M (Contributor 1.634.019, Spark Open 31.317.366, Glimmer 0); total semua pool 49.026.876; Baseten lintas pool 46.831.116. Hasil utama tetap Contributor `low`.
 - M0, M1 **selesai** (screenshot M1.1/M1.4 pada chunker v2 dan grid `e7ffa7b0…` disetor L2#9, `_kerja/orkestrasi/bukti/M1.1-v2-*`, `M1.4-v2-*`). M2: M2.1–M2.3 selesai (Tier 4 M2.3 dikonfirmasi operator 28 Okt); butir uupt v16 = 23 (3 `tolak`, H-099, faa343d); akta v85 = 84 (15 `tolak`). M2.4 stretch (potong). M2.5 selesai (stretch).
 - M3 selesai, M3.1–M3.4 (status MILESTONES dicocokkan L2#8/W93; Tier 4 M3.3 dikonfirmasi operator 28 Okt): skema A UU PT v2 operator; header B v2; grid uupt v2.
@@ -36,11 +35,9 @@ diperbarui: 2026-10-30 UTC (L1 tutup sesi sore: putusan operator 16-19, M5.1 Tie
 
 ## Menunggu operator
 
-- M5.1: Tier 4 UX review + kunci adegan video (putusan 8); setelah itu agen menyetor screenshot per adegan.
-- README Limits teks pembanding + sapuan (L2-pascasapuan, commit `ab47ba00`): menunggu tinjauan L1/operator.
-- Pemicu 31 Okt H-017 (31 Okt malam WIB).
-- Gate M5.2 (setelah sapuan selesai, H-108): rewrite histori + force push (H-096), repo publik, Pages; butir NOTICE "unverified, pending operator" (kartu Glimmer HF, syarat keluaran Contributor, endpoint Baseten, Official Rules terpisah, versi jurnal Magesh).
-- Isian form submit: repo catatan `docs/10-SUBMIT.md` (nama tim, feedback, Most Viral). Video milik operator.
+- Lihat baris "Menunggu operator" di Status (I-69, I-70, usulan sisir docs 2, gate M5.2, render final video, unggah).
+- Butir NOTICE "unverified, pending operator" (kartu Glimmer HF, syarat keluaran Contributor, endpoint Baseten, Official Rules terpisah, versi jurnal Magesh).
+- Isian form submit: repo catatan `docs/10-SUBMIT.md` (nama tim, feedback, Most Viral).
 - Keputusan L1 yang bisa dibalik: keterangan "agen L3 (Claude)" di `docs/scenarios` dibiarkan sebagai disclosure.
 - Teks tooltip header `Run cost (main results)` (`frontend/src/components/Header.tsx` `RUN_COST_TITLE`) draf L2#11, menunggu L1.
 
@@ -59,7 +56,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (RESUME + log) dan `keadaan-L2.md` (bagian L2#8), menjalankan ulang pytest (1840) dan vitest (321) di worktree bersih (`core.longpaths`; test akta v2 tidak lagi butuh salinan `_kerja/`), lalu melahirkan L2 baru bila ada mandat.
-2. Gerbang operator: adegan + Tier 4 UX M5.1, gate M5.2 (rewrite histori H-096, publik, Pages), isian submit. Pemicu 31 Okt H-017.
-3. Agen (tidak terblok, kecil): opsional test Glimmer di mode statis (belum dikerjakan; tidak ada agen aktif per 29 Okt).
-4. Proses per 29 Okt ±17Z: 5173 (frontend), 8000 (backend), 5177 (statis) dan 5175 (tailnet) mati; Glimmer di-unload. Untuk Tier 4/rekaman, nyalakan ulang dari HEAD; 5175 (tailnet) harus memakai `vite.config.ts` >= `b79e37b` (G-39).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah) dan `_kerja/orkestrasi/video-fix-pertanyaan.md`; tagih operator: tonton v2 + I-70, I-69, usulan `sisir-docs-2-usulan.md`.
+2. Bila operator memilih V2-1 (B) atau V2-2: L2 video (keadaan `_kerja/orkestrasi/keadaan-L2-video-prod.md`) rekam ulang T1(c) / slice Tier 3 U3, sebelum freeze 3 Nov 20:00 WIB; lalu render final dari HEAD beku.
+3. Gate M5.2 atas izin operator: rewrite histori H-096, publik, Pages (ekspor di mesin ini, G-49), tautan README, form submit.
+4. Proses per 31 Okt: 8000 (backend, kode sebelum `8a0f212f`, tanpa `--replay`, PID 3316) dan 5173 (vite, memuat frontend HEAD) masih menyala; statis 5177 (PID 33756, milik L2 video) masih menyala dari `dist-static` `ca33dadd`. Matikan bila RAM perlu.

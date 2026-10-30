@@ -1,7 +1,7 @@
 # DECISIONS — ringkasan keputusan
 
 Tujuan: satu baris per keputusan sebagai pointer; isi lengkap (Context → Decision → Consequences → Alternatives Rejected) ada di log keputusan lengkap operator (catatan perencanaan pra-acara, tidak dipublikasikan).
-Sumber keputusan: H-001 sampai H-074.
+Sumber keputusan: H-001 sampai H-114.
 
 Aturan: keputusan Locked tidak diubah tanpa revisi formal di log keputusan operator lebih dulu. Kalau dokumen di repo ini bentrok dengan keputusan, keputusan yang menang.
 
@@ -216,3 +216,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-30 | H-113 ditambahkan (Muse Voice Transcribe sebagai pemeriksa VO video; pengecualian H-028/H-016 terbatas); AGENTS.md diselaraskan atas izin operator |
 | 2026-10-30 | H-113 direvisi: pin model ID Voice Transcribe di `config/voice_qa.toml`, bukan `config/model` (config_hash utama tetap) |
 | 2026-10-30 | H-114 ditambahkan (VO ElevenLabs `brian`, merevisi putusan operator 19 butir 2); MG-3, `video/README.md`, `docs/VIDEO.md` diselaraskan |
+| 2026-10-31 | Tanpa H (pelaksanaan): putusan operator 20 (video dibuat agen lewat pipeline skrip, v1/v2 sekarang, final pasca-freeze; URL repo di MG-3; NOTICE fakta saja untuk Voice Transcribe dan narasi ElevenLabs) dan 21 (Q1–Q3 video opsi A: crop/VO tanpa ubah spec atau data; README memuat angka held-out UU PT; tautan Demo video/Live replay masuk checklist M5.2). Kartu akhir MG-3 + Voice Transcribe dan "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." atas permintaan operator |
