@@ -115,6 +115,9 @@ def profile_cfg(model_cfg: Mapping[str, Any], profile: str) -> Mapping[str, Any]
     p = profiles.get(profile) if isinstance(profiles, Mapping) else None
     if not isinstance(p, Mapping):
         raise ConfigInvalid(f"config/model: unknown profile '{profile}'")
+    if p.get("api") not in (None, API_RESPONSES, API_CHAT):
+        # H-113: profil `asr_transcribe` (pemeriksa VO) dan nilai `api` lain tidak bisa dipakai SparkClient.
+        raise ConfigInvalid(f"config/model: profile '{profile}' uses api '{p.get('api')}', which the Spark client does not support")
     required = ("provider", "model") if profile_api(p) == API_CHAT else ("provider", "model", "api_key_env")
     for k in required:
         if not isinstance(p.get(k), str) or not p[k]:

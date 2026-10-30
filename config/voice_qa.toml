@@ -1,0 +1,12 @@
+# config/voice_qa — pemeriksa voice over video (H-113; docs/scenarios/M5.3-vo-qa-transcribe.md). Bukan produk.
+# Hanya dibaca `python -m video.qa.vo_check`. Model ID dan harga dari config/model profil di bawah. Usulan agen, operator boleh ubah.
+version = 1
+profile = "meta_voice"
+mode = "PUSH_TO_TALK"
+language_bias = ["English"]
+keywords = []                    # bawaan kosong: bias kosakata bisa menutupi salah ucap merek
+wer_review_threshold_bp = 1000   # WER > 10% (setelah normalisasi) = "review"; angka tetap wajib cocok persis
+timeout_s = 120
+limit_micros = 50000             # H-113: belanja pool + proyeksi harus < nilai ini (ketat)
+scenes = ["S0", "S1", "D1", "D2", "D3", "D4", "D5", "T1", "I1"]
+joined_terms = ["bm25"]          # "BM 25" di transkrip digabung jadi satu token, bukan angka 25
