@@ -1,7 +1,7 @@
 # CONVENTIONS — konvensi kerja repo app
 
 Tujuan: aturan penamaan, bahasa, data, commit, dan test yang berlaku di semua slice.
-Sumber keputusan: H-005, H-013, H-014, H-016, H-018, H-031, H-045, H-052.
+Sumber keputusan: H-005, H-013, H-014, H-016, H-018, H-031, H-045, H-052, H-102, H-103.
 
 ## Bahasa
 
@@ -26,7 +26,7 @@ Sumber keputusan: H-005, H-013, H-014, H-016, H-018, H-031, H-045, H-052.
 ## Test
 
 - Setiap slice menulis test-nya sendiri dan menyetor output test, bukan klaim.
-- Slice Tier 1: skenario disusun agen dengan data sintetis sebelum kode, dicek pemeriksa agen independen, disetujui operator (H-052, `docs/EVAL-SPEC.md` §11).
+- Slice Tier 1: skenario disusun agen dengan data sintetis sebelum kode, dicek pemeriksa agen independen, disetujui operator (H-052, `docs/EVAL-SPEC.md` §11; kecuali skenario delta yang persetujuannya didelegasikan operator, H-102/H-103).
 - Test tidak memanggil Model API. Panggilan Spark diuji dengan run tersimpan.
 
 ## Git

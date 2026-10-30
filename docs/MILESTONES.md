@@ -35,7 +35,7 @@ A, B, C, D, dan waktu video tidak dipotong.
 
 Kode dibekukan **3 Nov 20:00 WIB**. 4 Nov hanya untuk video dan submit. Batas resmi 5 Nov 09:00 WIB.
 
-Slice Tier 1: M0.1, M1.2, M1.4, M1.5, M2.1, M2.3, M2.4, M3.2, M4.3. Skenario test-nya disusun agen dengan data sintetis sebelum kode slice, dicek pemeriksa agen independen, dan disetujui operator (H-052, `docs/EVAL-SPEC.md` §11).
+Slice Tier 1: M0.1, M1.2, M1.4, M1.5, M2.1, M2.3, M2.4, M3.2, M4.1 (peta unit akta, H-090), M4.3. Skenario test-nya disusun agen dengan data sintetis sebelum kode slice, dicek pemeriksa agen independen, dan disetujui operator (H-052, `docs/EVAL-SPEC.md` §11).
 
 Label UI bahasa Inggris sejak M1.1 (H-018). Semua panggilan Model API lewat Responses API (H-016); pembanding stretch Glimmer lokal (H-047, M2.5) lewat Chat Completions ke endpoint lokal. Token anggaran dari tokenizer lokal terkalibrasi (H-014). Split berstrata (H-015).
 
