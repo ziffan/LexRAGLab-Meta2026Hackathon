@@ -5,6 +5,7 @@ Hasil dicache singkat supaya `GET /api/health` yang sering dipanggil tidak memba
 
 from __future__ import annotations
 
+import threading
 import time
 from typing import Any
 
@@ -15,6 +16,14 @@ from .settings import is_loopback_url
 PROBE_TIMEOUT_S = 1.5
 CACHE_TTL_S = 5.0
 _cache: dict[tuple[str, str], tuple[float, tuple[bool, str]]] = {}
+_probe_lock = threading.Lock()
+_key_locks: dict[tuple[str, str], threading.Lock] = {}
+
+
+def _key_lock(key: tuple[str, str]) -> threading.Lock:
+    """Lock per (base_url, model): probe satu target tidak menahan target lain."""
+    with _probe_lock:
+        return _key_locks.setdefault(key, threading.Lock())
 
 
 def probe_models(base_url: str, model: str, *, timeout: float = PROBE_TIMEOUT_S, transport: Any = None) -> tuple[bool, str]:
@@ -38,11 +47,37 @@ def probe_models(base_url: str, model: str, *, timeout: float = PROBE_TIMEOUT_S,
 
 
 def probe_cached(base_url: str, model: str, *, now: float | None = None, **kw: Any) -> tuple[bool, str]:
-    t = time.monotonic() if now is None else now
+    """Probe dengan cache `CACHE_TTL_S`. Pemanggil serentak pada cache basi menunggu satu probe (M5.1-N1), bukan
+    masing-masing menunggu timeout sendiri."""
     key = (base_url, model)
     hit = _cache.get(key)
-    if hit is not None and t - hit[0] < CACHE_TTL_S:
+    if hit is not None and (time.monotonic() if now is None else now) - hit[0] < CACHE_TTL_S:
         return hit[1]
-    res = probe_models(base_url, model, **kw)
-    _cache[key] = (t, res)
-    return res
+    with _key_lock(key):
+        t = time.monotonic() if now is None else now
+        hit = _cache.get(key)
+        if hit is not None and t - hit[0] < CACHE_TTL_S:
+            return hit[1]
+        res = probe_models(base_url, model, **kw)
+        _cache[key] = (t, res)
+        return res
+
+
+REFRESH_INTERVAL_S = 3.0
+
+
+def refresh_loop(targets: list[tuple[str, str]], stop: threading.Event, *, interval: float = REFRESH_INTERVAL_S,
+                 probe: Any = None) -> None:
+    """Server saja (M5.1-N1): perbarui cache probe di latar tiap `interval` detik supaya `GET /api/health` tidak menunggu
+    timeout probe (server lokal mati = ±1,5 detik per probe). Satu thread per target (lifespan), jadi siklus tiap target
+    = interval + satu timeout, tidak bertambah dengan jumlah profil lokal. Nilai tetap hasil probe nyata berumur < `CACHE_TTL_S`
+    (cap waktu = selesai probe; interval + timeout < TTL); bila thread tertinggal, `probe_cached` memprobe sendiri seperti biasa. Galat diam."""
+    fn = probe or probe_models
+    while not stop.is_set():
+        for base_url, model in targets:
+            try:
+                res = fn(base_url, model)
+                _cache[(base_url, model)] = (time.monotonic(), res)  # penugasan dict atomik  # cap waktu = selesai probe
+            except Exception:  # noqa: BLE001 - thread latar tidak boleh mati karena probe
+                pass
+        stop.wait(interval)

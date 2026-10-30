@@ -260,7 +260,7 @@ export function EvidencePanel() {
     return () => clearInterval(t);
   }, [loading]);
 
-  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null, health?.model_profiles.find((p) => p.model_profile === effProfile));
+  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null, health?.model_profiles.find((p) => p.model_profile === effProfile), !healthDone);
   const doLive = () => {
     if (!snap || !itemId || !bestId || !baseId) return;
     const id = ++reqId.current;

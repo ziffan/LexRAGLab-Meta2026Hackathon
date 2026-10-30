@@ -77,8 +77,17 @@ export function fetchDocBySchema(family: string, docId: string, schemaVersion: n
   );
 }
 
+let healthInFlight: Promise<Health> | null = null;
+
+/** R1. Pemanggil serentak (App, Evidence, RunLog saat muat awal) berbagi satu request yang masih berjalan (M5.1-N1); setelah
+ * selesai (resolve atau reject) pemanggilan berikut menembak request baru, jadi tidak pernah basi. Objek hasil dibagi: baca-saja. */
 export function fetchHealth(): Promise<Health> {
-  return getJson<Health>("/api/health");
+  if (healthInFlight) return healthInFlight;
+  const p = getJson<Health>("/api/health").finally(() => {
+    if (healthInFlight === p) healthInFlight = null;
+  });
+  healthInFlight = p;
+  return p;
 }
 
 export function fetchRuns(limit = 500): Promise<RunRecord[]> {

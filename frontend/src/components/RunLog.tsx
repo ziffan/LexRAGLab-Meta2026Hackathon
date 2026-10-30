@@ -15,8 +15,10 @@ import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 export const RUNLOG_PAGE = 20; // UX-14: baris awal tabel U8; "Show more" menambah per halaman
 
-export function RunLogView({ runs, role, onRole, selected, onSelect, totals = null, pools = null, shown = RUNLOG_PAGE, onMore }: {
+export function RunLogView({ runs, role, onRole, selected, onSelect, totals = null, pools = null, shown = RUNLOG_PAGE, onMore, totalsPending = false }: {
   runs: RunRecord[];
+  /** M5.1-N1 (N-3): R1 belum selesai -> tabel per peran menunggu, bukan agregat sementara "latest N runs only". */
+  totalsPending?: boolean;
   /** R1 `pool_spend` (H-104 butir 3): belanja per pool; null = tidak tersedia (tabel pool tidak tampil). */
   pools?: PoolSpend[] | null;
   /** R1 `run_totals_by_kind` (semua run, server). null = tidak tersedia: agregat dihitung dari baris terbaru saja dan diberi label. */
@@ -50,6 +52,7 @@ export function RunLogView({ runs, role, onRole, selected, onSelect, totals = nu
           </select>
         </label>
       </div>
+      {totalsPending && !totals ? <LoadingBlock text="Loading per-role totals for all stored runs…" /> : (
       <div className="table-wrap">
         <table className="data runlog-agg">
           <caption className="cap">{aggCap}</caption>
@@ -70,6 +73,7 @@ export function RunLogView({ runs, role, onRole, selected, onSelect, totals = nu
           )}
         </table>
       </div>
+      )}
       {prow.length > 0 && (
         <div className="table-wrap">
           <table className="data runlog-pools">
@@ -172,6 +176,7 @@ export function RunLogPanel() {
   const [runs, setRuns] = useState<Load<RunRecord[]>>({ status: "loading" });
   const [totals, setTotals] = useState<RunTotal[] | null>(null);
   const [pools, setPools] = useState<PoolSpend[] | null>(null);
+  const [totalsPending, setTotalsPending] = useState(true);
   const [attempt, setAttempt] = useState(0);
   const [role, setRole] = useState<RoleFilter>("all");
   const [shown, setShown] = useState(RUNLOG_PAGE);
@@ -181,6 +186,7 @@ export function RunLogPanel() {
   const hash = snap?.config_hash ?? null;
   useEffect(() => {
     let live = true;
+    setTotalsPending(true);
     fetchRuns()
       .then((data) => live && setRuns({ status: "ready", data }))
       .catch((e: unknown) => live && setRuns({ status: "error", code: "runs", message: e instanceof Error ? e.message : "Unexpected error." }));
@@ -190,7 +196,8 @@ export function RunLogPanel() {
         setTotals(Array.isArray(h.run_totals_by_kind) ? h.run_totals_by_kind : null);
         setPools(Array.isArray(h.pool_spend) ? h.pool_spend : null);
       })
-      .catch(() => { if (live) { setTotals(null); setPools(null); } });
+      .catch(() => { if (live) { setTotals(null); setPools(null); } })
+      .finally(() => { if (live) setTotalsPending(false); });
     return () => {
       live = false;
     };
@@ -225,7 +232,7 @@ export function RunLogPanel() {
         <button type="button" onClick={() => { setRuns({ status: "loading" }); setAttempt((n) => n + 1); }}>Retry</button>
       </>
     );
-  else body = <RunLogView runs={runs.data} totals={totals} pools={pools} role={role} onRole={(r) => { setRole(r); setShown(RUNLOG_PAGE); }} selected={selected} onSelect={setSelected} shown={shown} onMore={() => setShown((n) => n + 100)} />;
+  else body = <RunLogView runs={runs.data} totals={totals} pools={pools} totalsPending={totalsPending} role={role} onRole={(r) => { setRole(r); setShown(RUNLOG_PAGE); }} selected={selected} onSelect={setSelected} shown={shown} onMore={() => setShown((n) => n + 100)} />;
   return (
     <section className="panel" aria-labelledby="runlog-title" id="runlog">
       <div className="panel-head"><h2 id="runlog-title">Run log &amp; cost</h2><Hint id="role.a" /><Hint id="role.b" /><Hint id="role.c" /><Hint id="role.d" /><Hint id="header_b.what" /><Hint id="metric.local_tokenizer" /></div>

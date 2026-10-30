@@ -167,8 +167,13 @@ export const SUMMARY_HEADERS = ["Answered, supported", "Answered, unsupported", 
 /** Run live: aktif hanya untuk butir `scene_checked` DAN backend terjangkau. Replay server tidak menonaktifkan (H-050, API.md §1); ekspor statis (H-051) atau backend mati menonaktifkan. */
 export const CLI_ONLY_REASON = "Glimmer runs offline via CLI to avoid GPU contention with embeddings; stored results are shown.";
 
-export function runLiveState(sceneChecked: boolean | undefined, backendUp: boolean, profile?: ModelProfileInfo | null): { enabled: boolean; reason: string } {
-  if (isStatic() || !backendUp) return { enabled: false, reason: STATIC_DISABLED };
+/** Alasan nonaktif selama /api/health belum selesai (M5.1-N1): ketersediaan model belum diketahui. */
+export const CHECKING_REASON = "Checking model availability…";
+
+export function runLiveState(sceneChecked: boolean | undefined, backendUp: boolean, profile?: ModelProfileInfo | null, pending = false): { enabled: boolean; reason: string } {
+  if (isStatic()) return { enabled: false, reason: STATIC_DISABLED };
+  if (pending) return { enabled: false, reason: CHECKING_REASON };
+  if (!backendUp) return { enabled: false, reason: STATIC_DISABLED };
   if (profile?.live_via_cli) return { enabled: false, reason: CLI_ONLY_REASON }; // G-26
   if (!sceneChecked) return { enabled: false, reason: "Live runs are limited to items marked scene_checked by the operator" };
   return { enabled: true, reason: "Run one live Muse Spark call for this item" };
