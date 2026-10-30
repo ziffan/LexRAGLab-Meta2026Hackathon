@@ -57,7 +57,7 @@ The output is a **versioned setting profile** you can export and reuse in your o
 
 | Model | Access / host | Roles | Status | Stored runs |
 |---|---|---|---|---|
-| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API with strict structured output, Contributor mode (see [Data and licensing](#data-and-licensing)) | A, B, C, D | Main results (reasoning effort `low`); the effort sweep (`medium`, `high`, `xhigh`) is stored separately | `runs/spark/records/`, `runs/schemas/<family>/v1.json`, `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
+| Muse Spark `muse-spark-1.3-contributor` | Meta Model API, Responses API with strict structured output, Contributor mode (see [Data and licensing](#data-and-licensing)) | A, B, C, D | Main results (reasoning effort `low`); the effort sweep (`medium`, `high`, `xhigh`) is stored separately | `runs/spark/records/`, `runs/schemas/<family>/` (`v1.json` = Spark proposal, `v2.json` = operator correction), `runs/headers/`, `runs/grid/`, `runs/answers/`, `runs/proposals/` |
 | Muse Spark Open `meta-models/muse-spark-open-1026` | hosted endpoint on Baseten, Responses API, strict structured output | A, B, C | Comparator, separate runs, never mixed with main results | `runs/schemas/<family>/compare/`, `runs/headers_compare/`, `runs/grid_compare/`, `runs/compare_report/c/` |
 | Muse Spark Open tokenizer (`meta-models/Muse-Spark-Open-816B-A42B`, revision pinned in `config/tokenizer.toml`) | local, read from the user's Hugging Face cache, not included | no role: counts tokens for every setting and the token budget (no model call) | Used for all token counts ("Built with Muse Spark Open"; `o200k_base` fallback) | `config/tokenizer.toml` |
 | Muse Glimmer `meta/muse-glimmer` (Q4_K_M) | local on the operator's machine, OpenAI-compatible loopback endpoint, client-side schema validation; weights not included; Apache-2.0 per Meta docs (model card not yet verified, see `NOTICE`) | A, B, C | Comparator, separate runs | same comparator directories |
@@ -115,7 +115,7 @@ The visual theme of the UI (colour tokens, IBM Plex typography, component patter
 - fixed-size 512 / 64, dense, header off: 64 of 69.
 - unstructured (one chunk per deed): 0 of 69.
 
-Full table, notes (transfer setting, unstructured, Recall@K not comparable, small n), and sources: [docs/RESULTS.md](docs/RESULTS.md).
+This is a transfer test on five synthetic documents, not the main result and not a general claim. Full table, notes (transfer setting, unstructured, Recall@K not comparable, small n), and sources: [docs/RESULTS.md](docs/RESULTS.md).
 
 ## Run it
 
@@ -171,7 +171,7 @@ storage:   files only (no database, no vector database)
 
 ## For AI agents and contributors
 
-- Read [`AGENTS.md`](AGENTS.md) first (rules for agents, written in Indonesian). Its reading order: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, the spec of the slice being worked on, `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`.
+- Read [`AGENTS.md`](AGENTS.md) first (rules for agents, written in Indonesian). Its reading order: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, the spec of the slice being worked on (listed in the "Spec per slice" section of `docs/MILESTONES.md`), `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`; `docs/PRD.md` and `docs/ARCHITECTURE.md` as reference.
 - Key rules from `AGENTS.md`: agents never write or approve evaluation items; numbers come only from stored runs and are never invented; no model other than `muse-spark-1.3-contributor` except the exceptions listed there (the comparators and the video check); no database, vector database, LangChain, PDF parser, or reranker; API keys live only in the local `.env`.
 - Spec documents are written in Indonesian. IDs like `H-028` refer to entries in the operator decision log, summarised in `docs/DECISIONS.md`. Family codes: `uupt` = Company Law, `akta` = notarial deeds.
 - Model profiles (main and comparators) are in `config/model.toml`, which `AGENTS.md` calls `config/model`.
