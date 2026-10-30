@@ -17,6 +17,20 @@ def check_family(family: str) -> None:
         raise ApiError(400, "invalid_request", f"family must be one of {list(FAMILIES)}.")
 
 
+def header_rows(hb: Any, chunker: str, chunks: list[dict[str, Any]]) -> list[dict[str, Any]] | None:
+    """`headers` R4 untuk setting header-on: `[{chunk_id, header, tokens_local}]` (subset HeaderB DATA-CONTRACTS §7 yang dipakai UI),
+    urut potongan, hanya potongan yang punya header di store (granularitas `expected_granularity`). Hanya membaca berkas; tanpa Spark."""
+    if hb is None:
+        return None
+    gran = hb.expected_granularity(chunker)
+    rows = []
+    for c in chunks:
+        rec = hb.store.get(c["chunk_id"], gran)
+        if rec is not None and isinstance(rec.get("header"), str) and rec["header"].strip():
+            rows.append({"chunk_id": c["chunk_id"], "header": rec["header"], "tokens_local": rec.get("tokens_local")})
+    return rows
+
+
 @router.get("/api/families")
 def get_families(request: Request) -> list[dict[str, Any]]:
     """R2: `[{family, n_docs, n_items, has_grid}]`. Hanya membaca berkas (butir, hasil grid tersimpan); `n_items` dari
@@ -46,8 +60,12 @@ def get_doc(request: Request, family: str, doc_id: str, setting_id: str | None =
     if setting_id is not None and schema_version is not None:
         raise ApiError(400, "invalid_request", "Pass either setting_id or schema_version, not both.")
     chunks = None
+    headers = None
     if schema_version is not None:
         chunks = svc.schema_chunks(doc, schema_version)
     elif setting_id is not None:
-        chunks = svc.chunks(doc, svc.find_setting(family, setting_id))
-    return {"doc_id": doc.doc_id, "text": doc.text, "chunks": chunks, "headers": None}
+        setting = svc.find_setting(family, setting_id)
+        chunks = svc.chunks(doc, setting)
+        if setting.header_b:
+            headers = header_rows(svc.header_binding(family), setting.chunker, chunks)
+    return {"doc_id": doc.doc_id, "text": doc.text, "chunks": chunks, "headers": headers}

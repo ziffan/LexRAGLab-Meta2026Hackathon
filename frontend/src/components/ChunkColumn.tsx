@@ -66,6 +66,7 @@ function ReadyColumn({ doc, retrieval, item, cleanSha256 }: { doc: DocResponse; 
     return <div className="state empty">No gold (must abstain). This item has no gold span, so there is nothing to highlight.</div>;
   }
   const ranks = retrieval.status === "ready" ? rankMap(retrieval.data) : null;
+  const headerOf = new Map((doc.headers ?? []).map((h) => [h.chunk_id, h.header]));
   const split = splitSpans(chunks, item.gold_spans);
   const shown = visibleChunks(chunks, item.gold_spans);
   return (
@@ -89,6 +90,7 @@ function ReadyColumn({ doc, retrieval, item, cleanSha256 }: { doc: DocResponse; 
           <ChunkCard
             key={c.chunk_id}
             chunk={c}
+            header={headerOf.get(c.chunk_id) ?? null}
             parts={pieces(codePoints, c, item.gold_spans)}
             edges={edgeSplit(c, split)}
             rank={ranks ? (ranks.get(c.chunk_id) ?? null) : undefined}
@@ -101,8 +103,9 @@ function ReadyColumn({ doc, retrieval, item, cleanSha256 }: { doc: DocResponse; 
   );
 }
 
-function ChunkCard({ chunk, parts, edges, rank, selected, onSelect }: {
+function ChunkCard({ chunk, header, parts, edges, rank, selected, onSelect }: {
   chunk: Chunk;
+  header: string | null;
   parts: { text: string; gold: boolean }[];
   edges: { top: boolean; bottom: boolean };
   rank: number | null | undefined; // undefined = belum dimuat, null = tidak terambil dalam anggaran
@@ -121,6 +124,11 @@ function ChunkCard({ chunk, parts, edges, rank, selected, onSelect }: {
   return (
     <li className={`chunk${selected ? " selected" : ""}`}>
       {edges.top && <div className="split-edge top">Gold split across chunks</div>}
+      {header !== null && (
+        <div className="chunk-header-b">
+          <span className="chunk-header-label">Context header (B)</span> {header}
+        </div>
+      )}
       <div className="chunk-head">
         <button type="button" className="addr" onClick={onSelect} aria-pressed={selected}>
           {chunk.address}

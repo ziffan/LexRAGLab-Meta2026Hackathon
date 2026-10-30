@@ -65,6 +65,13 @@ export function defaultProfile(health: Health | null): string | null {
   return ok?.model_profile ?? null;
 }
 
+/** Nilai `<select>` Model (U3): pilihan operator, lalu default server, lalu profil pertama yang tersedia, lalu profil pertama
+ * (selalu salah satu opsi yang ada; "" hanya bila tak ada profil sama sekali). Tidak dipakai untuk memuat jawaban. */
+export function selectedProfile(health: Health | null, profile: string | null): string {
+  const all = answerProfiles(health);
+  return profile ?? defaultProfile(health) ?? all.find((p) => p.available)?.model_profile ?? all[0]?.model_profile ?? "";
+}
+
 export interface CitationView {
   alamat: string;
   teks: string;
@@ -175,6 +182,7 @@ export function runLiveState(sceneChecked: boolean | undefined, backendUp: boole
   if (pending) return { enabled: false, reason: CHECKING_REASON };
   if (!backendUp) return { enabled: false, reason: STATIC_DISABLED };
   if (profile?.live_via_cli) return { enabled: false, reason: CLI_ONLY_REASON }; // G-26
+  if (profile && !profile.available) return { enabled: false, reason: profile.unavailable_reason ?? profileUnavailableText(profile) };
   if (!sceneChecked) return { enabled: false, reason: "Live runs are limited to items marked scene_checked by the operator" };
   return { enabled: true, reason: "Run one live Muse Spark call for this item" };
 }

@@ -51,6 +51,8 @@ mark { background: var(--gold); color: var(--ink); padding: 0 1px; border-radius
 .chunks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .chunk { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--surface); }
 .chunk.selected { box-shadow: 0 0 0 2px var(--accent); }
+.chunk-header-b { background: var(--panel-head); color: var(--muted); font-size: 0.85em; font-style: italic; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+.chunk-header-label { font-style: normal; font-weight: 600; margin-right: 4px; }
 .chunk-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; background: var(--panel-head); padding: 5px 8px; }
 .addr { background: none; border: 0; padding: 0; font: inherit; font-family: var(--font-mono); font-size: 0.9em; font-weight: 500; color: var(--accent); text-align: left; cursor: pointer; text-decoration: underline; }
 .chunk-stats { display: flex; gap: 12px; color: var(--muted); font-size: 0.8rem; }

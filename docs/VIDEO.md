@@ -132,9 +132,9 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 
 | # | Butir | Dasar |
 |---|---|---|
-| 1 | Backend `uv run python -m backend.api` (memakai `server_app` dengan pemanasan), frontend `npm run dev`, keduanya dari HEAD beku. Muat halaman sekali dan tunggu header "Run cost (main results)" terisi (bukan `n/a`) sebelum merekam | G-48 |
+| 1 | Backend `uv run python -m backend.api --replay` (tanpa key; lencana REPLAY; memakai `server_app` dengan pemanasan), frontend `npm run dev`, keduanya dari HEAD beku. Muat halaman sekali dan tunggu header "Run cost (main results)" terisi (bukan `n/a`) sebelum merekam | G-48 |
 | 2 | Jangan menekan Export di mode live. Rekam U7 dari replay statis (`dist-static`, port 5177) yang hanya menampilkan pratinjau dan Download. Bila Export live terlanjur ditekan: `git checkout -- profiles/`, dan jangan `commit -a` saat server menyala | G-47 |
-| 3 | Replay tanpa key: `.env` tanpa nilai key atau tidak ada; lencana `REPLAY` terlihat; tidak ada klik "Run live" | RM Run it |
+| 3 | Replay tanpa key (`uv run python -m backend.api --replay`): `.env` tanpa nilai key atau tidak ada; lencana `REPLAY` terlihat; tidak ada klik "Run live" | RM Run it |
 | 4 | Tidak ada terminal, `.env`, jalur lokal, atau tab lain di layar. Tutup popover hint sebelum klip U3 (menutupi pemilih Model) | Aturan isi; temuan UX N-2 |
 | 5 | 1920x1080, zoom browser 125–150%. Rekam per adegan, terpisah. Sorot dan zoom dibuat di editor | Teknis rekaman |
 | 6 | Butir K-01; setting fixed 512/64 dense untuk D1 dan profil terpilih `d7a9dd24…` untuk sisanya; split held-out; anggaran 2.000 | GRD, `data/butir/uupt.v16.jsonl` |
