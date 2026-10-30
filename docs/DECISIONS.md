@@ -210,3 +210,4 @@ Bentuk yang sudah obsolete dan **DILARANG** dihidupkan lagi tanpa revisi formal:
 | 2026-10-29 | H-110 ditambahkan (H-109 dicabut, Glimmer semua effort; B Spark Open medium selesai + high, tanpa xhigh) |
 | 2026-10-29 | H-111 ditambahkan (Spark Open dan Glimmer sampai medium; high/xhigh pembanding dibatalkan, ulang unit gagal low/medium) |
 | 2026-10-29 | H-112 ditambahkan (akta Spark Open medium dilengkapi lewat --skip-cache-guard, batas 3M) |
+| 2026-10-30 | Tier 4 M5.1 ditutup operator (preseden M3.3/M4.1, tanpa H); UX-09 statis dicek di gate M5.2; N-1 (header `n/a` saat muat awal) diperbaiki di kode |
