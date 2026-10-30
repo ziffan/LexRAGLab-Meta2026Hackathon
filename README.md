@@ -169,7 +169,7 @@ storage:   files only (no database, no vector database)
 | `profiles/` | Exported setting profiles |
 | `prompts/` | Prompts per role (`a` to `d`) |
 | `docs/` | Specs, decisions, and detail documents |
-| `video/` | Demo video motion graphics; not part of the app |
+| `video/` | Demo video motion graphics and the narration checker (`video/qa/`); not part of the app |
 | `licenses/` | Font license texts |
 
 ## For AI agents and contributors

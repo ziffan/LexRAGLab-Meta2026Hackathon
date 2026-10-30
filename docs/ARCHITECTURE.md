@@ -1,7 +1,7 @@
 # ARCHITECTURE — LexRAGLab
 
 Tujuan: menetapkan bentuk sistem (C4 konteks, kontainer, komponen), struktur repo, konfigurasi, cache, NFR, dan failure mode sebelum kode.
-Sumber keputusan: H-003, H-004, H-005, H-009, H-012, H-013, H-014, H-015, H-016, H-017, H-020, H-025, H-027, H-028, H-031, H-032, H-034, H-042, H-045, H-046, H-047, H-049, H-050, H-051, H-053, H-054, H-055, H-057, H-060, H-100 (ditambah 29 Okt, sisir A3).
+Sumber keputusan: H-003, H-004, H-005, H-009, H-012, H-013, H-014, H-015, H-016, H-017, H-020, H-025, H-027, H-028, H-031, H-032, H-034, H-042, H-045, H-046, H-047, H-049, H-050, H-051, H-053, H-054, H-055, H-057, H-060, H-100, H-113 (ditambah 29 Okt, sisir A3; H-113 ditambah 31 Okt).
 
 ## 1. Prinsip
 
@@ -109,13 +109,14 @@ data/
   akta/            lima akta sintetis (H-039), M4
   butir/           butir per keluarga, dengan asal, split, status periksa
   status/          tabel status berlaku berversi (H-009)
-config/            model, tokenizer, corpus, grid, retrieval, verifier, budget, header_b, sweep, proposals, corpus_akta, akta_unitmap, akta_grid_final (berversi)
+config/            model, tokenizer, corpus, grid, retrieval, verifier, budget, header_b, sweep, proposals, corpus_akta, akta_unitmap, akta_grid_final, voice_qa (berversi)
 cache/             embedding per hash (.npy + .json), H-025
 prompts/           prompt A, B, C, D (berversi)
-runs/              hasil run tersimpan, dikunci per hash
+runs/              hasil run tersimpan, dikunci per hash (`runs/voice_qa/`: store terpisah pemeriksa VO, H-113)
 profiles/          profil setting yang diekspor
 backend/           korpus, chunker, retrieval, metrik, klien Spark, verifier, API
 frontend/          satu halaman tiga panel + layar Review
+video/             alat video, bukan fitur produk: motion graphic (MG) dan pemeriksa VO `video/qa` (H-113)
 docs/              suite ini
 ```
 
@@ -138,6 +139,7 @@ docs/              suite ini
 | `config/corpus_akta` | korpus akta sintetis (H-039, H-041, H-054); berkas terpisah dari `config/corpus` agar kunci run UU PT tidak bergeser | Operator |
 | `config/akta_unitmap` | peta unit keluarga akta (H-090); ikut `config_hash` grid akta saja | Operator |
 | `config/akta_grid_final` | penanda "angka grid akta final" (H-091); tidak masuk `config_hash` grid | Operator |
+| `config/voice_qa` | pemeriksa voice over video (H-113; `docs/scenarios/M5.3-vo-qa-transcribe.md`): model ID `muse-voice-transcribe-1.0`, endpoint, harga audio per jam, ambang WER, daftar adegan, `limit_micros` pool belanja terpisah. Dibaca hanya `video/qa/vo_check.py`; `config_hash` run-nya = hash berkas ini saja, tidak masuk `config_hash` jalur utama (preseden `config/sweep`, H-104) | Operator |
 
 Setiap berkas punya field `version`. Hash konfigurasi = hash isi kanonik semua berkas yang dibaca run.
 
