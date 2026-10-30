@@ -293,9 +293,10 @@ def call_one(tc: ToolConfig, sr: SceneRun, wav: bytes, *, url: str, api_key: str
     except TimeoutError:
         status, raw = -1, b""
         err, cost, projected = {"code": "timeout", "message": "request timed out"}, None, sr.projected_micros
-    except Exception:  # noqa: BLE001  koneksi/protokol/lainnya: panggilan mungkin sudah ditagih -> record projected
+    except Exception as exc:  # noqa: BLE001  koneksi/protokol/lainnya: panggilan mungkin sudah ditagih -> record projected
         status, raw = -1, b""
-        err, cost, projected = {"code": "connection_error", "message": "connection failed"}, None, sr.projected_micros
+        err = {"code": "connection_error", "message": f"connection failed ({type(exc).__name__})"}
+        cost, projected = None, sr.projected_micros
     latency = int(round((clock() - t0) * 1000))
     if err is None and status != 200:
         msg = _api_message(raw)

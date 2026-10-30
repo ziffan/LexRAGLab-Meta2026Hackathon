@@ -559,6 +559,8 @@ Profil yang dimuat dengan `corpus_hash` berbeda **HARUS** ditolak.
 | `error` | `{code: string, message: string}` \| null | tanpa key, tanpa stack trace |
 | `failed_settings` | array of `{setting_id: string, reason: string, chunk_id: string \| null}` | hanya `kind=grid`; setting header-on yang gagal karena header hilang/kosong/basi/granularitas tak cocok (H-069). `reason` = `header_missing` / `header_invalid` / `header_stale` / `granularity_mismatch`; `chunk_id` = potongan pertama (offset awal naik) yang bermasalah. Setting itu tanpa `GridPoint`; run lanjut. Kosong `[]` bila tidak ada |
 
+**Pemeriksa VO (H-113)**: `kind = voice_qa`, `provider = meta_voice`, model `muse-voice-transcribe-1.0` hanya ada di store terpisah `runs/voice_qa/spark/records/` (bukan `runs/spark/`, tidak dibaca UI/R1/R6/ekspor). Nilai field: token `0`, `cost_usd_micros` dari `audioDurationMs`, `corpus_hash` = sha256 berkas audio, `tokenizer`/`embedder`/`packing`/`effort`/`clean_sha256` null, `prompt_version = vo_qa.r1`. Rincian: `docs/scenarios/M5.3-vo-qa-transcribe.md` §5.
+
 **Keluarga multi-dokumen (akta, H-086)**: `kind=grid` untuk akta menyimpan hash korpus keluarga, bukan hash satu dokumen.
 - `corpus_hash` dan `clean_sha256` sama-sama berisi `family_corpus_hash`: sha256 atas JSON kanonik daftar pasangan `[doc_id, clean_sha256]` terurut menurut `doc_id` (tidak bergantung urutan masukan). Ini hash atas teks bersih (`clean_sha256`), bukan `sha256` berkas mentah; `corpus_hash` keluarga satu dokumen dan `Profile.corpus_hash` (§11) tetap seperti semula.
 - `loader_rules_version` = nilai `loader_rules_version` yang berbeda antar dokumen, terurut dan digabung dengan koma (satu nilai bersama tampil sekali).

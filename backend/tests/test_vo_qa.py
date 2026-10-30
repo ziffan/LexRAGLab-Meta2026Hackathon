@@ -151,6 +151,7 @@ class Rig:
     ("A, B and C", ["a", "b", "and", "c"]), ("“Insufficient” — evidence", ["insufficient", "evidence"]),
     ("2.50", ["2.5"]), ("007", ["7"]),
     # tanda baca memutus rangkaian angka (§6.3; L3 kode S2)
+    ("the tenth time", ["the", "0.1", "time"]),
     ("eight, sixteen", ["8", "16"]), ("nineteen. Twenty six", ["19", "26"]), ("three; four", ["3", "4"]),
 ])
 def test_v1_normalize(text, expected):
@@ -219,6 +220,32 @@ def test_v6_cache_second_run_makes_no_calls(tmp_path):
     rig.vq = vq_cfg(keywords=["LexRAGLab"])
     t3 = FakeTransport()
     assert rig.run(transport=t3) == 0 and len(t3.calls) == 2 and t3.calls[0]["request"]["keywords"] == ["LexRAGLab"]
+
+
+def test_v6_cache_hit_without_origin_record_warns(tmp_path):
+    rig = Rig(tmp_path)
+    rig.run(transport=FakeTransport())
+    for p in (rig.store / "spark" / "records").glob("*.json"):
+        p.unlink()
+    t = FakeTransport()
+    assert rig.run(transport=t) == 0 and t.calls == []
+    assert "warning: S0 cache entry has no matching stored run record" in rig.out.getvalue()
+
+
+def test_v14_oserror_prints_no_absolute_path(tmp_path, monkeypatch):
+    rig = Rig(tmp_path)
+    target = str(rig.vo / "01-S0.wav")
+
+    orig = Path.read_bytes
+
+    def deny(self):
+        if self.suffix == ".wav":
+            raise PermissionError(13, "denied", target)
+        return orig(self)
+    monkeypatch.setattr(Path, "read_bytes", deny)
+    assert rig.run("--dry-run") == 2
+    out = rig.out.getvalue()
+    assert "PermissionError (01-S0.wav)" in out and str(tmp_path) not in out
 
 
 def test_v19_convert_version_change_misses_cache(tmp_path, monkeypatch):
