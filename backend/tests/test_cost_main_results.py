@@ -148,6 +148,35 @@ def test_readme_id_numbers_match_readme():
     assert m.group(1) in readme_id and m.group(2) in readme_id
 
 
+def test_readme_company_law_heldout_matches_profile():
+    """Putusan operator 31 Okt (R-a): baris held-out UU PT di README dan docs/RESULTS.md = field `held_out` profil terekspor
+    (hitungan mentah; token precision dibulatkan 4 desimal). Versi ID dijaga oleh test_readme_id_numbers_match_readme."""
+    import json
+    prof = json.loads((REPO / "profiles" / "uupt" / "d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json")
+                      .read_text(encoding="utf-8"))
+    h = prof["held_out"]
+    pat = re.compile(r"Held-out \((\d+) items; (\d+) operator-written, (\d+) Spark-proposed and approved\): (\d+) of the (\d+) items "
+                     r"that have a gold span fully covered, mean span recall ([\d.]+), mean token precision ([\d.]+);")
+    for name in ("README.md", "docs/RESULTS.md"):
+        m = pat.search((REPO / name).read_text(encoding="utf-8"))
+        assert m, f"{name}: baris held-out UU PT hilang"
+        n, op, sp, cov, tot, rec, tp = m.groups()
+        assert [int(n), int(op), int(sp)] == [h["n_items"], h["by_origin"]["operator"], h["by_origin"]["spark_disetujui"]], name
+        assert [int(cov), int(tot)] == [h["fully_covered"]["covered"], h["fully_covered"]["total"]], name
+        assert float(rec) == h["mean_span_recall"] and tp == f"{h['mean_token_precision']:.4f}", name
+    st = prof["setting"]
+    assert (st["chunker"], st["schema_version"], st["retrieval_mode"], st["header_b"], st["budget_tokens"]) == (
+        "structure_schema", 2, "dense", False, 2000)
+    for name, phrase in (("README.md", "structure-schema chunker (schema v2), dense retrieval, header off, 2,000-token budget"),
+                         ("docs/RESULTS.md", "structure-schema chunker (schema v2), dense retrieval, header off, 2,000-token budget"),
+                         ("docs/README.id.md", "chunker structure-schema (skema v2), dense retrieval, header off, token budget 2,000")):
+        assert phrase in (REPO / name).read_text(encoding="utf-8"), name
+    hid = re.search(r"Held-out \((\d+) butir; (\d+) ditulis operator, (\d+) diusulkan Spark dan disetujui\): (\d+) dari (\d+) butir "
+                    r"yang punya gold span tercakup penuh, mean span recall ([\d.]+), mean token precision ([\d.]+);",
+                    (REPO / "docs" / "README.id.md").read_text(encoding="utf-8"))
+    assert hid and hid.groups() == m.groups(), "README.id: baris held-out berbeda dari README"
+
+
 def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
     """Rekaman off-pin (Contributor effort medium, pin profil = low) masuk pool sweep, tidak ke main_results; total tetap memuatnya."""
     from backend.api.routers.system import cost_fields
