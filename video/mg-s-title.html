@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MG-S Title</title>
+<!--
+  MG-S, kartu judul di awal adegan S1 (0:25-0:29), storyboard terkunci putusan operator 19.
+  Aset video, bukan bagian app. Statis, tanpa jaringan: CSS/JS inline, font IBM Plex lokal (video/fonts/, SIL OFL 1.1).
+  Parameter URL: ?t=2 (bekukan frame), ?play=1 (putar real-time, bawaan), ?delay=2 (tahan frame 0 sebelum mulai).
+  Teks dan tanggal dari objek DATA; sumber di komentarnya dan di video/README.md.
+-->
+<style>
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; src: url("fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2"); }
+/* Token warna disalin dari frontend/src/theme.css (H-083). */
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --bg: #F3F4F1; --ink: #15181C; --muted: #4B535D; --line: #D3D7DC; --accent: #1D5BA8; --gold: #FBE3A6;
+  --head-bg: #15181C; --head-ink: #FFFFFF; --head-muted: #C9CED4;
+}
+html, body { margin: 0; height: 100%; background: #0B0C0E; overflow: hidden; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--head-bg);
+  color: var(--head-ink); font-family: var(--font-sans); overflow: hidden; }
+#name { position: absolute; left: 160px; top: 300px; font-size: 176px; font-weight: 600; letter-spacing: -2px; }
+#rule { position: absolute; left: 160px; top: 540px; height: 14px; background: var(--gold); }
+#line1 { position: absolute; left: 160px; top: 600px; font-size: 52px; font-weight: 500; }
+#line2 { position: absolute; left: 160px; top: 690px; font-size: 40px; color: var(--head-muted); }
+#line3 { position: absolute; left: 160px; top: 800px; font-family: var(--font-mono); font-size: 36px; color: var(--gold); }
+</style>
+</head>
+<body>
+<div id="stage"><div id="name"></div><div id="rule"></div><div id="line1"></div><div id="line2"></div><div id="line3"></div></div>
+<script>
+"use strict";
+const DATA = {
+  name: "LexRAGLab",
+  // README baris 8: "Indie track, theme \"Build for Your World\"" (H-001, H-098).
+  line1: "Indie track · Build for Your World",
+  // README "Theme": "The domain here is Indonesian law"; "What it is": "chunking and retrieval on Indonesian legal text".
+  line2: "Chunking and retrieval for Indonesian legal documents",
+  // README baris 8 (nama acara) dan "Built before vs during the hackathon" ("26 Oct to 4 Nov 2026").
+  line3: "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026",
+};
+const DUR = 4;   // detik, 3-4 detik di awal S1 (bagian 5 dokumen analisis)
+
+const Q = new URLSearchParams(location.search);
+const stage = document.getElementById("stage");
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = (x) => x * x * (3 - 2 * x);
+const k = (t, a, b) => ease(clamp((t - a) / (b - a)));
+const $ = (id) => document.getElementById(id);
+["name", "line1", "line2", "line3"].forEach((id) => { $(id).textContent = DATA[id]; });
+
+function render(t) {
+  const show = (id, a) => { const e = $(id); e.style.opacity = k(t, a, a + 0.5); e.style.transform = "translateY(" + (20 * (1 - k(t, a, a + 0.5))) + "px)"; };
+  show("name", 0.0); show("line1", 0.5); show("line2", 0.8); show("line3", 1.1);
+  $("rule").style.width = (1600 * k(t, 0.2, 1.0)) + "px";
+}
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = "translate(" + (innerWidth - 1920 * s) / 2 + "px," + (innerHeight - 1080 * s) / 2 + "px) scale(" + s + ")";
+}
+function start() {
+  fit(); addEventListener("resize", fit);
+  if (Q.has("t")) { render(clamp(parseFloat(Q.get("t")) || 0, 0, DUR)); document.body.dataset.ready = "1"; return; }
+  const delay = 1000 * (parseFloat(Q.get("delay")) || 0);
+  render(0); document.body.dataset.ready = "1";
+  const t0 = performance.now() + delay;
+  const loop = () => { const t = Math.max(0, (performance.now() - t0) / 1000); render(Math.min(t, DUR)); if (t < DUR) requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+window.MG = { duration: DUR, render };
+document.fonts.ready.then(start);
+</script>
+</body>
+</html>
