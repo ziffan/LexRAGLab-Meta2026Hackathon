@@ -28,10 +28,10 @@ Varian T1-B (sapuan effort) dan "Pembuka langsung app" tidak dibuat: T1-B memaka
 
 | Placeholder | Berkas, field | Diisi dari |
 |---|---|---|
-| URL repo publik | `mg-3-end.html` `DATA.repo_url` (null = kotak "TODO operator") | Operator, setelah gate M5.2 (H-029) |
+| URL repo publik | `mg-3-end.html` `DATA.repo_url` (null = kotak "TODO operator"): **terisi `https://github.com/ziffan/LexRAGLab-Meta2026Hackathon`** (30 Okt, putusan operator 20) | Operator; gate unggah tetap mensyaratkan repo sudah publik (H-029) |
 | Nama engine TTS | `mg-3-end.html` `DATA.tts_engine`: **terisi "ElevenLabs"** (30 Okt, H-114; semula "VoxCPM2") | ElevenLabs `eleven-v4` lewat OpenRouter, suara bawaan `brian` (bukan kloning orang nyata); teks "Narration: synthetic voice (ElevenLabs text-to-speech)." |
 
-Kotak TODO berwarna merah supaya tidak terlewat saat rekaman. Jangan merekam MG-3 final sebelum URL repo terisi.
+Kotak TODO berwarna merah supaya tidak terlewat saat rekaman. Kedua placeholder sudah terisi (30 Okt), jadi MG-3 tidak lagi menampilkan kotak TODO.
 
 ## Durasi VO dan parameter `?dur`
 

@@ -103,7 +103,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 
 ## Kartu akhir (MG-3)
 
-1. Tagline (`frontend/src/content/tagline.json`) dan URL repo publik (placeholder TODO operator sampai repo publik, H-029).
+1. Tagline (`frontend/src/content/tagline.json`) dan URL repo publik (terisi 30 Okt, putusan operator 20; gate unggah tetap mensyaratkan repo publik, H-029).
 2. "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026. Pre-event material: planning docs and the statute text only; the UI theme follows the operator's pre-event design mockup (markup not copied)."
 3. "Model: muse-spark-1.3-contributor (Contributor mode: Meta may use the content to train future models). Used because every document here is public or synthetic. Confidential documents: use the Standard model ID." (H-028)
 4. "Company Law text: unofficial consolidation of UU 40/2007 by the operator, as of 30 Dec 2022." (H-031, H-045)

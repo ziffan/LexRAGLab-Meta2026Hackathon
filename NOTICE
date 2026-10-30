@@ -41,6 +41,9 @@ relicensed by this project.
      its tokenizer (hf_repo meta-models/Muse-Spark-Open-816B-A42B, revision
      pinned in config/tokenizer.toml), for local token counting.
    - Muse Glimmer, run locally on the operator's machine (comparison only).
+   - Muse Voice Transcribe (model ID pinned in config/voice_qa.toml) via
+     the Meta Model API, used only by video/qa/ to match the demo video
+     narration against its script. It is not part of the product.
    Built with Muse Spark Open.
    Muse Spark Open and its tokenizer are under the Muse Model License
    (Hugging Face model card meta-models/Muse-Spark-Open-816B-A42B, license
@@ -86,3 +89,10 @@ relicensed by this project.
    victory-vendor is MIT AND ISC AND BSD-3-Clause; the BSD-3-Clause part
    (d3-ease and victory-vendor) requires keeping its copyright notice and
    disclaimer, which ship in the packages.
+
+8. Demo video narration (not in this repository)
+   The narration of the demo video was generated with ElevenLabs
+   text-to-speech (model eleven-v4, accessed through OpenRouter) using the
+   stock voice "brian". No real person's voice was cloned. The synthetic
+   voice is disclosed on the video's end card. The audio files are not
+   included in this repository.
