@@ -65,8 +65,9 @@ async def _warm_lifespan(app: FastAPI) -> AsyncIterator[None]:
     targets = [(p.get("base_url", ""), p.get("model", "")) for p in st.model_config.get("profiles", {}).values()
                if profile_api(p) == API_CHAT]
     if targets and not st.replay and getattr(st, "local_probe", None) is None:
-        threading.Thread(target=local_server.refresh_loop, args=(targets, stop), name="local-probe-refresh",
-                         daemon=True).start()
+        for t in dict.fromkeys(targets):  # satu thread per target: siklus < TTL berapa pun jumlah profil lokal
+            threading.Thread(target=local_server.refresh_loop, args=([t], stop), name="local-probe-refresh",
+                             daemon=True).start()
     try:
         yield
     finally:

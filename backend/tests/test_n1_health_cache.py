@@ -387,7 +387,9 @@ def test_lifespan_probe_refresh_only_outside_replay(tmp_path, monkeypatch):
     m = model_cfg()
     m["profiles"]["gl"] = {"provider": "lmstudio_local", "api": "chat_completions", "model": "meta/muse-glimmer",
                            "base_url": "http://127.0.0.1:9/v1"}
-    for replay, expect in ((True, []), (False, [[("http://127.0.0.1:9/v1", "meta/muse-glimmer")]])):
+    m["profiles"]["gl2"] = {**m["profiles"]["gl"], "base_url": "http://127.0.0.1:10/v1"}
+    both = [[("http://127.0.0.1:9/v1", "meta/muse-glimmer")], [("http://127.0.0.1:10/v1", "meta/muse-glimmer")]]
+    for replay, expect in ((True, []), (False, both)):  # satu thread per target (siklus tidak bertambah per profil)
         started.clear()
         svc = Service(tokenizer=get_tokenizer(), runs_dir=runs, encoder=FakeEncoder(), embed_cache_dir=tmp_path / "emb")
         app = create_app(svc, env={}, model_config=m, budget_config=BCFG, replay=replay, warm_index=True)
@@ -395,4 +397,4 @@ def test_lifespan_probe_refresh_only_outside_replay(tmp_path, monkeypatch):
             deadline = time.monotonic() + 2
             while len(started) < len(expect) and time.monotonic() < deadline:
                 time.sleep(0.01)
-        assert started == expect
+        assert sorted(started) == sorted(expect)
