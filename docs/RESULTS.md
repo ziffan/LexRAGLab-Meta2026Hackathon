@@ -26,7 +26,7 @@ Operator-written control items detect circularity between Spark-proposed queries
 
 ## Company Law (selected setting)
 
-The selected setting (dense retrieval, header off, 2,000-token budget) and its held-out numbers are in the exported profile [`../profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json`](../profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json) (field `held_out`) and on the report screen of the app.
+Selected setting: structure-schema chunker (schema v2), dense retrieval, header off, 2,000-token budget, chosen on the tune split. Held-out (10 items; 4 operator-written, 6 Spark-proposed and approved): 6 of 8 items with a gold span fully covered, mean span recall 0.75, mean token precision 0.0218; raw counts, no significance claim. Source: the exported profile [`../profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json`](../profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json) (field `held_out`); held-out results are also shown on the report screen of the app.
 
 ## Deed results (transfer test)
 

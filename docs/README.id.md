@@ -97,7 +97,7 @@ Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup
 
 ## Hasil
 
-**Hukum Perseroan.** Setelan terpilih (dense retrieval, header off, token budget 2,000) beserta angka held-out-nya ada di profil terekspor `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`) dan di layar laporan aplikasi.
+**Hukum Perseroan.** Setelan terpilih: chunker structure-schema (skema v2), dense retrieval, header off, token budget 2,000, dipilih pada split tune. Held-out (10 butir; 4 ditulis operator, 6 diusulkan Spark dan disetujui): 6 dari 8 butir yang punya gold span tercakup penuh, mean span recall 0.75, mean token precision 0.0218; hitungan mentah, tanpa klaim signifikansi. Sumber: profil terekspor `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); hasil held-out juga ditampilkan di layar laporan aplikasi.
 
 **Keluarga dokumen.**
 
