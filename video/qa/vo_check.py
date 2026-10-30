@@ -122,7 +122,7 @@ def load_tool_config(cfg: Mapping[str, Any], host: str = "") -> ToolConfig:
 
 
 def pool_spent(store_root: Path) -> int:
-    """Belanja pool `meta_voice` = jumlah `spend_micros()` semua record store terpisah (keputusan biaya; bukan
+    """Belanja pool alat ini (provider `config/voice_qa` [model].provider) = jumlah `spend_micros()` semua record store terpisah (keputusan biaya; bukan
     `Ledger.spent`, yang khusus tampilan). Record rusak -> ValueError (gagal tertutup)."""
     return sum(r.spend_micros() for r in store.load_records(store_root))
 
@@ -455,7 +455,7 @@ def run(argv: list[str] | None = None, *, model_cfg: Mapping[str, Any] | None = 
         p(f"| {r.scene} | {r.file_name} | {r.seconds:.2f} | {r.script_sha256[:12]} | {start} | "
           f"{'yes' if r.cached else 'no'} | {0 if r.cached else r.projected_micros} |")
     p(f"Total audio {sum(r.seconds for r in runs):.2f} s; projected {proj} micro-USD for {sum(not r.cached for r in runs)} uncached file(s)")
-    p(f"Pool meta_voice spent {spent} + projected {proj} = {spent + proj} micro-USD; limit < {tc.limit_micros}: "
+    p(f"Pool {tc.provider} spent {spent} + projected {proj} = {spent + proj} micro-USD; limit < {tc.limit_micros}: "
       f"{'ok' if gate_ok else 'BLOCKED'}")
 
     if env is None:

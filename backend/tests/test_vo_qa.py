@@ -334,6 +334,22 @@ def test_v9_separate_store_main_pools_untouched(tmp_path):
     assert cost_fields(main_runs, b, model_cfg=m) == before
     assert len(store.load_records(main_runs)) == 1
     assert vc.pool_spent(rig.store) == sum(r.cost_usd_micros for r in recs) == 1300 + 650
+    # config_hash record yang benar-benar ditulis = hash config/voice_qa saja (L3 delta SHOULD-1)
+    assert {r.config_hash for r in recs} == {cfgmod.config_hash({"voice_qa": rig.vq})}
+    assert MAIN_CONFIG_HASH not in {r.config_hash for r in recs}
+
+
+def test_v9_model_and_endpoint_come_from_voice_qa_config(tmp_path):
+    vq = vq_cfg()
+    vq["model"].update(model="muse-voice-transcribe-9.9", endpoint_path="/asr/other")
+    rig = Rig(tmp_path, vq=vq)
+    t = FakeTransport()
+    rig.run(transport=t)
+    assert {c["request"]["model"] for c in t.calls} == {"muse-voice-transcribe-9.9"}
+    assert {c["url"] for c in t.calls} == {BASE + "/asr/other"}
+    assert {r.model for r in rig.records()} == {"muse-voice-transcribe-9.9"}
+    rep = json.loads((rig.reports / "vo-report.json").read_text(encoding="utf-8"))
+    assert rep["model"] == "muse-voice-transcribe-9.9"
 
 
 def test_v10_dry_run_no_network_no_files_no_key(tmp_path):
@@ -514,8 +530,10 @@ def test_v15_voice_model_only_in_voice_qa_config():
 
 
 def test_v15_backend_never_reads_voice_qa_config():
+    import re
+    pat = re.compile(r"voice_qa|meta_voice|^\s*(from|import)\s+video\b", re.M)
     hits = [str(p.relative_to(cfgmod.REPO_ROOT)) for p in (cfgmod.REPO_ROOT / "backend").rglob("*.py")
-            if "tests" not in p.parts and ("voice_qa" in p.read_text(encoding="utf-8") or "video.qa" in p.read_text(encoding="utf-8"))]
+            if "tests" not in p.parts and pat.search(p.read_text(encoding="utf-8"))]
     assert hits == []
 
 
