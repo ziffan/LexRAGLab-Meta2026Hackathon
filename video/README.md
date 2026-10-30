@@ -29,22 +29,22 @@ Varian T1-B (sapuan effort) dan "Pembuka langsung app" tidak dibuat: T1-B memaka
 | Placeholder | Berkas, field | Diisi dari |
 |---|---|---|
 | URL repo publik | `mg-3-end.html` `DATA.repo_url` (null = kotak "TODO operator") | Operator, setelah gate M5.2 (H-029) |
-| Nama engine TTS | `mg-3-end.html` `DATA.tts_engine`: **terisi "VoxCPM2"** (30 Okt) | Laporan L2-tts lewat L1: VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra`, bukan tiruan orang nyata; teks "Narration: synthetic voice (VoxCPM2, local TTS)." |
+| Nama engine TTS | `mg-3-end.html` `DATA.tts_engine`: **terisi "ElevenLabs"** (30 Okt, H-114; semula "VoxCPM2") | ElevenLabs `eleven-v4` lewat OpenRouter, suara bawaan `brian` (bukan kloning orang nyata); teks "Narration: synthetic voice (ElevenLabs text-to-speech)." |
 
 Kotak TODO berwarna merah supaya tidak terlewat saat rekaman. Jangan merekam MG-3 final sebelum URL repo terisi.
 
 ## Durasi VO dan parameter `?dur`
 
-Durasi VO terukur (laporan L2-tts, tempo 1,12; detik): S0 26,09; S1 13,52; D1 13,05; D2 22,97; D3 14,70; D4 17,73; D5 17,84; T1 26,83; I1 25,28; total 178,01 (target ekspor <= 178).
+Durasi VO terukur (H-114, ElevenLabs `brian`, tempo asli; detik): S0 25,43; S1 13,56; D1 12,35; D2 21,58; D3 13,71; D4 16,87; D5 17,02; T1 25,66; I1 23,41; total 169,61 (target ekspor <= 178). Semula `electra` tempo 1,12: total 178,01.
 
 | MG | Bawaan (slot storyboard) | Usulan untuk VO | Catatan |
 |---|---|---|---|
-| MG-1 | 25 dtk | `?dur=26.1` | S0 seluruhnya MG-1 |
-| MG-S | 4 dtk | tetap | Kartu judul di awal S1 (13,52 dtk); sisa S1 rekaman APP |
-| MG-2 | 20 dtk | `?dur=22` atau sesuai sisa | T1 26,83 dtk = APP (a) 2–3 dtk + MG-2 + APP (c) 2 dtk; MG-2 mengisi sisanya |
-| MG-3 | 8 dtk | tetap, atau dipotong | I1 25,28 dtk = APP U7 Export + MG-3; MG-3 hanya kartu akhir |
+| MG-1 | 25 dtk | `?dur=25.4` | S0 seluruhnya MG-1 |
+| MG-S | 4 dtk | tetap | Kartu judul di awal S1 (13,56 dtk); sisa S1 rekaman APP |
+| MG-2 | 20 dtk | `?dur=21` atau sesuai sisa | T1 25,66 dtk = APP (a) 2–3 dtk + MG-2 + APP (c) 2 dtk; MG-2 mengisi sisanya |
+| MG-3 | 8 dtk | tetap, atau dipotong | I1 23,41 dtk = APP U7 Export + MG-3; MG-3 hanya kartu akhir |
 
-Total 178,01 dtk sudah di batas ekspor 2:58; bila edit melewati batas, MG-3 dipotong lebih dulu (storyboard).
+Total 169,61 dtk, sisa ±8 dtk di bawah batas ekspor 2:58; bila edit melewati batas, MG-3 dipotong lebih dulu (storyboard).
 
 ## Angka di layar dan sumbernya
 
