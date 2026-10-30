@@ -72,9 +72,9 @@ RM = `README.md`. Tidak ada angka lain di layar selain yang di tabel ini (durasi
 | MG-2, MG-3 | "Q4_K_M" (Glimmer) | `MODELS.glimmer.host` | RM "What Muse Spark does" (comparators) |
 | MG-3 | "30 Dec 2022", "UU 40/2007", "five synthetic deeds" | teks `LINES` | RM "Document families" dan "Data and licensing" |
 | MG-3 | Tagline | `tagline` | `frontend/src/content/tagline.json` (status final) |
-| MG-3 | "© 2026" (lisensi atas nama operator) | teks `LINES` | `LICENSE`/`NOTICE` ("Copyright 2026 Ziffany Firdinal", H-097) |
+| MG-3 | "© 2026" (lisensi atas nama operator) | teks `LINES` | `NOTICE` ("Copyright 2026 Ziffany Firdinal", H-097; lisensi Apache-2.0 di `LICENSE`) |
 
-Baris kartu akhir F9 (30 Okt malam, permintaan operator): "Narration checked against the script with Muse Voice Transcribe (Meta Model API); not part of the app." (H-113, `NOTICE` butir 4) dan "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." (`LICENSE`, `NOTICE`). Kartu akhir kini 12 baris; durasi MG-3 di video boleh diperpanjang selama total ekspor <= 178 dtk.
+Baris kartu akhir F9 (30 Okt malam, permintaan operator): "Narration checked against the script with Muse Voice Transcribe (Meta Model API); not part of the app." (H-113, `NOTICE` butir 4) dan "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." (`NOTICE`; Apache-2.0 di `LICENSE`). Kartu akhir kini 12 butir (bagian "Kartu akhir" `docs/VIDEO.md`; untuk hook A: judul, tagline, URL, 10 baris daftar, disclaimer); durasi MG-3 di video boleh diperpanjang selama total ekspor <= 178 dtk.
 
 Rumusan yang bukan angka: "Apache-2.0 per Meta docs" untuk Glimmer (putusan 18 O11; `NOTICE` butir 4), "Contributor mode: Meta may use the content to train future models" (RM "Data and licensing"), "Built with Muse Spark Open (tokenizer for local token counts)" (RM "Built with Muse Spark Open. Token counts use the Muse Spark Open tokenizer"; `NOTICE`, Muse Model License bagian 2).
 
