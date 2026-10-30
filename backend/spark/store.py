@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -102,3 +103,83 @@ def origin_record(runs_dir: Path, role: str, key: str) -> RunRecord | None:
     except (OSError, ValueError, KeyError, TypeError):
         return None
     return rec if rec.status == "ok" and rec.cache_key == key else None
+
+
+class _Skip:
+    """Hasil parse yang boleh di-cache sebagai "lewati" (isi rusak / tanpa record); bukan galat baca sesaat."""
+
+
+SKIP = _Skip()
+
+_StatKey = tuple[int, int, int, int]
+
+
+class DirIndex:
+    """Indeks inkremental berkas `*.json` satu direktori (M5.1-N1): `nama -> (kunci stat, hasil parse)`.
+
+    Tiap `load()`: `os.scandir`; stat diambil dari `DirEntry` SEBELUM berkas dibaca dan stat itulah yang disimpan, jadi
+    penulisan di antaranya membuat stat berikut berbeda dan berkas di-parse ulang. Kunci = (`st_mtime_ns`, `st_ctime_ns`,
+    `st_size`, `st_ino`). Hanya berkas baru/berubah yang di-parse; entri yang hilang dibuang. Urutan hasil = `sorted` atas
+    `Path` (sama dengan `sorted(d.glob("*.json"))`). `parse(path)` mengembalikan nilai, `SKIP` (di-cache, dilewati), atau
+    melempar; galat diteruskan dan tidak di-cache (dicoba ulang panggilan berikut), kecuali `FileNotFoundError` (berkas
+    hilang di antara scandir dan baca = dilewati) dan `skip_errors` (dilewati panggilan ini saja, tidak di-cache). Satu lock per indeks: pemanggil serentak menunggu satu
+    pemindaian. Hasil = list BARU; objek di dalamnya di-share dan diperlakukan baca-saja."""
+
+    def __init__(self, directory: Path, parse: Any, *, skip_errors: tuple[type[BaseException], ...] = ()) -> None:
+        self.dir = Path(directory)
+        self._parse = parse
+        self._skip_errors = skip_errors
+        self._entries: dict[str, tuple[_StatKey, Any]] = {}
+        self._order: list[str] | None = None
+        self._lock = threading.Lock()
+
+    def load(self) -> list[Any]:
+        with self._lock:
+            try:
+                listing = list(os.scandir(self.dir))
+            except (FileNotFoundError, NotADirectoryError):
+                self._entries, self._order = {}, None
+                return []
+            seen: dict[str, tuple[_StatKey, Any]] = {}
+            changed = False
+            for e in listing:
+                if not os.path.normcase(e.name).endswith(".json"):  # = glob("*.json"): tanpa beda huruf di Windows
+                    continue
+                try:
+                    if not e.is_file():
+                        continue
+                    st = e.stat()
+                except FileNotFoundError:
+                    continue
+                key = (st.st_mtime_ns, st.st_ctime_ns, st.st_size, st.st_ino)
+                old = self._entries.get(e.name)
+                if old is not None and old[0] == key:
+                    seen[e.name] = old
+                    continue
+                changed = True
+                try:
+                    val = self._parse(Path(e.path))
+                except FileNotFoundError:
+                    continue
+                except self._skip_errors:
+                    continue  # galat baca sesaat: dilewati panggilan ini, tidak di-cache
+                seen[e.name] = (key, val)
+            if changed or self._order is None or len(seen) != len(self._entries):
+                # Urutan = sorted(Path) jalur lama: satu direktori, jadi sama dengan membandingkan normcase(nama).
+                self._order = sorted(seen, key=os.path.normcase)
+            self._entries = seen
+            return [v for v in (seen[n][1] for n in self._order) if v is not SKIP]
+
+
+def _parse_record(p: Path) -> RunRecord:
+    try:
+        return RunRecord.from_dict(json.loads(p.read_text(encoding="utf-8")))
+    except FileNotFoundError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError):
+        raise ValueError(f"unreadable run record file: {p.name}") from None
+
+
+def records_index(runs_dir: Path) -> DirIndex:
+    """Indeks `runs/spark/records/`; semantik galat = `load_records` (berkas rusak -> ValueError, tidak di-cache)."""
+    return DirIndex(spark_dir(runs_dir) / RECORDS_DIR, _parse_record)

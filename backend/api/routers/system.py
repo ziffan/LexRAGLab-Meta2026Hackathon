@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,17 @@ def _available(profile: Mapping[str, Any], env_map: Mapping[str, str]) -> bool:
     return bool(clean_env_value(env_map.get(profile.get("base_url_env", ""))))
 
 
+def _parse_grid(p: Path) -> Any:
+    """Satu amplop grid -> RunRecord, atau `store.SKIP` (tanpa record / rusak; sama dengan `grid_records`). `OSError` diteruskan
+    (galat baca sesaat: `RunIndex` melewatinya tanpa cache)."""
+    raw = p.read_bytes()
+    try:
+        rec = json.loads(raw.decode("utf-8")).get("record")
+        return RunRecord.from_dict(rec) if rec else store.SKIP
+    except (ValueError, TypeError, AttributeError):
+        return store.SKIP
+
+
 def grid_records(runs_dir: Path) -> list[RunRecord]:
     """RunRecord run grid dari amplop `runs/grid/<kunci>.json`; amplop tanpa record (belum selesai) atau rusak dilewati."""
     out: list[RunRecord] = []
@@ -62,9 +74,52 @@ def grid_records(runs_dir: Path) -> list[RunRecord]:
     return out
 
 
-def all_records(runs_dir: Path) -> list[RunRecord]:
-    """Semua RunRecord tersimpan (records + grid), tanpa limit; dipakai R6 dan R1. ValueError bila record rusak."""
-    return store.load_records(runs_dir) + grid_records(runs_dir)
+class RunIndex:
+    """Indeks inkremental R1/R6 untuk satu `runs_dir` (M5.1-N1): `records/` (semantik `store.load_records`) dan `grid/`
+    (semantik `grid_records`). Nilai identik dengan jalur tanpa indeks; tidak basi (stat per berkas tiap panggilan)."""
+
+    def __init__(self, runs_dir: Path) -> None:
+        self.records = store.records_index(runs_dir)
+        self.grid = store.DirIndex(Path(runs_dir) / "grid", _parse_grid, skip_errors=(OSError,))
+
+    def warm(self) -> None:
+        """Pemanasan (thread lifespan): galat apa pun diam; permintaan berikut menghitung sendiri."""
+        for idx in (self.records, self.grid):
+            try:
+                idx.load()
+            except Exception:  # noqa: BLE001 - pemanasan tidak boleh menjatuhkan proses
+                pass
+
+
+_INDEX_LOCK = threading.Lock()
+
+
+def run_index(state: Any, runs_dir: Path) -> RunIndex:
+    """`RunIndex` milik aplikasi (`app.state.run_indexes`, bukan global modul) untuk `runs_dir`."""
+    key = str(Path(runs_dir).resolve())
+    with _INDEX_LOCK:
+        table = getattr(state, "run_indexes", None)
+        if table is None:
+            table = {}
+            state.run_indexes = table
+        idx = table.get(key)
+        if idx is None:
+            idx = table[key] = RunIndex(runs_dir)
+        return idx
+
+
+def _load(runs_dir: Path, index: RunIndex | None) -> tuple[list[RunRecord], list[RunRecord]]:
+    """(records, grid). `index` None = jalur lama tanpa indeks. ValueError bila record rusak."""
+    if index is None:
+        return store.load_records(runs_dir), grid_records(runs_dir)
+    return index.records.load(), index.grid.load()
+
+
+def all_records(runs_dir: Path, index: RunIndex | None = None) -> list[RunRecord]:
+    """Semua RunRecord tersimpan (records + grid), tanpa limit; dipakai R6 dan R1. ValueError bila record rusak.
+    `index` (M5.1-N1) = baca lewat indeks inkremental; None = jalur lama. Hasil identik; list baru tiap panggilan."""
+    recs, grid = _load(runs_dir, index)
+    return recs + grid
 
 
 def run_cost_micros(runs_dir: Path) -> int | None:
@@ -111,19 +166,20 @@ def _totals(records: list[RunRecord]) -> list[dict[str, Any]]:
     return [acc[k] for k in KINDS if k in acc]
 
 
-def cost_fields(runs_dir: Path, budget_cfg: Mapping[str, Any] | None = None, *, model_cfg: Mapping[str, Any]) -> dict[str, Any]:
+def cost_fields(runs_dir: Path, budget_cfg: Mapping[str, Any] | None = None, *, model_cfg: Mapping[str, Any],
+                index: RunIndex | None = None) -> dict[str, Any]:
     """Bidang biaya R1 dari SATU pembacaan record (5.000+ berkas; pembacaan terpisah membuat R1 > 4 detik).
     Nilai identik dengan `run_cost_micros`, `ledger_spent_micros` (= `Ledger.spent()`: hanya `records/`), `run_totals_by_kind`.
     H-104 butir 3: `pool_spend` = belanja per pool (aturan `Ledger.spent_pool`, `config/budget` `[provider_cap_micros]`) atas
     `records/`; `main_results_spent_usd_micros` = pool `default` (hasil utama Contributor) = angka header U0 dan README.
     Config budget tak sah -> kedua bidang pool None (bidang lain tetap). H-102 P3: rekaman off-pin (sapuan effort) masuk pool
-    `sweep` lewat `is_off_pin` atas `config/model` (`model_cfg` keyword WAJIB), tidak ke pool default/Baseten."""
+    `sweep` lewat `is_off_pin` atas `config/model` (`model_cfg` keyword WAJIB), tidak ke pool default/Baseten.
+    M5.1-N1: `index` = record dari `RunIndex` (nilai identik dengan `index=None`, jalur lama)."""
     try:
-        recs = store.load_records(runs_dir)
+        recs, grid = _load(runs_dir, index)
     except ValueError:
         return {"run_cost_usd_micros": None, "ledger_spent_usd_micros": None, "main_results_spent_usd_micros": None,
                 "pool_spend": None, "run_totals_by_kind": None}
-    grid = grid_records(runs_dir)
     allr = recs + grid
     try:
         pools: dict[str, int] | None = pool_spend(recs, provider_caps(budget_cfg or {}),
@@ -157,7 +213,8 @@ def health(request: Request) -> dict[str, Any]:
         "replay": st.replay,
         "model": profiles.get(default, {}).get("model"),
         "config_hash": st.config_hash,
-        **cost_fields(st.service.runs_dir, getattr(st, "budget_config", None), model_cfg=st.model_config),
+        **cost_fields(st.service.runs_dir, getattr(st, "budget_config", None), model_cfg=st.model_config,
+                      index=run_index(st, st.service.runs_dir)),
         "model_profiles": [_profile_row(request, name, p) for name, p in profiles.items()],
     }
 
@@ -173,7 +230,7 @@ def runs_list(request: Request, kind: str | None = None, limit: str | None = Non
         n = int(limit)
     runs = request.app.state.service.runs_dir
     try:
-        records = all_records(runs)
+        records = all_records(runs, run_index(request.app.state, runs))
     except ValueError:
         raise ApiError(500, "model_error", "stored run records are unreadable") from None
     if kind is not None:

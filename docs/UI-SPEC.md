@@ -160,7 +160,7 @@ State bersama (dipegang satu store di frontend, `useReducer` + context, H-023): 
 | Data | `RunRecord[]` (§12) |
 | Tampil | Tabel per panggilan atau run grid: waktu (UTC), peran (A/B/C/D/grid), model, effort, versi prompt, hash konfigurasi, token input / cached / output, biaya, latensi. Baris agregat per peran atas semua run (R1 `run_totals_by_kind`, biaya = buku belanja) + baris total "All roles (all pools)" (= R1 `ledger_spent_usd_micros`, bukan angka U0 sejak H-104) + tabel "Spend by budget pool" (R1 `pool_spend`; pool default = angka U0, pool Baseten H-101 dan sapuan H-102 terpisah); tabel baris berlabel "Latest {N} runs (UTC)" (putusan operator 12) |
 | Interaksi | Filter per peran. Klik baris → detail JSON catatan run |
-| Loading / empty / error | Skeleton / "No runs recorded" / "Run log unreadable: {message}" |
+| Loading / empty / error | Skeleton / "No runs recorded" / "Run log unreadable: {message}". Agregat per peran saat R1 belum selesai: "Loading per-role totals for all stored runs…" (M5.1-N1); agregat "latest {N} runs only" hanya bila R1 gagal |
 | Label | `Run log & cost`, `Role`, `Effort`, `Prompt version`, `Input tokens`, `Cached tokens`, `Output tokens`, `Cost (USD)`, `Latency` |
 | Adegan video | 2 (cached tokens dan biaya B) |
 
@@ -350,7 +350,7 @@ Self-host lewat paket `@fontsource/ibm-plex-{sans,serif,mono}` 5.3.0 (versi pers
 
 ### 10.3 Pola komponen
 
-- Header gelap U0 (`--head-bg`): nama app, Family, Selected setting, `Model` (dari `/api/health`), `Run cost (main results)` (`main_results_spent_usd_micros` dari `/api/health`, buku belanja pool default; H-104 butir 3; frontend tidak menjumlah, satu fetch health di `App`; direvisi 29 Okt, sisir A3: semula `Run cost` dari `run_cost_usd_micros`), badge `REPLAY` (`.tag.replay`). Nilai tidak terbaca ditampilkan "n/a".
+- Header gelap U0 (`--head-bg`): nama app, Family, Selected setting, `Model` (dari `/api/health`), `Run cost (main results)` (`main_results_spent_usd_micros` dari `/api/health`, buku belanja pool default; H-104 butir 3; frontend tidak menjumlah, satu fetch health di `App`; direvisi 29 Okt, sisir A3: semula `Run cost` dari `run_cost_usd_micros`), badge `REPLAY` (`.tag.replay`). Selama `/api/health` belum selesai, Model dan Run cost menampilkan "loading…" (M5.1-N1); nilai tidak terbaca ditampilkan "n/a". "Run live" (U3) selama itu nonaktif dengan alasan "Checking model availability…".
 - Panel putih (`.panel`): border `--line`, radius 6, padding 16.
 - Label uppercase kecil: `.field`, `dt` detail, kepala tabel (0,75rem, letter-spacing 0,04em).
 - Chip: pass, fail, not-run (token di atas), bulat, 0,75rem, teks tebal 600.

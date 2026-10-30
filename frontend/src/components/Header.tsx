@@ -13,11 +13,15 @@ import { Hint } from "./Hint";
 // Nilai `family` (data) -> label UI (docs/UI-SPEC.md U0).
 export const FAMILY_LABELS: Record<string, string> = { uupt: "Company Law (UU 40/2007)", akta: "Deed (synthetic)" };
 
-export interface BuildInfo { model: string | null; costMicros: number | null }
+/** `pending` (M5.1-N1): health belum selesai -> header menampilkan "loading…", bukan "n/a". Default false. */
+export interface BuildInfo { model: string | null; costMicros: number | null; pending?: boolean }
 
 /** Tooltip angka biaya U0 (H-104 butir 3). DRAF teks: ditunjukkan ke L1 sebelum final (brief L2#11 K1). */
 export const RUN_COST_TITLE =
   "Main results only: budget ledger of the Contributor runs (default pool), cost from model usage plus projected cost of failed attempts. Comparator and effort-sweep spend is shown per pool in the run log.";
+
+/** Teks header saat /api/health belum selesai (M5.1-N1, N-1): jujur "loading", bukan "n/a" (n/a = tidak terbaca). */
+export const HEALTH_LOADING = "loading…";
 
 /** Health -> BuildInfo. Biaya hanya dari field server `main_results_spent_usd_micros` (buku belanja pool default = hasil utama
  * Contributor, H-104 butir 3; integer); selain itu null ("n/a"). `ledger_spent_usd_micros` (semua pool) dan `run_cost_usd_micros`
@@ -27,14 +31,17 @@ export function buildInfoFromHealth(h: Health | null | undefined): BuildInfo {
   return { model: h?.model ?? null, costMicros: typeof c === "number" && Number.isInteger(c) ? c : null };
 }
 
+/** Health tertunda -> BuildInfo selesai (`pending: false`): resolve = nilai health, reject = null ("n/a"). Tidak pernah menolak. */
+export function settleBuildInfo(p: Promise<Health>): Promise<BuildInfo> {
+  return p.then((h) => ({ ...buildInfoFromHealth(h), pending: false }), () => ({ model: null, costMicros: null, pending: false }));
+}
+
 /** Model ID dan biaya hasil utama, keduanya dari satu fetch /api/health (`model`, `main_results_spent_usd_micros`). null = belum ada / tidak terbaca. Panggil sekali (App), oper ke Header lewat prop. */
 export function useBuildInfo(): BuildInfo {
-  const [info, setInfo] = useState<BuildInfo>({ model: null, costMicros: null });
+  const [info, setInfo] = useState<BuildInfo>({ model: null, costMicros: null, pending: true });
   useEffect(() => {
     let live = true;
-    fetchHealth()
-      .then((h) => live && setInfo(buildInfoFromHealth(h)))
-      .catch(() => undefined);
+    void settleBuildInfo(fetchHealth()).then((i) => live && setInfo(i));
     return () => { live = false; };
   }, []);
   return info;
@@ -93,8 +100,8 @@ export function Header({ build = { model: null, costMicros: null } }: { build?: 
       <span className="family">
         Selected setting: <strong>{sel ? settingShort(sel) : state.snapshot.status === "error" ? "n/a" : "…"}</strong>
       </span>
-      <span className="hdr-item">Model: <strong className="mono hdr-value">{build.model ?? "n/a"}</strong></span>
-      <span className="hdr-item" title={RUN_COST_TITLE}>Run cost (main results): <strong className="mono hdr-value">{build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
+      <span className="hdr-item">Model: <strong className="mono hdr-value">{build.pending ? HEALTH_LOADING : build.model ?? "n/a"}</strong></span>
+      <span className="hdr-item" title={RUN_COST_TITLE}>Run cost (main results): <strong className="mono hdr-value" aria-busy={build.pending || undefined}>{build.pending ? HEALTH_LOADING : build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
       {snap?.replay && <span className="hdr-group"><span className="tag replay">REPLAY</span><Hint id="app.replay" /></span>}
       <AboutPanel />
     </header>
