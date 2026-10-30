@@ -3,7 +3,7 @@ import { fetchHealth } from "../api";
 import { useStore } from "../state";
 import {
   SUMMARY_HEADERS, answerProfiles, baselineFor, columnView, modelDetail, profileLabel, defaultProfile, evidenceReducer, flagLabel, formatUsd, isGlimmer, loadEvidence,
-  modelLabel, profileUnavailableText, runLiveState, summaryRows, tokenStr, type ColumnView, type EvidenceState,
+  modelLabel, profileUnavailableText, runLiveState, selectedProfile, summaryRows, tokenStr, type ColumnView, type EvidenceState,
 } from "../lib/evidence";
 import { fixed3, orNa } from "../lib/format";
 import { settingShort } from "../lib/labels";
@@ -165,7 +165,7 @@ export interface EvidenceControlsProps {
 
 export function EvidenceControls({ health, profile, onProfile, runLive, onRunLive, busy }: EvidenceControlsProps) {
   const profiles = answerProfiles(health);
-  const current = profile ?? defaultProfile(health) ?? "";
+  const current = selectedProfile(health, profile);
   return (
     <div className="controls">
       <label className="field">
@@ -260,7 +260,7 @@ export function EvidencePanel() {
     return () => clearInterval(t);
   }, [loading]);
 
-  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null, health?.model_profiles.find((p) => p.model_profile === effProfile), !healthDone);
+  const runLive = runLiveState(item?.scene_checked, healthDone && health !== null, health?.model_profiles.find((p) => p.model_profile === selectedProfile(health, profile)), !healthDone);
   const doLive = () => {
     if (!snap || !itemId || !bestId || !baseId) return;
     const id = ++reqId.current;
