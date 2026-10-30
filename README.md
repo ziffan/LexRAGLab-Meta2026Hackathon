@@ -1,5 +1,5 @@
 <!-- Tujuan: README publik repo app (bahasa Inggris, H-018): apa, kenapa, cara jalan, batas, disclaimer. -->
-<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054, H-060, H-078, H-086, H-089, H-090, H-091, H-093, H-098. -->
+<!-- Sumber keputusan: H-002, H-004, H-005, H-006, H-007, H-013, H-014, H-016, H-017, H-018, H-028, H-029, H-031, H-032, H-039, H-041, H-043, H-044, H-045, H-047, H-048, H-051, H-053, H-054, H-060, H-078, H-086, H-089, H-090, H-091, H-093, H-098, H-100, H-101, H-102, H-104, H-110, H-111, H-112. -->
 
 # LexRAGLab
 
@@ -76,7 +76,7 @@ Current count, from `data/butir/` (`uupt.v16.jsonl`, `akta.v85.jsonl`):
 | Company Law | **23** | 9 operator-written control items (`origin: operator`); 14 Spark-proposed items approved by the operator (`origin: spark_disetujui`; 8 approved as proposed, 6 edited by the operator) | 3 must-refuse items (`mode: tolak`, answer not in the statute) plus 1 operator control item with no gold span. Tune / held-out split: 13 / 10 (1 must-refuse item held out) |
 | Notarial deeds (synthetic) | **84** | all Spark-proposed, approved by the operator (82 as proposed, 2 edited); none operator-written | 43 literal, 26 paraphrase, 15 must-refuse (3 per deed, no gold span); the 69 gold items are spread over the five deeds (12 to 16 each). No tune / held-out split; transfer test only |
 
-Operator-written control items detect circularity between Spark-proposed queries and their spans. There are none for deeds, so that check does not apply to the deed numbers. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`). The Company Law count may still change after the operator's final review.
+Operator-written control items detect circularity between Spark-proposed queries and their spans. There are none for deeds, so that check does not apply to the deed numbers. Two Company Law proposals were rejected and are not counted (`runs/proposals/records/`).
 
 ## Deed results (transfer test)
 
