@@ -59,3 +59,8 @@ Generated 2026-10-30T15:13:37Z UTC. Model `muse-voice-transcribe-1.0`. Spend thi
 - Word differences: `versioned` -> `version`
 - Transcript: The output is a version profile you drop into your own RAG pipeline. All main results cost 56 cents. Muse Glimmer already ran roles A and C and B on part of the corpus. On my own machine, with tuned prompts, confidential files could stay inside the firm. Next, internal policies. Research demo, not legal advice.
 
+
+## Operator listening check (2026-10-30)
+
+- S0: the operator listened to `01-S0.wav` and hears "three hundred thousand" once. The doubled `300000` is a transcription artifact, not a VO defect. S0 accepted.
+- S1, T1 "review": word differences are transcription of product names ("LexRAGLab", "Muse Spark", "I ran"); all numbers match. Accepted.
