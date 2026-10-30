@@ -14,8 +14,9 @@ HOST = "127.0.0.1"  # tidak dapat dikonfigurasi: backend tidak pernah dibuka ke 
 def main() -> None:
     ap = argparse.ArgumentParser(description="LexRAGLab backend (127.0.0.1 only)")
     ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--replay", action="store_true", help="replay mode: serve stored results, REPLAY badge (API.md §1); no key needed")
     args = ap.parse_args()
-    uvicorn.run(create_app(warm_index=True), host=HOST, port=args.port, log_level="warning")
+    uvicorn.run(create_app(replay=args.replay, warm_index=True), host=HOST, port=args.port, log_level="warning")
 
 
 if __name__ == "__main__":

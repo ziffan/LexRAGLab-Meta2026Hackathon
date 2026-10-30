@@ -35,9 +35,9 @@ html, body { margin: 0; height: 100%; background: #0B0C0E; overflow: hidden; }
 #tag { position: absolute; left: 120px; top: 190px; width: 1680px; font-size: 38px; font-weight: 500; line-height: 1.3; }
 #rule { position: absolute; left: 120px; top: 310px; height: 8px; background: var(--gold); }
 #repo { position: absolute; left: 120px; top: 340px; font-family: var(--font-mono); font-size: 34px; color: var(--gold); }
-#list { position: absolute; left: 120px; top: 420px; width: 1680px; margin: 0; padding: 0; list-style: none; }
-#list li { font-size: 24px; line-height: 1.38; color: var(--head-muted); margin: 0 0 10px; }
-#disc { position: absolute; left: 120px; top: 960px; font-size: 44px; font-weight: 600; }
+#list { position: absolute; left: 120px; top: 405px; width: 1680px; margin: 0; padding: 0; list-style: none; }
+#list li { font-size: 23px; line-height: 1.32; color: var(--head-muted); margin: 0 0 7px; }
+#disc { position: absolute; left: 120px; top: 885px; font-size: 44px; font-weight: 600; }
 .todo { background: var(--err-bg); color: var(--err-text); padding: 0 10px; border-radius: 4px; font-family: var(--font-mono); }
 </style>
 </head>
@@ -75,6 +75,9 @@ const LINES = [
   "@PROBLEM",
   "Built with Muse Spark Open (tokenizer for local token counts).",
   "@TTS",
+  // F9 (operator 30 Okt malam): peran Voice Transcribe (H-113; NOTICE butir 4) dan lisensi atas nama operator (LICENSE, NOTICE, H-097).
+  "Narration checked against the script with Muse Voice Transcribe (Meta Model API); not part of the app.",
+  "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0.",
 ];
 const DUR = 8;   // detik (bagian 5 dokumen analisis: 6-8 detik)
 

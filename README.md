@@ -106,6 +106,7 @@ Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node.js with np
 ```bash
 uv sync                                   # backend dependencies
 uv run python -m backend.api              # backend, bound to 127.0.0.1:8000 only
+uv run python -m backend.api --replay     # same, replay mode: stored results only, REPLAY badge, no API key needed (recording/demo)
 cd frontend && npm install && npm run dev # frontend dev server on 127.0.0.1:5173, proxies /api to the backend
 ```
 
