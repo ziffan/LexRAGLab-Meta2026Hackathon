@@ -1,6 +1,6 @@
 # video/ — motion graphic untuk video demo
 
-Aset video, bukan bagian app. Storyboard terkunci: `docs/VIDEO.md` (putusan operator 18 dan 19). Spesifikasi MG: dokumen analisis narasi repo catatan (`docs/riset/2026-10-30-analisis-narasi-video.md`, c983b71) bagian 5.
+Aset video, bukan bagian app. Storyboard terkunci: `docs/VIDEO.md` (putusan operator 18, 19, dan 20; VO H-114). Spesifikasi MG: dokumen analisis narasi repo catatan (`docs/riset/2026-10-30-analisis-narasi-video.md`, c983b71) bagian 5.
 
 Setiap berkas HTML berdiri sendiri: CSS dan JS inline, tanpa jaringan (tanpa CDN, tanpa fetch), font IBM Plex dari `video/fonts/` (salinan woff2 dari paket `@fontsource` yang sudah dipakai frontend; SIL OFL 1.1, teks lisensi di `licenses/` akar repo). Kanvas 1920x1080; jendela berukuran lain diskalakan proporsional. Warna dari token `frontend/src/theme.css` (H-083, sorot gold kuning). Label bahasa Inggris (H-018).
 
@@ -56,26 +56,26 @@ RM = `README.md`. Tidak ada angka lain di layar selain yang di tabel ini (durasi
 | MG-1 A, D | "200K-token context window" | `statute_window_tokens` 200000 | RM "Why": "more than a 200-thousand-token window on its own" |
 | MG-1 A | "≈ 5.8 × a 1M-token context window", berkas uji tuntas | `dd_window_multiple` 5.8 | RM "Why": "about 5.8 million for a full due diligence file (1.2 to 5.8 times a 1-million-token window)" |
 | MG-1 A, D | "≈ 1 in 10", "about 10% of the regulation text" | `regulation_used_pct` 10 | RM "Why": "Of the regulation text, only about 10% was actually used" |
-| MG-1 D | "≈ 15 billion tokens", "two due diligence engagements, about 120 agent sessions" | `dd_cached_tokens_billion` 15, `dd_engagements` 2, `dd_sessions` 120 | RM "Why", paragraf "Supporting, secondary" |
+| MG-1 D | "≈ 15 billion tokens", "two due diligence engagements, about 120 agent sessions" | `dd_cached_tokens_billion` 15, `dd_engagements` 2, `dd_sessions` 120 | `docs/DATA.md` "Operator measurements (background)", paragraf "Supporting, secondary" |
 | MG-1 A | Label "1M" pada enam kotak, "1M-token context window" | jumlah kotak = pembulatan ke atas `dd_window_multiple` | RM "Why": "1-million-token window" |
 | MG-1 B | "46,583 tokens", korpus UU PT | `uupt_tokens` 46583 | `runs/measure/5db7720bc1f5a121.json` baris `section = "_document"`, `tokens_local` |
 | MG-1 B | Posisi sorotan Pasal 102 (visual, tanpa angka) | `art102_start_char` 141959, `art102_end_char` 143179, `uupt_chars` 213139 | `runs/corpus/uupt-40-2007.c56e4f0f38a4.json` (`batang_tubuh` [141959–143179]); MEA `chars` |
 | MG-1 B | "Article 102" | teks `markLabel` | Pasal 102 = gold butir K-01 (`data/butir/uupt.v16.jsonl`); offset di `runs/corpus/uupt-40-2007.c56e4f0f38a4.json` |
-| MG-S | "Oct 26 – Nov 4, 2026" | `line3` | RM baris 8 dan "Built before vs during the hackathon" ("26 Oct to 4 Nov 2026") |
+| MG-S | "Oct 26 – Nov 4, 2026" | `line3` | RM "At a glance" ("Built during the hackathon: ... 26 Oct to 4 Nov 2026") dan "Built before vs during the hackathon" |
 | MG-2 | "$0.561741", "Run cost (main results)" | `run_cost_micro_usd` 561741 | RM Limits: "561,741 micro-USD (shown as $0.561741)"; sama dengan header U0 |
-| MG-2 | "40-token limit" | `header_limit_tokens` 40 | `config/header_b.toml` `max_header_tokens = 40`; RM Limits "header over 40 tokens" |
-| MG-2 low | "816 of 1,783 calls" (Spark Open), "142 of 1,926 calls" (muse-spark-1.3-contributor) | `header_over.low` | RM Limits, sapuan effort: "Contributor 7.4% (142 of 1,926 calls, `low`)", "Spark Open 45.8% (816 of 1,783, `low`)" |
-| MG-2 medium | "1,919 of 2,923", "110 of 1,048" | `header_over.medium` | RM Limits: "Spark Open ... 65.7% (1,919 of 2,923, `medium`)", "Contributor ... 10.5% (110 of 1,048, `medium`)" |
-| MG-2 | "3 must-refuse questions", "6 of 6 abstained" per model; "4 refused, 2 insufficient evidence" (Contributor), "5 ... 1" (Spark Open), "4 ... 2" (Glimmer) | `must_refuse_items`, `abstain` | RM Limits (comparators): "On the three must-refuse items every answer abstained ... (6 of 6 each; Contributor 4 `tolak` and 2 `bukti_tidak_cukup`, Spark Open 5 and 1, Glimmer 4 and 2)" |
-| MG-2 | Effort run dasar peran C: Contributor "low", Spark Open "low", Glimmer "high" | `base_c_effort` | `config/model.toml` `[effort] c = "low"`, `profiles.glimmer_local.reasoning_effort = "high"`; RM "What Muse Spark does" (Glimmer high) |
-| MG-2, MG-3 | "1.3" di ID model `muse-spark-1.3-contributor` | `MODELS` | RM baris 8, `config/model.toml` |
-| MG-2, MG-3 | "Q4_K_M" (Glimmer) | `MODELS.glimmer.host` | RM "What Muse Spark does" (comparators) |
+| MG-2 | "40-token limit" | `header_limit_tokens` 40 | `config/header_b.toml` `max_header_tokens = 40`; `docs/LIMITS.md` "Effort sweep" ("the generated header is over 40 tokens") |
+| MG-2 low | "816 of 1,783 calls" (Spark Open), "142 of 1,926 calls" (muse-spark-1.3-contributor) | `header_over.low` | `docs/LIMITS.md` "Effort sweep": "Contributor: 7.4% (142 of 1,926 calls, `low`)", "Spark Open: 45.8% (816 of 1,783, `low`)" |
+| MG-2 medium | "1,919 of 2,923", "110 of 1,048" | `header_over.medium` | `docs/LIMITS.md` "Effort sweep": "Spark Open ... 65.7% (1,919 of 2,923, `medium`)", "Contributor ... 10.5% (110 of 1,048, `medium`)" |
+| MG-2 | "3 must-refuse questions", "6 of 6 abstained" per model; "4 refused, 2 insufficient evidence" (Contributor), "5 ... 1" (Spark Open), "4 ... 2" (Glimmer) | `must_refuse_items`, `abstain` | `docs/LIMITS.md` "Comparators": "On the three must-refuse items every answer abstained ... (6 of 6 each; Contributor 4 `tolak` and 2 `bukti_tidak_cukup`, Spark Open 5 and 1, Glimmer 4 and 2)" |
+| MG-2 | Effort run dasar peran C: Contributor "low", Spark Open "low", Glimmer "high" | `base_c_effort` | `config/model.toml` `[effort] c = "low"`, `profiles.glimmer_local.reasoning_effort = "high"`; `docs/LIMITS.md` "Comparators" (`reasoning_effort` high for the role C base runs) |
+| MG-2, MG-3 | "1.3" di ID model `muse-spark-1.3-contributor` | `MODELS` | RM, kalimat pembuka ("`muse-spark-1.3-contributor` through the Meta Model API"), `config/model.toml` |
+| MG-2, MG-3 | "Q4_K_M" (Glimmer) | `MODELS.glimmer.host` | RM "Meta models and their roles" (baris Muse Glimmer) |
 | MG-3 | "30 Dec 2022", "UU 40/2007", "five synthetic deeds" | teks `LINES` | RM "Document families" dan "Data and licensing" |
 | MG-3 | Tagline | `tagline` | `frontend/src/content/tagline.json` (status final) |
 | MG-3 | "© 2026" (lisensi atas nama operator) | teks `LINES` | `NOTICE` ("Copyright 2026 Ziffany Firdinal", H-097; lisensi Apache-2.0 di `LICENSE`) |
 
 Baris kartu akhir F9 (30 Okt malam, permintaan operator): "Narration checked against the script with Muse Voice Transcribe (Meta Model API); not part of the app." (H-113, `NOTICE` butir 4) dan "© 2026 Ziffany Firdinal. Code licensed under Apache-2.0." (`NOTICE`; Apache-2.0 di `LICENSE`). Kartu akhir kini 12 butir (bagian "Kartu akhir" `docs/VIDEO.md`; untuk hook A: judul, tagline, URL, 10 baris daftar, disclaimer); durasi MG-3 di video boleh diperpanjang selama total ekspor <= 178 dtk.
 
-Rumusan yang bukan angka: "Apache-2.0 per Meta docs" untuk Glimmer (putusan 18 O11; `NOTICE` butir 4), "Contributor mode: Meta may use the content to train future models" (RM "Data and licensing"), "Built with Muse Spark Open (tokenizer for local token counts)" (RM "Built with Muse Spark Open. Token counts use the Muse Spark Open tokenizer"; `NOTICE`, Muse Model License bagian 2).
+Rumusan yang bukan angka: "Apache-2.0 per Meta docs" untuk Glimmer (putusan 18 O11; `NOTICE` butir 4), "Contributor mode: Meta may use the content to train future models" (RM "Data and licensing"), "Built with Muse Spark Open (tokenizer for local token counts)" (`docs/DATA.md` "Built with Muse Spark Open. Token counts use the Muse Spark Open tokenizer"; `NOTICE`, Muse Model License bagian 2).
 
 Catatan S0-B: naskah VO S0-B menyebut "a single article of under three hundred [tokens]". Angka 266 token itu hasil hitung ulang pemeriksa L3 (dokumen analisis bagian 10), tidak tersimpan di run mana pun, jadi tidak ditampilkan di MG-1 B. Bila S0-B dipilih, operator memutuskan apakah frasa VO itu dipertahankan.

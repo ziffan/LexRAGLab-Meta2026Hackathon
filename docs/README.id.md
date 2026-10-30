@@ -169,7 +169,7 @@ storage:   files only (no database, no vector database)
 | `profiles/` | Setting profile yang diekspor |
 | `prompts/` | Prompt per peran (`a` sampai `d`) |
 | `docs/` | Spesifikasi, keputusan, dan dokumen rincian |
-| `video/` | Motion graphics video demo; bukan bagian aplikasi |
+| `video/` | Motion graphics video demo dan pemeriksa narasi (`video/qa/`); bukan bagian aplikasi |
 | `licenses/` | Teks lisensi font |
 
 ## Untuk agen AI dan kontributor
