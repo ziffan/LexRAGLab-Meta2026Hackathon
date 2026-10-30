@@ -1,0 +1,375 @@
+{
+  "config_hash": "2add880f7208d2692d33014c5ff4f2d7568aa01d62291af1ccb3cafd25c34169",
+  "generated_at": "2026-10-30T15:13:37Z",
+  "model": "muse-voice-transcribe-1.0",
+  "new_spend_usd_micros": 8250,
+  "provider": "meta_voice",
+  "scenes": [
+    {
+      "audio_sha256": "09a2c69ce74784ca712e78670ca618f45b8fb0c290874c37a0ea84b9c33b461d",
+      "cached": false,
+      "cost_usd_micros": 1250,
+      "error_code": null,
+      "file": "01-S0.wav",
+      "number_diffs": [
+        {
+          "hyp": "300000",
+          "op": "ins",
+          "ref": null
+        }
+      ],
+      "numbers_script": [
+        "1",
+        "300000",
+        "1",
+        "6",
+        "1000000",
+        "0.1"
+      ],
+      "numbers_transcript": [
+        "1",
+        "300000",
+        "300000",
+        "1",
+        "6",
+        "1000000",
+        "0.1"
+      ],
+      "run_id": "9af4b02ec4d54af9a5b72970e968bc9a",
+      "scene": "S0",
+      "script_sha256": "7b328e987cc45943d5b2bcbb012d29748a5caf78792a16ee8cc2cf7019c94feb",
+      "seconds": 25.43,
+      "status": "ok",
+      "transcript": "I do legal work with AI agents. Opinions, due diligence, contracts. In my own files, one statute ran over 300,000 300,000 tokens. One due diligence file was nearly six times a million token window. Yet only about a tenth of the regulation text was ever used. So retrieval is a must, but which chunk size? Guessing is opening Pandora's box.",
+      "verdict": "fail",
+      "wer_bp": 176,
+      "word_diffs": [
+        {
+          "hyp": "300000",
+          "op": "ins",
+          "ref": null
+        }
+      ]
+    },
+    {
+      "audio_sha256": "206ad3d01552dd95cdacbeb7d6641b0b93476eac89d262eaa232239228fe538a",
+      "cached": false,
+      "cost_usd_micros": 650,
+      "error_code": null,
+      "file": "02-S1.wav",
+      "number_diffs": [],
+      "numbers_script": [],
+      "numbers_transcript": [],
+      "run_id": "d8d804b4f4a846f4b3e40a2856e95bc2",
+      "scene": "S1",
+      "script_sha256": "12b0e145a4bde976d8e175eae2b6ecdcd1c19de6eee1755dda63923bf85ed92a",
+      "seconds": 13.56,
+      "status": "ok",
+      "transcript": "Lex Raglab is an evaluation lab for legal rag builders. Musespark reads a new family of Indonesian legal documents. The lab measures which chunking and retrieval setting feeds the model the right clauses.",
+      "verdict": "review",
+      "wer_bp": 1213,
+      "word_diffs": [
+        {
+          "hyp": "lex",
+          "op": "ins",
+          "ref": null
+        },
+        {
+          "hyp": "raglab",
+          "op": "sub",
+          "ref": "lexraglab"
+        },
+        {
+          "hyp": null,
+          "op": "del",
+          "ref": "muse"
+        },
+        {
+          "hyp": "musespark",
+          "op": "sub",
+          "ref": "spark"
+        }
+      ]
+    },
+    {
+      "audio_sha256": "f04d3db8ccbd019b9c1ae5933a19f0c6b34cb58b69bdd725506e5528f7b359fd",
+      "cached": false,
+      "cost_usd_micros": 600,
+      "error_code": null,
+      "file": "03-D1.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "102",
+        "3"
+      ],
+      "numbers_transcript": [
+        "102",
+        "3"
+      ],
+      "run_id": "8ad94c4e929b4d2cab853b5c4379d539",
+      "scene": "D1",
+      "script_sha256": "eb931cf8686e3335baa5138089f998852a2381fd08f1c97fb2d55991ec65a601",
+      "seconds": 12.35,
+      "status": "ok",
+      "transcript": "Here is a held out company law question about Article 102. The fixed size chunk it retrieves starts in the middle of paragraph three. The structure aware chunk keeps the whole article.",
+      "verdict": "pass",
+      "wer_bp": 0,
+      "word_diffs": []
+    },
+    {
+      "audio_sha256": "1117756454b78feefd26a154efff1aed59a071411c9c617a6ffc74ad46fc7043",
+      "cached": false,
+      "cost_usd_micros": 1050,
+      "error_code": null,
+      "file": "04-D2.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "1",
+        "2000",
+        "47000",
+        "8",
+        "6",
+        "5"
+      ],
+      "numbers_transcript": [
+        "1",
+        "2000",
+        "47000",
+        "8",
+        "6",
+        "5"
+      ],
+      "run_id": "da5b821c3b954210bbe669cbe6cbf453",
+      "scene": "D2",
+      "script_sha256": "2b81d248b64707845e4b78c45212cea119f05164fa87368c7e3c14e25f7be198",
+      "seconds": 21.58,
+      "status": "ok",
+      "transcript": "The lab runs runs the grid. Chunker, dense, BM20 fiber hybrid, hybrid, context header on or off, all at one budget, 2000 tokens out of a 47,000 token statute. the setting is chosen on tune items. On eight held out items, it fully covers six, fixed size covers five at best.",
+      "verdict": "pass",
+      "wer_bp": 817,
+      "word_diffs": [
+        {
+          "hyp": "runs",
+          "op": "ins",
+          "ref": null
+        },
+        {
+          "hyp": "bm20",
+          "op": "ins",
+          "ref": null
+        },
+        {
+          "hyp": "fiber",
+          "op": "sub",
+          "ref": "bm25"
+        },
+        {
+          "hyp": "hybrid",
+          "op": "sub",
+          "ref": "or"
+        }
+      ]
+    },
+    {
+      "audio_sha256": "c5f197ef6abf1df1251c61745c553ecec2b6a91735cb5a5f08cac0a9e9b9cb12",
+      "cached": false,
+      "cost_usd_micros": 650,
+      "error_code": null,
+      "file": "05-D3.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "14",
+        "2"
+      ],
+      "numbers_transcript": [
+        "14",
+        "2"
+      ],
+      "run_id": "f0bca19fcc684cc49c5391e8fa802720",
+      "scene": "D3",
+      "script_sha256": "23a231ab0b10c76ce467b4ce6a27e983fd2c6607fd62fb4f87886ca8cdcab270",
+      "seconds": 13.71,
+      "status": "ok",
+      "transcript": "where do the test questions come from? MuseSpark proposes them with exact gold spans, including questions it must refuse. I review every one, for company law, 14 approved, two rejected.",
+      "verdict": "pass",
+      "wer_bp": 667,
+      "word_diffs": [
+        {
+          "hyp": null,
+          "op": "del",
+          "ref": "muse"
+        },
+        {
+          "hyp": "musespark",
+          "op": "sub",
+          "ref": "spark"
+        }
+      ]
+    },
+    {
+      "audio_sha256": "f9de077ee3d9fc3a20cd969d130288e0a042d732c58f8d1fda7391da650baa44",
+      "cached": false,
+      "cost_usd_micros": 800,
+      "error_code": null,
+      "file": "06-D4.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "69"
+      ],
+      "numbers_transcript": [
+        "69"
+      ],
+      "run_id": "350a52fd01c54c2d969faa4905aebed9",
+      "scene": "D4",
+      "script_sha256": "faa40359b980e712b973bbecbfdfa01292ae0c3791b7a3a07403efa2973e760a",
+      "seconds": 16.87,
+      "status": "ok",
+      "transcript": "Notorial deeds have no parser. Muse Spark read sample deeds and proposed their structure. I corrected its marker pattern. On the transfer test, test, that schema covers all 69 gold items. The statute parser finds no structure and and covers none.",
+      "verdict": "pass",
+      "wer_bp": 770,
+      "word_diffs": [
+        {
+          "hyp": "notorial",
+          "op": "sub",
+          "ref": "notarial"
+        },
+        {
+          "hyp": "test",
+          "op": "ins",
+          "ref": null
+        },
+        {
+          "hyp": "and",
+          "op": "ins",
+          "ref": null
+        }
+      ]
+    },
+    {
+      "audio_sha256": "17fe6df2072e8410718478e54ffb49cb4ee6d28da6994c2ce67e952f2a9eca76",
+      "cached": false,
+      "cost_usd_micros": 850,
+      "error_code": null,
+      "file": "07-D5.wav",
+      "number_diffs": [],
+      "numbers_script": [],
+      "numbers_transcript": [],
+      "run_id": "c33f5757476a4790a0376876eba56c3d",
+      "scene": "D5",
+      "script_sha256": "3124f4edbc0a5344855b2f4fc5d26dafdf56f525cbfcb3185c4a5aac7b3f64e0",
+      "seconds": 17.02,
+      "status": "ok",
+      "transcript": "Does a better setting give a better answer? Same model, same budget. From the chosen setting, MuseSpark answers. And its citation passes a deterministic verifier, not an LLM judge. From fixed size, it reports the evidence is insufficient.",
+      "verdict": "pass",
+      "wer_bp": 513,
+      "word_diffs": [
+        {
+          "hyp": null,
+          "op": "del",
+          "ref": "muse"
+        },
+        {
+          "hyp": "musespark",
+          "op": "sub",
+          "ref": "spark"
+        }
+      ]
+    },
+    {
+      "audio_sha256": "621395e47f3b724efee95d9b8e4645f5f8e20f2343175b4b33b6b09e1745c282",
+      "cached": false,
+      "cost_usd_micros": 1250,
+      "error_code": null,
+      "file": "08-T1.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "40",
+        "816",
+        "1783",
+        "1.3",
+        "142",
+        "1926",
+        "3"
+      ],
+      "numbers_transcript": [
+        "40",
+        "816",
+        "1783",
+        "1.3",
+        "142",
+        "1926",
+        "3"
+      ],
+      "run_id": "0bb68df276594f44b03c5771441c85e4",
+      "scene": "T1",
+      "script_sha256": "0615508f703049be58ea0287dc032643cfa385bc2320468051185dfd521801f6",
+      "seconds": 25.66,
+      "status": "ok",
+      "transcript": "NewSpark writes a context header per chunk chunk with the statute cached. Iran rolls A, B, and C on open weight muse models. Against the 40 token header limit, Spark Open went over in 816 of 1783 calls. Muse Spark 1.3 in 142 of 1926. On three must refuse questions, every model abstained every time.",
+      "verdict": "review",
+      "wer_bp": 1072,
+      "word_diffs": [
+        {
+          "hyp": null,
+          "op": "del",
+          "ref": "muse"
+        },
+        {
+          "hyp": "newspark",
+          "op": "sub",
+          "ref": "spark"
+        },
+        {
+          "hyp": "chunk",
+          "op": "ins",
+          "ref": null
+        },
+        {
+          "hyp": null,
+          "op": "del",
+          "ref": "i"
+        },
+        {
+          "hyp": "iran",
+          "op": "sub",
+          "ref": "ran"
+        },
+        {
+          "hyp": "rolls",
+          "op": "sub",
+          "ref": "roles"
+        }
+      ]
+    },
+    {
+      "audio_sha256": "83cde02d995f432ac3210dd22461ab2d30cb95ba12b8e1fd4775e4a556d8197b",
+      "cached": false,
+      "cost_usd_micros": 1150,
+      "error_code": null,
+      "file": "09-I1.wav",
+      "number_diffs": [],
+      "numbers_script": [
+        "0.56"
+      ],
+      "numbers_transcript": [
+        "0.56"
+      ],
+      "run_id": "fe7f23704403452e835a34dfcd0f8e23",
+      "scene": "I1",
+      "script_sha256": "8433e3bcdd87da629e7073293a31bcf7cd35de8716974358fba67e45ac7c32d1",
+      "seconds": 23.41,
+      "status": "ok",
+      "transcript": "The output is a version profile you drop into your own RAG pipeline. All main results cost 56 cents. Muse Glimmer already ran roles A and C and B on part of the corpus. On my own machine, with tuned prompts, confidential files could stay inside the firm. Next, internal policies. Research demo, not legal advice.",
+      "verdict": "pass",
+      "wer_bp": 179,
+      "word_diffs": [
+        {
+          "hyp": "version",
+          "op": "sub",
+          "ref": "versioned"
+        }
+      ]
+    }
+  ],
+  "wer_review_threshold_bp": 1000
+}
