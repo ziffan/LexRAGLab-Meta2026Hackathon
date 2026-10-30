@@ -223,11 +223,18 @@ export interface Retrieval {
   packed_tokens: number;
 }
 
+/** Subset HeaderB (DATA-CONTRACTS §7) yang dikirim R4 untuk setting header-on. */
+export interface HeaderRow {
+  chunk_id: string;
+  header: string;
+  tokens_local: number | null;
+}
+
 export interface DocResponse {
   doc_id: string;
   text: string;
   chunks: Chunk[] | null;
-  headers: unknown[] | null;
+  headers: HeaderRow[] | null;
 }
 
 export type Load<T> =
