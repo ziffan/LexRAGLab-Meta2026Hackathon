@@ -47,7 +47,7 @@ Penonton harus pulang dengan tiga hal:
 | Atribusi Glimmer | "Apache-2.0 per Meta docs" sampai kartu model terverifikasi (`NOTICE` butir 4: kartu HF belum terverifikasi) | 18 O11 |
 | Berkas motion graphic | `video/` repo app (ikut repo publik Apache-2.0, wajib lolos secret scan M5.2) | 18 O8 |
 | Storyboard | Dikunci sesuai usulan bagian 4; alternatif 4.1 terbuka | 19 butir 1 |
-| Voice over | TTS lokal lewat repo `audiobook-maker`; lisensi bobot dan suara harus mengizinkan publikasi; tanpa kloning suara orang nyata; kartu akhir memuat pengungkapan suara sintetis; sampel dengar ke operator sebelum render penuh. Merevisi 18 O7 ("suara operator sendiri") | 19 butir 2 |
+| Voice over | TTS lokal lewat repo `audiobook-maker`; lisensi bobot dan suara harus mengizinkan publikasi; tanpa kloning suara orang nyata; kartu akhir memuat pengungkapan suara sintetis; sampel dengar ke operator sebelum render penuh. Merevisi 18 O7 ("suara operator sendiri"). *Engine direvisi H-114: ElevenLabs `eleven-v4` (OpenRouter), suara `brian`* | 19 butir 2, H-114 |
 
 ## Storyboard terkunci (30 Okt)
 
@@ -97,7 +97,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 
 ## Audio
 
-- Voice over: TTS lokal lewat `<folder TTS lokal>` (putusan 19 butir 2), dikerjakan L2-tts. Syarat: lisensi bobot model dan suara mengizinkan publikasi di submission; tanpa kloning suara orang nyata; sampel dengar (S0 dan T1) disetujui operator sebelum render penuh. Engine: VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra` (bukan tiruan orang nyata), laporan L2-tts 30 Okt; terisi di `video/mg-3-end.html`. Durasi VO terukur per adegan (total 178,01 dtk) dan parameter `?dur` MG: `video/README.md`.
+- Voice over: TTS lokal lewat `<folder TTS lokal>` (putusan 19 butir 2), dikerjakan L2-tts. Syarat: lisensi bobot model dan suara mengizinkan publikasi di submission; tanpa kloning suara orang nyata; sampel dengar (S0 dan T1) disetujui operator sebelum render penuh. *Direvisi H-114 (30 Okt): engine = ElevenLabs `eleven-v4` lewat OpenRouter, suara bawaan `brian` (bukan kloning orang nyata), dipilih operator setelah 3 putaran dengar buta (VoxCPM2 terbaik skor 4 "agak seperti robot"; ElevenLabs skor 5); hak pakai: akses berbayar OpenRouter, ditafsirkan operator memenuhi syarat komersial ElevenLabs.* Semula: VoxCPM2 (openbmb/VoxCPM2, Apache-2.0), suara voice design `electra`, laporan L2-tts 30 Okt; terisi di `video/mg-3-end.html`. Durasi VO terukur per adegan (`brian` total 169,61 dtk) dan parameter `?dur` MG: `video/README.md`.
 - Pengungkapan: "Narration: synthetic voice (TTS)" di kartu akhir MG-3 dan di deskripsi video.
 - Takarir Inggris dibakar ke video, dari kolom VO storyboard.
 
@@ -111,7 +111,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 6. "Comparators: Muse Spark Open (open-weight, Baseten) and Muse Glimmer (open-weight, Q4_K_M, running locally on the operator's machine; Apache-2.0 per Meta docs), labelled with model and reasoning effort, separate runs, never mixed with main results." (H-047, H-060, H-100; putusan 18 O11)
 7. "Problem-size figures: the operator's measurements of prior engagements, not output of this app." (mengikuti varian hook)
 8. "Built with Muse Spark Open (tokenizer for local token counts)." (README; `NOTICE`, Muse Model License bagian 2)
-9. "Narration: synthetic voice (VoxCPM2, local TTS)." (putusan 19 butir 2; laporan L2-tts)
+9. "Narration: synthetic voice (ElevenLabs text-to-speech)." (H-114, merevisi putusan 19 butir 2)
 10. "Research demo. Not legal advice."
 
 ## Aturan isi
