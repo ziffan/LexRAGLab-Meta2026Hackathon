@@ -4,6 +4,7 @@ luar dan tanpa key nyata."""
 from __future__ import annotations
 
 import email
+import http.client
 import http.server
 import io
 import json
@@ -149,9 +150,16 @@ class Rig:
     ("816 1783", ["816", "1783"]), ("eight 16", ["8", "16"]), ("I review every one", ["i", "review", "everyone"]),
     ("A, B and C", ["a", "b", "and", "c"]), ("“Insufficient” — evidence", ["insufficient", "evidence"]),
     ("2.50", ["2.5"]), ("007", ["7"]),
+    # tanda baca memutus rangkaian angka (§6.3; L3 kode S2)
+    ("eight, sixteen", ["8", "16"]), ("nineteen. Twenty six", ["19", "26"]), ("three; four", ["3", "4"]),
 ])
 def test_v1_normalize(text, expected):
     assert normalize(text) == expected
+
+
+def test_v5_wer_bp_rounds_up():
+    # 1 galat dari 3 kata = 3333,3 bp -> 3334 (dibulatkan ke atas, konservatif)
+    assert compare("X", "a b c", "a b z", 10000).wer_bp == 3334
 
 
 def test_v2_paired_reading_passes():
@@ -258,6 +266,25 @@ def test_v8_gate_strict_limit(tmp_path, spent, ok):
         assert code == 2 and t.calls == [] and "budget_exceeded" in rig.out.getvalue()
 
 
+def test_v8_pool_counts_projected_of_failed_calls(tmp_path):
+    rig = Rig(tmp_path)
+    tc = vc.load_tool_config(model_cfg(), vq_cfg())
+    store.save_record(rig.store, vc._record(tc, "k" * 64, "a" * 64, status="error", cost=None, projected=50000 - 2050,
+                                            latency_ms=1, error={"code": "timeout", "message": "x"}, now=lambda: 0.0))
+    t = FakeTransport()
+    assert rig.run(transport=t) == 2 and t.calls == []
+
+
+def test_v8_corrupt_pool_record_fails_closed(tmp_path):
+    rig = Rig(tmp_path)
+    d = rig.store / "spark" / "records"
+    d.mkdir(parents=True)
+    (d / "bad.json").write_text("{not json", encoding="utf-8")
+    t = FakeTransport()
+    assert rig.run("--dry-run", transport=t) == 2 and t.calls == []
+    assert rig.run(transport=t) == 2 and t.calls == []
+
+
 def test_v8_projection_alone_at_limit_blocked(tmp_path):
     rig = Rig(tmp_path, vq=vq_cfg(limit_micros=2050))
     t = FakeTransport()
@@ -297,6 +324,13 @@ def test_v10_live_without_key_refuses(tmp_path):
     rig = Rig(tmp_path)
     t = FakeTransport()
     assert rig.run(transport=t, env={}) == 2 and t.calls == []
+
+
+def test_v11_plain_http_base_refused(tmp_path):
+    rig = Rig(tmp_path)
+    t = FakeTransport()
+    assert rig.run(transport=t, env={"MUSE_API_KEY": KEY, "MUSE_BASE_URL": "http://voice.example-host.test/v1"}) == 2
+    assert t.calls == [] and "https" in rig.out.getvalue()
 
 
 def test_v11_request_shape_and_no_leak(tmp_path):
@@ -370,7 +404,17 @@ def test_v13_http_errors_not_billed_not_cached(tmp_path, status):
     assert len(t2.calls) == 1  # hanya berkas yang gagal; yang ok dari cache
 
 
-@pytest.mark.parametrize("exc,code", [(TimeoutError("t"), "timeout"), (ConnectionError("c"), "connection_error")])
+def test_v13_host_only_message_redacted(tmp_path):
+    rig = Rig(tmp_path)
+    body = json.dumps({"message": f"upstream {HOST} refused"}).encode()
+    rig.run(transport=FakeTransport(responses={0: (503, body)}))
+    err = [r for r in rig.records() if r.status == "error"][0]
+    assert HOST not in rig.all_text() and "[redacted]" in err.error["message"]
+
+
+@pytest.mark.parametrize("exc,code", [(TimeoutError("t"), "timeout"), (ConnectionError("c"), "connection_error"),
+                                      (http.client.IncompleteRead(b"x"), "connection_error"),
+                                      (RuntimeError("boom"), "connection_error")])
 def test_v13_timeout_projected(tmp_path, exc, code):
     rig = Rig(tmp_path)
     assert rig.run(transport=FakeTransport(raise_exc=exc)) == 1
@@ -493,5 +537,20 @@ def test_v11_real_opener_does_not_follow_redirect_or_use_proxy(monkeypatch):
         assert seen == ["/asr/transcribe|Bearer k"]  # tidak ada permintaan kedua ke /leak; proxy env diabaikan
     finally:
         srv.shutdown()
+
+
+def test_v11_transport_requires_https_before_any_connection(monkeypatch):
+    def boom(*a, **k):
+        raise AssertionError("opener must not be built for http://")
+    monkeypatch.setattr(vc, "_opener", boom)
+    with pytest.raises(ConnectionError, match="https"):
+        vc.urllib_transport("http://127.0.0.1:9/x", {}, b"", 1)
+
+
+def test_v13_transport_maps_protocol_errors(monkeypatch):
+    class Op:
+        def open(self, req, timeout):
+            raise http.client.IncompleteRead(b"partial")
+    monkeypatch.setattr(vc, "_opener", lambda: Op())
     with pytest.raises(ConnectionError):
-        vc.urllib_transport("http://example.test/x", {}, b"", 1)
+        vc.urllib_transport("https://127.0.0.1:9/x", {}, b"", 1)

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import re
 import sys
@@ -222,6 +223,8 @@ def urllib_transport(url: str, headers: Mapping[str, str], body: bytes, timeout:
         if isinstance(e.reason, TimeoutError):
             raise TimeoutError("timeout") from None
         raise ConnectionError("connection failed") from None
+    except http.client.HTTPException:
+        raise ConnectionError("connection failed") from None  # IncompleteRead, BadStatusLine (L3 kode S1)
 
 
 class Scrubber:
@@ -290,7 +293,7 @@ def call_one(tc: ToolConfig, sr: SceneRun, wav: bytes, *, url: str, api_key: str
     except TimeoutError:
         status, raw = -1, b""
         err, cost, projected = {"code": "timeout", "message": "request timed out"}, None, sr.projected_micros
-    except (ConnectionError, OSError):
+    except Exception:  # noqa: BLE001  koneksi/protokol/lainnya: panggilan mungkin sudah ditagih -> record projected
         status, raw = -1, b""
         err, cost, projected = {"code": "connection_error", "message": "connection failed"}, None, sr.projected_micros
     latency = int(round((clock() - t0) * 1000))
@@ -417,8 +420,11 @@ def run(argv: list[str] | None = None, *, model_cfg: Mapping[str, Any] | None = 
                                  projected_micros=au.projected_micros(aud.seconds_ceil, tc.audio_per_hour_micros),
                                  cache_key=key, cached=cached))
             wavs[s] = aud.wav_bytes
-    except (InputError, OSError) as exc:
+    except InputError as exc:
         p(f"input_error: {exc}")
+        return 2
+    except OSError as exc:  # tanpa jalur absolut di stdout (L3 kode N6)
+        p(f"input_error: {type(exc).__name__}" + (f" ({Path(exc.filename).name})" if getattr(exc, "filename", None) else ""))
         return 2
     try:
         spent = pool_spent(root)
@@ -472,6 +478,8 @@ def run(argv: list[str] | None = None, *, model_cfg: Mapping[str, Any] | None = 
         if r.cached:
             r.transcript = json.loads(store.cache_read(root, ROLE, r.cache_key))["transcript"]
             r.record = store.origin_record(root, ROLE, r.cache_key)
+            if r.record is None:
+                p(f"warning: {r.scene} cache entry has no matching stored run record (run_id and cost unknown)")
         if r.transcript is not None:
             r.result = compare(r.scene, scripts[r.scene], r.transcript, tc.threshold_bp, tc.joined_terms)
     gen = datetime.fromtimestamp(now(), tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ")

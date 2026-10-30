@@ -36,7 +36,7 @@ def check_model_ids(m: dict) -> None:
     # H-113: tepat satu profil Muse Voice Transcribe, hanya peran `voice_qa`, api `asr_transcribe`, tidak untuk angka laporan.
     comparators = {"meta-models/muse-spark-open-1026", "meta/muse-glimmer"}
     voice = [n for n, p in m["profiles"].items() if p["model"] == VOICE_QA_MODEL]
-    assert len(voice) <= 1
+    assert len(voice) == 1
     for prof in m["profiles"].values():
         if prof["model"] in comparators:
             assert "c" in prof["roles"] and set(prof["roles"]) <= {"a", "b", "c"}
