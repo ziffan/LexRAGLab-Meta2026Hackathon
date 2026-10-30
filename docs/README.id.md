@@ -97,7 +97,7 @@ Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup
 
 ## Hasil
 
-**Hukum Perseroan.** Setelan terpilih: chunker structure-schema (skema v2), dense retrieval, header off, token budget 2,000, dipilih pada split tune. Held-out (10 butir; 4 ditulis operator, 6 diusulkan Spark dan disetujui): 6 dari 8 butir yang punya gold span tercakup penuh, mean span recall 0.75, mean token precision 0.0218; hitungan mentah, tanpa klaim signifikansi. Sumber: profil terekspor `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); hasil held-out juga ditampilkan di layar laporan aplikasi.
+**Hukum Perseroan.** Setelan terpilih: chunker structure-schema (skema v2), dense retrieval, header off, token budget 2,000. Held-out (10 butir; 4 ditulis operator, 6 diusulkan Spark dan disetujui): 6 dari 8 butir yang punya gold span tercakup penuh, mean span recall 0.75, mean token precision 0.0218; hitungan mentah, tanpa klaim signifikansi. Sumber: profil terekspor `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); hasil held-out juga ditampilkan di layar laporan aplikasi.
 
 **Keluarga dokumen.**
 
@@ -128,7 +128,7 @@ uv run python -m backend.api --replay     # same, replay mode: stored results on
 cd frontend && npm install && npm run dev # frontend dev server on 127.0.0.1:5173, proxies /api to the backend
 ```
 
-Mode replay lokal: backend menyajikan setiap layar dari run tersimpan (`runs/`) serta data dokumen dan butir (`data/`) tanpa memanggil Model API.
+Mode replay lokal: backend menyajikan setiap layar dari run tersimpan (`runs/`) serta data dokumen dan butir (`data/`) tanpa memanggil Model API (sebagian tampilan juga butuh model lokal; lihat "Model lokal untuk replay" di bawah).
 
 Ekspor replay statis (tanpa backend, tanpa panggilan model):
 
@@ -140,6 +140,8 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 ```
 
 `dist-static/` adalah keluaran build dan tidak ada di repositori. Live replay yang dipublikasikan (tautan di atas) adalah ekspor statis ini: tanpa backend, tanpa API key, dan tanpa panggilan model.
+
+**Model lokal untuk replay.** Diperiksa pada clone bersih dengan cache Hugging Face kosong dan `HF_HUB_OFFLINE=1`: backend replay berjalan, dan endpoint health, family, snapshot, teks dokumen, serta log run bekerja tanpa model Hugging Face apa pun. Retrieval per butir dan tampilan chunk fixed-size membutuhkan dua model di cache Hugging Face lokal: embedder `BAAI/bge-m3` (revisi dipin di `config/retrieval.toml`) dan tokenizer Muse Spark Open (revisi dipin di `config/tokenizer.toml`). Aplikasi tidak mengunduh keduanya; tanpa keduanya endpoint itu mengembalikan HTTP 500, dan ekspor statis tetap selesai tetapi tidak memuat berkas retrieval dan chunk yang tidak bisa dibangun. Tokenizer fallback `o200k_base` diunduh oleh `tiktoken` pada permintaan pertama; run tanpa akses jaringan belum diuji.
 
 Test:
 

@@ -97,7 +97,7 @@ The visual theme of the UI (colour tokens, IBM Plex typography, component patter
 
 ## Results
 
-**Company Law.** Selected setting: structure-schema chunker (schema v2), dense retrieval, header off, 2,000-token budget, chosen on the tune split. Held-out (10 items; 4 operator-written, 6 Spark-proposed and approved): 6 of 8 items with a gold span fully covered, mean span recall 0.75, mean token precision 0.0218; raw counts, no significance claim. Source: the exported profile `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); held-out results are also shown on the report screen of the app.
+**Company Law.** Selected setting: structure-schema chunker (schema v2), dense retrieval, header off, 2,000-token budget. Held-out (10 items; 4 operator-written, 6 Spark-proposed and approved): 6 of the 8 items that have a gold span fully covered, mean span recall 0.75, mean token precision 0.0218; raw counts, no significance claim. Source: the exported profile `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); held-out results are also shown on the report screen of the app.
 
 **Document families.**
 
@@ -128,7 +128,7 @@ uv run python -m backend.api --replay     # same, replay mode: stored results on
 cd frontend && npm install && npm run dev # frontend dev server on 127.0.0.1:5173, proxies /api to the backend
 ```
 
-Local replay mode: the backend serves every screen from stored runs (`runs/`) and the document and item data (`data/`) without calling the Model API.
+Local replay mode: the backend serves every screen from stored runs (`runs/`) and the document and item data (`data/`) without calling the Model API (some views also need local models; see "Local models for replay" below).
 
 Static replay export (no backend, no model calls):
 
@@ -140,6 +140,8 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 ```
 
 `dist-static/` is build output and is not in the repository. The published live replay (link above) is this static export: no backend, no API key, and no model calls.
+
+**Local models for replay.** Checked on a clean clone with an empty Hugging Face cache and `HF_HUB_OFFLINE=1`: the replay backend starts, and the health, family, snapshot, document text, and run log endpoints work without any Hugging Face model. Per-item retrieval and the fixed-size chunk view need two models in the local Hugging Face cache: the `BAAI/bge-m3` embedder (revision pinned in `config/retrieval.toml`) and the Muse Spark Open tokenizer (revision pinned in `config/tokenizer.toml`). The app does not download them; without them those endpoints return HTTP 500, and the static export still completes but leaves out the retrieval and chunk files it could not build. The `o200k_base` fallback tokenizer was downloaded by `tiktoken` on the first request; a run without network access was not tested.
 
 Tests:
 
