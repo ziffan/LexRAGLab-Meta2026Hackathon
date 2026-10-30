@@ -128,6 +128,26 @@ def test_readme_cost_figures_match_stored_runs():
     assert [_num(x) for x in s.groups()[1:]] == per and sum(per) == pools["sweep"]
 
 
+def _number_tokens(doc: str) -> set[str]:
+    return {t.rstrip(",.") for t in re.findall(r"\$?\d[\d,\.]*%?", doc)}
+
+
+def test_readme_id_numbers_match_readme():
+    """docs/README.id.md = terjemahan setia: himpunan token angka sama persis dengan README.md (nol pengecualian), dan
+    baris biaya utama (padanan Indonesia) memuat angka mikro-USD serta dolar yang sama dengan baris Inggris di README."""
+    readme = (REPO / "README.md").read_text(encoding="utf-8")
+    readme_id = (REPO / "docs" / "README.id.md").read_text(encoding="utf-8")
+    en, idn = _number_tokens(readme), _number_tokens(readme_id)
+    assert en - idn == set(), f"angka README tidak ada di versi ID: {sorted(en - idn)}"
+    assert idn - en == set(), f"angka versi ID tidak ada di README: {sorted(idn - en)}"
+    m = re.search(r"Run cost \(main results\): ([\d,]+) micro-USD \(shown as (\$\d+\.\d{6})\)", readme)
+    assert m, "baris biaya utama README hilang"
+    j = re.search(r"Biaya run \(hasil utama\): ([\d,]+) micro-USD \(ditampilkan sebagai (\$\d+\.\d{6})\)", readme_id)
+    assert j, "baris biaya utama README.id hilang"
+    assert j.groups() == m.groups()
+    assert m.group(1) in readme_id and m.group(2) in readme_id
+
+
 def test_r1_off_pin_record_excluded_from_main_results(tmp_path):
     """Rekaman off-pin (Contributor effort medium, pin profil = low) masuk pool sweep, tidak ke main_results; total tetap memuatnya."""
     from backend.api.routers.system import cost_fields
