@@ -186,6 +186,6 @@ Angka latensi dan biaya aktual diukur di M0.1, M0.2, dan M3.1, bukan ditetapkan 
 | Verifier | Fuzzy terlalu longgar | Kutipan karangan lolos | Kasus test yang disetujui operator (H-052) | Ambang di konfigurasi, diusulkan dengan alasan tertulis dan disetujui operator | M2.3 |
 | Glimmer client | Server LM Studio mati atau OOM VRAM | Pembanding tidak jalan | Cek ketersediaan sebelum panggilan | Pilihan nonaktif dengan pesan jelas; run lama tetap tampil (H-053) | stretch M2.5 |
 | Profil | Dimuat dengan korpus lain | Profil tidak berlaku | Cek hash korpus | Tolak dengan pesan | M4.3 |
-| Replay | Run tersimpan tidak lengkap | Adegan kosong saat demo | Rekaman kasar 2 Nov | Daftar run wajib per adegan di `docs/VIDEO.md` | M5.1 |
+| Replay | Run tersimpan tidak lengkap | Adegan kosong saat demo | Rekaman kasar 2 Nov (rencana awal; diganti render agen v1..v10, `docs/VIDEO.md` Produksi) | Daftar run wajib per adegan di `docs/VIDEO.md` | M5.1 |
 | Ekspor statis | Snapshot memuat key atau path lokal | Bocor di situs publik | Pemeriksaan isi snapshot | Gate M5.2 sebelum dipasang (H-051) | M5.1, M5.2 |
 | Frontend | Panel error menjatuhkan halaman | Demo macet | Uji keadaan | Error terisolasi per panel | M5.1 |

@@ -7,7 +7,7 @@ Kalau Official Rules menetapkan durasi atau format lain, rules yang menang, dan 
 
 ## Status
 
-**Storyboard dikunci operator 30 Okt (putusan operator 19)** dari usulan agen di repo catatan `docs/riset/2026-10-30-analisis-narasi-video.md` (c983b71) bagian 4, dengan pilihan putusan 18. Alternatif bagian 4.1 tetap terbuka sampai penyuntingan/unggah (operator memilih saat itu). Motion graphic ada di `video/` (lihat `video/README.md`). Storyboard lama (25 Okt) disimpan di bagian "Riwayat" di bawah.
+**Storyboard dikunci operator 30 Okt (putusan operator 19)** dari usulan agen di repo catatan `docs/riset/2026-10-30-analisis-narasi-video.md` (c983b71) bagian 4, dengan pilihan putusan 18. Alternatif bagian 4.1 tetap terbuka sampai penyuntingan/unggah (operator memilih saat itu); pilihan efektif = isi v10 (operator, 1 Nov). Motion graphic ada di `video/` (lihat `video/README.md`). Storyboard lama (25 Okt) disimpan di bagian "Riwayat" di bawah.
 
 Produksi (putusan operator 20): video dibuat agen lewat pipeline skrip; v1 dirender dari HEAD saat putusan 20, v2 dari main `1abb253c` (v2 177,08 dtk, takarir dibakar, `.srt` sidecar), v3 31 Okt (177,081 dtk; sama dengan v2 kecuali T1(c) yang kini menampilkan butir must-refuse `usulan-83bb3dc705c43f4c`, Glimmer Abstained; laporan QA `_kerja/video-prod/out/laporan-v3.md`), v4 31 Okt (177,081 dtk; putaran kamera T1(c) saja, 3 MINOR v3 tertutup, 2 MINOR baru; `_kerja/video-prod/out/laporan-v4.md`), v5 dan v6 31 Okt (177,081 dtk; framing D4 dan T1(c), QA v6 LULUS 0 MINOR; `_kerja/video-prod/out/laporan-v6.md`), v7 dan v8 31 Okt (177,081 dtk; kartu "Muse models by role" di MG-2 T1, putusan operator 22/23; v8 sempat ditetapkan sebagai video unggah, putusan 23; `_kerja/video-prod/out/laporan-v8.md`), v9 31 Okt (177,081 dtk; D3 dengan lencana REPLAY, I-70; sempat diunggah YouTube, lalu digantikan v10), v10 31 Okt (177,651 dtk; revisi teks atas putusan operator 31 Okt: pembuka before/during, tanpa rencana di I1, jejak panggilan Spark di D5; bagian "Revisi v10" di bawah storyboard; QA `_kerja/video-prod/out/laporan-v10.md` 0 BLOCKER/MAJOR/MINOR). **Video unggah = v10** (https://youtu.be/BMXQfIeGhqw), disubmit operator 1 Nov; v10 menggantikan rencana render final setelah freeze 3 Nov (tidak ada render final terpisah). Unggah dan form dikerjakan operator. Temuan v1 Q1–Q3 diputus A (putusan 21: tanpa kode; D3 footer provenance dari halaman utama, D4 dan D1 di-crop); temuan v2: V2-1 ditangani di v3 (rekam ulang T1(c); QA v3 lulus dengan catatan MINOR, `laporan-v3.md`), V2-2 dibiarkan (putusan operator 31 Okt; batasan dicatat sebagai U3 di `docs/LIMITS.md`), V2-3 ditutup (I-70: V2-1..V2-3 ditutup sebelum v9), V2-4 (`/review` statis tanpa lencana REPLAY) ditutup lewat I-70 (kode + v9, 31 Okt).
 
@@ -18,7 +18,7 @@ Putusan 8 (27 Okt: video milik operator, agen tidak mengunci storyboard) tetap b
 | Hal | Asumsi | Dasar |
 |---|---|---|
 | Durasi | Tiga menit; storyboard 3:00, ekspor akhir paling lama 2:58 | Panduan peserta 26 Okt: "three minute demo video"; dokumen analisis bagian 4 |
-| Platform | YouTube unlisted, cadangan Loom; tautan harus bisa diakses | Panduan: "your video link is accessible"; platform tidak ditentukan |
+| Platform | YouTube unlisted, cadangan Loom; tautan harus bisa diakses (realisasi: v10 di YouTube, Public; operator 1 Nov) | Panduan: "your video link is accessible"; platform tidak ditentukan |
 | Bahasa | Narasi Inggris, UI Inggris, teks hukum Indonesia dengan gloss | H-018 |
 | Ringkasan tertulis | 100–200 kata, bahasa Inggris | Asumsi; field form belum terlihat |
 | Repo | Publik, Apache-2.0 | Panduan: "Repositories must be public"; H-029 |
@@ -48,7 +48,7 @@ Penonton harus pulang dengan tiga hal:
 | Laju gagal header di MG-2 | Hitungan mentah (816 of 1,783; 142 of 1,926); README memuat baris hitungan mentah (`7771832a`) | 18 O6 |
 | Atribusi Glimmer | "Apache-2.0 per Meta docs" sampai kartu model terverifikasi (`NOTICE` butir 4: kartu HF belum terverifikasi) | 18 O11 |
 | Berkas motion graphic | `video/` repo app (ikut repo publik Apache-2.0, wajib lolos secret scan M5.2) | 18 O8 |
-| Storyboard | Dikunci sesuai usulan bagian 4; alternatif 4.1 terbuka | 19 butir 1 |
+| Storyboard | Dikunci sesuai usulan bagian 4; alternatif 4.1 terbuka (efektif = isi v10, 1 Nov) | 19 butir 1 |
 | Voice over | TTS lokal lewat repo `audiobook-maker`; lisensi bobot dan suara harus mengizinkan publikasi; tanpa kloning suara orang nyata; kartu akhir memuat pengungkapan suara sintetis; sampel dengar ke operator sebelum render penuh. Merevisi 18 O7 ("suara operator sendiri"). *Engine direvisi H-114: ElevenLabs `eleven-v4` (OpenRouter), suara `brian`* | 19 butir 2, H-114 |
 
 ## Storyboard terkunci (30 Okt)
@@ -87,7 +87,7 @@ Waktu: ekor klip 0,6 -> 0,4 dtk di semua adegan dan tahan kartu akhir 2,0 -> 0,8
 
 ### Alternatif terbuka (dokumen analisis bagian 4.1)
 
-Dipilih operator saat penyuntingan/unggah (putusan 19 butir 1). Naskah lengkap di dokumen analisis bagian 4.1.
+Dipilih operator saat penyuntingan/unggah (putusan 19 butir 1). Pilihan efektif = isi v10 yang diunggah (operator, 1 Nov). Naskah lengkap di dokumen analisis bagian 4.1.
 
 | Pilihan | Kapan dipakai | Varian MG yang sudah siap |
 |---|---|---|
@@ -196,11 +196,13 @@ Teknis rekaman:
 
 ## Gate sebelum unggah
 
-- [ ] Durasi ≤ 3:00, target ekspor ≤ 2:58 (Participant Guide, H-043).
-- [ ] Setiap angka cocok dengan layar dan README (MG: tabel `video/README.md`).
-- [ ] Jumlah butir dan asalnya disebut (footer U9 provenance dari halaman utama di D3; putusan 21 Q1).
-- [ ] Keempat peran Spark terlihat, dan nama model tampil.
-- [ ] Disclaimer tampil.
+Dicocokkan L1 1 Nov (pasca-submit) ke laporan QA `_kerja/video-prod/out/laporan-v*.md`: butir dicentang hanya bila ada bukti per butir; butir kosong = tidak ada bukti tertulis per butir, bukan temuan gagal.
+
+- [x] Durasi ≤ 3:00, target ekspor ≤ 2:58 (Participant Guide, H-043). v10 177,651 dtk (QA v10 pemeriksaan 1).
+- [x] Setiap angka cocok dengan layar dan README (MG: tabel `video/README.md`). Tabel cocok angka QA v2 (S0..I1; isi adegan sama sampai v10 kecuali D5/I1) + QA v10 pemeriksaan 6 (D5 RunRecord, I1 $0.561741).
+- [x] Jumlah butir dan asalnya disebut (footer U9 provenance dari halaman utama di D3; putusan 21 Q1). QA v9 pemeriksaan 4 ("23 items: 9 operator-written, 14 Spark-proposed and operator-approved"); D3 v10 isi sama.
+- [x] Keempat peran Spark terlihat, dan nama model tampil. Kartu "Muse models by role" MG-2 T1, peran A-D + tiga model ID (QA v7 pemeriksaan 4, v8 pemeriksaan 5).
+- [x] Disclaimer tampil. Kartu akhir MG-3 "Research demo. Not legal advice." + takarir (QA v10 pemeriksaan 3).
 - [ ] Disclosure tampil di layar akhir video dan di README: Contributor (H-028), konsolidasi UU PT tidak resmi (H-031), akta ditulis agen AI dengan identitas fiktif (H-039, H-041), Glimmer sebagai open-weight lokal dengan "Apache-2.0 per Meta docs" (H-047; putusan 18 O11, menggantikan "atribusi kartu model" sampai kartu model terverifikasi).
 - [ ] Pengungkapan suara sintetis di kartu akhir dan deskripsi video; lisensi engine/suara TTS terdokumentasi (putusan 19 butir 2).
 - [ ] Tidak ada kotak TODO di MG-3 (URL repo dan engine TTS terisi).
