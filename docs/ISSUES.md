@@ -9,13 +9,13 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-70 | Temuan video sisa setelah v6: V2-4 bagian `/review` statis tanpa lencana REPLAY (butuh kode frontend, tidak di video-level). Ditutup 31 Okt: V2-1 (v3), V2-2 dibiarkan (putusan operator, `docs/LIMITS.md`), V2-3 diterima (operator: END "ok" di catatan review v4), V2-4 bagian D4 (v5), MINOR v4 A/B (v5), MINOR v5 "2x2 summary" (v6); QA `_kerja/video-prod/out/laporan-v6.md` LULUS 0 MINOR, NIT tercatat | P3. Dibiarkan + catatan LIMITS (rekomendasi L1), atau slice Tier 3 frontend + ekspor ulang + rekam D3 | Operator | Freeze 3 Nov 20:00 WIB |
 | — | Gerbang lama: pemicu 31 Okt H-017 (lapor status), repo publik/Pages/rewrite histori M5.2; 14 usulan kelas (b) sisir docs 2 di `_kerja/orkestrasi/sisir-docs-2-usulan.md` | | Operator | |
 
 ## Ditutup
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-70 | Temuan video sisa: `/review` statis tanpa lencana REPLAY (V2-4); V2-1..V2-3 dan D4 sudah ditutup sebelumnya (v3..v6) | Operator: perbaiki kode + video v9 (tanpa H). Lencana REPLAY bersama di header `/review` (merge `c7ab0c7e`, vitest 345, pytest 1976), ekspor statis ulang (1097 berkas data, `failed requests: 0`, S2 = 0, `--check` 0), D3 direkam ulang dengan kamera penuh (lencana terlihat), v9 177,081 dtk, QA `_kerja/video-prod/out/laporan-v9.md` 0 BLOCKER/MAJOR/MINOR | 2026-10-31 |
 | I-69 | Ekspor statis lolos exit 0 walau berkas gagal dibangun (G-49) | Operator: slice Tier 3 gagal-keras (exit 3, tanpa menulis, `--allow-missing` hanya dev); kelas sah W6 409 `replay_no_stored_run` dan S2 422 setting belum tersedia, dengan syarat gate M5.2 S2 = 0 (tanpa H). Merge `6091dce1`, pytest 1976 | 2026-10-31 |
 | I-68 | Hint Recall@K menyebut held-out/tune di layar akta | Operator: varian teks khusus akta (H-094) | 2026-10-28 |
 | I-66 | Cakupan keluarga `tolak` | Operator: juga untuk UU PT; D unanswerable UU PT + review U6; dampak dilaporkan sebelum run ulang (H-095) | 2026-10-28 |
