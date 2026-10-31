@@ -181,12 +181,11 @@ Rekaman memakai mode putar ulang (M5.1). Adegan hanya bisa direkam bila run di b
 | Tanggal | Langkah | Jam (operator) |
 |---|---|---|
 | 30 Okt | Storyboard dikunci (putusan 19); MG di `video/`; VO ElevenLabs `brian` (H-114) lolos pemeriksa H-113 | — |
-| 30-31 Okt | v1, v2, v3, v4 dirender agen lewat pipeline skrip (putusan 20), menggantikan rekaman kasar 2 Nov | — |
-| 3 Nov | Perbaikan layar bila perlu (M5.1); kode dibekukan 20:00 WIB | (masuk M5.1) |
-| 3-4 Nov | Render final dari HEAD beku (agen); tonton ulang penuh di perangkat lain, unggah unlisted, form dan ringkasan 100–200 kata, pilihan 4.1 (operator) | ? (operator) |
-| 4 Nov malam | Submit. Batas resmi 5 Nov 09:00 WIB adalah cadangan, bukan target | — |
+| 30-31 Okt | v1..v9 dirender agen lewat pipeline skrip (putusan 20), menggantikan rekaman kasar 2 Nov; v8 kartu peran MG-2 (putusan 22, 23); v9 lencana REPLAY D3 (I-70), diunggah YouTube 31 Okt | — |
+| 1 Nov dini | v10 (177,651 dtk; revisi teks atas pedoman video penyelenggara, putusan operator 31 Okt), diunggah YouTube menggantikan v9; repo publik lagi, Pages dipulihkan ke `gh-pages` (G-52). Render final pasca-freeze tidak dilakukan, diganti v10 | — |
+| 1 Nov | Submit form Cerebral Valley (operator). Batas resmi 5 Nov 09:00 WIB | — |
 
-Total jam operator: diisi operator.
+Total jam: tidak dicatat per langkah. Jam aktif sesi agen (Claude Code) seluruh proyek, 26 Okt 23:48 WIB sampai 1 Nov 00:37 WIB: 34,5 jam dengan ambang idle 5 menit (41,9 jam dengan ambang 15 menit), dihitung dari transcript mesin desktop saja (laptop tidak tercakup). Angka ini jam mesin/agen bekerja, bukan jam kehadiran operator; jam kehadiran operator lebih kecil. Sumber: laporan cost-tracking operator 1 Nov (di luar repo).
 
 Teknis rekaman:
 - Rekam 1920x1080 dengan zoom browser 125–150% supaya teks hukum terbaca.
@@ -252,6 +251,7 @@ Adegan 1, 2, dan 4 lama tidak boleh hilang. Di storyboard terkunci, perannya dib
 ### Perubahan lain 30 Okt
 
 - Jadwal produksi lama: 31 Okt kunci storyboard (1 jam), 2 Nov rekaman kasar (1), 4 Nov pagi rekam layar (1,5), 4 Nov siang rekam narasi + edit + takarir (2,5), 4 Nov sore unggah (1); total sekitar 7 jam. "31 Okt kunci storyboard" selesai 30 Okt; "rekam narasi" diganti TTS lokal (putusan 19 butir 2, merevisi putusan 18 O7 "suara operator sendiri"), lalu ElevenLabs `brian` (H-114).
+- Baris Produksi yang digantikan 1 Nov (rencana, tidak terjadi): "3 Nov perbaikan layar bila perlu (M5.1); kode dibekukan 20:00 WIB", "3-4 Nov render final dari HEAD beku; tonton ulang, unggah unlisted, form, pilihan 4.1", "4 Nov malam Submit". Submit maju ke 1 Nov dengan v10.
 - Target durasi lama "target 2:50" diganti storyboard 3:00 dengan ekspor akhir paling lama 2:58 (dokumen analisis bagian 4).
 - Gate disclosure Glimmer: "atribusi kartu model bila tampil" diganti "Apache-2.0 per Meta docs" sampai kartu model terverifikasi (putusan 18 O11).
 - Klausa catatan kaki T1 usulan "muse-spark-1.3 low mixes prompt v1/v2" tidak dipasang di MG-2: tidak ada di README (pemeriksa L3, 30 Okt); tetap tercatat di dokumen analisis (AMD §2.4) sebagai jawaban Q&A.
