@@ -48,7 +48,7 @@ Muse Spark 1.3 (`muse-spark-1.3-contributor`, H-028) mengerjakan bagian yang tad
 | A. Induksi struktur | Inti | Membaca sampel keluarga dokumen, mengeluarkan skema hierarki yang menggerakkan chunker |
 | B. Contextual chunking | Inti | Menulis header konteks per potongan, dokumen sumber di-cache |
 | C. Evaluasi ujung ke ujung | Lantai bukti | Menjawab dari top-K profil terbaik vs pembanding; kutipan diperiksa verifier deterministik |
-| D. Calon butir | Pendukung | Mengusulkan (query, span gold) literal dan parafrase; operator memeriksa semua |
+| D. Calon butir | Pendukung | Mengusulkan (query, span gold) literal dan parafrase, dan mode `unanswerable` untuk butir `tolak` (H-092, H-095); operator memeriksa semua |
 
 Grid search retrieval tidak memakai LLM.
 
@@ -121,7 +121,7 @@ Proyek berhasil kalau, pada saat submit:
 | # | Kriteria | Cara cek |
 |---|---|---|
 | S1 | Frontier UU PT di held-out tampil untuk minimal tiga mode retrieval dan dua chunker | Layar + catatan run |
-| S2 | Butir UU PT 15–20 disetujui, minimal enam butir kontrol operator, minimal tiga kontrol di held-out | `data/butir/` + laporan split (H-011, H-015) |
+| S2 | Butir UU PT 15–20 disetujui, minimal enam butir kontrol operator, minimal tiga kontrol di held-out | `data/butir/` + laporan split (H-011, H-015). Catatan: `uupt.v16` = 20 butir bergold + 3 `tolak` (`docs/EVAL-SPEC.md` §5 catatan H-099); kriteria tidak diubah |
 | S3 | Keempat peran Spark punya keluaran tersimpan dan tampil di layar | Mode putar ulang |
 | S4 | Skema A akta tersimpan v1/v2 dan menggerakkan chunker | Panel skema |
 | S5 | Verifier uji 1 dan 2 berjalan dan ringkasan 2×2 tampil dalam hitungan mentah | Panel bukti |

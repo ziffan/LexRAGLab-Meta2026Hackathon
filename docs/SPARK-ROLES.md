@@ -1,11 +1,11 @@
 # SPARK-ROLES — peran A, B, C, D Muse Spark
 
 Tujuan: menetapkan masukan, keluaran, maksud prompt, cache, effort, biaya, galat, dan pemeriksa untuk setiap peran Spark, sebelum prompt ditulis.
-Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028, H-031, H-032, H-036, H-037, H-038, H-039, H-047, H-048, H-053, H-055, H-060, H-074, H-100, H-102, H-104.
+Sumber keputusan: H-004, H-005, H-006, H-009, H-013, H-014, H-016, H-017, H-028, H-031, H-032, H-036, H-037, H-038, H-039, H-047, H-048, H-053, H-055, H-060, H-074, H-100, H-102, H-104, H-113.
 
 ## 1. Aturan bersama
 
-- Model: `muse-spark-1.3-contributor` saja, lewat Responses API dengan SDK `openai` (H-028, H-016). Pengecualian: pembanding terpisah Glimmer lokal (H-032, host H-047) dan Spark Open di Baseten (H-060), peran C lalu A dan B (H-100), di §7; hasil utama tetap Contributor. Model ID dari `config/model`, dicatat di `RunRecord` dan kunci cache. Satu model ID per run.
+- Model: `muse-spark-1.3-contributor` saja, lewat Responses API dengan SDK `openai` (H-028, H-016). Pengecualian: pembanding terpisah Glimmer lokal (H-032, host H-047) dan Spark Open di Baseten (H-060), peran C lalu A dan B (H-100), di §7; hasil utama tetap Contributor. Pengecualian ketiga, bukan peran A–D: Muse Voice Transcribe hanya sebagai pemeriksa voice over video (H-113, `AGENTS.md`), model ID dipin di `config/voice_qa.toml`, run terpisah, tidak masuk produk. Model ID dari `config/model`, dicatat di `RunRecord` dan kunci cache. Satu model ID per run.
 - Keluaran: `text.format` dengan JSON Schema `strict: true` dari `docs/DATA-CONTRACTS.md`. Tidak ada tool calling.
 - Effort: satu nilai tetap per peran di `config/model` (profil sapuan effort pembanding di `config/sweep.toml`, H-102, H-104; hasil utama tetap satu nilai), dicatat di setiap `RunRecord`. Nilai valid diuji di M0.1, karena `max` tidak konsisten di docs. Rekomendasi awal: `minimal` atau `low`, karena reasoning ditagih sebagai output (docs Model API).
 - Prompt: berkas berversi di `prompts/<peran>/`; hash prompt masuk kunci cache. Prompt boleh berbahasa Indonesia (H-018), tetapi tidak tampil sebagai teks utama di video.
