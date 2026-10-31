@@ -9,7 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | Gerbang lama: pemicu 31 Okt H-017 (lapor status), repo publik/Pages/rewrite histori M5.2; 14 usulan kelas (b) sisir docs 2 di `_kerja/orkestrasi/sisir-docs-2-usulan.md` | | Operator | |
+| — | Sisa gate M5.2 dan submit: form submit (isian `10-SUBMIT.md` repo catatan), clone ulang Linux + laptop pasca-H-096, render final pasca-freeze (unggah ulang bila beda dari v9), pemicu H-017 31 Okt (lapor status). Selesai 31 Okt: rewrite H-096, repo publik, Pages, tautan README | | Operator | Submit 4 Nov |
 
 ## Ditutup
 
