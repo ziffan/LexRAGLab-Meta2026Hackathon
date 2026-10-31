@@ -13,6 +13,13 @@ import { Hint } from "./Hint";
 // Nilai `family` (data) -> label UI (docs/UI-SPEC.md U0).
 export const FAMILY_LABELS: Record<string, string> = { uupt: "Company Law (UU 40/2007)", akta: "Deed (synthetic)" };
 
+/** I-70: lencana REPLAY bersama (Header utama dan header /review). Tampil hanya bila snapshot siap dan `replay` true. */
+export function ReplayBadge() {
+  const { state } = useStore();
+  const snap = state.snapshot.status === "ready" ? state.snapshot.data : null;
+  return snap?.replay ? <span className="hdr-group"><span className="tag replay">REPLAY</span><Hint id="app.replay" /></span> : null;
+}
+
 /** `pending` (M5.1-N1): health belum selesai -> header menampilkan "loading…", bukan "n/a". Default false. */
 export interface BuildInfo { model: string | null; costMicros: number | null; pending?: boolean }
 
@@ -102,7 +109,7 @@ export function Header({ build = { model: null, costMicros: null } }: { build?: 
       </span>
       <span className="hdr-item">Model: <strong className="mono hdr-value">{build.pending ? HEALTH_LOADING : build.model ?? "n/a"}</strong></span>
       <span className="hdr-item" title={RUN_COST_TITLE}>Run cost (main results): <strong className="mono hdr-value" aria-busy={build.pending || undefined}>{build.pending ? HEALTH_LOADING : build.costMicros === null ? "n/a" : formatUsd(build.costMicros)}</strong></span>
-      {snap?.replay && <span className="hdr-group"><span className="tag replay">REPLAY</span><Hint id="app.replay" /></span>}
+      <ReplayBadge />
       <AboutPanel />
     </header>
   );
