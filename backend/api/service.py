@@ -28,6 +28,7 @@ from backend.schema_a import SchemaStore, SchemaStoreError
 from backend.tokenizer import get_tokenizer
 
 FAMILIES = ("uupt", "akta")
+SETTING_UNAVAILABLE_PREFIX = "Setting is not available yet"  # awalan pesan 422 find_setting; ekspor statis mengenalinya (I-69)
 log = logging.getLogger(__name__)
 # Galat yang berarti config/prompt B tak terbaca atau cacat; selain ini (bug) dibiarkan naik.
 _BINDING_UNREADABLE = (GridRunError, ConfigError, OSError, ValueError, KeyError, TypeError)
@@ -142,7 +143,7 @@ class Service:
             raise ApiError(404, "not_found", f"Unknown setting_id {setting_id[:16]!r}.")
         reason = unavailable_reason(s, headers=self.header_binding(family) is not None, schemas=self.schema_binding(family))
         if reason:
-            raise ApiError(422, "validation_failed", f"Setting is not available yet: {reason}.")
+            raise ApiError(422, "validation_failed", f"{SETTING_UNAVAILABLE_PREFIX}: {reason}.")
         return s
 
     def chunks(self, doc: CorpusDoc, setting: Setting) -> list[dict[str, Any]]:
