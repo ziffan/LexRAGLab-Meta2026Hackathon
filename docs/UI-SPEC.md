@@ -234,7 +234,7 @@ Aturan isi mockup:
 
 ## 9. Hints and glossary (H-073)
 
-Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menutup kontrol lain. Status teks: `final` (hints 1.5.0, disetujui operator 28 Okt; `frontend/src/content/hints.json`). Perubahan teks ke depan lewat review operator; panel menampilkan "Hint text: draft" hanya bila `status` berkas bukan `final` (entri `ui.pending_review` masih bertanda `draft` per entri). (Direvisi 29 Okt, sisir A3: semula "draf sampai operator menyetujui".)
+Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menutup kontrol lain. Status teks: `final` (hints 1.6.0, disetujui operator 31 Okt, termasuk seksi peran A–D dan koreksi `role.d`/`model.*`; sebelumnya 1.5.0, 28 Okt; `frontend/src/content/hints.json`). Perubahan teks ke depan lewat review operator; panel menampilkan "Hint text: draft" hanya bila `status` berkas bukan `final` (entri `ui.pending_review` masih bertanda `draft` per entri). (Direvisi 29 Okt, sisir A3: semula "draf sampai operator menyetujui".)
 
 ### 9.1 Pola
 
@@ -248,12 +248,13 @@ Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menut
 ### 9.2 Panel About / Glossary
 
 - Tombol `About / Glossary` di U0 (menambah satu label ke U0; tanpa mengubah label lain). Membuka panel sisi (pola tetap: dialog non-modal; fokus dipindah ke judulnya, Esc menutup dan mengembalikan fokus ke tombol).
-- Isi, berurutan: (1) tujuan app (`app.purpose`), (2) target pengguna (`app.audience`), (3) cara membaca frontier (`app.read_frontier`), (4) mode putar ulang (`app.replay`), (5) glosarium: seluruh entri bertag `stretch` hanya dirender bila fiturnya dikirim (H-017; lihat §9.3), ditambah seluruh entri `term.*`, `metric.*`, `role.*`, `verifier.*`, `status.*`, `chunker.*`, `retrieval.*`, `header_b.*`, `model.*`, `ui.*`, dikelompokkan menurut awalan id dan bisa dicari (kotak cari memfilter judul dan isi).
+- Isi, berurutan: (1) tujuan app (`app.purpose`), (2) target pengguna (`app.audience`), (3) cara membaca frontier (`app.read_frontier`), (4) mode putar ulang (`app.replay`), (5) seksi "Roles and models" dari entri `roles.*` (`roles.overview`, `roles.table`, `roles.each`, `roles.not_model`, `roles.other`): tabel peran A–D × tiga model (Contributor, Spark Open Baseten, Glimmer lokal), sel pembanding `Comparator` untuk A, B, C dan "— (not run)" untuk D (H-100); seksi ini bukan glosarium, tidak bisa dicari, tidak bertag `stretch`, sehingga tampil sama di live dan replay statis karena ikut bundel; (6) glosarium: seluruh entri bertag `stretch` hanya dirender bila fiturnya dikirim (H-017; lihat §9.3), ditambah seluruh entri `term.*`, `metric.*`, `role.*`, `verifier.*`, `status.*`, `chunker.*`, `retrieval.*`, `header_b.*`, `model.*`, `ui.*`, dikelompokkan menurut awalan id dan bisa dicari (kotak cari memfilter judul dan isi).
+- Perilaku 375/768/1440 px untuk seksi (5): tabel membungkus teks di dalam lebar panel; tidak ada scroll horizontal pada halaman (`scrollWidth <= clientWidth`).
 - Panel menampilkan `version` dan `status` berkas konten bila `status` bukan `final` (label "Hint text: draft").
 
 ### 9.3 Konten
 
-- Satu berkas berversi: `frontend/src/content/hints.json`, bentuk `{version, status, locale, entries[{id, title, body, stretch?}]}`. `stretch: true` menandai entri fitur stretch (H-017): hint tertaut dan entri glosarium hanya dirender bila kontrolnya ada di build (mis. `Valid on date`, `Valid`/`Revoked`/`Conditional`, pemilih model Glimmer/Spark Open dengan run tersimpan); bila fitur dipotong, entri tidak muncul dan test id-hilang tidak memandangnya yatim. `status` bernilai `draft` atau `final`; hanya operator mengubahnya ke `final`. `id` stabil, huruf kecil, `kelompok.nama`.
+- Satu berkas berversi: `frontend/src/content/hints.json`, bentuk `{version, status, locale, entries[{id, title, body, stretch?, table?, items?}]}`; `table?` = `{columns[], rows[][]}` (dirender sebagai tabel semantik dengan `title` sebagai caption) dan `items?` = `[{title, body}]` (daftar definisi), keduanya hanya dipakai entri `roles.*`. Awalan `roles.` dirender di seksi tersendiri (§9.2 butir 5), bukan di glosarium. `stretch: true` menandai entri fitur stretch (H-017): hint tertaut dan entri glosarium hanya dirender bila kontrolnya ada di build (mis. `Valid on date`, `Valid`/`Revoked`/`Conditional`, pemilih model Glimmer/Spark Open dengan run tersimpan); bila fitur dipotong, entri tidak muncul dan test id-hilang tidak memandangnya yatim. `status` bernilai `draft` atau `final`; hanya operator mengubahnya ke `final`. `id` stabil, huruf kecil, `kelompok.nama`.
 - Komponen hanya merujuk `id`. Id yang tidak ada di berkas = galat build/test (test: setiap id di tabel 9.4 ada di berkas, tidak ada entri yatim, tidak ada `id` ganda).
 - Berkas ikut dibundel di build, sehingga ikut ekspor statis replay (H-051); tidak diambil dari backend dan tidak butuh jaringan.
 - Bahasa Inggris. Istilah hukum Indonesia tetap dengan gloss dalam kurung: `Pasal (article)`, `ayat (paragraph)`, `Penjelasan (official elucidation)`.
@@ -299,7 +300,7 @@ Hint bersifat opsional: tertutup default, tidak mengubah tata letak, tidak menut
 | U8 | `Cost (USD)` | `metric.local_tokenizer` |
 | U9 | disclaimer | `app.audience` |
 
-Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`.
+Catatan: penjelasan Literal vs Paraphrase menjadi bagian isi `role.d`; `role.d` juga memuat mode unanswerable (H-092, H-095). Entri `model.*` pembanding berlaku untuk peran A, B, dan C (H-100); D tetap Contributor saja.
 
 ### 9.5 Aksesibilitas dan uji
 
