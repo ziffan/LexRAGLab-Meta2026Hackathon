@@ -12,6 +12,10 @@ export interface HintEntry {
   status?: "draft" | "final";
   /** Rujukan keputusan operator untuk entri yang disetujui lewat H (mis. H-094). */
   source?: string;
+  /** Hanya entri `roles.*` (UI-SPEC §9.3): tabel semantik; `title` dipakai sebagai caption. */
+  table?: { columns: string[]; rows: string[][] };
+  /** Hanya entri `roles.*`: daftar definisi judul + isi. */
+  items?: { title: string; body: string }[];
 }
 
 export interface HintFile {
@@ -101,6 +105,7 @@ export function keyAction(key: string, keyId: string): OpenAction | null {
 
 // ---- Panel About / Glossary (§9.2) ----
 export const INTRO_IDS = ["app.purpose", "app.audience", "app.read_frontier", "app.replay"] as const;
+export const ROLES_IDS = ["roles.overview", "roles.table", "roles.each", "roles.not_model", "roles.other"] as const;
 export const GLOSSARY_PREFIXES = ["term", "metric", "role", "verifier", "status", "chunker", "retrieval", "header_b", "model", "ui"] as const;
 export const PREFIX_LABELS: Record<string, string> = {
   term: "Terms", metric: "Metrics", role: "Roles", verifier: "Verifier", status: "Validity status",
@@ -127,5 +132,6 @@ export function glossaryGroups(query: string, feats: ReadonlySet<string>): Gloss
 }
 
 export const introEntries = (): HintEntry[] => INTRO_IDS.map((id) => BY_ID.get(id)).filter((e): e is HintEntry => !!e);
+export const rolesEntries = (): HintEntry[] => ROLES_IDS.map((id) => BY_ID.get(id)).filter((e): e is HintEntry => !!e);
 export const isDraft = (): boolean => HINT_FILE.status !== "final" || draftIds().length > 0;
 export const draftIds = (): string[] => HINT_FILE.entries.filter((e) => e.status === "draft").map((e) => e.id);

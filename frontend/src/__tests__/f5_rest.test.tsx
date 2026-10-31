@@ -48,10 +48,10 @@ describe("UX-14: U8 menampilkan 20 baris + Show more", () => {
   });
 });
 
-describe("hint 1.5.0 final (UX-10, UX-23; disetujui operator 28 Okt)", () => {
+describe("hint 1.6.0 final (UX-10, UX-23 28 Okt; peran A-D 31 Okt)", () => {
   it("matrix_2x2 menjelaskan Abstained, correctly; entri glosarium label tolak ada", async () => {
     const { HINT_FILE, getHint } = await import("../lib/hints");
-    expect(HINT_FILE.version).toBe("1.5.0");
+    expect(HINT_FILE.version).toBe("1.6.0");
     expect(HINT_FILE.status).toBe("final");
     expect(getHint("verifier.matrix_2x2")?.body).toContain("Abstained, correctly means the model declined");
     expect(getHint("verifier.matrix_2x2")?.status).toBeUndefined();

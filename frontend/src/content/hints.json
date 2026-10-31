@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.6.0",
   "status": "final",
   "locale": "en",
   "entries": [
@@ -22,6 +22,93 @@
       "id": "app.replay",
       "title": "Replay mode",
       "body": "Replay mode reads stored runs and data and computes nothing new. The static public version has no backend, key, or model call, so live buttons are disabled there."
+    },
+    {
+      "id": "roles.overview",
+      "title": "How Meta models are used: roles A–D",
+      "body": "LexRAGLab uses Muse Spark in four roles. Every main result comes from muse-spark-1.3-contributor. Two open-weight Meta models re-run roles A, B, and C on a limited subset, as separate, labelled comparator runs (coverage: docs/LIMITS.md); they never replace or mix with the main results, and no quality claim is made about them."
+    },
+    {
+      "id": "roles.table",
+      "title": "Roles and models",
+      "body": "\"Main runs\" = the runs behind every reported result. In role D the output is a proposal, not a result: it counts only after operator approval.",
+      "table": {
+        "columns": [
+          "Role",
+          "Muse Spark Contributor",
+          "Muse Spark Open (Baseten)",
+          "Muse Glimmer (local)"
+        ],
+        "rows": [
+          [
+            "A. Structure induction",
+            "Main runs",
+            "Comparator",
+            "Comparator"
+          ],
+          [
+            "B. Contextual chunking",
+            "Main runs",
+            "Comparator",
+            "Comparator"
+          ],
+          [
+            "C. Cited answers",
+            "Main runs",
+            "Comparator",
+            "Comparator"
+          ],
+          [
+            "D. Item proposals",
+            "Main runs",
+            "— (not run)",
+            "— (not run)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "roles.each",
+      "title": "What each role does",
+      "body": "",
+      "items": [
+        {
+          "title": "A. Structure induction",
+          "body": "Input: sample documents of one family as plain text. Output: a flat schema of hierarchy levels and marker patterns that a deterministic chunker runs. Checked by: the operator, who corrects the proposal into a second version (both kept); for Company Law, the schema is also compared with a hand-written parser."
+        },
+        {
+          "title": "B. Contextual chunking",
+          "body": "Input: one source document (cached as a fixed prefix) plus one chunk. Output: a short context header that places the chunk in its document. Checked by: the system (schema and length validation) and the operator, who reads sample headers; the header's effect is measured in the grid (header on/off), not judged by an LLM."
+        },
+        {
+          "title": "C. Cited answers",
+          "body": "Input: an item's question plus the chunks retrieved by one profile, with address labels. Output: an answer, refusal, or \"insufficient evidence\", with verbatim quotes and unit addresses. Checked by: a deterministic citation verifier (not a model) and the operator's gold span."
+        },
+        {
+          "title": "D. Item proposals",
+          "body": "Input: one source document and a mode (literal, paraphrase, or unanswerable). Output: proposed questions with an exact gold span, or, in unanswerable mode, questions with a reason and no span. Checked by: the system, which locates each gold span in the document, and the operator, who approves, edits, or rejects every proposal; only approved items are used. Contributor only."
+        }
+      ]
+    },
+    {
+      "id": "roles.not_model",
+      "title": "What is not a model",
+      "body": "The grid search and the citation verifier use no LLM. Evaluation items are written by the operator, or proposed in role D and then approved by the operator; no model or AI agent approves an item."
+    },
+    {
+      "id": "roles.other",
+      "title": "Other Meta components (no role)",
+      "body": "",
+      "items": [
+        {
+          "title": "Muse Spark Open tokenizer",
+          "body": "Part of the product: it counts tokens locally for every setting and the budget, with no model call."
+        },
+        {
+          "title": "Muse Voice Transcribe",
+          "body": "Outside the product: it only checks the demo video narration against its script. It is not part of the product and does not affect any result."
+        }
+      ]
     },
     {
       "id": "term.pasal",
@@ -139,7 +226,7 @@
     {
       "id": "role.d",
       "title": "Role D: proposed items",
-      "body": "Muse Spark proposes candidate questions with gold spans, in literal and paraphrase wording. Literal wording shares keywords with the gold span; paraphrase deliberately does not, to test retrieval beyond keyword match. Nothing enters evaluation until the operator approves it, and results are reported by origin (operator-written vs Spark-proposed, approved) to expose circularity."
+      "body": "Muse Spark proposes candidate questions with gold spans, in literal and paraphrase wording, or, in unanswerable mode, questions with a reason and no span. Literal wording shares keywords with the gold span; paraphrase deliberately does not, to test retrieval beyond keyword match. Nothing enters evaluation until the operator approves it, and results are reported by origin (operator-written vs Spark-proposed, approved) to expose circularity."
     },
     {
       "id": "verifier.exists",
@@ -218,24 +305,24 @@
     {
       "id": "model.contributor",
       "title": "Model: Muse Spark Contributor",
-      "body": "The Contributor model of Muse Spark, called through the Meta Model API, is the model for all main results and for roles A, B, and D, and by default for role C. The exact model ID is recorded with every run and shown from the run record."
+      "body": "The Contributor model of Muse Spark, called through the Meta Model API, produces every main result, in roles A, B, C, and D, and is the only model used for role D. The exact model ID is recorded with every run and shown from the run record."
     },
     {
       "id": "model.glimmer_local",
       "title": "Model: Muse Glimmer (local)",
-      "body": "A comparison for role C only (stretch; shown only if a stored run exists): an open-weight Muse Glimmer model running on the machine of the operator, with its quantization and reasoning effort fixed before the run. It is not the same weights as Spark. Its answers are stored and shown separately and never mixed with Contributor results.",
+      "body": "A comparator for roles A, B, and C (stretch; shown only if a stored run exists): an open-weight Muse Glimmer model running on the machine of the operator, re-run on a limited subset, with its quantization and reasoning effort fixed before the run. It is not the same weights as Spark. Its outputs are stored and shown separately as labelled comparator runs and never mixed with Contributor results.",
       "stretch": true
     },
     {
       "id": "model.spark_open_baseten",
       "title": "Model: Spark Open (Baseten)",
-      "body": "A second comparison for role C only (stretch; shown only if a stored run exists): Muse Spark Open hosted on Baseten. Like the local Glimmer run it is a separate run, labeled with its model, and not combined with Contributor results.",
+      "body": "A second comparator for roles A, B, and C (stretch; shown only if a stored run exists): Muse Spark Open hosted on Baseten, re-run on a limited subset. Like the local Glimmer run it is a separate run, labelled with its model, and not combined with Contributor results.",
       "stretch": true
     },
     {
       "id": "model.comparison_rule",
       "title": "Reading the model picker",
-      "body": "The main results are from Contributor. The other models are comparisons on role C only, shown with their own labels and counts. Roles A, B, and D always use Contributor. Quote checking (the verifier) is a program, not a model."
+      "body": "The main results are from Contributor. In this picker, the other models are comparator runs for role C, shown with their own labels and counts. The same comparators also re-ran roles A and B on a limited subset, as separate runs; none of them replace or mix with the main results. Role D uses Contributor only. Quote checking (the verifier) is a program, not a model."
     }
   ]
 }
