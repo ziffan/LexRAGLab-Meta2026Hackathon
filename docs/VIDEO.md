@@ -208,7 +208,7 @@ Dicocokkan L1 1 Nov (pasca-submit) ke laporan QA `_kerja/video-prod/out/laporan-
 - [ ] Tidak ada kotak TODO di MG-3 (URL repo dan engine TTS terisi).
 - [x] README (`README.md` dan `docs/README.id.md`): tautan "Demo video" dan "Live replay" diisi (31 Okt) setelah unggah dan Pages (putusan 21 R-b; juga di gate M5.2).
 - [ ] Tidak ada secret, akta asli, dokumen internal, atau UI prototipe pra-acara.
-- [ ] Ditonton ulang penuh sekali tanpa suara dan sekali dengan suara.
+- [x] Ditonton ulang penuh sekali tanpa suara dan sekali dengan suara. v10, dikonfirmasi operator 1 Nov.
 
 ## Riwayat
 
