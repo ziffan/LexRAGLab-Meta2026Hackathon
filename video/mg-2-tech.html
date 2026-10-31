@@ -14,6 +14,7 @@
     ?dur=26      regangkan timeline ke 26 detik (ikuti durasi VO)
     ?delay=2    tahan frame 0 selama 2 detik sebelum mulai
     ?pair=medium  varian alternatif 4.1 "T1 pasangan medium" (bawaan low)
+  Elemen (d) kartu peran "Muse models by role" (putusan operator 31 Okt; sumber teks README.md:60-63 tabel Roles, docs/DECISIONS.md H-100): masuk 1.8-2.3, penuh 2.3-6.0, keluar 6.0-6.3 (v8: masuk 1.8-2.3 setelah lencana selesai; tajuk (b) digeser ke 6.2-6.8, batang mulai 6.9); lencana biaya mengecil ke pojok 1.0-1.8.
   Semua angka di layar berasal dari objek DATA; sumber per angka di komentarnya dan di video/README.md.
 -->
 <style>
@@ -57,6 +58,14 @@ h2 small { font-weight: 400; color: var(--muted); font-size: 28px; margin-left: 
 .col .h { font-size: 22px; color: var(--muted); margin-top: 4px; }
 .col .r { position: absolute; left: 28px; bottom: 22px; font-family: var(--font-mono); font-size: 48px; font-weight: 500; color: var(--pass-text); }
 .col .r small { font-family: var(--font-sans); font-size: 24px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+.card { position: absolute; left: 120px; top: 240px; width: 1680px; height: 510px; box-sizing: border-box; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 14px 36px; display: grid; grid-template-columns: 480px 500px 340px 324px; grid-template-rows: repeat(5, 1fr); align-items: center; }
+.card div { font-size: 30px; }
+.card .hd { font-size: 25px; color: var(--muted); }
+.card .hd.mono { font-family: var(--font-mono); font-size: 24px; }
+.card .role { font-weight: 500; }
+.card .main { font-weight: 500; color: var(--ink); }
+.card .cmp { color: var(--pass-text); }
+.card .no { color: var(--muted); }
 .foot { position: absolute; left: 120px; top: 930px; width: 1680px; font-size: 21px; line-height: 1.4; color: var(--muted); }
 </style>
 </head>
@@ -116,16 +125,35 @@ const usd = (micro) => "$" + Math.floor(micro / 1e6) + "." + String(micro % 1e6)
 function el(tag, cls, parent, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; (parent || stage).appendChild(e); return e; }
 const U = [];
 
-// (a) lencana biaya: 0-4.5 dtk di tengah, lalu mengecil ke pojok kanan atas.
+// (a) lencana biaya: 0-1.0 dtk di tengah, lalu mengecil ke pojok kanan atas.
 const cost = el("div"); cost.id = "cost";
 el("div", "lbl", cost, "Run cost (main results)");
 el("div", "amt", cost, usd(DATA.run_cost_micro_usd));
 el("div", "note", cost, "Experiment pools reported separately");
 U.push((t) => {
-  const m = k(t, 4.2, 5.2), s = 1 - 0.55 * m;
+  const m = k(t, 1.0, 1.8), s = 1 - 0.55 * m;
   const x0 = 960 - 330, y0 = 380, x1 = 1920 - 120 - 660 * 0.45, y1 = 30;
   cost.style.left = (x0 + (x1 - x0) * m) + "px"; cost.style.top = (y0 + (y1 - y0) * m) + "px";
   cost.style.transform = "scale(" + s + ")"; cost.style.opacity = k(t, 0.2, 0.8);
+});
+
+// (d) kartu peran: model Muse per peran (README.md:60-63 tabel Roles; H-100). Teks tanpa angka.
+const hd = el("h2", null, null, "Muse models by role"); hd.style.top = "160px";
+el("small", null, hd, "comparators are separate, labelled runs, never mixed with main results");
+const card = el("div", "card");
+[["Role", "muse-spark-1.3-contributor", "Muse Spark Open · Baseten", "Muse Glimmer · local"],
+ ["A. Structure induction", "Main runs", "Comparator", "Comparator"],
+ ["B. Contextual chunking", "Main runs", "Comparator", "Comparator"],
+ ["C. Cited answers", "Main runs", "Comparator", "Comparator"],
+ ["D. Item proposals", "Main runs", "not run", "not run"]].forEach((row, ri) => row.forEach((txt, ci) => {
+  const cls = ri === 0 ? "hd" + (ci === 1 ? " mono" : "") : ci === 0 ? "role" : txt === "Main runs" ? "main" : txt === "Comparator" ? "cmp" : "no";
+  el("div", cls, card, txt);
+}));
+U.push((t) => {
+  const a = k(t, 1.8, 2.3) * (1 - k(t, 6.0, 6.3));
+  hd.style.opacity = a; card.style.opacity = a;
+  const y = 24 * (1 - k(t, 1.8, 2.3));
+  hd.style.transform = card.style.transform = "translateY(" + y + "px)";
 });
 
 // (b) dua batang laju header lewat batas.
@@ -138,14 +166,14 @@ const bars = BARS.map((key, i) => {
   const who = el("div", "who", b, MODELS[key].id + "  "); el("span", null, who, ((PAIR === "medium" && MODELS[key].hostSweep) || MODELS[key].host) + " · effort " + PAIR);
   const tr = el("div", "track", b), ok = el("div", "ok", tr), ov = el("div", "over", tr);
   const num = el("div", "num", b, fmt(over)); el("small", null, num, "of " + fmt(total) + " calls");
-  return { b, ok, ov, num, frac: over / total, at: 6.0 + i * 1.6 };
+  return { b, ok, ov, num, frac: over / total, at: 6.9 + i * 1.6 };
 });
 const lg = el("div", "legend"); lg.style.top = "580px";
 lg.innerHTML = '<i style="background:var(--series-on)"></i><span></span><i style="background:var(--accent);margin-left:36px"></i><span></span>';
 lg.querySelectorAll("span")[0].textContent = "header over the limit (call rejected)";
 lg.querySelectorAll("span")[1].textContent = "within the limit";
 U.push((t) => {
-  const a = k(t, 5.0, 5.6); hb.style.opacity = a; lg.style.opacity = k(t, 7.0, 7.6);
+  const a = k(t, 6.2, 6.8); hb.style.opacity = a; lg.style.opacity = k(t, 7.9, 8.5);
   bars.forEach((r) => {
     r.b.style.opacity = k(t, r.at - 0.6, r.at);
     const g = k(t, r.at, r.at + 1.6);
