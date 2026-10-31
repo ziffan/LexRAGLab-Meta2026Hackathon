@@ -9,7 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | Pasca-submit: clone ulang Linux + laptop (G-50); jam operator di `docs/VIDEO.md` (data operator); izin push commit docs lokal tutup sesi 1 Nov (repo beku sejak submit). Selesai 1 Nov: v10, repo publik + Pages, SUBMIT | | Operator | Penjurian 4–8 Nov |
+| — | Pasca-submit: clone ulang Linux + laptop (G-50); jam operator di `docs/VIDEO.md` (data operator); docs saja yang boleh diubah sampai 5 Nov 09:00 WIB, lalu beku total. Selesai 1 Nov: v10, repo publik + Pages, SUBMIT | | Operator | Penjurian 4–8 Nov |
 
 ## Ditutup
 
