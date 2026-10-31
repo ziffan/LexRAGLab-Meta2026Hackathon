@@ -9,7 +9,6 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-69 | Ekspor statis lolos exit 0 walau berkas retrieval/chunk gagal dibangun (G-49; tanpa model HF di cache) | P2. Slice kecil Tier 3: ekspor gagal atau memperingatkan bila ada GET non-200; atau cukup cek manual jumlah berkas + `retrieval/uupt/` saat ekspor Pages | Operator | Gate M5.2 (sebelum Pages) |
 | I-70 | Temuan video v2: V2-1 T1(c) jawaban Glimmer K-01 saat VO membaca kalimat must-refuse; V2-2 panel U3 mengikuti setting U1 (setting tanpa run pembanding kosong); V2-3 kartu akhir ±5 dtk; V2-4 MINOR (MRR D4 tertutup takarir, /review statis tanpa REPLAY) | P1. V2-1 rekam ulang T1(c) pada butir tolak UU PT yang punya jawaban Glimmer; V2-2 kandidat perbaikan Tier 3 sebelum freeze atau dibiarkan; rincian `_kerja/orkestrasi/video-fix-pertanyaan.md` | Operator | Freeze 3 Nov 20:00 WIB |
 | — | Gerbang lama: pemicu 31 Okt H-017 (lapor status), repo publik/Pages/rewrite histori M5.2; 14 usulan kelas (b) sisir docs 2 di `_kerja/orkestrasi/sisir-docs-2-usulan.md` | | Operator | |
 
@@ -17,6 +16,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan (ringkas) | Penutupan | Tanggal |
 |---|---|---|---|
+| I-69 | Ekspor statis lolos exit 0 walau berkas gagal dibangun (G-49) | Operator: slice Tier 3 gagal-keras (exit 3, tanpa menulis, `--allow-missing` hanya dev); kelas sah W6 409 `replay_no_stored_run` dan S2 422 setting belum tersedia, dengan syarat gate M5.2 S2 = 0 (tanpa H). Merge `6091dce1`, pytest 1976 | 2026-10-31 |
 | I-68 | Hint Recall@K menyebut held-out/tune di layar akta | Operator: varian teks khusus akta (H-094) | 2026-10-28 |
 | I-66 | Cakupan keluarga `tolak` | Operator: juga untuk UU PT; D unanswerable UU PT + review U6; dampak dilaporkan sebelum run ulang (H-095) | 2026-10-28 |
 | I-67 | Titik grid akta `structure_handwritten` degenerate | Operator: dipertahankan (H-091), label "no structure recognized" di U2, laporan transfer, snapshot (H-093) | 2026-10-28 |
