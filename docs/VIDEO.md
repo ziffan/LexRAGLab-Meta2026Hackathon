@@ -9,7 +9,7 @@ Kalau Official Rules menetapkan durasi atau format lain, rules yang menang, dan 
 
 **Storyboard dikunci operator 30 Okt (putusan operator 19)** dari usulan agen di repo catatan `docs/riset/2026-10-30-analisis-narasi-video.md` (c983b71) bagian 4, dengan pilihan putusan 18. Alternatif bagian 4.1 tetap terbuka sampai penyuntingan/unggah (operator memilih saat itu). Motion graphic ada di `video/` (lihat `video/README.md`). Storyboard lama (25 Okt) disimpan di bagian "Riwayat" di bawah.
 
-Produksi (putusan operator 20): video dibuat agen lewat pipeline skrip; v1 dirender dari HEAD saat putusan 20, v2 dari main `ca33dadd` (v2 177,08 dtk, takarir dibakar, `.srt` sidecar), v3 31 Okt (177,081 dtk; sama dengan v2 kecuali T1(c) yang kini menampilkan butir must-refuse `usulan-83bb3dc705c43f4c`, Glimmer Abstained; laporan QA `_kerja/video-prod/out/laporan-v3.md`), v4 31 Okt (177,081 dtk; putaran kamera T1(c) saja, 3 MINOR v3 tertutup, 2 MINOR baru; `_kerja/video-prod/out/laporan-v4.md`), v5 dan v6 31 Okt (177,081 dtk; framing D4 dan T1(c), QA v6 LULUS 0 MINOR; `_kerja/video-prod/out/laporan-v6.md`), render final diulang setelah freeze 3 Nov. Unggah, form, dan pilihan alternatif 4.1 tetap operator. Temuan v1 Q1–Q3 diputus A (putusan 21: tanpa kode; D3 footer provenance dari halaman utama, D4 dan D1 di-crop); temuan v2: V2-1 ditangani di v3 (rekam ulang T1(c); QA v3 lulus dengan catatan MINOR, `laporan-v3.md`), V2-2 dibiarkan (putusan operator 31 Okt; batasan dicatat sebagai U3 di `docs/LIMITS.md`), V2-3 dan V2-4 masih terbuka di catatan kerja operator.
+Produksi (putusan operator 20): video dibuat agen lewat pipeline skrip; v1 dirender dari HEAD saat putusan 20, v2 dari main `1abb253c` (v2 177,08 dtk, takarir dibakar, `.srt` sidecar), v3 31 Okt (177,081 dtk; sama dengan v2 kecuali T1(c) yang kini menampilkan butir must-refuse `usulan-83bb3dc705c43f4c`, Glimmer Abstained; laporan QA `_kerja/video-prod/out/laporan-v3.md`), v4 31 Okt (177,081 dtk; putaran kamera T1(c) saja, 3 MINOR v3 tertutup, 2 MINOR baru; `_kerja/video-prod/out/laporan-v4.md`), v5 dan v6 31 Okt (177,081 dtk; framing D4 dan T1(c), QA v6 LULUS 0 MINOR; `_kerja/video-prod/out/laporan-v6.md`), render final diulang setelah freeze 3 Nov. Unggah, form, dan pilihan alternatif 4.1 tetap operator. Temuan v1 Q1–Q3 diputus A (putusan 21: tanpa kode; D3 footer provenance dari halaman utama, D4 dan D1 di-crop); temuan v2: V2-1 ditangani di v3 (rekam ulang T1(c); QA v3 lulus dengan catatan MINOR, `laporan-v3.md`), V2-2 dibiarkan (putusan operator 31 Okt; batasan dicatat sebagai U3 di `docs/LIMITS.md`), V2-3 dan V2-4 masih terbuka di catatan kerja operator.
 
 Putusan 8 (27 Okt: video milik operator, agen tidak mengunci storyboard) tetap berlaku dalam arti kunci ada di tangan operator; penguncian 30 Okt dilakukan operator sendiri.
 
@@ -45,7 +45,7 @@ Penonton harus pulang dengan tiga hal:
 | Angka regulasi per pekerjaan | Tidak di video | 18 O2 |
 | Titik held-out yang lebih baik dari profil terpilih | Tidak di VO; teks layar "Chosen on tune; held-out shown for reporting" wajib terlihat di D2; jawaban Q&A di dokumen analisis N4 | 18 O4 |
 | Tech highlight T1 | Perbandingan model, pasangan effort `low` | 18 O5 |
-| Laju gagal header di MG-2 | Hitungan mentah (816 of 1,783; 142 of 1,926); README memuat baris hitungan mentah (`cfbaea04`) | 18 O6 |
+| Laju gagal header di MG-2 | Hitungan mentah (816 of 1,783; 142 of 1,926); README memuat baris hitungan mentah (`7771832a`) | 18 O6 |
 | Atribusi Glimmer | "Apache-2.0 per Meta docs" sampai kartu model terverifikasi (`NOTICE` butir 4: kartu HF belum terverifikasi) | 18 O11 |
 | Berkas motion graphic | `video/` repo app (ikut repo publik Apache-2.0, wajib lolos secret scan M5.2) | 18 O8 |
 | Storyboard | Dikunci sesuai usulan bagian 4; alternatif 4.1 terbuka | 19 butir 1 |
@@ -142,7 +142,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 | 4 | Tidak ada terminal, `.env`, jalur lokal, atau tab lain di layar. Tutup popover hint sebelum klip U3 (menutupi pemilih Model) | Aturan isi; temuan UX N-2 |
 | 5 | 1920x1080, zoom browser 125–150%. Rekam per adegan, terpisah. Sorot dan zoom dibuat di editor | Teknis rekaman |
 | 6 | Butir K-01; setting fixed 512/64 dense untuk D1 dan profil terpilih `d7a9dd24…` untuk sisanya; split held-out; anggaran 2.000 | GRD, `data/butir/uupt.v16.jsonl` |
-| 7 | Jangan merekam lewat tailnet 5175 dengan `vite.config.ts` lebih lama dari `b79e37b` | G-39 |
+| 7 | Jangan merekam lewat tailnet 5175 dengan `vite.config.ts` lebih lama dari `79be0d7` | G-39 |
 | 8 | Glimmer tidak perlu dimuat: pemilih model U3 menampilkan run tersimpan | RM Limits |
 | 9 | MG direkam dari `video/*.html` (layar penuh 1920x1080 atau render per frame `?t=`); `DATA.repo_url` MG-3 sudah terisi (tidak ada kotak TODO di layar); `?dur` MG sesuai durasi VO | `video/README.md` |
 | 10 | Setelah rekaman: `git status` bersih (tidak ada `profiles/` berubah) | G-47 |
