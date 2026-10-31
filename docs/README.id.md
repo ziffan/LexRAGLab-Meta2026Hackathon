@@ -11,7 +11,7 @@ LexRAGLab adalah lab evaluasi yang mencari setelan chunking dan retrieval untuk 
 
 Dibuat untuk Meta Global AI Developer Hackathon (track Indie, tema "Build for Your World") dengan Muse Spark (`muse-spark-1.3-contributor` lewat Meta Model API).
 
-- Video demo: TODO(operator)
+- Video demo: https://youtu.be/ov9b68hAXvk
 - Live replay: TODO(operator): GitHub Pages link, added after the repository is public
 
 > Demo riset. Bukan nasihat hukum.
