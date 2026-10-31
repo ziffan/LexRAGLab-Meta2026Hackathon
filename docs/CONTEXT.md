@@ -3,7 +3,7 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-114; putusan operator 16–21.
 
-diperbarui: 2026-11-01 UTC (L1 tutup sesi: SUBMITTED 1 Nov, v10, Pages dipulihkan; docs boleh sampai 5 Nov 09:00 WIB)
+diperbarui: 2026-11-01 UTC (L1 tutup sesi pasca-submit docs: sisir, M5 selesai, gate video 11/11; docs boleh sampai 5 Nov 09:00 WIB)
 
 ## Status
 
@@ -62,7 +62,8 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit. Sampai 5 Nov 09:00 WIB hanya docs yang boleh diedit + push; setelah itu beku total (aturan beku di Status).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs tertunda. Sampai 5 Nov 09:00 WIB hanya docs yang boleh diedit + push; setelah itu beku total (aturan beku di Status).
 2. ~~Jam operator di tabel Produksi `docs/VIDEO.md`~~ diisi 1 Nov (jam aktif sesi agen, berlabel).
 3. Operator: clone ulang Linux + laptop (G-50); setelah semua mesin sehat hapus `D:/PROYEK/_rewrite/{work,ctrl,fresh}`; bundle disimpan.
-4. Proses per 31 Okt larut: 8000 (backend lama, tanpa `--replay`, PID 3316), 5173 (vite), 5177 (statis, PID 33308, `dist-static` = isi Pages). Matikan bila RAM perlu.
+4. Opsional sebelum beku total: kalau perlu, sisir docs lagi; tidak ada yang wajib.
+5. Proses per 31 Okt larut: 8000 (backend lama, tanpa `--replay`, PID 3316), 5173 (vite), 5177 (statis, PID 33308, `dist-static` = isi Pages). Matikan bila RAM perlu.
