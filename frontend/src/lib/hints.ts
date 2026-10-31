@@ -12,9 +12,9 @@ export interface HintEntry {
   status?: "draft" | "final";
   /** Rujukan keputusan operator untuk entri yang disetujui lewat H (mis. H-094). */
   source?: string;
-  /** Hanya entri oles.* (UI-SPEC §9.3): tabel semantik; 	itle dipakai sebagai caption. */
+  /** Hanya entri `roles.*` (UI-SPEC §9.3): tabel semantik; `title` dipakai sebagai caption. */
   table?: { columns: string[]; rows: string[][] };
-  /** Hanya entri oles.*: daftar definisi judul + isi. */
+  /** Hanya entri `roles.*`: daftar definisi judul + isi. */
   items?: { title: string; body: string }[];
 }
 
