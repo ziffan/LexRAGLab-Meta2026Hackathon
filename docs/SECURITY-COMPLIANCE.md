@@ -46,6 +46,8 @@ Tidak ada pemrosesan data pribadi nyata, jadi inventaris data pribadi tidak dipe
 
 Semua butir harus tercentang dan buktinya disimpan di repo sebelum repo dibuka dan form dikirim.
 
+Catatan pasca-submit (1 Nov): daftar ini tidak dicentang per butir sebelum submit. Pemeriksaan yang dilakukan: audit isi pra-submit oleh pemeriksa independen (0 BLOCKER; angka form = README = run tersimpan, `pytest -k readme` 3 passed, key 0), verifikasi rewrite histori H-096 di clone segar (email hanya noreply, pemindai 0 di luar allowlist), ekspor statis dengan scan key 0 (`docs/CONTEXT.md` Status 31 Okt larut dan 1 Nov). Butir yang tetap kosong tidak berarti gagal; tidak ada Tier 4 security review operator per butir.
+
 **Rules dan isi**
 - [ ] Syarat Official Rules (repo, video, bahasa, karya pra-acara) dipenuhi satu per satu, dengan kutipan klausul Participant Guide (H-043).
 - [ ] Commit pertama repo setelah 26 Okt 2026 23:00 WIB; tidak ada kode prototipe pra-acara yang disalin (H-003).
