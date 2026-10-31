@@ -203,11 +203,11 @@ Dicocokkan L1 1 Nov (pasca-submit) ke laporan QA `_kerja/video-prod/out/laporan-
 - [x] Jumlah butir dan asalnya disebut (footer U9 provenance dari halaman utama di D3; putusan 21 Q1). QA v9 pemeriksaan 4 ("23 items: 9 operator-written, 14 Spark-proposed and operator-approved"); D3 v10 isi sama.
 - [x] Keempat peran Spark terlihat, dan nama model tampil. Kartu "Muse models by role" MG-2 T1, peran A-D + tiga model ID (QA v7 pemeriksaan 4, v8 pemeriksaan 5).
 - [x] Disclaimer tampil. Kartu akhir MG-3 "Research demo. Not legal advice." + takarir (QA v10 pemeriksaan 3).
-- [ ] Disclosure tampil di layar akhir video dan di README: Contributor (H-028), konsolidasi UU PT tidak resmi (H-031), akta ditulis agen AI dengan identitas fiktif (H-039, H-041), Glimmer sebagai open-weight lokal dengan "Apache-2.0 per Meta docs" (H-047; putusan 18 O11, menggantikan "atribusi kartu model" sampai kartu model terverifikasi).
-- [ ] Pengungkapan suara sintetis di kartu akhir dan deskripsi video; lisensi engine/suara TTS terdokumentasi (putusan 19 butir 2).
-- [ ] Tidak ada kotak TODO di MG-3 (URL repo dan engine TTS terisi).
+- [x] Disclosure tampil di layar akhir video dan di README: Contributor (H-028), konsolidasi UU PT tidak resmi (H-031), akta ditulis agen AI dengan identitas fiktif (H-039, H-041), Glimmer sebagai open-weight lokal dengan "Apache-2.0 per Meta docs" (H-047; putusan 18 O11, menggantikan "atribusi kartu model" sampai kartu model terverifikasi). Dicek L1 1 Nov: kartu akhir v10 memuat keempatnya (frame `_kerja/video-prod/out/check/gate-v10/endcard.png` (v10 173,5 dtk)); README Data and licensing + baris 88 (akta ditulis agen AI, ditinjau operator).
+- [x] Pengungkapan suara sintetis di kartu akhir dan deskripsi video; lisensi engine/suara TTS terdokumentasi (putusan 19 butir 2). Dicek L1 1 Nov: kartu akhir "Narration: synthetic voice (ElevenLabs text-to-speech)." (frame `_kerja/video-prod/out/check/gate-v10/endcard.png` (v10 173,5 dtk)), deskripsi YouTube v10 memuat baris yang sama, lisensi TTS di NOTICE butir 8.
+- [x] Tidak ada kotak TODO di MG-3 (URL repo dan engine TTS terisi). Dicek L1 1 Nov: URL repo dan ElevenLabs tampil, tanpa TODO (frame `_kerja/video-prod/out/check/gate-v10/endcard.png` (v10 173,5 dtk)).
 - [x] README (`README.md` dan `docs/README.id.md`): tautan "Demo video" dan "Live replay" diisi (31 Okt) setelah unggah dan Pages (putusan 21 R-b; juga di gate M5.2).
-- [ ] Tidak ada secret, akta asli, dokumen internal, atau UI prototipe pra-acara.
+- [x] Tidak ada secret, akta asli, dokumen internal, atau UI prototipe pra-acara. Dicek L1 1 Nov pada lembar kontak v10 0,5 fps (89 frame, `_kerja/video-prod/out/check/gate-v10/sheet-01..06.png`): hanya app replay, kartu MG, dan JSON profil; tanpa terminal, `.env`, atau key; akta berlabel sintetis.
 - [x] Ditonton ulang penuh sekali tanpa suara dan sekali dengan suara. v10, dikonfirmasi operator 1 Nov.
 
 ## Riwayat
