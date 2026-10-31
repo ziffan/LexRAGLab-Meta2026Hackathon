@@ -3,6 +3,12 @@
 Pakai: `uv run python -m backend.replay.export --out dist-static` -> menulis `dist-static/data/**` (isi `data/` lama diganti).
 Frontend statis dibangun terpisah (`npm run build:static` -> `dist-static/`), lalu `--check dist-static` memeriksa ulang isinya.
 
+Gagal-keras (I-69, G-49): setiap respons non-200 dicatat sebagai `Miss`. Ringkasan selalu dicetak (satu baris per jenis berkas yang
+gagal, `failed requests: N`, dan `skipped by design: ...` untuk kelas sah). Ada kegagalan di luar kelas sah -> tidak ada berkas
+ditulis dan exit 3 (1 = bocor, 2 = argparse). Kelas sah: POST W6 409 `replay_no_stored_run` (jawaban tidak tersimpan) dan GET
+docs?setting_id 422 "Setting is not available yet". `--allow-missing` (dev/test): tulis apa adanya, cetak `WARNING`, exit 0.
+`--check` tetap hanya pemindai bocor (tidak bisa mendeteksi berkas hilang).
+
 Semua berkas dihasilkan oleh app replay yang sama (`create_app(replay=True)`) lewat klien in-process, jadi bentuknya
 identik dengan respons live. Tanpa jaringan, tanpa panggilan model (W6 `live` selalu false). Isi diperiksa
 (`backend/replay/scan.py`) SEBELUM ditulis; bocor -> `SnapshotLeak`, tidak ada berkas yang ditulis. Tidak membaca `.env`.
@@ -33,11 +39,14 @@ import os
 import re
 import shutil
 import sys
+from collections import Counter
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from backend.api.service import SETTING_UNAVAILABLE_PREFIX
 from backend.replay.scan import Finding, SnapshotLeak, env_secrets, scan_dir, scan_files
 
 SAFE = re.compile(r"^[A-Za-z0-9._\-]+$")
@@ -48,6 +57,95 @@ LICENSE_SKIP_KINDS = ("host_url",)  # teks lisensi sah memuat URL resmi; key, pa
 
 class ExportError(Exception):
     pass
+
+
+@dataclass(frozen=True)
+class Miss:
+    """Satu respons non-200 selama ekspor. `message` hanya untuk klasifikasi; tidak pernah dicetak."""
+    kind: str
+    url: str
+    status: int
+    code: str
+    message: str = ""
+
+
+class ExportIncomplete(ExportError):
+    def __init__(self, failed: list[Miss], skipped: list[Miss]):
+        self.failed, self.skipped = failed, skipped
+        super().__init__(f"{len(failed)} failed request(s)")
+
+
+def _kind_of(url: str, params: Mapping[str, Any] | None) -> str:
+    p = params or {}
+    if url == "/api/health":
+        return "health.json"
+    if url == "/api/runs":
+        return "runs.json"
+    if url == "/api/families":
+        return "families.json"
+    if url.endswith("/retrieval"):
+        return "retrieval/"
+    if "/docs/" in url:
+        return "docs/ (setting chunks)" if "setting_id" in p else "docs/ (schema)" if "schema_version" in p else "docs/ (text)"
+    if url.endswith("/snapshot"):
+        return "snapshot/"
+    if url.endswith("/profiles/export"):
+        return "profiles/"
+    if url.endswith("/proposals"):
+        return "proposals/"
+    return "other"
+
+
+def _short_url(url: str, params: Mapping[str, Any] | None) -> str:
+    if not params:
+        return url
+    return url + "?" + "&".join(f"{k}={str(v)[:16]}" for k, v in params.items())
+
+
+def _record(misses: list[Miss] | None, kind: str, url: str, resp: Any) -> None:
+    if misses is None:
+        return
+    code, msg = "", ""
+    try:
+        err = (resp.json() or {}).get("error") or {}
+        code, msg = str(err.get("code", "")), str(err.get("message", ""))
+    except Exception:  # noqa: BLE001 - badan respons bukan JSON galat: kode kosong
+        pass
+    misses.append(Miss(kind, url, resp.status_code, code, msg))
+
+
+def is_by_design(m: Miss) -> str | None:
+    """Nama kelas sah (bukan kegagalan) atau None. S1: W6 409 replay_no_stored_run. S2: docs?setting_id 422 setting belum tersedia."""
+    if m.kind == "answers/" and m.status == 409 and m.code == "replay_no_stored_run":
+        return "answers/ 409 replay_no_stored_run"
+    if (m.kind == "docs/ (setting chunks)" and m.status == 422 and m.code == "validation_failed"
+            and m.message.startswith(SETTING_UNAVAILABLE_PREFIX)):
+        return "docs/ (setting chunks) 422 setting_unavailable"
+    return None
+
+
+def split_misses(misses: Iterable[Miss]) -> tuple[list[Miss], list[Miss]]:
+    failed: list[Miss] = []
+    skipped: list[Miss] = []
+    for m in misses:
+        (skipped if is_by_design(m) else failed).append(m)
+    return failed, skipped
+
+
+def format_summary(failed: list[Miss], skipped: list[Miss], *, warning: bool = False) -> list[str]:
+    """Baris ringkasan. Hanya kind, status, dan url ringkas: tanpa pesan galat mentah atau jalur lokal."""
+    pre = "WARNING " if warning else ""
+    lines: list[str] = []
+    for kind in sorted({m.kind for m in failed}):
+        ms = [m for m in failed if m.kind == kind]
+        st = ", ".join(f"{s} x{n}" for s, n in sorted(Counter(m.status for m in ms).items()))
+        lines.append(f"{pre}{kind}: {len(ms)} ({st})")
+        lines += [f"  e.g. {m.url}" for m in ms[:3]]
+    lines.append(f"{pre}failed requests: {len(failed)}")
+    if skipped:
+        cls = ", ".join(f"{name} x{n}" for name, n in sorted(Counter(is_by_design(m) for m in skipped).items()))
+        lines.append(f"skipped by design: {cls}")
+    return lines
 
 
 def _safe(part: str) -> str:
@@ -101,8 +199,9 @@ def stored_profile(get: Any, profiles_dir: Path, fam: str, snapshot: Mapping[str
 
 
 def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieval: bool = True, answers: bool = True,
-                now: datetime | None = None) -> dict[str, bytes]:
-    """Kumpulkan semua berkas (jalur relatif `data/` -> byte) dari app replay. Tidak menulis ke disk."""
+                now: datetime | None = None, misses: list[Miss] | None = None) -> dict[str, bytes]:
+    """Kumpulkan semua berkas (jalur relatif `data/` -> byte) dari app replay. Tidak menulis ke disk.
+    `misses` (opsional): kolektor respons non-200; perilaku build_files tidak berubah."""
     from starlette.testclient import TestClient
 
     if not getattr(app.state, "replay", False):
@@ -112,7 +211,10 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
 
     def get(url: str, **params: Any) -> Any | None:
         r = client.get(url, params=params or None)
-        return r.json() if r.status_code == 200 else None
+        if r.status_code != 200:
+            _record(misses, _kind_of(url, params), _short_url(url, params), r)
+            return None
+        return r.json()
 
     health = get("/api/health")
     if health is None:
@@ -187,6 +289,9 @@ def build_files(app: Any, *, families: Iterable[str] = EXPORT_FAMILIES, retrieva
                             stored_profiles.add(prof)
                             key = f"{_safe(it['id'])}/{sid(best['setting_id'])}/{sid(base['setting_id'])}/{_safe(prof)}"
                             files[f"answers/{fam}/{key}.json"] = dump(r.json())
+                        else:
+                            _record(misses, "answers/", _short_url(f"/api/families/{fam}/answers", {
+                                "item_id": it["id"], "best": best["setting_id"], "baseline": base["setting_id"], "model_profile": prof}), r)
 
         # UX-09 (putusan operator 12, Q-UX-6): profil tersimpan setting terpilih (UU PT) / setting transfer (akta), disalin
         # byte-identik dari `profiles/<fam>/<setting_id>.json` (keluaran W7), hanya bila sama dengan W7 replay sekarang selain
@@ -252,9 +357,15 @@ def write_files(out_dir: Path, files: Mapping[str, bytes]) -> Path:
 
 
 def export_static(out_dir: Path, app: Any, *, secrets: Iterable[str] = (), base_urls: Iterable[str] = (), retrieval: bool = True,
-                  answers: bool = True, now: datetime | None = None, license_root: Path = REPO_ROOT) -> dict[str, Any]:
-    """Bangun, periksa, lalu tulis (data + salinan lisensi). Bocor -> `SnapshotLeak` dan tidak ada yang ditulis."""
-    files = build_files(app, retrieval=retrieval, answers=answers, now=now)
+                  answers: bool = True, now: datetime | None = None, license_root: Path = REPO_ROOT,
+                  allow_missing: bool = False) -> dict[str, Any]:
+    """Bangun, periksa, lalu tulis (data + salinan lisensi). Bocor -> `SnapshotLeak`; respons non-200 di luar kelas sah ->
+    `ExportIncomplete` (kecuali `allow_missing`). Keduanya menolak SEBELUM menulis: tidak ada berkas ditulis."""
+    misses: list[Miss] = []
+    files = build_files(app, retrieval=retrieval, answers=answers, now=now, misses=misses)
+    failed, skipped = split_misses(misses)
+    if failed and not allow_missing:
+        raise ExportIncomplete(failed, skipped)
     lic = collect_license_files(license_root)
     findings = scan_files(files, secrets=secrets, base_urls=base_urls)
     findings += scan_files(lic, secrets=secrets, base_urls=base_urls, skip_kinds=LICENSE_SKIP_KINDS)
@@ -262,7 +373,9 @@ def export_static(out_dir: Path, app: Any, *, secrets: Iterable[str] = (), base_
         raise SnapshotLeak(findings)
     data = write_files(Path(out_dir), files)
     write_license_files(Path(out_dir), lic)
-    return {"data_dir": str(data), "n_files": len(files), "bytes": sum(len(v) for v in files.values()), "license_files": sorted(lic)}
+    return {"data_dir": str(data), "n_files": len(files), "bytes": sum(len(v) for v in files.values()), "license_files": sorted(lic),
+            "failed": len(failed), "skipped": dict(Counter(is_by_design(m) for m in skipped)),
+            "summary": format_summary(failed, skipped, warning=bool(failed))}
 
 
 def source_date(environ: Mapping[str, str]) -> datetime | None:
@@ -276,6 +389,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, help="output directory (e.g. dist-static); data goes to <out>/data")
     ap.add_argument("--no-retrieval", action="store_true", help="skip per-item retrieval files (R5)")
     ap.add_argument("--no-answers", action="store_true", help="skip stored W6 answers")
+    ap.add_argument("--allow-missing", action="store_true", help="write the export even if requests failed (dev/test); prints WARNING, exit 0")
     ap.add_argument("--check", type=Path, help="only scan an existing <dir>/data for keys, local paths, hosts")
     args = ap.parse_args(argv)
     keys, urls = env_secrets(os.environ)  # lingkungan proses; .env tidak dibaca di sini
@@ -293,10 +407,16 @@ def main(argv: list[str] | None = None) -> int:
 
     app = create_app(replay=True)
     try:
-        info = export_static(args.out, app, secrets=keys, base_urls=urls, retrieval=not args.no_retrieval, answers=not args.no_answers, now=now)
+        info = export_static(args.out, app, secrets=keys, base_urls=urls, retrieval=not args.no_retrieval, answers=not args.no_answers, now=now,
+                           allow_missing=args.allow_missing)
+    except ExportIncomplete as exc:
+        print("\n".join(format_summary(exc.failed, exc.skipped)))
+        print("export refused, nothing written: failed requests (use --allow-missing for dev/test)", file=sys.stderr)
+        return 3
     except SnapshotLeak as exc:
         print(f"export refused, nothing written: {exc}", file=sys.stderr)
         return 1
+    print("\n".join(info.get("summary") or [f"failed requests: {info.get('failed', 0)}"]))
     print(f"exported {info['n_files']} files ({info['bytes']} bytes) to {info['data_dir']}")
     return 0
 
