@@ -46,6 +46,8 @@ Durasi VO terukur (H-114, ElevenLabs `brian`, tempo asli; detik): S0 25,43; S1 1
 
 Total 169,61 dtk, sisa ±8 dtk di bawah batas ekspor 2:58; bila edit melewati batas, MG-3 dipotong lebih dulu (storyboard).
 
+Video v4 (31 Okt) 177,081 dtk; sisa ±0,9 dtk terhadap batas ekspor 178, jadi memperpanjang MG-3 harus diimbangi pemotongan di tempat lain.
+
 ## Angka di layar dan sumbernya
 
 RM = `README.md`. Tidak ada angka lain di layar selain yang di tabel ini (durasi dan posisi animasi bukan klaim).

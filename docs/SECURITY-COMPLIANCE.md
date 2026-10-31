@@ -66,6 +66,7 @@ Semua butir harus tercentang dan buktinya disimpan di repo sebelum repo dibuka d
 - [ ] Disclaimer identitas fiktif di setiap akta dan README (H-041).
 - [ ] Tidak ada key kedua selain `BASETEN_API_KEY` (H-060, H-100; hanya di `.env` lokal, ikut secret scan); pembanding Glimmer berjalan di `127.0.0.1` tanpa key (H-047).
 - [ ] Isi snapshot ekspor statis (H-051) diperiksa: tanpa key, tanpa path lokal, tanpa header HTTP; situs dipasang di GitHub Pages hanya setelah repo publik.
+- [ ] Run pemeriksa VO (`runs/voice_qa/`) tidak masuk ekspor statis dan tidak dibaca R1/R6.
 
 **Model dan biaya**
 - [ ] Model ID `muse-spark-1.3-contributor` di `config/model` dan di semua `RunRecord` kecuali run pembanding Glimmer H-047 dan Spark Open Baseten H-060/H-100 (yang mencatat model ID, `provider`, kuantisasi, dan `reasoning_effort`); Muse Code, kalau dipakai, di mode Standard.
