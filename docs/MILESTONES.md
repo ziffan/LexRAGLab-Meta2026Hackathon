@@ -16,7 +16,7 @@ Nilai status: `belum mulai` · `berjalan` · `selesai` (dengan sha + bukti) · `
 | M2 Spark D dan C | 29–31 Okt | Usulan butir, jawaban ujung ke ujung, verifier | 4 | 10 | selesai, kecuali M2.4 stretch dipotong (M2.1–M2.3, M2.5 selesai; butir UU PT `data/butir/uupt.v16.jsonl` = 23 dengan 3 `tolak`, akta `akta.v85.jsonl` = 84 dengan 15 `tolak`) |
 | M3 Spark B dan A, UU PT | 31 Okt–1 Nov | Header konteks, induksi skema, editor skema | 4 | 11 | selesai (M3.1–M3.4; header B v2 lengkap tiga sumber, grid header-on `82809c6`; skema A UU PT v2 `source: operator`, I-60 ditutup H-084) |
 | M4 Transfer ke akta, ekspor | 2 Nov | Skema akta, frontier akta, profil berversi | 3 | 6,5 | **selesai** (Tier 4 M4.1 dikonfirmasi operator 28 Okt; M4.2, M4.3 selesai; akta disetujui operator 27 Okt; skema A akta v2 `source: operator` H-089, grid akta 36 setting `runs/grid/86e701f5…`) |
-| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | berjalan (M5.1 Tier 4 ditutup 30 Okt; M5.2 gate menunggu operator; M5.3 video v8 dipilih operator 31 Okt (T1(c) direkam ulang, putaran kamera, kartu peran MG-2); render final pasca-freeze, putusan 20/21) |
+| M5 Demo dan submit | 3–4 Nov | Mode putar ulang dan gate (3 Nov), video (4 Nov) | 3 | 11 | berjalan (M5.1 Tier 4 ditutup 30 Okt; M5.2 gate menunggu operator; M5.3 video v9 = video unggah 31 Okt (T1(c) direkam ulang, putaran kamera, kartu peran MG-2, D3 dengan lencana REPLAY I-70); render final pasca-freeze, putusan 20/21) |
 | **Jumlah** | | | **21** | **55,5** | |
 
 Acara mulai 26 Okt 2026 23:00 WIB. Commit pertama repo ini dibuat setelah jam itu. Butir kontrol, akta sintetis, dan kode ditulis setelah jam mulai.
