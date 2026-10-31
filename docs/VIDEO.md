@@ -191,7 +191,7 @@ Teknis rekaman:
 - [ ] Disclosure tampil di layar akhir video dan di README: Contributor (H-028), konsolidasi UU PT tidak resmi (H-031), akta ditulis agen AI dengan identitas fiktif (H-039, H-041), Glimmer sebagai open-weight lokal dengan "Apache-2.0 per Meta docs" (H-047; putusan 18 O11, menggantikan "atribusi kartu model" sampai kartu model terverifikasi).
 - [ ] Pengungkapan suara sintetis di kartu akhir dan deskripsi video; lisensi engine/suara TTS terdokumentasi (putusan 19 butir 2).
 - [ ] Tidak ada kotak TODO di MG-3 (URL repo dan engine TTS terisi).
-- [ ] README (`README.md` dan `docs/README.id.md`): tautan "Demo video" dan "Live replay" diisi setelah unggah dan Pages (putusan 21 R-b; juga di gate M5.2).
+- [x] README (`README.md` dan `docs/README.id.md`): tautan "Demo video" dan "Live replay" diisi (31 Okt) setelah unggah dan Pages (putusan 21 R-b; juga di gate M5.2).
 - [ ] Tidak ada secret, akta asli, dokumen internal, atau UI prototipe pra-acara.
 - [ ] Ditonton ulang penuh sekali tanpa suara dan sekali dengan suara.
 
