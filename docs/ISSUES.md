@@ -9,7 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| I-70 | Temuan video v2 sisa: V2-3 kartu akhir ±5 dtk (keterbacaan); V2-4 MINOR (MRR D4 tertutup takarir, /review statis tanpa REPLAY); MINOR v4 A ("Context budget" terpotong tepi kanan 150,0-151,0) dan B (baris kontrol terpotong tepi atas 148,5-150,0). V2-1 ditangani v3/v4 (butir must-refuse, putaran kamera); V2-2 dibiarkan, putusan operator 31 Okt (catatan `docs/LIMITS.md`) | P2. Diputus lewat catatan lembar review `_kerja/video-review/review.html` (butir T1.qa.4/.5); rincian `_kerja/video-prod/out/laporan-v4.md` | Operator | Freeze 3 Nov 20:00 WIB |
+| I-70 | Temuan video sisa setelah v6: V2-4 bagian `/review` statis tanpa lencana REPLAY (butuh kode frontend, tidak di video-level). Ditutup 31 Okt: V2-1 (v3), V2-2 dibiarkan (putusan operator, `docs/LIMITS.md`), V2-3 diterima (operator: END "ok" di catatan review v4), V2-4 bagian D4 (v5), MINOR v4 A/B (v5), MINOR v5 "2x2 summary" (v6); QA `_kerja/video-prod/out/laporan-v6.md` LULUS 0 MINOR, NIT tercatat | P3. Dibiarkan + catatan LIMITS (rekomendasi L1), atau slice Tier 3 frontend + ekspor ulang + rekam D3 | Operator | Freeze 3 Nov 20:00 WIB |
 | — | Gerbang lama: pemicu 31 Okt H-017 (lapor status), repo publik/Pages/rewrite histori M5.2; 14 usulan kelas (b) sisir docs 2 di `_kerja/orkestrasi/sisir-docs-2-usulan.md` | | Operator | |
 
 ## Ditutup
