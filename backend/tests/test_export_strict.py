@@ -134,7 +134,9 @@ def test_t3_skipped_counts_in_info(stub):
     (lambda url, p: "/docs/" in url and "schema_version" in p, err("validation_failed", 422, "Schema chunking failed."), 2),  # skema dicoba untuk uupt dan akta
     (lambda url, p: "/docs/" in url and "schema_version" in p, err("not_found", 404), 2),
     (lambda url, p: "/docs/" in url and "setting_id" in p, err("internal_error", 500), 1),
-], ids=["docs-422-other-message", "schema-422", "schema-404", "docs-500"])
+    (lambda url, p: "/docs/" in url and "setting_id" in p, err("validation_failed", 500, f"{SETTING_UNAVAILABLE_PREFIX}: x."), 1),
+    (lambda url, p: "/docs/" in url and "schema_version" in p, err("validation_failed", 422, f"{SETTING_UNAVAILABLE_PREFIX}: x."), 2),
+], ids=["docs-422-other-message", "schema-422", "schema-404", "docs-500", "docs-500-prefix-msg", "schema-422-prefix-msg"])
 def test_t3b_other_422_and_schema_failures_fail(stub, capsys, match, resp, n):
     stub.get_rules.append((match, resp))
     code, out, _ = run_cli(stub, capsys)
