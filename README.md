@@ -11,7 +11,7 @@ LexRAGLab is an evaluation lab that finds chunking and retrieval settings for a 
 
 Built for the Meta Global AI Developer Hackathon (Indie track, theme "Build for Your World") with Muse Spark (`muse-spark-1.3-contributor` through the Meta Model API).
 
-- Demo video: https://youtu.be/ov9b68hAXvk
+- Demo video: https://youtu.be/BMXQfIeGhqw
 - Live replay: https://ziffan.github.io/LexRAGLab-Meta2026Hackathon/
 
 > Research demo. Not legal advice.
