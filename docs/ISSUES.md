@@ -9,7 +9,7 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | Sisa gate M5.2 dan submit: form submit (isian `10-SUBMIT.md` repo catatan), clone ulang Linux + laptop pasca-H-096, repo publik lagi + cek Pages lalu Submit (v10 diunggah 1 Nov, H-017 dilaporkan 1 Nov). Selesai 31 Okt: rewrite H-096, repo publik, Pages, tautan README | | Operator | Submit 4 Nov |
+| — | Pasca-submit: clone ulang Linux + laptop (G-50); jam operator di `docs/VIDEO.md` (data operator); izin push commit docs lokal tutup sesi 1 Nov (repo beku sejak submit). Selesai 1 Nov: v10, repo publik + Pages, SUBMIT | | Operator | Penjurian 4–8 Nov |
 
 ## Ditutup
 
