@@ -9,7 +9,7 @@ Kalau Official Rules menetapkan durasi atau format lain, rules yang menang, dan 
 
 **Storyboard dikunci operator 30 Okt (putusan operator 19)** dari usulan agen di repo catatan `docs/riset/2026-10-30-analisis-narasi-video.md` (c983b71) bagian 4, dengan pilihan putusan 18. Alternatif bagian 4.1 tetap terbuka sampai penyuntingan/unggah (operator memilih saat itu). Motion graphic ada di `video/` (lihat `video/README.md`). Storyboard lama (25 Okt) disimpan di bagian "Riwayat" di bawah.
 
-Produksi (putusan operator 20): video dibuat agen lewat pipeline skrip; v1 dirender dari HEAD saat putusan 20, v2 dari main `1abb253c` (v2 177,08 dtk, takarir dibakar, `.srt` sidecar), v3 31 Okt (177,081 dtk; sama dengan v2 kecuali T1(c) yang kini menampilkan butir must-refuse `usulan-83bb3dc705c43f4c`, Glimmer Abstained; laporan QA `_kerja/video-prod/out/laporan-v3.md`), v4 31 Okt (177,081 dtk; putaran kamera T1(c) saja, 3 MINOR v3 tertutup, 2 MINOR baru; `_kerja/video-prod/out/laporan-v4.md`), v5 dan v6 31 Okt (177,081 dtk; framing D4 dan T1(c), QA v6 LULUS 0 MINOR; `_kerja/video-prod/out/laporan-v6.md`), render final diulang setelah freeze 3 Nov. Unggah, form, dan pilihan alternatif 4.1 tetap operator. Temuan v1 Q1–Q3 diputus A (putusan 21: tanpa kode; D3 footer provenance dari halaman utama, D4 dan D1 di-crop); temuan v2: V2-1 ditangani di v3 (rekam ulang T1(c); QA v3 lulus dengan catatan MINOR, `laporan-v3.md`), V2-2 dibiarkan (putusan operator 31 Okt; batasan dicatat sebagai U3 di `docs/LIMITS.md`), V2-3 dan V2-4 masih terbuka di catatan kerja operator.
+Produksi (putusan operator 20): video dibuat agen lewat pipeline skrip; v1 dirender dari HEAD saat putusan 20, v2 dari main `1abb253c` (v2 177,08 dtk, takarir dibakar, `.srt` sidecar), v3 31 Okt (177,081 dtk; sama dengan v2 kecuali T1(c) yang kini menampilkan butir must-refuse `usulan-83bb3dc705c43f4c`, Glimmer Abstained; laporan QA `_kerja/video-prod/out/laporan-v3.md`), v4 31 Okt (177,081 dtk; putaran kamera T1(c) saja, 3 MINOR v3 tertutup, 2 MINOR baru; `_kerja/video-prod/out/laporan-v4.md`), v5 dan v6 31 Okt (177,081 dtk; framing D4 dan T1(c), QA v6 LULUS 0 MINOR; `_kerja/video-prod/out/laporan-v6.md`), v9 31 Okt (177,081 dtk; D3 dengan lencana REPLAY; diunggah YouTube), v10 31 Okt (177,65 dtk; revisi teks atas putusan operator 31 Okt: pembuka before/during, tanpa rencana di I1, jejak panggilan Spark di D5; bagian "Revisi v10" di bawah storyboard; `_kerja/video-prod/out/laporan-v10.md`), render final diulang setelah freeze 3 Nov. Unggah, form, dan pilihan alternatif 4.1 tetap operator. Temuan v1 Q1–Q3 diputus A (putusan 21: tanpa kode; D3 footer provenance dari halaman utama, D4 dan D1 di-crop); temuan v2: V2-1 ditangani di v3 (rekam ulang T1(c); QA v3 lulus dengan catatan MINOR, `laporan-v3.md`), V2-2 dibiarkan (putusan operator 31 Okt; batasan dicatat sebagai U3 di `docs/LIMITS.md`), V2-3 dan V2-4 masih terbuka di catatan kerja operator.
 
 Putusan 8 (27 Okt: video milik operator, agen tidak mengunci storyboard) tetap berlaku dalam arti kunci ada di tangan operator; penguncian 30 Okt dilakukan operator sendiri.
 
@@ -71,6 +71,20 @@ Durasi: 25 + 15 + 15 + 22 + 13 + 20 + 20 + 25 + 25 = 180 detik. Kata ucap per ad
 
 Pemetaan rubrik: Impact (S0, I1), Use of Meta AI Tooling (D3, D4, D5, T1), Technical Depth (D2, T1), Demo (D1–D5 dari app yang berjalan).
 
+### Revisi v10 (putusan operator 31 Okt, jalur B "perbaikan teks")
+
+Tabel storyboard di atas adalah naskah **v9** (dipertahankan sebagai jejak, tidak dihapus). Video v10 menutup tiga celah terhadap pedoman video penyelenggara: kalimat pembuka sebelum/selama acara, rencana masa depan di VO, dan jejak panggilan model di D5. Perubahan terhadap v9:
+
+| # | Waktu v10 | Jenis | Yang tampil | Voice over (Inggris) | Sumber |
+|---|---|---|---|---|---|
+| P0 (baru) | 0:00–0:07 | MG-S | Kartu judul dipindah ke depan: LexRAGLab, Indie track · Build for Your World, Chunking and retrieval for Indonesian legal documents; "Before kickoff (25–26 Oct): planning specs and the Company Law text. No code."; "Built during the hackathon, Oct 26 – Nov 4, 2026: all code, prompts, evaluation items, synthetic deeds, stored runs, profiles, live replay."; "UI theme follows the operator's pre-event design mockup; markup not copied." | Before the hackathon I had only planning specs and the Company Law text; all code was written during it. | README "Built before vs during the hackathon" baris 79–88 |
+| S0 | 0:07–0:33 | MG-1 | Sama dengan v9 | Sama dengan v9 | — |
+| S1 | 0:33–0:47 | APP | Landing app saja (kartu judul 4 dtk pindah ke P0) | Sama dengan v9 | — |
+| D5 | 1:53–2:14 | APP | Sama dengan v9, lalu sorot blok U3 "Cost and tokens" kolom Best profile (`origin_runs`, W6) dengan label "Recorded Muse Spark call: muse-spark-1.3-contributor" / "4053 input / 632 cached / 524 output tokens · $0.000449 · 2026-10-27 15:18:26 UTC" | Kolom VO v9 + "Each answer is a recorded Muse Spark call." | `runs/spark/records/c6f32b3129864ee29ecbecf8450dde35.json` |
+| I1 | 2:40–2:58 | APP → MG-3 | Sama dengan v9; MG-3 8 dtk di ujung klip | The output is a versioned profile you drop into your own RAG pipeline; all main results cost fifty-six cents. Muse Glimmer already ran roles A and C, and B on part of the corpus, on my own machine. Research demo, not legal advice. | Dua kalimat rencana v9 dihapus |
+
+Waktu: ekor klip 0,6 -> 0,4 dtk di semua adegan dan tahan kartu akhir 2,0 -> 0,8 dtk (G1b Alt 1, putusan operator); kalimat VO lain tidak dipotong (putusan operator menolak pemotongan S0 dan kalimat Glimmer). Durasi v10 177,65 dtk. VO baru: ElevenLabs `eleven-v4` `brian` (H-114), 250 karakter (~$0,02); wav D5 dan I1 v10 = wav v9 disambung/di-splice pada jeda; berkas `audiobook-maker/out/lexraglab-video/vo/brian-v10/`. Cek VO H-113 (P0, D5, I1; 2.500 micro-USD): `_kerja/orkestrasi/video-v10/vo-qa/vo-report.md`. QA: `_kerja/video-prod/out/laporan-v10.md`. Kartu akhir butir 2: "statute text" -> "Company Law text".
+
 ### Alternatif terbuka (dokumen analisis bagian 4.1)
 
 Dipilih operator saat penyuntingan/unggah (putusan 19 butir 1). Naskah lengkap di dokumen analisis bagian 4.1.
@@ -91,7 +105,7 @@ Dipilih operator saat penyuntingan/unggah (putusan 19 butir 1). Naskah lengkap d
 | Berkas | Adegan | Durasi |
 |---|---|---|
 | `video/mg-1-hook.html` | S0 | 25 dtk |
-| `video/mg-s-title.html` | Awal S1 | 4 dtk |
+| `video/mg-s-title.html` | v10: adegan pembuka P0 (0:00), kartu judul + baris before/during. v9: awal S1 | v10: sepanjang VO P0 (~7,4 dtk). v9: 4 dtk |
 | `video/mg-2-tech.html` | T1 (b) | 20 dtk |
 | `video/mg-3-end.html` | I1, kartu akhir | 8 dtk (boleh dipotong 2–5 dtk) |
 
@@ -106,7 +120,7 @@ HTML statis tanpa jaringan, 1920x1080, animasi deterministik (`?t=` membekukan f
 ## Kartu akhir (MG-3)
 
 1. Tagline (`frontend/src/content/tagline.json`) dan URL repo publik (terisi 30 Okt, putusan operator 20; gate unggah tetap mensyaratkan repo publik, H-029).
-2. "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026. Pre-event material: planning docs and the statute text only; the UI theme follows the operator's pre-event design mockup (markup not copied)."
+2. "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026. Pre-event material: planning docs and the Company Law text only; the UI theme follows the operator's pre-event design mockup (markup not copied)." *(v10, putusan operator 31 Okt: "statute text" -> "Company Law text")*
 3. "Model: muse-spark-1.3-contributor (Contributor mode: Meta may use the content to train future models). Used because every document here is public or synthetic. Confidential documents: use the Standard model ID." (H-028)
 4. "Company Law text: unofficial consolidation of UU 40/2007 by the operator, as of 30 Dec 2022." (H-031, H-045)
 5. "Notarial deeds: five synthetic deeds written by an AI agent and reviewed by the operator; all identities fictitious." (H-039, H-041)
@@ -158,7 +172,7 @@ Rekaman memakai mode putar ulang (M5.1). Adegan hanya bisa direkam bila run di b
 | D2 | Grid UU PT held-out pada anggaran default; ringkasan butir | R3 (`grid`, `items_summary`) |
 | D3 | Usulan D yang diputus (UU PT) dan provenance butir | R3 (`proposals`, `items_summary`) |
 | D4 | Skema akta v1 dan v2; grid akta transfer | R3 (`schemas`, `schema_diff`, `grid`) |
-| D5 | Jawaban C untuk K-01, dua slot; hasil verifier; ringkasan 2×2 | R3 (`answers`, `answers_summary`) |
+| D5 | Jawaban C untuk K-01, dua slot; hasil verifier; ringkasan 2×2; v10: RunRecord panggilan asal kolom Best (`origin_runs`, `runs/spark/records/c6f32b3129864ee29ecbecf8450dde35.json`) | R3 (`answers`, `answers_summary`), W6 `origin_runs` |
 | T1 | Header B Pasal 102 (U1); jawaban C pembanding tersimpan untuk pemilih model U3 | R4, R3 (`answers`) |
 | I1 | Profil UU PT; header biaya | W7 (statis: pratinjau), R1 |
 
