@@ -63,7 +63,7 @@ M2 dan M3 dikerjakan berurutan, tidak paralel.
 | M3.1–M3.2 | `docs/SPARK-ROLES.md` §3, `docs/DATA-CONTRACTS.md` §7 |
 | M3.3–M3.4, M4.1 | `docs/SPARK-ROLES.md` §2, `docs/DATA-CONTRACTS.md` §6, `docs/UI-SPEC.md` U5 |
 | M4.3 | `docs/DATA-CONTRACTS.md` §11, `docs/UI-SPEC.md` U7 |
-| M5.1–M5.3 | `docs/UI-SPEC.md` §4–§7, `docs/VIDEO.md`, `docs/SECURITY-COMPLIANCE.md` §4 |
+| M5.1–M5.3 | `docs/UI-SPEC.md` §4–§7, `docs/VIDEO.md`, `docs/SECURITY-COMPLIANCE.md` §4; skenario `docs/scenarios/M5.1-N1-health-cache.md` (N-1), `docs/scenarios/M5.3-vo-qa-transcribe.md` (H-113) |
 
 Endpoint per slice: `docs/API.md` kolom Slice.
 

@@ -11,6 +11,7 @@ Moved from README.md; the README keeps a summary.
 - Token counts use a local tokenizer calibrated once against the API token-count endpoint; billed tokens may differ.
 - The "valid on date" citation check is a stretch goal and may be absent.
 - Indonesian legal text is shown in Indonesian, with short English glosses where needed.
+- The answer panel (U3) follows the setting chosen in the chunk view (U1); for a setting with no stored comparator run, the comparator answer column is empty.
 
 ## Comparators
 
