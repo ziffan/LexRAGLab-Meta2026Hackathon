@@ -9,7 +9,7 @@ Setiap berkas HTML berdiri sendiri: CSS dan JS inline, tanpa jaringan (tanpa CDN
 | Berkas | Adegan | Durasi | Varian (parameter URL) |
 |---|---|---|---|
 | `mg-1-hook.html` | S0 hook, 0:00–0:25 | 25 dtk | `?hook=A` (bawaan, terkunci), `B`, `C`, `D` (alternatif 4.1) |
-| `mg-s-title.html` | Kartu judul awal S1, 0:25–0:29 | 4 dtk | — |
+| `mg-s-title.html` | v10: adegan pembuka P0, 0:00 (kartu judul + baris before/during; putusan operator 31 Okt). v9: awal S1, 0:25–0:29 | bawaan 4 dtk; v10 `?dur` = VO P0 + ekor | — |
 | `mg-2-tech.html` | T1 tech highlight, di dalam 2:10–2:35 | 20 dtk | `?pair=low` (bawaan, terkunci O5), `?pair=medium` (alternatif 4.1) |
 | `mg-3-end.html` | Kartu akhir di I1 | 8 dtk (boleh dipotong 2–5 dtk) | `?hook=A|B|C|D` menyamakan baris "problem-size figures" dengan hook yang dipakai |
 
@@ -40,13 +40,15 @@ Durasi VO terukur (H-114, ElevenLabs `brian`, tempo asli; detik): S0 25,43; S1 1
 | MG | Bawaan (slot storyboard) | Usulan untuk VO | Catatan |
 |---|---|---|---|
 | MG-1 | 25 dtk | `?dur=25.4` | S0 seluruhnya MG-1 |
-| MG-S | 4 dtk | tetap | Kartu judul di awal S1 (13,56 dtk); sisa S1 rekaman APP |
+| MG-S | 4 dtk | v10: `?dur` = durasi P0 (VO 7,02 + ekor 0,4) | v10: seluruh adegan P0; S1 seluruhnya rekaman APP. v9: kartu judul 4 dtk di awal S1 |
 | MG-2 | 20 dtk | `?dur=21` atau sesuai sisa | T1 25,66 dtk = APP (a) 2–3 dtk + MG-2 + APP (c) 2 dtk; MG-2 mengisi sisanya |
 | MG-3 | 8 dtk | tetap, atau dipotong | I1 23,41 dtk = APP U7 Export + MG-3; MG-3 hanya kartu akhir |
 
 Total 169,61 dtk, sisa ±8 dtk di bawah batas ekspor 2:58; bila edit melewati batas, MG-3 dipotong lebih dulu (storyboard).
 
 Video v4 (31 Okt) 177,081 dtk; sisa ±0,9 dtk terhadap batas ekspor 178, jadi memperpanjang MG-3 harus diimbangi pemotongan di tempat lain.
+
+v10 (31 Okt, putusan operator jalur B): VO dari `audiobook-maker/out/lexraglab-video/vo/brian-v10/` (P0 7,02 baru; D5 20,04 = D5 v9 + "Each answer is a recorded Muse Spark call."; I1 16,55 = I1 v9 tanpa dua kalimat rencana; lainnya byte-identik v9). Ekor klip 0,6 -> 0,4 dtk dan tahan kartu akhir 2,0 -> 0,8 dtk (G1b Alt 1). MG-3 tetap 8 dtk di ujung I1.
 
 ## Angka di layar dan sumbernya
 
@@ -63,7 +65,10 @@ RM = `README.md`. Tidak ada angka lain di layar selain yang di tabel ini (durasi
 | MG-1 B | "46,583 tokens", korpus UU PT | `uupt_tokens` 46583 | `runs/measure/5db7720bc1f5a121.json` baris `section = "_document"`, `tokens_local` |
 | MG-1 B | Posisi sorotan Pasal 102 (visual, tanpa angka) | `art102_start_char` 141959, `art102_end_char` 143179, `uupt_chars` 213139 | `runs/corpus/uupt-40-2007.c56e4f0f38a4.json` (`batang_tubuh` [141959–143179]); MEA `chars` |
 | MG-1 B | "Article 102" | teks `markLabel` | Pasal 102 = gold butir K-01 (`data/butir/uupt.v16.jsonl`); offset di `runs/corpus/uupt-40-2007.c56e4f0f38a4.json` |
-| MG-S | "Oct 26 – Nov 4, 2026" | `line3` | RM "At a glance" ("Built during the hackathon: ... 26 Oct to 4 Nov 2026") dan "Built before vs during the hackathon" |
+| MG-S | "Oct 26 – Nov 4, 2026" | `line4` (v9: `line3`) | RM "At a glance" ("Built during the hackathon: ... 26 Oct to 4 Nov 2026") dan "Built before vs during the hackathon" baris 79 |
+| MG-S (v10) | "Before kickoff (25–26 Oct): planning specs and the Company Law text. No code." | `line3` | RM "Built before vs during the hackathon" baris 81, 85, 86 |
+| MG-S (v10) | Daftar "all code, prompts, evaluation items, synthetic deeds, stored runs, profiles, live replay" | `line4` | RM "Built before vs during the hackathon" baris 85 kolom "Built during the hackathon" |
+| MG-S (v10) | "UI theme follows the operator's pre-event design mockup; markup not copied." | `line5` | RM "Built before vs during the hackathon" baris 88 |
 | MG-2 | "$0.561741", "Run cost (main results)" | `run_cost_micro_usd` 561741 | RM Limits: "561,741 micro-USD (shown as $0.561741)"; sama dengan header U0 |
 | MG-2 | "40-token limit" | `header_limit_tokens` 40 | `config/header_b.toml` `max_header_tokens = 40`; `docs/LIMITS.md` "Effort sweep" ("the generated header is over 40 tokens") |
 | MG-2 low | "816 of 1,783 calls" (Spark Open), "142 of 1,926 calls" (muse-spark-1.3-contributor) | `header_over.low` | `docs/LIMITS.md` "Effort sweep": "Contributor: 7.4% (142 of 1,926 calls, `low`)", "Spark Open: 45.8% (816 of 1,783, `low`)" |

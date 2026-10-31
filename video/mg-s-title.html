@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MG-S Title</title>
 <!--
-  MG-S, kartu judul di awal adegan S1 (0:25-0:29), storyboard terkunci putusan operator 19.
+  MG-S, kartu judul. v10 (putusan operator 31 Okt): dipindah ke 0:00 sebagai adegan pembuka P0 dengan baris before/during
+  (line3-line5, sumber README "Built before vs during the hackathon" baris 79-88). Semula: awal S1 (0:25-0:29), putusan operator 19.
   Aset video, bukan bagian app. Statis, tanpa jaringan: CSS/JS inline, font IBM Plex lokal (video/fonts/, SIL OFL 1.1).
   Parameter URL: ?t=2 (bekukan frame), ?play=1 (putar real-time, bawaan), ?delay=2 (tahan frame 0 sebelum mulai).
   Teks dan tanggal dari objek DATA; sumber di komentarnya dan di video/README.md.
@@ -25,15 +26,17 @@
 html, body { margin: 0; height: 100%; background: #0B0C0E; overflow: hidden; }
 #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--head-bg);
   color: var(--head-ink); font-family: var(--font-sans); overflow: hidden; }
-#name { position: absolute; left: 160px; top: 300px; font-size: 176px; font-weight: 600; letter-spacing: -2px; }
-#rule { position: absolute; left: 160px; top: 540px; height: 14px; background: var(--gold); }
-#line1 { position: absolute; left: 160px; top: 600px; font-size: 52px; font-weight: 500; }
-#line2 { position: absolute; left: 160px; top: 690px; font-size: 40px; color: var(--head-muted); }
-#line3 { position: absolute; left: 160px; top: 800px; font-family: var(--font-mono); font-size: 36px; color: var(--gold); }
+#name { position: absolute; left: 160px; top: 150px; font-size: 176px; font-weight: 600; letter-spacing: -2px; }
+#rule { position: absolute; left: 160px; top: 380px; height: 14px; background: var(--gold); }
+#line1 { position: absolute; left: 160px; top: 425px; font-size: 52px; font-weight: 500; }
+#line2 { position: absolute; left: 160px; top: 505px; font-size: 40px; color: var(--head-muted); }
+#line3 { position: absolute; left: 160px; top: 600px; width: 1600px; font-size: 38px; font-weight: 500; color: var(--gold); }
+#line4 { position: absolute; left: 160px; top: 662px; width: 1600px; font-size: 38px; font-weight: 500; line-height: 1.3; }
+#line5 { position: absolute; left: 160px; top: 790px; width: 1600px; font-size: 28px; color: var(--head-muted); }
 </style>
 </head>
 <body>
-<div id="stage"><div id="name"></div><div id="rule"></div><div id="line1"></div><div id="line2"></div><div id="line3"></div></div>
+<div id="stage"><div id="name"></div><div id="rule"></div><div id="line1"></div><div id="line2"></div><div id="line3"></div><div id="line4"></div><div id="line5"></div></div>
 <script>
 "use strict";
 const DATA = {
@@ -42,8 +45,13 @@ const DATA = {
   line1: "Indie track · Build for Your World",
   // README "Theme": "The domain here is Indonesian law"; "What it is": "chunking and retrieval on Indonesian legal text".
   line2: "Chunking and retrieval for Indonesian legal documents",
-  // README baris 8 (nama acara) dan "Built before vs during the hackathon" ("26 Oct to 4 Nov 2026").
-  line3: "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026",
+  // v10: README "Built before vs during the hackathon" baris 81, 85, 86 (dua hal pra-kickoff 25-26 Oct; planning specs, tanpa kode).
+  line3: "Before kickoff (25–26 Oct): planning specs and the Company Law text. No code.",
+  // README baris 79 (26 Oct to 4 Nov 2026) dan baris 85 kolom "Built during the hackathon".
+  line4: "Built during the hackathon, Oct 26 – Nov 4, 2026: all code, prompts, evaluation items, synthetic deeds, stored runs, profiles, live replay.",
+  // README baris 88.
+  line5: "UI theme follows the operator's pre-event design mockup; markup not copied.",
+  // Teks line3 v9 (sebelum v10): "Built during the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026".
 };
 const DUR = 4;   // detik, 3-4 detik di awal S1 (bagian 5 dokumen analisis)
 
@@ -53,11 +61,11 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const ease = (x) => x * x * (3 - 2 * x);
 const k = (t, a, b) => ease(clamp((t - a) / (b - a)));
 const $ = (id) => document.getElementById(id);
-["name", "line1", "line2", "line3"].forEach((id) => { $(id).textContent = DATA[id]; });
+["name", "line1", "line2", "line3", "line4", "line5"].forEach((id) => { $(id).textContent = DATA[id]; });
 
 function render(t) {
   const show = (id, a) => { const e = $(id); e.style.opacity = k(t, a, a + 0.5); e.style.transform = "translateY(" + (20 * (1 - k(t, a, a + 0.5))) + "px)"; };
-  show("name", 0.0); show("line1", 0.5); show("line2", 0.8); show("line3", 1.1);
+  show("name", 0.0); show("line1", 0.5); show("line2", 0.8); show("line3", 1.1); show("line4", 1.4); show("line5", 1.7);
   $("rule").style.width = (1600 * k(t, 0.2, 1.0)) + "px";
 }
 function fit() {
