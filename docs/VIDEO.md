@@ -166,15 +166,13 @@ Rekaman memakai mode putar ulang (M5.1). Adegan hanya bisa direkam bila run di b
 
 | Tanggal | Langkah | Jam (operator) |
 |---|---|---|
-| 30 Okt | Storyboard dikunci (putusan 19); MG dibangun di `video/` (agen); VO TTS: sampel dengar ke operator (L2-tts) | — |
-| 2 Nov malam | Rekaman kasar dari mode putar ulang. Tujuannya menemukan panel yang kurang, bukan hasil final | 1 |
-| 3 Nov | Perbaikan layar dari rekaman kasar (M5.1). Kode dibekukan 20:00 WIB | (masuk M5.1) |
-| 4 Nov pagi | Rekam layar per adegan, terpisah; rekam/render MG | 1,5 |
-| 4 Nov siang | Render penuh VO TTS (bila belum), edit, takarir Inggris dibakar ke video | 2,5 |
-| 4 Nov sore | Unggah unlisted, tonton ulang penuh di perangkat lain, isi form, ringkasan 100–200 kata | 1 |
+| 30 Okt | Storyboard dikunci (putusan 19); MG di `video/`; VO ElevenLabs `brian` (H-114) lolos pemeriksa H-113 | — |
+| 30-31 Okt | v1, v2, v3, v4 dirender agen lewat pipeline skrip (putusan 20), menggantikan rekaman kasar 2 Nov | — |
+| 3 Nov | Perbaikan layar bila perlu (M5.1); kode dibekukan 20:00 WIB | (masuk M5.1) |
+| 3-4 Nov | Render final dari HEAD beku (agen); tonton ulang penuh di perangkat lain, unggah unlisted, form dan ringkasan 100–200 kata, pilihan 4.1 (operator) | ? (operator) |
 | 4 Nov malam | Submit. Batas resmi 5 Nov 09:00 WIB adalah cadangan, bukan target | — |
 
-Total sekitar 6 jam operator (kunci storyboard selesai 30 Okt).
+Total jam operator: diisi operator.
 
 Teknis rekaman:
 - Rekam 1920x1080 dengan zoom browser 125–150% supaya teks hukum terbaca.
