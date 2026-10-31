@@ -26,7 +26,7 @@
     {
       "id": "roles.overview",
       "title": "How Meta models are used: roles A–D",
-      "body": "LexRAGLab uses Muse Spark in four roles. Every main result comes from `muse-spark-1.3-contributor`. Two open-weight Meta models re-run roles A, B, and C on a limited subset, as separate, labelled comparator runs (coverage: docs/LIMITS.md); they never replace or mix with the main results, and no quality claim is made about them."
+      "body": "LexRAGLab uses Muse Spark in four roles. Every main result comes from muse-spark-1.3-contributor. Two open-weight Meta models re-run roles A, B, and C on a limited subset, as separate, labelled comparator runs (coverage: docs/LIMITS.md); they never replace or mix with the main results, and no quality claim is made about them."
     },
     {
       "id": "roles.table",
