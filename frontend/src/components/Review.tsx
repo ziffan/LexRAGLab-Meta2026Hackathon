@@ -7,7 +7,7 @@ import { apiFetch } from "../api";
 import { truncate } from "../lib/format";
 import { modeLabel } from "../lib/labels";
 import { STATIC_DISABLED, isStatic } from "../lib/staticData";
-import { FAMILY_LABELS } from "./Header";
+import { FAMILY_LABELS, ReplayBadge } from "./Header";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "./Shell";
 
 // U6 Review proposals (docs/UI-SPEC.md U6): layar terpisah `/review`. Komponen menggambar keadaan `ReviewController`.
@@ -301,6 +301,7 @@ export function ReviewScreen() {
       <header className="app-header">
         <span className="brand">LexRAGLab</span>
         <ReviewFamilyPicker family={family} onChange={pick} />
+        <ReplayBadge />
         <a href={isStatic() ? "./" : "/"}>Back to overview</a>
       </header>
       <main className="layout">
