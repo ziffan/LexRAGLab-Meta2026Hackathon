@@ -6,6 +6,8 @@
 Bahasa Indonesia: [docs/README.id.md](docs/README.id.md)
 
 [![CI](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/ziffan/LexRAGLab-Meta2026Hackathon)](LICENSE)
+[![Live replay](https://img.shields.io/badge/live_replay-GitHub_Pages-blue)](https://ziffan.github.io/LexRAGLab-Meta2026Hackathon/)
 
 Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed.
 
