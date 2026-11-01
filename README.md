@@ -5,6 +5,8 @@
 
 Bahasa Indonesia: [docs/README.id.md](docs/README.id.md)
 
+[![CI](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml)
+
 Find the chunking and retrieval setting that feeds an LLM the right clauses of Indonesian legal documents, measured, not guessed.
 
 LexRAGLab is an evaluation lab that finds chunking and retrieval settings for a family of Indonesian legal documents; it is not a RAG application or a chatbot.
@@ -143,12 +145,19 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 
 **Local models for replay.** Checked on a clean clone with an empty Hugging Face cache and `HF_HUB_OFFLINE=1`: the replay backend starts, and the health, family, snapshot, document text, and run log endpoints work without any Hugging Face model. Per-item retrieval and the fixed-size chunk view need two models in the local Hugging Face cache: the `BAAI/bge-m3` embedder (revision pinned in `config/retrieval.toml`) and the Muse Spark Open tokenizer (revision pinned in `config/tokenizer.toml`). The app does not download them; without them those endpoints return HTTP 500, and the static export writes nothing: it prints the failed requests per file type and exits with code 3 (`--allow-missing` writes a partial export for development only). The `o200k_base` fallback tokenizer was downloaded by `tiktoken` on the first request; a run without network access was not tested.
 
-Tests:
+## Running tests
 
 ```bash
-uv run pytest
-cd frontend && npm test
+uv sync --frozen && uv run pytest -q   # backend, tests in backend/tests
+cd frontend && npm ci && npx tsc --noEmit && npx vitest run
 ```
+
+Tests never call the Model API and need no `.env`. Setup notes:
+
+- **Tokenizer.** The Muse Spark Open tokenizer must be in the local Hugging Face cache (gated repo: accept the terms on Hugging Face; revision pinned in `config/tokenizer.toml`; only the three tokenizer files, no weights). Without it the loader silently falls back to `o200k_base` and tokenizer-dependent tests fail.
+- **bge-m3.** One test needs the `BAAI/bge-m3` weights, and the dense-retrieval tests skip without CUDA or bge-m3.
+- **CI.** [The workflow](.github/workflows/ci.yml) runs both suites on every push to `main`, fetching the tokenizer files with a repository secret and deselecting the bge-m3 test.
+- **Windows.** Clone with `git clone -c core.longpaths=true -c core.autocrlf=false`; some paths under `runs/` exceed the default Windows path-length limit.
 
 ## Repository map
 
