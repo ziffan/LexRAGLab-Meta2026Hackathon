@@ -1,6 +1,6 @@
 name: CI
 
-# push only: no pull_request / pull_request_target, so the HF_TOKEN secret never reaches fork code.
+# push and manual dispatch only; no secrets are used.
 on:
   push:
     branches: [main, "ci/**"]
@@ -35,15 +35,12 @@ jobs:
       - run: npm run typecheck
       - run: npx vitest run
 
+  # Light backend subset (docs/TESTING.md): no torch/CUDA wheels, empty HF cache, offline, no secrets.
+  # Ignored files need torch or the gated Muse Spark Open tokenizer (G-32); they run locally only.
   backend:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
-      - name: Free disk space (torch cu128 + nvidia wheels need ~7-9 GB)
-        run: |
-          df -h /
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-          df -h /
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -52,39 +49,52 @@ jobs:
           python-version: "3.12"
           enable-cache: true
           cache-dependency-glob: uv.lock
-      - run: uv sync --frozen
-      # Gated tokenizer files (G-32): fetched with the secret, never via actions/cache.
-      # Repo and revision are read from config/tokenizer.toml, not hardcoded here.
-      - name: Fetch tokenizer files (gated HF repo)
+      - name: uv sync without torch and CUDA packages
+        run: >-
+          uv sync --frozen
+          --no-install-package torch
+          --no-install-package cuda-bindings
+          --no-install-package cuda-pathfinder
+          --no-install-package cuda-toolkit
+          --no-install-package nvidia-cublas-cu12
+          --no-install-package nvidia-cudnn-cu12
+          --no-install-package nvidia-cusparselt-cu12
+          --no-install-package nvidia-nccl-cu12
+          --no-install-package nvidia-nvshmem-cu12
+          --no-install-package triton
+          --no-install-package sympy
+          --no-install-package mpmath
+          --no-install-package networkx
+      - name: pytest (light subset)
         env:
-          HF_HOME: ${{ runner.temp }}/hf
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          if [ -z "$HF_TOKEN" ]; then
-            echo "::error::HF_TOKEN secret not set"
-            exit 1
-          fi
-          uv run --frozen python - <<'PY'
-          import os, tomllib
-          from huggingface_hub import hf_hub_download
-
-          with open("config/tokenizer.toml", "rb") as f:
-              cfg = tomllib.load(f)["muse-spark-open"]
-          for name in ("tokenizer.json", "tokenizer_config.json", "special_tokens_map.json"):
-              hf_hub_download(
-                  repo_id=cfg["hf_repo"],
-                  revision=cfg["hf_revision"],
-                  filename=name,
-                  token=os.environ["HF_TOKEN"],
-              )
-          print("tokenizer files fetched")
-          PY
-      # Deselected: needs BAAI/bge-m3 weights, which are not available in CI (G-49).
-      - name: pytest
-        env:
-          HF_HOME: ${{ runner.temp }}/hf
+          HF_HOME: ${{ runner.temp }}/hf-empty
           HF_HUB_OFFLINE: "1"
           TRANSFORMERS_OFFLINE: "1"
         run: >-
-          uv run --frozen pytest -q
-          --deselect backend/tests/test_s11_s12_grid_compare_sweep.py::test_s11_mask_ref_reference_failure_leaves_no_envelope_and_retry_writes_both
+          uv run --no-sync pytest -q
+          --ignore=backend/tests/test_answer_api.py
+          --ignore=backend/tests/test_answer_context.py
+          --ignore=backend/tests/test_api_docs.py
+          --ignore=backend/tests/test_api_m1.py
+          --ignore=backend/tests/test_chunking_chunkers.py
+          --ignore=backend/tests/test_fix_video_v1.py
+          --ignore=backend/tests/test_h101_gpulock.py
+          --ignore=backend/tests/test_header_b_akta_family.py
+          --ignore=backend/tests/test_header_b_api.py
+          --ignore=backend/tests/test_header_b_core.py
+          --ignore=backend/tests/test_header_b_h079.py
+          --ignore=backend/tests/test_header_store_family.py
+          --ignore=backend/tests/test_m25_w6_cli.py
+          --ignore=backend/tests/test_measure.py
+          --ignore=backend/tests/test_proposal_report.py
+          --ignore=backend/tests/test_r3_akta_s4.py
+          --ignore=backend/tests/test_replay_m51.py
+          --ignore=backend/tests/test_retrieval_dense.py
+          --ignore=backend/tests/test_s11_s12_grid_compare_sweep.py
+          --ignore=backend/tests/test_s13_s14_s20_a_c_sweep.py
+          --ignore=backend/tests/test_s19_w6_health_golden.py
+          --ignore=backend/tests/test_s8_main_grid_byte_identity.py
+          --ignore=backend/tests/test_s9c_s10_s16_sweep_closing.py
+          --ignore=backend/tests/test_w51_profiles_fix.py
+          --ignore=backend/tests/test_w66_profile_akta.py
+          --ignore=backend/tests/test_w6_schema_binding.py
