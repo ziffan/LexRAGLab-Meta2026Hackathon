@@ -143,12 +143,7 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 
 **Model lokal untuk replay.** Diperiksa pada clone bersih dengan cache Hugging Face kosong dan `HF_HUB_OFFLINE=1`: backend replay berjalan, dan endpoint health, family, snapshot, teks dokumen, serta log run bekerja tanpa model Hugging Face apa pun. Retrieval per butir dan tampilan chunk fixed-size membutuhkan dua model di cache Hugging Face lokal: embedder `BAAI/bge-m3` (revisi dipin di `config/retrieval.toml`) dan tokenizer Muse Spark Open (revisi dipin di `config/tokenizer.toml`). Aplikasi tidak mengunduh keduanya; tanpa keduanya endpoint itu mengembalikan HTTP 500, dan ekspor statis tidak menulis apa pun: ekspor mencetak permintaan yang gagal per jenis berkas dan keluar dengan kode 3 (`--allow-missing` menulis ekspor sebagian, hanya untuk pengembangan). Tokenizer fallback `o200k_base` diunduh oleh `tiktoken` pada permintaan pertama; run tanpa akses jaringan belum diuji.
 
-Test:
-
-```bash
-uv run pytest
-cd frontend && npm test
-```
+**Test.** Test tidak memanggil Model API dan tidak membutuhkan `.env`. CI menjalankan suite frontend dan subset backend ringan (tanpa torch, tanpa tokenizer gated); suite backend penuh hanya dijalankan lokal. Perintah, syarat, dan apa yang dilewati CI: [TESTING.md](TESTING.md) (bahasa Inggris).
 
 ## Peta repositori
 

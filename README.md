@@ -147,17 +147,7 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 
 ## Running tests
 
-```bash
-uv sync --frozen && uv run pytest -q   # backend, tests in backend/tests
-cd frontend && npm ci && npx tsc --noEmit && npx vitest run
-```
-
-Tests never call the Model API and need no `.env`. Setup notes:
-
-- **Tokenizer.** The Muse Spark Open tokenizer must be in the local Hugging Face cache (gated repo: accept the terms on Hugging Face; revision pinned in `config/tokenizer.toml`; only the three tokenizer files, no weights). Without it the loader silently falls back to `o200k_base` and tokenizer-dependent tests fail.
-- **bge-m3.** One test needs the `BAAI/bge-m3` weights, and the dense-retrieval tests skip without CUDA or bge-m3.
-- **CI.** [The workflow](.github/workflows/ci.yml) runs both suites on every push to `main`, fetching the tokenizer files with a repository secret and deselecting the bge-m3 test.
-- **Windows.** Clone with `git clone -c core.longpaths=true -c core.autocrlf=false`; some paths under `runs/` exceed the default Windows path-length limit.
+Tests never call the Model API and need no `.env`. CI runs the frontend suite and a light backend subset (no torch, no gated tokenizer); the full backend suite runs locally only. Commands, requirements, and what CI skips: [docs/TESTING.md](docs/TESTING.md).
 
 ## Repository map
 
