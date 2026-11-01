@@ -5,55 +5,58 @@
 
 English: [README.md](../README.md). Versi bahasa Inggris yang otoritatif; bila berbeda, README Inggris yang berlaku. Angka memakai notasi Inggris (koma pemisah ribuan, titik desimal), sama dengan README Inggris.
 
+[![CI](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/ziffan/LexRAGLab-Meta2026Hackathon)](../LICENSE)
+[![Live replay](https://img.shields.io/badge/live_replay-GitHub_Pages-blue)](https://ziffan.github.io/LexRAGLab-Meta2026Hackathon/)
+
 Temukan setelan chunking dan retrieval yang memberi LLM klausul yang tepat dari dokumen hukum Indonesia, berdasarkan pengukuran, bukan tebakan.
 
-LexRAGLab adalah lab evaluasi yang mencari setelan chunking dan retrieval untuk satu keluarga dokumen hukum Indonesia; ini bukan aplikasi RAG dan bukan chatbot.
+LexRAGLab mengukur satu grid setelan chunking dan retrieval untuk satu keluarga dokumen terhadap gold span yang disetujui operator pada token budget yang tetap, dan menghasilkan setting profile berversi yang Anda pasang di pipeline RAG Anda sendiri.
 
-Dibuat untuk Meta Global AI Developer Hackathon (track Indie, tema "Build for Your World") dengan Muse Spark (`muse-spark-1.3-contributor` lewat Meta Model API).
+Track Indie, tema "Build for Your World", dibangun dengan Muse Spark (`muse-spark-1.3-contributor` lewat Meta Model API) untuk Meta Global AI Developer Hackathon, 26 Okt sampai 4 Nov 2026.
 
 - Video demo: https://youtu.be/BMXQfIeGhqw
-- Live replay: https://ziffan.github.io/LexRAGLab-Meta2026Hackathon/
+- Live replay (tanpa API key): https://ziffan.github.io/LexRAGLab-Meta2026Hackathon/
+- Contoh profil: [`profiles/uupt/`](../profiles/uupt/)
 
 > Demo riset. Bukan nasihat hukum.
 
-## Sekilas
+![Layar live replay: potongan terhadap gold span di kiri; di kanan Pareto frontier span recall terhadap token yang diambil untuk setelan-setelan Hukum Perseroan pada split held-out, dengan setelan struktur terpilih dilingkari dan ringkasan held-out-nya di bawah grafik](img/hero.png)
 
-- **Masalah:** tim legal RAG memilih ukuran chunk dengan menebak, dan tidak ada benchmark publik untuk teks hukum Indonesia ([Mengapa](#mengapa)).
-- **Dibangun selama hackathon:** seluruh kode ditulis 26 Okt sampai 4 Nov 2026; sebelum acara hanya ada dokumen perencanaan berlabel dan teks peraturan, tanpa kode ([Dibangun sebelum vs selama hackathon](#dibangun-sebelum-vs-selama-hackathon)).
-- **Model Meta yang dipakai:** Muse Spark (`muse-spark-1.3-contributor`) menghasilkan hasil utama dalam empat peran; dua model open-weight Meta menjadi comparator; tokenizer Muse Spark Open menghitung token; Muse Voice Transcribe hanya memeriksa narasi video. Pencarian grid dan verifier sitasi tidak memakai LLM ([Model Meta](#model-meta-dan-perannya)).
-- **Bukti:** setiap angka berasal dari run tersimpan ([Hasil](#hasil), [RESULTS.md](RESULTS.md) (bahasa Inggris)).
-- **Cara menjalankan:** replay tidak butuh API key ([Cara menjalankan](#cara-menjalankan)).
-- **Batasan:** n kecil, hitungan mentah, tanpa klaim signifikansi ([Batasan](#batasan), [LIMITS.md](LIMITS.md) (bahasa Inggris)).
+## Hasil utama
 
-## Tema: Build for Your World
+- **Satu undang-undang, konteks 2,000 token.** Konsolidasi Hukum Perseroan berukuran 46,583 token (teks bersih, tokenizer lokal). Setelan terpilih mengambil konteks dalam token budget 2,000: 6 dari 8 butir held-out yang punya gold span tercakup penuh, mean span recall 0.75. Sumber: `runs/measure/5db7720bc1f5a121.json` (baris `_document`), `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`).
+- **Struktur diinduksi untuk keluarga tanpa parser.** Muse Spark membaca contoh akta notaris dan mengusulkan skema hierarkinya; dengan skema yang dikoreksi operator, dense retrieval, header off: 69 dari 69 butir gold tercakup penuh, vs 64 dari 69 untuk fixed-size 512 / 64 dan 0 dari 69 untuk satu chunk per akta (melampaui budget). Uji transfer pada lima akta sintetis. Sumber: `runs/grid/86e701f56a3bc5f83268b4cf8590d9dfe641773b8234b3e826c4c4db2b517c2e.json`, [RESULTS.md](RESULTS.md) (bahasa Inggris).
+- **Sitasi diperiksa tanpa LLM.** Pada peran C model menjawab dari profil terbaik dan profil baseline dengan sitasi; verifier deterministik memeriksa bahwa setiap sitasi ada dan setia pada sumber.
+- **Profil yang dapat direproduksi.** Profil yang diekspor di-hash; memuatnya membangun ulang set chunk yang sama dan ditolak bila hash korpus berbeda ([`profiles/uupt/`](../profiles/uupt/)).
 
-Tema hackathon adalah "Bring Meta's models into your domain. Solve a problem you know firsthand, free up time and mental space, and make something possible that wasn't before." (Bawa model Meta ke domain Anda. Selesaikan masalah yang Anda kenal langsung, bebaskan waktu dan ruang pikiran, dan wujudkan sesuatu yang sebelumnya tidak mungkin.) Domain di sini adalah hukum Indonesia.
+n kecil, hitungan mentah, tanpa klaim signifikansi; lihat [Batasan](#batasan).
 
-- **Masalah yang dikenal langsung.** Operator (satu-satunya pengembang proyek) mengerjakan pekerjaan hukum agentic (pendapat hukum, legal due diligence, penyusunan kontrak) yang mengharuskan agen merujuk kumpulan peraturan yang tidak muat dalam satu context window (lihat [Mengapa](#mengapa)).
-- **Waktu dan ruang pikiran.** LexRAGLab bertujuan mengganti tebakan ukuran chunk dengan pilihan yang terukur, dan menjaga konteks yang dibutuhkan agen tetap kecil. Ini hipotesis yang diuji evaluasi, bukan penghematan yang sudah terukur.
-- **Sesuatu yang sebelumnya tidak mungkin.** Tidak ada benchmark publik yang standar untuk RAG hukum Indonesia, sehingga setelan retrieval untuk teks hukum Indonesia tidak bisa dipilih lewat pengukuran. Muse Spark membaca keluarga dokumen baru, mengusulkan strukturnya dan butir evaluasinya untuk ditinjau operator, dan LexRAGLab menilai setiap setelan terhadap gold span yang telah disetujui.
+## Untuk siapa dan cara pakainya
 
-## Mengapa
+Pengguna sasarannya adalah legal engineer atau tim RAG yang membangun retrieval atas undang-undang, akta, atau keluarga dokumen serupa dan menginginkan setelan terukur alih-alih tebakan. Saat ini ukuran chunk berasal dari tutorial; pada peraturan Indonesia tebakan bisa memotong sebuah *ayat* (paragraf dalam pasal) menjadi dua, model lalu mengutip separuh aturan, tidak ada angka yang bisa dibela, dan keluarga dokumen baru berarti menebak lagi.
 
-Tim legal RAG biasanya memilih ukuran chunk dengan menebak. Pada peraturan Indonesia, tebakan bisa memotong sebuah *ayat* (paragraf dalam pasal) menjadi dua, lalu model mengutip separuh aturan. Tidak ada benchmark publik yang standar untuk RAG hukum Indonesia. LexRAGLab menjadikan chunking keputusan desain yang terukur.
+1. **Tambahkan keluarga dokumen** sebagai teks biasa (satu undang-undang, satu set akta).
+2. **Tinjau usulan Muse Spark:** skema struktur (peran A) dan butir evaluasi dengan gold span (peran D). Operator mengoreksi atau menyetujuinya di layar review; yang tidak disetujui tidak dipakai.
+3. **Jalankan grid, pilih titik di frontier, ekspor profil,** lalu muat di pipeline Anda sendiri. Profil membawa chunker, versi skema, mode retrieval, setelan header, budget, dan hash.
 
-Motivasinya berasal dari praktik: pekerjaan hukum agentic harus merujuk undang-undang dan peraturan pelaksanaannya yang tidak muat dalam satu context window agen, sehingga setelan yang menjaga konteks yang dibutuhkan tetap kecil menjadi penting.
+Kebijakan internal adalah keluarga berikutnya yang direncanakan; tidak ada dokumen yang disertakan.
 
-Angka di bawah adalah hasil pengukuran operator atas pekerjaan sebelumnya (tidak disertakan di repositori ini). Angka itu bukan keluaran aplikasi ini, dan tidak ada hasil LexRAGLab yang diturunkan dari angka tersebut.
+## Cara Muse Spark dipakai
 
-- Satu undang-undang yang dirujuk untuk satu pendapat hukum berukuran sekitar 320 ribu token, dengan sendirinya sudah melampaui jendela 200 ribu token.
-- Dari teks peraturan itu, hanya sekitar 10% yang benar-benar dipakai.
-- Seluruh materi per pekerjaan, komposisinya tidak dirinci menjadi peraturan versus dokumen lain: sekitar 1.2 juta token untuk pendapat hukum satu transaksi dan sekitar 5.8 juta untuk satu berkas due diligence lengkap (1.2 sampai 5.8 kali jendela 1 juta token); sekitar 2.2 juta untuk penyusunan kontrak, atau sekitar 2.8 juta bila pustaka klausul disertakan.
+| Peran | Yang dikerjakan Spark | Mengapa penting |
+|---|---|---|
+| A. Structure induction | Membaca dokumen contoh dari keluarga baru dan mengusulkan skema hierarki datar yang dijalankan chunker deterministik | Keluarga tanpa parser mendapat chunker yang sadar struktur tanpa aturan tulisan tangan |
+| B. Contextual chunking | Menulis context header singkat untuk setiap chunk, dengan dokumen sumber di-cache sebagai prefiks tetap | Header on/off adalah sumbu grid dan token header dihitung terhadap budget, sehingga efeknya diukur, bukan diasumsikan |
+| C. End-to-end check | Menjawab sebuah butir dari profil terbaik dan dari profil baseline, dengan sitasi | Verifier deterministik memeriksa setiap sitasi, sehingga setelan diuji di tingkat jawaban tanpa LLM sebagai juri |
+| D. Item proposals | Mengusulkan pasangan (query, gold span) dalam mode literal, paraphrase, dan unanswerable | Operator meninjau setiap usulan dan hanya butir yang disetujui dipakai, sehingga set gold bertambah sementara operator tetap satu-satunya penyetuju |
 
-Pengukuran operator atas penggunaan agen (sekunder) ada di [DATA.md](DATA.md#operator-measurements-background) (bahasa Inggris).
+> **Kemampuan yang tak terduga.** Peran A adalah structure induction: hanya dari dokumen contoh, Muse Spark mengusulkan skema hierarki akta notaris, keluarga tanpa parser yang ada, dan chunker deterministik berjalan di atasnya. Operator mengoreksi usulan itu; kedua versi disimpan (`runs/schemas/<family>/v1.json` = usulan Spark, `v2.json` = koreksi operator).
 
-## Apa ini
+Hasil utama memakai `muse-spark-1.3-contributor` lewat Meta Model API (Responses API dengan strict structured output, reasoning effort `low`). Peran D hanya memakai model Contributor. Pencarian grid sendiri tidak memakai LLM, dan verifier sitasi di peran C bersifat deterministik, bukan model.
 
-Untuk satu keluarga dokumen dengan pola homogen, LexRAGLab menelusuri grid setelan (chunker, ukuran chunk dan overlap, retrieval dense / BM25 / hybrid, context header menyala atau mati) dan melaporkan setelan mana yang memberi bukti emas (gold evidence) terbanyak pada token budget yang tetap.
-
-Keluarannya adalah **versioned setting profile** yang bisa diekspor dan dipakai ulang di pipeline RAG Anda. Profil Hukum Perseroan yang sudah diekspor ada di [`profiles/uupt/`](../profiles/uupt/); memuatnya kembali membangun ulang set chunk yang sama (dicek dengan hash) dan ditolak bila hash korpus berbeda. Proyek ini berhenti pada penemuan setelan; ini bukan produk RAG.
-
-## Model Meta dan perannya
+<details>
+<summary>Comparator, tokenizer, sapuan effort, dan pemeriksa video</summary>
 
 | Model | Akses / host | Peran | Status | Run tersimpan |
 |---|---|---|---|---|
@@ -61,33 +64,29 @@ Keluarannya adalah **versioned setting profile** yang bisa diekspor dan dipakai 
 | Muse Spark Open `meta-models/muse-spark-open-1026` | endpoint hosted di Baseten, Responses API, strict structured output | A, B, C | Comparator, run terpisah, tidak pernah dicampur dengan hasil utama | `runs/schemas/<family>/compare/`, `runs/headers_compare/`, `runs/grid_compare/`, `runs/compare_report/c/` |
 | Tokenizer Muse Spark Open (`meta-models/Muse-Spark-Open-816B-A42B`, revisi dipin di `config/tokenizer.toml`) | lokal, dibaca dari cache Hugging Face pengguna, tidak disertakan | tanpa peran: menghitung token untuk setiap setelan dan token budget (tanpa panggilan model) | Dipakai untuk semua penghitungan token ("Built with Muse Spark Open"; fallback `o200k_base`) | `config/tokenizer.toml` |
 | Muse Glimmer `meta/muse-glimmer` (Q4_K_M) | lokal di mesin operator, endpoint loopback kompatibel OpenAI, validasi skema di sisi klien; bobot tidak disertakan; Apache-2.0 menurut dokumen Meta (model card belum diverifikasi, lihat `NOTICE`) | A, B, C | Comparator, run terpisah | direktori comparator yang sama |
-| Muse Voice Transcribe `muse-voice-transcribe-1.0` | endpoint transkripsi Meta Model API (model ID dipin di `config/voice_qa.toml`) | tidak ada di produk: memeriksa narasi video demo terhadap skripnya | Hanya alat video; bukan bagian produk dan tidak memengaruhi hasil apa pun | `runs/voice_qa/` |
+| Muse Voice Transcribe `muse-voice-transcribe-1.0` | endpoint transkripsi Meta Model API (model ID dipin di `config/voice_qa.toml`) | tidak ada di produk: memeriksa narasi video demo terhadap skripnya | Hanya QA video, bukan bagian produk; tidak memengaruhi hasil apa pun | `runs/voice_qa/` |
 
-| Peran | Yang dikerjakan model |
-|---|---|
-| A. Structure induction | Membaca dokumen contoh dari keluarga baru dan mengusulkan skema hierarki datar yang menggerakkan chunker deterministik. Operator mengoreksinya; kedua versi disimpan |
-| B. Contextual chunking | Menulis context header untuk setiap chunk dengan dokumen sumber di-cache. Header menyala/mati adalah sumbu grid, dan token header dihitung terhadap budget |
-| C. End-to-end check | Menjawab sebuah butir dari profil terbaik dan dari profil baseline, dengan sitasi. Verifier deterministik (bukan LLM) memeriksa bahwa setiap sitasi ada dan setia pada sumber |
-| D. Item proposals | Mengusulkan pasangan (query, gold span) dalam mode literal dan paraphrase. Operator meninjau setiap usulan; hanya butir yang disetujui dipakai |
+Comparator: dua model open-weight menjalankan ulang peran A, B, dan C sebagai run terpisah yang berlabel, bisa dipilih di panel bukti untuk peran C. Untuk peran C keduanya hanya menjawab enam butir (tiga butir demo dan tiga butir must-refuse (wajib menolak) Hukum Perseroan), dan tidak ada klaim umum tentang kualitas kedua model itu. Sapuan effort memvariasikan reasoning effort per peran dan model. Rincian dan belanja per pool: [LIMITS.md](LIMITS.md) (bahasa Inggris).
 
-Peran D hanya memakai model Contributor. Pencarian grid sendiri tidak memakai LLM, dan verifier sitasi di peran C bersifat deterministik, bukan model.
+</details>
 
-Comparator: dua model open-weight menjalankan ulang peran A, B, dan C sebagai run terpisah yang berlabel, bisa dipilih di panel bukti untuk peran C. Untuk peran C keduanya hanya menjawab enam butir (tiga butir demo dan tiga butir must-refuse (wajib menolak) Hukum Perseroan), dan tidak ada klaim umum tentang kualitas kedua model itu. Rincian: [LIMITS.md](LIMITS.md) (bahasa Inggris).
+## Cara kerja
 
-## Dibangun sebelum vs selama hackathon
+```mermaid
+flowchart LR
+  docs[Dokumen keluarga] --> A[Peran A: skema struktur]
+  docs --> D[Peran D: usulan butir]
+  A --> grid[Grid: chunker x ukuran/overlap x retrieval x header]
+  B[Peran B: context header] --> grid
+  D --> items[Butir dengan gold span yang disetujui operator]
+  grid --> score[Penilaian pada token budget tetap]
+  items --> score
+  score --> pareto[Pareto frontier, dipilih pada tune]
+  pareto --> report[Laporan pada held-out]
+  report --> profile[Ekspor profil berversi]
+```
 
-Hackathon dimulai pada 26 Okt 2026, 23:00 WIB. Commit pertama di repositori ini bertanggal 26 Okt 2026 23:23 WIB, setelah kickoff. Seluruh kode ditulis selama hackathon (26 Okt sampai 4 Nov 2026); tidak ada prototipe pra-acara yang disertakan atau disalin.
-
-Hanya dua hal di repositori ini yang disiapkan sebelum kickoff (didraf 25-26 Okt, di-commit sesudahnya, masing-masing dalam commit berlabel terpisah):
-
-| Dibangun sebelum kickoff (25-26 Okt 2026) | Dibangun selama hackathon |
-|---|---|
-| Spesifikasi perencanaan di [`docs/`](./), diimpor dalam satu commit berlabel (`docs: import pre-event planning`). Hanya perencanaan: tanpa kode | Seluruh kode, konfigurasi, prompt, butir evaluasi, akta sintetis, run tersimpan, profil, dan live replay |
-| Berkas Hukum Perseroan: konsolidasi tidak resmi UU 40/2007, terkonsolidasi per 30 Desember 2022, disiapkan operator dari teks peraturan dan putusan Mahkamah Konstitusi; di-commit terpisah sebagai materi pra-acara (`data: add UU 40/2007 consolidated text`) | Setiap perubahan pada spesifikasi setelah commit impor |
-
-Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup desain pra-acara milik operator, yang tidak ada di repositori ini; markup-nya tidak disalin dan layout mengikuti `docs/UI-SPEC.md`. Kelima akta sintetis ditulis selama hackathon oleh agen AI (agen pengembangan) dan ditinjau operator.
-
-## Definisi "terbaik"
+Untuk satu keluarga dokumen dengan pola homogen, LexRAGLab menelusuri grid setelan (chunker, ukuran chunk dan overlap, retrieval dense / BM25 / hybrid, context header menyala atau mati) dan melaporkan setelan mana yang memberi bukti emas (gold evidence) terbanyak pada token budget yang tetap. Keluarannya adalah **versioned setting profile** yang bisa diekspor dan dipakai ulang di pipeline RAG Anda; memuatnya kembali membangun ulang set chunk yang sama (dicek dengan hash) dan ditolak bila hash korpus berbeda. Proyek ini berhenti pada penemuan setelan; ini bukan produk RAG.
 
 - Bukti emas (gold evidence) disimpan sebagai **character span** pada dokumen sumber, sehingga satu set butir bisa menilai chunker mana pun. Sebuah gold span menandai setiap *ayat* yang dibutuhkan untuk jawaban; span itu dipecah pada batas *ayat* sebelum Recall@K dihitung.
 - Setelan dibandingkan pada **token budget yang tetap**, bukan K yang tetap. Token dihitung dengan satu tokenizer lokal untuk setiap setelan.
@@ -98,6 +97,8 @@ Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup
 ## Hasil
 
 **Hukum Perseroan.** Setelan terpilih: chunker structure-schema (skema v2), dense retrieval, header off, token budget 2,000. Held-out (10 butir; 4 ditulis operator, 6 diusulkan Spark dan disetujui): 6 dari 8 butir yang punya gold span tercakup penuh, mean span recall 0.75, mean token precision 0.0218; hitungan mentah, tanpa klaim signifikansi. Sumber: profil terekspor `profiles/uupt/d7a9dd244260e256789d10d02bd50b1f125bcd1b8a088f2a8058c2f222c58ebf.json` (field `held_out`); hasil held-out juga ditampilkan di layar laporan aplikasi. Dua butir yang meleset sama-sama parafrase, dengan penyebab berbeda. `kontrol-K-07` (ditulis operator, "pemberhentian seorang komisaris") meleset di retrieval: gold span-nya Pasal 119, satu kalimat rujukan silang ("Pasal 105 mutatis mutandis berlaku"), dan tidak ada di 5 potongan teratas (Recall@5 = 0); konteks justru berisi pasal-pasal tetangga yang lebih panjang tentang komisaris dan direksi. `usulan-dbd56534fe41df4e` (diusulkan Spark, tentang kewajiban Tanggung Jawab Sosial dan Lingkungan di Pasal 74) meleset di anggaran: potongan gold ada di 5 teratas (Recall@5 = 1), tetapi dua potongan struktur berperingkat lebih tinggi, Pasal 1 (definisi) dan Penjelasan Umum, memakan 1,941 dari 2,000 token sehingga potongan gold tidak pernah masuk konteks. Sumber: retrieval tersimpan untuk setelan terpilih (`d7a9dd24…`, endpoint R5) dan baris per butir laporan held-out.
+
+**Token precision** adalah token gold dibagi token yang diambil atas konteks yang dikemas ([EVAL-SPEC.md](EVAL-SPEC.md) bagian 5): sebuah token dihitung gold hanya bila seluruh karakternya ada di dalam gold span, token header tidak pernah gold, dan token yang berulang karena overlap menambah penyebut tetapi tidak menambah pembilang, yang sengaja menghukum konteks berulang; karena penyebutnya adalah seluruh konteks yang dikemas, konteks yang dikemas sampai budget dengan potongan utuh bernilai rendah pada metrik ini walau gold span tercakup penuh.
 
 **Keluarga dokumen.**
 
@@ -116,6 +117,16 @@ Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup
 - unstructured (satu chunk per akta): 0 dari 69.
 
 Ini uji transfer pada lima dokumen sintetis, bukan hasil utama dan bukan klaim umum. Tabel lengkap, catatan (setelan transfer, unstructured, Recall@K tidak sebanding, n kecil), dan sumber: [RESULTS.md](RESULTS.md) (bahasa Inggris).
+
+## Mengapa: Build for Your World
+
+Tema hackathon adalah "Bring Meta's models into your domain. Solve a problem you know firsthand, free up time and mental space, and make something possible that wasn't before." (Bawa model Meta ke domain Anda. Selesaikan masalah yang Anda kenal langsung, bebaskan waktu dan ruang pikiran, dan wujudkan sesuatu yang sebelumnya tidak mungkin.) Domain di sini adalah hukum Indonesia.
+
+- **Masalah yang dikenal langsung.** Operator (satu-satunya pengembang proyek) mengerjakan pekerjaan hukum agentic (pendapat hukum, legal due diligence, penyusunan kontrak) yang mengharuskan agen merujuk kumpulan peraturan yang tidak muat dalam satu context window.
+- **Waktu dan ruang pikiran.** LexRAGLab bertujuan mengganti tebakan ukuran chunk dengan pilihan yang terukur, dan menjaga konteks yang dibutuhkan agen tetap kecil. Ini hipotesis yang diuji evaluasi, bukan penghematan yang sudah terukur.
+- **Sesuatu yang sebelumnya tidak mungkin.** Tidak ada benchmark publik yang standar untuk RAG hukum Indonesia, sehingga setelan retrieval untuk teks hukum Indonesia tidak bisa dipilih lewat pengukuran. Muse Spark membaca keluarga dokumen baru, mengusulkan strukturnya dan butir evaluasinya untuk ditinjau operator, dan LexRAGLab menilai setiap setelan terhadap gold span yang telah disetujui.
+
+Skala masalahnya, dari pengukuran operator atas pekerjaan sebelumnya (tidak disertakan di repositori ini; angka ini bukan keluaran aplikasi ini, dan tidak ada hasil LexRAGLab yang diturunkan dari angka tersebut): satu undang-undang yang dirujuk untuk satu pendapat hukum berukuran sekitar 320 ribu token, dengan sendirinya sudah melampaui jendela 200 ribu token, dan hanya sekitar 10% dari teks peraturan itu yang benar-benar dipakai; seluruh materi per pekerjaan, komposisinya tidak dirinci menjadi peraturan versus dokumen lain, sekitar 1.2 juta token untuk pendapat hukum satu transaksi dan sekitar 5.8 juta untuk satu berkas due diligence lengkap (1.2 sampai 5.8 kali jendela 1 juta token), sekitar 2.2 juta untuk penyusunan kontrak, atau sekitar 2.8 juta bila pustaka klausul disertakan. Pengukuran operator atas penggunaan agen (sekunder) ada di [DATA.md](DATA.md#operator-measurements-background) (bahasa Inggris).
 
 ## Cara menjalankan
 
@@ -143,9 +154,54 @@ uv run python -m http.server -d dist-static -b 127.0.0.1 8080
 
 **Model lokal untuk replay.** Diperiksa pada clone bersih dengan cache Hugging Face kosong dan `HF_HUB_OFFLINE=1`: backend replay berjalan, dan endpoint health, family, snapshot, teks dokumen, serta log run bekerja tanpa model Hugging Face apa pun. Retrieval per butir dan tampilan chunk fixed-size membutuhkan dua model di cache Hugging Face lokal: embedder `BAAI/bge-m3` (revisi dipin di `config/retrieval.toml`) dan tokenizer Muse Spark Open (revisi dipin di `config/tokenizer.toml`). Aplikasi tidak mengunduh keduanya; tanpa keduanya endpoint itu mengembalikan HTTP 500, dan ekspor statis tidak menulis apa pun: ekspor mencetak permintaan yang gagal per jenis berkas dan keluar dengan kode 3 (`--allow-missing` menulis ekspor sebagian, hanya untuk pengembangan). Tokenizer fallback `o200k_base` diunduh oleh `tiktoken` pada permintaan pertama; run tanpa akses jaringan belum diuji.
 
-**Test.** Test tidak memanggil Model API dan tidak membutuhkan `.env`. CI menjalankan suite frontend dan subset backend ringan (tanpa torch, tanpa tokenizer gated); suite backend penuh hanya dijalankan lokal. Perintah, syarat, dan apa yang dilewati CI: [TESTING.md](TESTING.md) (bahasa Inggris).
+## Menjalankan test
 
-## Peta repositori
+Test tidak memanggil Model API dan tidak membutuhkan `.env`. CI menjalankan suite frontend dan subset backend ringan (tanpa torch, tanpa tokenizer gated); suite backend penuh hanya dijalankan lokal. Perintah, syarat, dan apa yang dilewati CI: [TESTING.md](TESTING.md) (bahasa Inggris).
+
+## Batasan
+
+- Set butir kecil; hasil per butir dengan hitungan mentah, tanpa klaim signifikansi.
+- Konsolidasi hanya mencakup satu undang-undang, per 30 Desember 2022; perubahan sesudahnya tidak tercermin.
+- Comparator adalah run terpisah; tidak ada klaim kualitas tentang keduanya. Hasil utama tetap pada `muse-spark-1.3-contributor` dengan reasoning effort `low`.
+- Hasil akta bertumpu pada lima dokumen sintetis; tidak ada butir kontrol yang ditulis operator dan tidak ada split held-out untuk akta, dan uji transfer tidak memilih apa pun.
+- Hitungan token memakai tokenizer lokal yang dikalibrasi sekali terhadap endpoint token-count API; token yang ditagih bisa berbeda. Pemeriksaan sitasi "berlaku pada tanggal" (apakah ketentuan yang dikutip berlaku pada tanggal tertentu) adalah stretch goal dan mungkin tidak ada.
+- Biaya run (hasil utama): 561,741 micro-USD (ditampilkan sebagai $0.561741), angka yang sama dengan header aplikasi (label di UI: "Run cost (main results)").
+
+Belanja eksperimen per pool (comparator, sapuan effort), rincian comparator, dan batasan lainnya ada di [LIMITS.md](LIMITS.md) (bahasa Inggris).
+
+## Dibangun sebelum vs selama hackathon
+
+Hackathon dimulai pada 26 Okt 2026, 23:00 WIB. Commit pertama di repositori ini bertanggal 26 Okt 2026 23:23 WIB, setelah kickoff. Seluruh kode ditulis selama hackathon (26 Okt sampai 4 Nov 2026); tidak ada prototipe pra-acara yang disertakan atau disalin.
+
+Hanya dua hal di repositori ini yang disiapkan sebelum kickoff (didraf 25-26 Okt, di-commit sesudahnya, masing-masing dalam commit berlabel terpisah):
+
+| Dibangun sebelum kickoff (25-26 Okt 2026) | Dibangun selama hackathon |
+|---|---|
+| Spesifikasi perencanaan di [`docs/`](./), diimpor dalam satu commit berlabel (`docs: import pre-event planning`). Hanya perencanaan: tanpa kode | Seluruh kode, konfigurasi, prompt, butir evaluasi, akta sintetis, run tersimpan, profil, dan live replay |
+| Berkas Hukum Perseroan: konsolidasi tidak resmi UU 40/2007, terkonsolidasi per 30 Desember 2022, disiapkan operator dari teks peraturan dan putusan Mahkamah Konstitusi; di-commit terpisah sebagai materi pra-acara (`data: add UU 40/2007 consolidated text`) | Setiap perubahan pada spesifikasi setelah commit impor |
+
+Tema visual UI (token warna, tipografi IBM Plex, pola komponen) mengikuti mockup desain pra-acara milik operator, yang tidak ada di repositori ini; markup-nya tidak disalin dan layout mengikuti `docs/UI-SPEC.md`. Kelima akta sintetis ditulis selama hackathon oleh agen AI (agen pengembangan) dan ditinjau operator.
+
+## Data dan lisensi
+
+- Teks Hukum Perseroan adalah konsolidasi tidak resmi UU 40/2007 (per 30 Desember 2022), disiapkan operator dari teks peraturan publik dan putusan Mahkamah Konstitusi. Akta bersifat sintetis dan fiktif; tidak ada akta asli, data klien, atau dokumen internal yang disertakan.
+- Panggilan Model API memakai `muse-spark-1.3-contributor` (mode Contributor: Meta boleh memakai konten untuk melatih model berikutnya). Ini dapat diterima di sini karena setiap dokumen publik atau sintetis. Untuk keluarga dokumen rahasia, setel model ID Standard di `config/model.toml`.
+- Lisensi: Apache-2.0 untuk semua yang dibuat proyek ini (lihat `LICENSE`); atribusi pihak ketiga ada di `NOTICE`.
+
+**Built with Muse Spark Open.** Tokenizer Muse Spark Open menghitung token secara lokal (Muse Model License mensyaratkan notice ini), dan model Muse Spark Open juga menjadi comparator.
+
+Sumber korpus, rincian lisensi lengkap (font, UU 28/2014 Pasal 42, lisensi tokenizer dan Glimmer, lisensi dependensi): [DATA.md](DATA.md) (bahasa Inggris).
+
+## Disclaimer
+
+Demo riset. Bukan nasihat hukum. Jangan mengandalkan keluaran apa pun untuk keputusan hukum.
+
+## Dokumentasi
+
+Dokumen spesifikasi ditulis dalam bahasa Indonesia. Spesifikasi ada di [`docs/`](./): [PRD](PRD.md), [UI-SPEC](UI-SPEC.md), [ARCHITECTURE](ARCHITECTURE.md), [DATA-CONTRACTS](DATA-CONTRACTS.md), [API](API.md), [EVAL-SPEC](EVAL-SPEC.md), [SPARK-ROLES](SPARK-ROLES.md), [SECURITY-COMPLIANCE](SECURITY-COMPLIANCE.md), [MILESTONES](MILESTONES.md), [DECISIONS](DECISIONS.md), [VIDEO](VIDEO.md). Dokumen rincian dalam bahasa Inggris: [LIMITS](LIMITS.md), [RESULTS](RESULTS.md), [DATA](DATA.md). README bahasa Inggris: [README.md](../README.md).
+
+<details>
+<summary>Peta repositori</summary>
 
 ```text
 backend:   Python 3.12 + FastAPI
@@ -167,39 +223,14 @@ storage:   files only (no database, no vector database)
 | `video/` | Motion graphics video demo dan pemeriksa narasi (`video/qa/`); bukan bagian aplikasi |
 | `licenses/` | Teks lisensi font |
 
-## Untuk agen AI dan kontributor
+</details>
+
+<details>
+<summary>Untuk agen AI dan kontributor</summary>
 
 - Baca [`AGENTS.md`](../AGENTS.md) lebih dulu (aturan untuk agen, ditulis dalam bahasa Indonesia). Urutan bacanya: `docs/CONTEXT.md`, `docs/DECISIONS.md`, `docs/ISSUES.md`, `docs/MILESTONES.md`, spec slice yang dikerjakan (terdaftar di bagian "Spec per slice" pada `docs/MILESTONES.md`), `docs/CONVENTIONS.md`, `docs/GOTCHAS.md`; `docs/PRD.md` dan `docs/ARCHITECTURE.md` sebagai referensi.
 - Aturan inti dari `AGENTS.md`: agen tidak pernah menulis atau menyetujui butir evaluasi; angka hanya berasal dari run tersimpan dan tidak pernah dikarang; tidak ada model selain `muse-spark-1.3-contributor` kecuali pengecualian yang tercantum di sana (comparator dan pemeriksa video); tanpa database, vector database, LangChain, parser PDF, atau reranker; API key hanya ada di `.env` lokal.
 - Dokumen spesifikasi ditulis dalam bahasa Indonesia. ID seperti `H-028` merujuk ke entri di log keputusan operator, yang diringkas di `docs/DECISIONS.md`. Kode keluarga: `uupt` = Hukum Perseroan, `akta` = akta notaris.
 - Profil model (utama dan comparator) ada di `config/model.toml`, yang di `AGENTS.md` disebut `config/model`.
 
-## Batasan
-
-- Set butir kecil; hasil per butir dengan hitungan mentah, tanpa klaim signifikansi.
-- Konsolidasi hanya mencakup satu undang-undang, per 30 Desember 2022; perubahan sesudahnya tidak tercermin.
-- Comparator adalah run terpisah; tidak ada klaim kualitas tentang keduanya. Hasil utama tetap pada `muse-spark-1.3-contributor` dengan reasoning effort `low`.
-- Hasil akta bertumpu pada lima dokumen sintetis; tidak ada butir kontrol yang ditulis operator dan tidak ada split held-out untuk akta.
-- Hitungan token memakai tokenizer lokal yang dikalibrasi sekali terhadap endpoint token-count API; token yang ditagih bisa berbeda.
-- Pemeriksaan sitasi "berlaku pada tanggal" (apakah ketentuan yang dikutip berlaku pada tanggal tertentu) adalah stretch goal dan mungkin tidak ada. Teks hukum Indonesia ditampilkan dalam bahasa Indonesia, dengan gloss singkat bahasa Inggris bila perlu.
-- Biaya run (hasil utama): 561,741 micro-USD (ditampilkan sebagai $0.561741), angka yang sama dengan header aplikasi (label di UI: "Run cost (main results)").
-
-Belanja eksperimen per pool (comparator, sapuan effort) dilaporkan terpisah di [LIMITS.md](LIMITS.md) (bahasa Inggris), bersama rincian comparator dan sapuan effort.
-
-## Data dan lisensi
-
-- Teks Hukum Perseroan adalah konsolidasi tidak resmi UU 40/2007 (per 30 Desember 2022), disiapkan operator dari teks peraturan publik dan putusan Mahkamah Konstitusi. Akta bersifat sintetis dan fiktif; tidak ada akta asli, data klien, atau dokumen internal yang disertakan.
-- Panggilan Model API memakai `muse-spark-1.3-contributor` (mode Contributor: Meta boleh memakai konten untuk melatih model berikutnya). Ini dapat diterima di sini karena setiap dokumen publik atau sintetis. Untuk keluarga dokumen rahasia, setel model ID Standard di `config/model.toml`.
-- Lisensi: Apache-2.0 untuk semua yang dibuat proyek ini (lihat `LICENSE`); atribusi pihak ketiga ada di `NOTICE`.
-
-**Built with Muse Spark Open.** Tokenizer Muse Spark Open menghitung token secara lokal (Muse Model License mensyaratkan notice ini), dan model Muse Spark Open juga menjadi comparator.
-
-Sumber korpus, rincian lisensi lengkap (font, UU 28/2014 Pasal 42, lisensi tokenizer dan Glimmer, lisensi dependensi): [DATA.md](DATA.md) (bahasa Inggris).
-
-## Disclaimer
-
-Demo riset. Bukan nasihat hukum. Jangan mengandalkan keluaran apa pun untuk keputusan hukum.
-
-## Dokumentasi
-
-Dokumen spesifikasi ditulis dalam bahasa Indonesia. Spesifikasi ada di [`docs/`](./): [PRD](PRD.md), [UI-SPEC](UI-SPEC.md), [ARCHITECTURE](ARCHITECTURE.md), [DATA-CONTRACTS](DATA-CONTRACTS.md), [API](API.md), [EVAL-SPEC](EVAL-SPEC.md), [SPARK-ROLES](SPARK-ROLES.md), [SECURITY-COMPLIANCE](SECURITY-COMPLIANCE.md), [MILESTONES](MILESTONES.md), [DECISIONS](DECISIONS.md), [VIDEO](VIDEO.md). Dokumen rincian dalam bahasa Inggris: [LIMITS](LIMITS.md), [RESULTS](RESULTS.md), [DATA](DATA.md). README bahasa Inggris: [README.md](../README.md).
+</details>
