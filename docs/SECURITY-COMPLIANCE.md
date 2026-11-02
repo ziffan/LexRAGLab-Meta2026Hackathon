@@ -78,7 +78,7 @@ Catatan pasca-submit (1 Nov): daftar ini tidak dicentang per butir sebelum submi
 - [ ] Disclaimer "Research demo. Not legal advice." tampil di app, README, dan video.
 - [x] `LICENSE` Apache-2.0 terpasang (teks resmi, disalin verbatim dari paket terpasang; sha256 `c71d239d…0ab4` setelah normalisasi LF) dan `NOTICE` dengan atribusi pihak ketiga; font IBM Plex OFL 1.1 di `licenses/`; README memisahkan lisensi kode dari teks korpus (H-029, H-097). Repo publik tetap izin terpisah.
 - [ ] README memuat disclosure: Contributor (H-028), konsolidasi UU PT tidak resmi yang disiapkan sebelum acara sampai 30 Desember 2022 (H-031, H-045), akta ditulis agen AI dan direview operator (H-039), bagian "Built before vs during the hackathon" (H-044), atribusi "Built with Muse Spark Open" bila tokenizer dipakai (H-014), dan bila pembanding Glimmer dipakai: open-weight yang berjalan di mesin operator, bukan bobot Spark, dengan atribusi kartu model (H-047).
-- [ ] Klaim bonus open-weight hanya tercantum bila cara verifikasi "own hardware" sudah dikonfirmasi penyelenggara (H-047).
+- [ ] Klaim bonus open-weight hanya tercantum bila cara verifikasi "own hardware" sudah dikonfirmasi penyelenggara (H-047). Catatan 2 Nov: Participant Guide §9 (halaman `/details`) menjelaskan verifikasi (juri menandai di ronde pertama, partner infrastruktur memverifikasi; inference partner ikut dihitung). Tidak ada klaim bonus di docs; LIMITS hanya menyatakan fakta pemakaian (putusan operator 2 Nov, opsi a).
 - [ ] README memuat tautan replay statis dan menyebut bahwa versi web adalah replay (H-051).
 
 ### Lisensi dependensi runtime frontend (bundel statis; H-097)

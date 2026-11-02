@@ -24,7 +24,7 @@ Comparators are Muse Spark Open on Baseten and Muse Glimmer locally. In the role
 - Comparator answers are stored in `runs/answers/` (role C cells for the effort sweep also in report files under `runs/compare_report/c/`) and are not shown in the app outside the role C selector.
 - On the three must-refuse items every answer abstained in the base runs, for all three models (6 of 6 each; Contributor 4 `tolak` and 2 `bukti_tidak_cukup`, Spark Open 5 and 1, Glimmer 4 and 2). Here `tolak` = refuse and `bukti_tidak_cukup` = insufficient evidence.
 - No comparator quality figure is claimed and no significance test is run. No general claim is made about either model's Indonesian-language quality.
-- Any open-weight bonus claim waits for the organizers' confirmation of how own-hardware use is verified.
+- Muse Spark Open is used through Baseten (partner inference) and Muse Glimmer on the operator's machine, both as labelled comparators (plus the Spark Open tokenizer for token counts); the main results use Contributor.
 
 ## Effort sweep
 
