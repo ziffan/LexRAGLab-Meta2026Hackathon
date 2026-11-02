@@ -46,7 +46,7 @@ diperbarui: 2026-11-02 UTC (L1: hasil sapuan effort dipublikasikan di RESULTS; b
 ## Menunggu operator
 
 - Lihat baris "Menunggu operator" di Status.
-- Butir NOTICE "unverified, pending operator" tersisa (2 Nov): syarat keluaran Model API Meta (Contributor) dan Official Rules terpisah. Kartu Glimmer HF, Baseten, jurnal Magesh sudah diverifikasi 2 Nov.
+- Butir NOTICE "unverified, pending operator" tersisa (2 Nov): syarat keluaran Model API Meta (Contributor) dan teks waiver acara (tidak terbaca). Rules = pesan #rules Discord hackathon (26 Okt, staf CV; dibaca lewat Chrome 2 Nov, tautan dari operator): tanpa klausul kepemilikan/atribusi output, dicatat di NOTICE §5. Kartu Glimmer HF, Baseten, jurnal Magesh sudah diverifikasi 2 Nov.
 - ~~Isian form submit: repo catatan `docs/10-SUBMIT.md` (nama tim, feedback, Most Viral).~~ Selesai 1 Nov (form masih bisa diedit sampai 5 Nov 09:00 WIB).
 - Keputusan L1 yang bisa dibalik: keterangan "agen L3 (Claude)" di `docs/scenarios` dibiarkan sebagai disclosure.
 - ~~Teks tooltip header `Run cost (main results)` (`frontend/src/components/Header.tsx` `RUN_COST_TITLE`) draf L2#11, menunggu L1.~~ Tidak diubah: kode beku sejak submit 1 Nov, draf L2#11 berlaku apa adanya.
