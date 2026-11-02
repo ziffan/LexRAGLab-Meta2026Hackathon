@@ -21,14 +21,14 @@ Comparators are Muse Spark Open on Baseten and Muse Glimmer locally. In the role
 - Role A stores comparator schemas that are never made active (`runs/schemas/*/compare/`).
 - Role B writes separate header stores and comparator grids (`runs/headers_compare/`, `runs/grid_compare/`).
 - Role C answers six items only: the three demo items (`kontrol-K-09`, `kontrol-K-01`, `kontrol-K-08`) and the three Company Law must-refuse items (`mode: tolak`), each with the best and the baseline profile.
-- Comparator results are kept in report files (`runs/compare_report/c/`) and are not shown in the app outside the role C selector.
+- Comparator answers are stored in `runs/answers/` (role C cells for the effort sweep also in report files under `runs/compare_report/c/`) and are not shown in the app outside the role C selector.
 - On the three must-refuse items every answer abstained in the base runs, for all three models (6 of 6 each; Contributor 4 `tolak` and 2 `bukti_tidak_cukup`, Spark Open 5 and 1, Glimmer 4 and 2). Here `tolak` = refuse and `bukti_tidak_cukup` = insufficient evidence.
 - No comparator quality figure is claimed and no significance test is run. No general claim is made about either model's Indonesian-language quality.
 - Any open-weight bonus claim waits for the organizers' confirmation of how own-hardware use is verified.
 
 ## Effort sweep
 
-The sweep varies `reasoning_effort` for roles A, B, C plus a comparator grid per level.
+The sweep varies `reasoning_effort` for roles A, B, C plus a comparator grid per level. Per-role results (calls, output tokens, latency, cost, role C cells): [RESULTS.md](RESULTS.md#reasoning-effort-sweep-comparison-runs).
 
 - Contributor: `low` (main results), `medium`, `high`, `xhigh` (`max` is not supported).
 - Spark Open: `low` and `medium`.

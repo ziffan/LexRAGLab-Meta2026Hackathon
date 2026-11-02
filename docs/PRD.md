@@ -22,7 +22,7 @@ Angka korpus (penekanan utama):
 | Bahan penyusunan kontrak, bahan utuh, komposisi tidak dirinci | draf kontrak sekitar 2,2 juta token; sekitar 2,8 juta bila pustaka klausul ikut dihitung | idem |
 | Bahan satu perkara dibanding jendela 1 juta token | 1,2× sampai 5,8× | idem |
 | Ukuran korpus aturan per jenis pekerjaan (LO, LDD, kontrak) | tidak tersedia | idem |
-| Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan); Magesh dkk., "Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools", arXiv:2405.20362, 2024 |
+| Halusinasi alat riset hukum komersial | sekitar 17–33% | catatan riset pra-acara (tidak disertakan); Magesh dkk., "Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools", arXiv:2405.20362, 2024; versi terbit Journal of Empirical Legal Studies 22 (2025) 216, DOI 10.1111/jels.12413 |
 | Benchmark RAG hukum Indonesia publik dan standar | tidak ada | idem |
 
 Laju pemakaian agen (pendukung, sekunder), agregat. Dihitung dari transkrip agen lokal operator dengan tarif list API (bukan tagihan); pengukuran operator atas pekerjaan sebelumnya, tidak disertakan dalam repo ini:

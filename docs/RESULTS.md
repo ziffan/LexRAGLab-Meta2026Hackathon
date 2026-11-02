@@ -49,4 +49,68 @@ Source: the stored deed grid run ([`../runs/grid/86e701f56a3bc5f83268b4cf8590d9d
 - Deed **Recall@K is not comparable with Company Law Recall@K**. It is computed at the default chunk level of the deed schema (`recall_unit: default_chunk_level`). Compare chunkers within the deed family only.
 - Small n: 69 gold items from five documents, all proposed by Spark and approved by the operator. The table gives raw counts. It claims no significance, and it does not show that the structure schema beats the baselines in general.
 
+## Reasoning effort sweep (comparison runs)
+
+The sweep re-ran roles A, B, and C at other `reasoning_effort` levels for Muse Spark (Contributor), Muse Spark Open (Baseten), and Muse Glimmer (local). These are separate runs; the main results, profiles, and grid stay on Contributor at `low`. Which levels ran, partial role B coverage, and spend per pool are in [LIMITS.md](LIMITS.md#effort-sweep).
+
+Sources: call statistics from `runs/spark/records/`; role A schemas from `runs/schemas/<family>/compare/<profile>/`; role B stores and grids from `runs/headers_compare/` and `runs/grid_compare/<profile>/`; role C cells from `runs/compare_report/c/sweep_*.json`. Output tokens include reasoning tokens (billed as output); the stored records do not split reasoning out. Latency is the median wall-clock time per call. Call counts differ between rows because the runs cover different stores, so compare the per-call columns, not the totals. Small n, no significance test, and no general claim about any model's quality.
+
+Run labels: **main** = main results; **comparator** = the base comparator run (Spark Open at `low`, Glimmer at `high`); **sweep** = the effort sweep.
+
+### Role B (context header per chunk)
+
+| Model | Effort | Run | Calls | Rejected (header over 40 tokens) | Mean output tokens per call | Median latency (ms) | Cost (micro-USD) |
+|---|---|---|---|---|---|---|---|
+| Contributor | `low` | main | 1,926 | 7.4% | 566 | 6,038 | 526,265 |
+| Contributor | `medium` | sweep | 1,048 | 10.5% | 978 | 9,885 | 400,056 |
+| Contributor | `high` | sweep | 1,066 | 11.4% | 1,174 | 11,338 | 477,669 |
+| Contributor | `xhigh` | sweep | 1,068 | 10.8% | 1,913 | 16,698 | 660,432 |
+| Spark Open | `low` | comparator | 1,783 | 45.8% | 462 | 3,588 | 15,366,732 |
+| Spark Open | `medium` | sweep | 2,923 | 65.7% | 862 | 4,881 | 30,688,764 |
+| Glimmer | `low` | sweep | 543 | 14.5% | 259 | 11,520 | 0 (local) |
+| Glimmer | `medium` | sweep | 534 | 14.4% | 498 | 21,875 | 0 (local) |
+
+Comparator grids are stored in `runs/grid_compare/<profile>/` for each row of this table except Contributor `low` (main grid in `runs/grid/`); Glimmer at `high` has no role B run and no grid. Header coverage is partial for several profiles, so the number of header-on Company Law grid points differs between profiles (from 1 to 9), and recall is not compared across effort levels here.
+
+### Role A (structure schema proposal)
+
+"Differences vs operator v2" counts the levels and fields in which the comparator schema differs from the operator-corrected schema (`v2.json`), for Company Law / deeds. It describes distance, not quality; no comparator schema is ever made active.
+
+| Model | Effort | Run | Calls (valid) | Mean output tokens per call | Median latency (ms) | Cost (micro-USD) | Differences vs operator v2 (Company Law / deeds) |
+|---|---|---|---|---|---|---|---|
+| Contributor | `low` | main | 2 (2) | 4,034 | 40,312 | 8,170 | v2 is the operator's correction of this proposal |
+| Contributor | `medium` | sweep | 2 (2) | 6,032 | 56,295 | 8,969 | 14 / 14 |
+| Contributor | `high` | sweep | 6 (2; 4 incomplete) | 8,911 | 77,545 | 17,538 | 20 / 14 |
+| Contributor | `xhigh` | sweep | 7 (2; 4 incomplete, 1 timeout) | 9,574 | 82,954 | 45,897 | 14 / 14 |
+| Spark Open | `low` | comparator | 2 (2) | 1,481 | 9,127 | 93,751 | 12 / 5 |
+| Spark Open | `medium` | sweep | 3 (1; 2 rejected) | 3,263 | 18,586 | 130,038 | no valid schema / 6 |
+| Spark Open | `high` | sweep | 2 (2) | 6,165 | 25,703 | 133,565 | 13 / 6 |
+| Spark Open | `xhigh` | sweep | 2 (2) | 13,004 | 50,530 | 191,693 | 14 / 7 |
+| Glimmer | `low` | sweep | 2 (2) | 1,035 | 63,208 | 0 (local) | 15 / 13 |
+| Glimmer | `medium` | sweep | 3 (2; 1 rejected) | 3,470 | 138,823 | 0 (local) | 14 / 15 |
+| Glimmer | `high` | comparator | 5 (2; 2 invalid requests, 1 rejected) | 7,648 | 303,415 | 0 (local) | 14 / 15 |
+
+### Role C (cited answer), three demo items
+
+Items `kontrol-K-09`, `kontrol-K-01`, `kontrol-K-08`, each answered with the best and the baseline Company Law setting. Cells are supported / unsupported / abstained correctly / abstained but should have answered.
+
+| Model | Effort | Run | Best setting | Baseline setting |
+|---|---|---|---|---|
+| Contributor | `low` | main | 2 / 0 / 1 / 0 | 0 / 0 / 2 / 1 |
+| Contributor | `medium`, `high`, `xhigh` | sweep | 2 / 0 / 1 / 0 | 0 / 0 / 2 / 1 |
+| Spark Open | `low` | comparator | 1 / 1 / 1 / 0 | 1 / 0 / 2 / 0 |
+| Spark Open | `medium`, `high`, `xhigh` | sweep | 2 / 0 / 1 / 0 | 0 / 0 / 2 / 1 |
+| Glimmer | `low`, `medium` | sweep | 2 / 0 / 1 / 0 | 0 / 0 / 2 / 1 |
+| Glimmer | `high` | comparator | 2 / 0 / 1 / 0 | 0 / 0 / 2 / 1 |
+
+The sweep rows come from the stored reports. The main and comparator rows have no stored report file; they were graded offline from the stored answers in `runs/answers/` with the same deterministic verifier (`backend.answer.compare_c.grade_cells`, no model call); run over the stored sweep answers, the same function reproduces all eight stored sweep reports exactly. Mean output tokens per role C call: Contributor 470, 725, 817, 1,503 (`low` to `xhigh`); Spark Open 219, 654, 1,416, 1,372 (`xhigh` slightly below `high`); Glimmer 260, 458, 851 (`low` to `high`). The Contributor `low`, Spark Open `low`, and Glimmer `high` figures also include the must-refuse items.
+
+### What the sweep shows
+
+- On the three demo items, every sweep level of every model gives the same role C cells as Contributor at `low`. The only differing row is the Spark Open `low` comparator run (one unsupported answer with the best setting, one supported answer with the baseline). Three items cannot show an effect of effort either way.
+- Higher effort costs more output tokens and time for every model and role, with one exception: Spark Open role C at `xhigh` is slightly below `high` (mean output 1,372 vs 1,416 tokens, median latency 5,056 ms vs 5,182 ms). For Contributor role B, mean output per call grows from 566 to 1,913 tokens and median latency from 6,038 ms to 16,698 ms (`low` to `xhigh`), while the header rejection rate stays between 7.4% and 11.4%.
+- Spark Open role B rejects far more headers than the other two models, and more at `medium` than at `low` (45.8% to 65.7%), and its role B spend is the largest in the sweep. This is consistent with retries: each retry sends the document prefix again (see G-45 in [GOTCHAS.md](GOTCHAS.md)).
+- At `high` and `xhigh`, Contributor role A returned incomplete responses on several attempts before producing a valid schema.
+- The main results were run at `low` before the sweep; this data gives no reason to change that.
+
 Back to the [README](../README.md).

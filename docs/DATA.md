@@ -25,7 +25,7 @@ No real deeds, client data, or internal documents are included. The five synthet
 - The IBM Plex font license texts (SIL OFL 1.1) are in [`../licenses/`](../licenses/).
 - Regulation texts are reproduced as public legal texts (UU 28/2014 Article 42) with sources cited and are not relicensed.
 - The Muse Spark Open tokenizer is not included; it is read from the user's local Hugging Face cache and is downloaded from its official source under its own license (Muse Model License).
-- Muse Glimmer weights are not included; Muse Glimmer is Apache-2.0 per Meta docs (model card not yet verified, see `../NOTICE`).
+- Muse Glimmer weights are not included; Muse Glimmer is Apache-2.0 per Meta docs and the Hugging Face model card (see `../NOTICE`).
 - Frontend runtime dependencies are MIT, ISC, or BSD-3-Clause (table in [`SECURITY-COMPLIANCE.md`](SECURITY-COMPLIANCE.md) section 4, subheading "Lisensi dependensi runtime frontend").
 
 **Built with Muse Spark Open.** Token counts use the Muse Spark Open tokenizer (revision pinned in `config/tokenizer.toml`; `o200k_base` is the fallback).
