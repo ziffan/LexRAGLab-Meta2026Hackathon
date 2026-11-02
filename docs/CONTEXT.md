@@ -3,7 +3,7 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-114; putusan operator 16–21.
 
-diperbarui: 2026-11-02 UTC (L1: hasil sapuan effort dipublikasikan di RESULTS; butir NOTICE unverified ditutup sebagian; docs + berkas workflow boleh sampai 5 Nov 09:00 WIB)
+diperbarui: 2026-11-02 UTC (L1 tutup sesi: sapuan effort di RESULTS, NOTICE diverifikasi kecuali syarat Model API + waiver, LIMITS bonus opsi a, G-59/G-60; CI `main` hijau; docs + berkas workflow boleh sampai 5 Nov 09:00 WIB)
 
 ## Status
 
@@ -66,7 +66,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs tertunda. Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs wajib. Opsional: teks waiver dari operator -> NOTICE §5 (ISSUES, G-59). Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
 2. ~~Jam operator di tabel Produksi `docs/VIDEO.md`~~ diisi 1 Nov (jam aktif sesi agen, berlabel).
 3. Operator: clone ulang laptop Windows (Linux selesai 1 Nov; G-50); setelah semua mesin sehat hapus `D:/PROYEK/_rewrite/{work,ctrl,fresh}`; bundle disimpan.
 4. Opsional sebelum beku total: cek tracker watt-mind setelah refresh (±4 jam) apakah `has_ci` dan topic terbaca; kalau perlu, sisir docs lagi; tidak ada yang wajib.

@@ -9,7 +9,8 @@ Aturan: rekomendasi di sini **bukan** keputusan. Yang dikunci operator dicatat d
 
 | ID | Pertanyaan | Rekomendasi | Owner | Batas |
 |---|---|---|---|---|
-| — | Pasca-submit: clone ulang laptop Windows (G-50; Linux T14 selesai 1 Nov); docs (+ berkas workflow, H-115) saja yang boleh diubah sampai 5 Nov 09:00 WIB, lalu beku total. Selesai 1 Nov: v10, repo publik + Pages, SUBMIT, jam Produksi VIDEO, M5 selesai, gate video 11/11, H-115 (CI + tag) | | Operator | Penjurian 4–8 Nov |
+| — | Pasca-submit: clone ulang laptop Windows (G-50; Linux T14 selesai 1 Nov); docs (+ berkas workflow, H-115) saja yang boleh diubah sampai 5 Nov 09:00 WIB, lalu beku total. Selesai 1 Nov: v10, repo publik + Pages, SUBMIT, jam Produksi VIDEO, M5 selesai, gate video 11/11, H-115 (CI + tag) | | Operator | Penjurian 5–8 Nov |
+| — | NOTICE sisa "unverified, pending operator" (2 Nov): syarat output Model API Meta (halaman syarat tidak ditemukan) dan teks waiver acara (`/waiver` dirender JS, G-59). P3: tidak wajib sebelum beku; label jujur sudah ada | Operator buka `/waiver` di browser yang login CV, salin teks; L1 perbarui NOTICE §5 | Operator | 5 Nov 09:00 WIB (beku total) |
 
 ## Ditutup
 
