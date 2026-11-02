@@ -88,13 +88,21 @@ relicensed by this project.
    (section 4 above). The Muse Glimmer usage policy places no attribution or
    ownership condition on outputs (section 4 above). For Muse Spark via the
    Meta Model API, no attribution or ownership condition on model output
-   was found in the sources read: unverified, pending operator. The
-   hackathon rules have none either: the rules post in the #rules channel
-   of the hackathon Discord (posted 26 Oct 2026 by the Cerebral Valley
-   team, read 2 Nov 2026) covers new work only, identifying contributions,
-   public repository, teams, demo video, banned projects, theme,
-   submission, and eligibility, and the Participant Guide section 4 has
-   the same scope. The event waiver it refers to was not read.
+   was found in the sources read: unverified, pending operator.
+   Hackathon Terms & Conditions ("Official Rules") and Event Waiver (dated
+   25 Oct 2026; text supplied by the operator and read 2 Nov 2026),
+   section "Hackathon Submission": the entrant retains ownership of the
+   intellectual property in the Submission and grants the Organizers a
+   perpetual, non-exclusive, royalty-free license to use it; the entrant
+   warrants the Submission is original, owned by the entrant, and does not
+   infringe third-party rights; open source may be included if its
+   licenses are followed. The Official Rules contain no specific clause on
+   model output and no attribution requirement. The rules post in the
+   #rules channel of the hackathon Discord (26 Oct 2026) and the
+   Participant Guide section 4 add none. Third-party material in this
+   repository is listed in the sections above with its license. Both the
+   Apache-2.0 license of this repository and the license granted to the
+   Organizers are non-exclusive.
 
 6. Cited research
    Varun Magesh, Faiz Surani, Matthew Dahl, Mirac Suzgun, Christopher D.

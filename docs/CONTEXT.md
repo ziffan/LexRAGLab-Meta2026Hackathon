@@ -46,7 +46,7 @@ diperbarui: 2026-11-02 UTC (L1 tutup sesi: sapuan effort di RESULTS, NOTICE dive
 ## Menunggu operator
 
 - Lihat baris "Menunggu operator" di Status.
-- Butir NOTICE "unverified, pending operator" tersisa (2 Nov): syarat keluaran Model API Meta (Contributor) dan teks waiver acara (tidak terbaca). Rules = pesan #rules Discord hackathon (26 Okt, staf CV; dibaca lewat Chrome 2 Nov, tautan dari operator): tanpa klausul kepemilikan/atribusi output, dicatat di NOTICE §5. Kartu Glimmer HF, Baseten, jurnal Magesh sudah diverifikasi 2 Nov.
+- Butir NOTICE "unverified, pending operator" tersisa (2 Nov): syarat keluaran Model API Meta (Contributor). Official Rules + Event Waiver (25 Okt; teks ditempel operator 2 Nov) dicatat di NOTICE §5: IP submission milik peserta, lisensi non-eksklusif ke penyelenggara, jaminan orisinal/tidak melanggar, open source boleh bila lisensi dipatuhi; tanpa klausul output model atau atribusi. Rules = pesan #rules Discord hackathon (26 Okt, staf CV; dibaca lewat Chrome 2 Nov, tautan dari operator): tanpa klausul kepemilikan/atribusi output, dicatat di NOTICE §5. Kartu Glimmer HF, Baseten, jurnal Magesh sudah diverifikasi 2 Nov.
 - ~~Isian form submit: repo catatan `docs/10-SUBMIT.md` (nama tim, feedback, Most Viral).~~ Selesai 1 Nov (form masih bisa diedit sampai 5 Nov 09:00 WIB).
 - Keputusan L1 yang bisa dibalik: keterangan "agen L3 (Claude)" di `docs/scenarios` dibiarkan sebagai disclosure.
 - ~~Teks tooltip header `Run cost (main results)` (`frontend/src/components/Header.tsx` `RUN_COST_TITLE`) draf L2#11, menunggu L1.~~ Tidak diubah: kode beku sejak submit 1 Nov, draf L2#11 berlaku apa adanya.
@@ -66,7 +66,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs wajib. Opsional: teks waiver dari operator -> NOTICE §5 (ISSUES, G-59). Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs wajib. Waiver sudah masuk NOTICE §5 (2 Nov). Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
 2. ~~Jam operator di tabel Produksi `docs/VIDEO.md`~~ diisi 1 Nov (jam aktif sesi agen, berlabel).
 3. Operator: clone ulang laptop Windows (Linux selesai 1 Nov; G-50); setelah semua mesin sehat hapus `D:/PROYEK/_rewrite/{work,ctrl,fresh}`; bundle disimpan.
 4. Opsional sebelum beku total: cek tracker watt-mind setelah refresh (±4 jam) apakah `has_ci` dan topic terbaca; kalau perlu, sisir docs lagi; tidak ada yang wajib.
