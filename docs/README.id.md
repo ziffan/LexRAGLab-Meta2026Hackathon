@@ -3,6 +3,8 @@
 
 # LexRAGLab
 
+<p align="center"><img src="img/logo.png" width="560" alt="Logo LexRAGLab: buku terbuka dengan satu keping berbentuk puzzle hilang dari halaman kanannya, keping yang cocok terlihat di bawah kaca pembesar, dan tagline Measured, not guessed."></p>
+
 English: [README.md](../README.md). Versi bahasa Inggris yang otoritatif; bila berbeda, README Inggris yang berlaku. Angka memakai notasi Inggris (koma pemisah ribuan, titik desimal), sama dengan README Inggris.
 
 [![CI](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml)
