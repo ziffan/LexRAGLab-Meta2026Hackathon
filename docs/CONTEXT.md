@@ -3,7 +3,7 @@
 Tujuan: satu layar tentang di mana proyek berada, diperbarui setiap akhir sesi kerja.
 Sumber keputusan: H-017, H-027, H-044, H-052, H-057, H-058, H-062..H-114; H-115..H-117 (repo catatan); putusan operator 16–21.
 
-diperbarui: 2026-11-04 UTC (sesi 2: bagian "Beyond this corpus" di README/README.id + `docs/IMPACT.md`; docs + berkas workflow boleh sampai 5 Nov 09:00 WIB)
+diperbarui: 2026-11-04 UTC (tutup sesi 2: bagian "Beyond this corpus" di README/README.id + `docs/IMPACT.md`, commit `c11d0dfb`, CI run 41832882463 hijau; docs + berkas workflow boleh sampai 5 Nov 09:00 WIB)
 
 ## Status
 
@@ -68,7 +68,7 @@ Tiga mesin, dicek 27 Okt (commit `9d13586`):
 
 ## Berikutnya
 
-1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah). Sudah submit; semua milestone selesai, tidak ada kerja docs wajib. Waiver sudah masuk NOTICE §5 (2 Nov). Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
+1. Sesi baru: L1 membaca `_kerja/orkestrasi/keadaan-L1.md` (log terbawah; berkas ini hanya ada di desktop, tidak ada di clone Windows `C:\dev`, yang `_kerja/`-nya hanya berisi lima berkas lama). Sudah submit; semua milestone selesai, tidak ada kerja docs wajib. Waiver sudah masuk NOTICE §5 (2 Nov). Sampai 5 Nov 09:00 WIB hanya docs (dan `.github/workflows/ci.yml`, H-115) yang boleh diedit + push; setelah itu beku total (aturan beku di Status). Setiap push `main` memicu CI: cek hijau (`gh run list --branch main --limit 1`).
 2. ~~Jam operator di tabel Produksi `docs/VIDEO.md`~~ diisi 1 Nov (jam aktif sesi agen, berlabel).
 3. Operator: **semua clone lain basi lagi sejak H-116 (4 Nov)**, termasuk Linux (T14) yang di-clone 1 Nov: clone ulang, jangan `git pull` (G-50); pasang ulang exclude lokal alat agen dan pengaturan attribution (G-61). Clone Windows `C:\dev` sudah baru (4 Nov). Setelah yakin, hapus backup `C:\dev\LexRAGLab-Meta2026Hackathon.bak-20261104` (±4,5 GB, termasuk `.venv`) dan `D:/PROYEK/_rewrite/{work,ctrl,fresh}` bila masih ada.
 4. Opsional sebelum beku total: cek tracker watt-mind setelah refresh (±4 jam) apakah `has_ci` dan topic terbaca; kalau perlu, sisir docs lagi; tidak ada yang wajib.
