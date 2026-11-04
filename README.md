@@ -130,6 +130,17 @@ The hackathon theme is "Bring Meta's models into your domain. Solve a problem yo
 
 The scale of the problem, from the operator's measurements of prior engagements (not included in this repository; these are not outputs of this app, and nothing in LexRAGLab's results is derived from them): a single statute consulted for one legal opinion was about 320 thousand tokens, more than a 200-thousand-token window on its own, and only about 10% of that regulation text was actually used; whole material per job, composition not broken down into regulation versus other documents, was about 1.2 million tokens for one transaction's legal opinion and about 5.8 million for a full due diligence file (1.2 to 5.8 times a 1-million-token window), about 2.2 million for contract drafting, or about 2.8 million with the clause library included. Operator measurements of agent usage (secondary) are in [docs/DATA.md](docs/DATA.md#operator-measurements-background).
 
+## Beyond this corpus
+
+The project started from one firsthand problem: an agent doing legal work must consult regulation that does not fit its context window, so the context it is given should be small and right. The hypothesis is that a measured retrieval setting lets the agent work more effectively and efficiently than a guessed one. This repository does not measure that saving; it measures retrieval quality at a fixed budget. What may carry over, as material for exploration rather than a claim:
+
+- The method is not tied to Indonesian law. It needs plain text, a structure schema (proposed by the model, corrected by a person), evaluation items with gold spans approved by a domain reader, and a token budget. The parts that are specific to Indonesian statutes, and would have to be rebuilt for a new family, are listed in [docs/IMPACT.md](docs/IMPACT.md).
+- Legal RAG elsewhere: regulation of other jurisdictions, contracts, court decisions, internal policies (the next planned family), wherever answers are provisions that must be cited exactly.
+- Outside law: document families that are numerous and homogeneous in pattern, such as accounting and tax standards, audit working papers, or procedures and technical standards. Untested here.
+- The patterns most likely to be reusable: gold evidence as character spans so one item set scores any chunker; comparison at a fixed token budget rather than a fixed K; the operator as the only approver of evaluation items; the deterministic citation verifier; and the hashed, versioned setting profile.
+
+Conditions, candidates, what would have to be rebuilt, and non-claims: [docs/IMPACT.md](docs/IMPACT.md).
+
 ## Run it
 
 Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node.js with npm. Copy `.env.example` to `.env` and fill the values locally; `.env` is git-ignored and never committed. Keys are needed only for live runs: `MUSE_API_KEY` / `MUSE_BASE_URL` for Contributor, `BASETEN_*` only for the comparator. Replay needs no key.
@@ -200,7 +211,7 @@ Research demo. Not legal advice. Do not rely on any output for legal decisions.
 
 ## Documentation
 
-Spec documents are written in Indonesian. Specs live in [`docs/`](docs/): [PRD](docs/PRD.md), [UI-SPEC](docs/UI-SPEC.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [DATA-CONTRACTS](docs/DATA-CONTRACTS.md), [API](docs/API.md), [EVAL-SPEC](docs/EVAL-SPEC.md), [SPARK-ROLES](docs/SPARK-ROLES.md), [SECURITY-COMPLIANCE](docs/SECURITY-COMPLIANCE.md), [MILESTONES](docs/MILESTONES.md), [DECISIONS](docs/DECISIONS.md), [VIDEO](docs/VIDEO.md). Detail documents in English: [LIMITS](docs/LIMITS.md), [RESULTS](docs/RESULTS.md), [DATA](docs/DATA.md). Indonesian README: [docs/README.id.md](docs/README.id.md).
+Spec documents are written in Indonesian. Specs live in [`docs/`](docs/): [PRD](docs/PRD.md), [UI-SPEC](docs/UI-SPEC.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [DATA-CONTRACTS](docs/DATA-CONTRACTS.md), [API](docs/API.md), [EVAL-SPEC](docs/EVAL-SPEC.md), [SPARK-ROLES](docs/SPARK-ROLES.md), [SECURITY-COMPLIANCE](docs/SECURITY-COMPLIANCE.md), [MILESTONES](docs/MILESTONES.md), [DECISIONS](docs/DECISIONS.md), [VIDEO](docs/VIDEO.md). Detail documents in English: [LIMITS](docs/LIMITS.md), [RESULTS](docs/RESULTS.md), [DATA](docs/DATA.md), [IMPACT](docs/IMPACT.md). Indonesian README: [docs/README.id.md](docs/README.id.md).
 
 <details>
 <summary>Repository map</summary>

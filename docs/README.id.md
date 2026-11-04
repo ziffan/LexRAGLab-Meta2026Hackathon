@@ -130,6 +130,17 @@ Tema hackathon adalah "Bring Meta's models into your domain. Solve a problem you
 
 Skala masalahnya, dari pengukuran operator atas pekerjaan sebelumnya (tidak disertakan di repositori ini; angka ini bukan keluaran aplikasi ini, dan tidak ada hasil LexRAGLab yang diturunkan dari angka tersebut): satu undang-undang yang dirujuk untuk satu pendapat hukum berukuran sekitar 320 ribu token, dengan sendirinya sudah melampaui jendela 200 ribu token, dan hanya sekitar 10% dari teks peraturan itu yang benar-benar dipakai; seluruh materi per pekerjaan, komposisinya tidak dirinci menjadi peraturan versus dokumen lain, sekitar 1.2 juta token untuk pendapat hukum satu transaksi dan sekitar 5.8 juta untuk satu berkas due diligence lengkap (1.2 sampai 5.8 kali jendela 1 juta token), sekitar 2.2 juta untuk penyusunan kontrak, atau sekitar 2.8 juta bila pustaka klausul disertakan. Pengukuran operator atas penggunaan agen (sekunder) ada di [DATA.md](DATA.md#operator-measurements-background) (bahasa Inggris).
 
+## Di luar korpus ini
+
+Proyek ini berangkat dari satu masalah yang dikenal langsung: agen yang mengerjakan pekerjaan hukum harus merujuk peraturan yang tidak muat dalam context window-nya, sehingga konteks yang diberikan kepadanya harus kecil dan tepat. Hipotesisnya: setelan retrieval yang terukur membuat kerja agen lebih efektif dan efisien dibanding setelan tebakan. Repositori ini tidak mengukur penghematan itu; yang diukur adalah mutu retrieval pada budget yang tetap. Yang mungkin terbawa ke tempat lain, sebagai bahan eksplorasi dan bukan klaim:
+
+- Metodenya tidak terikat pada hukum Indonesia. Yang dibutuhkan: teks polos, skema struktur (diusulkan model, dikoreksi manusia), butir evaluasi dengan gold span yang disetujui pembaca ahli domain, dan token budget. Bagian yang khusus untuk undang-undang Indonesia, dan harus dibangun ulang untuk keluarga baru, didaftar di [IMPACT.md](IMPACT.md) (bahasa Inggris).
+- RAG hukum di tempat lain: peraturan yurisdiksi lain, kontrak, putusan pengadilan, kebijakan internal (keluarga berikutnya yang direncanakan), di mana pun jawabannya berupa ketentuan yang harus dikutip persis.
+- Di luar hukum: keluarga dokumen yang banyak dan homogen polanya, seperti standar akuntansi dan perpajakan, kertas kerja audit, atau prosedur dan standar teknis. Belum diuji di sini.
+- Pola yang paling mungkin dipakai ulang: gold evidence sebagai character span sehingga satu set butir bisa menilai chunker apa pun; pembandingan pada token budget tetap dan bukan K tetap; operator sebagai satu-satunya penyetuju butir evaluasi; verifier kutipan deterministik; dan setting profile berversi yang di-hash.
+
+Syarat, kandidat, yang harus dibangun ulang, dan hal yang tidak diklaim: [IMPACT.md](IMPACT.md).
+
 ## Cara menjalankan
 
 Prasyarat: Python 3.12 dengan [uv](https://docs.astral.sh/uv/), Node.js dengan npm. Salin `.env.example` ke `.env` dan isi nilainya secara lokal; `.env` di-git-ignore dan tidak pernah di-commit. Key hanya dibutuhkan untuk run live: `MUSE_API_KEY` / `MUSE_BASE_URL` untuk Contributor, `BASETEN_*` hanya untuk comparator. Replay tidak butuh key.
@@ -200,7 +211,7 @@ Demo riset. Bukan nasihat hukum. Jangan mengandalkan keluaran apa pun untuk kepu
 
 ## Dokumentasi
 
-Dokumen spesifikasi ditulis dalam bahasa Indonesia. Spesifikasi ada di [`docs/`](./): [PRD](PRD.md), [UI-SPEC](UI-SPEC.md), [ARCHITECTURE](ARCHITECTURE.md), [DATA-CONTRACTS](DATA-CONTRACTS.md), [API](API.md), [EVAL-SPEC](EVAL-SPEC.md), [SPARK-ROLES](SPARK-ROLES.md), [SECURITY-COMPLIANCE](SECURITY-COMPLIANCE.md), [MILESTONES](MILESTONES.md), [DECISIONS](DECISIONS.md), [VIDEO](VIDEO.md). Dokumen rincian dalam bahasa Inggris: [LIMITS](LIMITS.md), [RESULTS](RESULTS.md), [DATA](DATA.md). README bahasa Inggris: [README.md](../README.md).
+Dokumen spesifikasi ditulis dalam bahasa Indonesia. Spesifikasi ada di [`docs/`](./): [PRD](PRD.md), [UI-SPEC](UI-SPEC.md), [ARCHITECTURE](ARCHITECTURE.md), [DATA-CONTRACTS](DATA-CONTRACTS.md), [API](API.md), [EVAL-SPEC](EVAL-SPEC.md), [SPARK-ROLES](SPARK-ROLES.md), [SECURITY-COMPLIANCE](SECURITY-COMPLIANCE.md), [MILESTONES](MILESTONES.md), [DECISIONS](DECISIONS.md), [VIDEO](VIDEO.md). Dokumen rincian dalam bahasa Inggris: [LIMITS](LIMITS.md), [RESULTS](RESULTS.md), [DATA](DATA.md), [IMPACT](IMPACT.md). README bahasa Inggris: [README.md](../README.md).
 
 <details>
 <summary>Peta repositori</summary>
