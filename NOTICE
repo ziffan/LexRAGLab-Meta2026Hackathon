@@ -130,3 +130,15 @@ relicensed by this project.
    stock voice "brian". No real person's voice was cloned. The synthetic
    voice is disclosed on the video's end card. The audio files are not
    included in this repository.
+
+9. Logo (docs/img/logo.png)
+   Generated with Muse Image (muse-image-1.0) via the Meta Model API
+   (POST /v1/images/generations and /v1/images/edits) on 4 November 2026,
+   then cropped, resized, and colour-reduced by the project. It is a
+   branding asset only: it is not part of the product, was added after the
+   tag v1.0.0-submission, and Muse Image is not used by any LexRAGLab
+   pipeline. The Meta developer pages read (dev.meta.ai/docs/
+   image-generation, dev.meta.ai/docs/api-reference/images, and
+   dev.meta.ai/docs/pricing-rate-limits; checked 4 Nov 2026) state no
+   attribution or ownership condition on generated images: unverified,
+   pending operator.

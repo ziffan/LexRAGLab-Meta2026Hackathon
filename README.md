@@ -3,6 +3,8 @@
 
 # LexRAGLab
 
+<p align="center"><img src="docs/img/logo.png" width="560" alt="LexRAGLab logo: an open book with a puzzle-shaped piece missing from its right page, the matching piece seen under a magnifying glass, and the tagline Measured, not guessed."></p>
+
 Bahasa Indonesia: [docs/README.id.md](docs/README.id.md)
 
 [![CI](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ziffan/LexRAGLab-Meta2026Hackathon/actions/workflows/ci.yml)
